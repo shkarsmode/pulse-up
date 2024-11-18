@@ -21,6 +21,7 @@ export class TopicFormComponent {
     public imageSrc: string | ArrayBuffer | null = null;
     public categoriesForForm: Array<string>;
     public categories: Topic[] = categories;
+    public selectedIcon: string | ArrayBuffer | null;
 
     private readonly router: Router = inject(Router);
     public readonly sendTopicService: SendTopicService =
@@ -43,19 +44,24 @@ export class TopicFormComponent {
     public onFileSelected(event: Event): void {
         const file = (event.target as HTMLInputElement).files?.[0];
 
-        if (file) {
-            const reader = new FileReader();
-            reader.onload = () => {
-                this.topicForm.patchValue({ icon: reader.result });
-                this.topicForm.get('icon')?.updateValueAndValidity();
-            };
-            reader.readAsDataURL(file);
-        }
+        this.topicForm.patchValue({ icon: file });
+        this.updateSelectedIcon();
     }
 
     public onNextButtonClick(): void {
         if (this.topicForm.valid) {
             this.router.navigateByUrl('user/topic/contact-info');
+        }
+    }
+
+    public updateSelectedIcon(): void {
+        const file = this.topicForm.get('icon')?.value;
+
+        if (file) {
+            const reader = new FileReader();
+            
+            reader.onload = () => this.selectedIcon = reader.result;
+            reader.readAsDataURL(file);
         }
     }
 }

@@ -15,11 +15,11 @@
             
                 <div class="custom-icon">
                     <img
-                        *ngIf="topicForm.get('icon')?.value"
-                        [src]="topicForm.get('icon')?.value"
+                        *ngIf="selectedIcon"
+                        [src]="selectedIcon"
                         alt="Selected Image">
                     <img
-                        *ngIf="!topicForm.get('icon')?.value"
+                        *ngIf="!selectedIcon"
                         src="assets/svg/plus.svg"
                         alt="plus">
                 </div>

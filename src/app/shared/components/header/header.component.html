@@ -129,13 +129,15 @@
         
                 <div>
                     <app-secondary-button
+                        [class.scale]="!isMobileDropdown"
                         [routerLink]="'/' + AppRoutes.User.Topic.HOW_IT_WORKS"
-                        routerLinkActive="active"
-                        [class.scale]="!isMobileDropdown">
+                        (click)="toggleDropdown()"
+                        routerLinkActive="active">
                         Suggest topic
                     </app-secondary-button>
-                    <app-primary-button 
+                    <app-primary-button
                         [class.scale]="!isMobileDropdown"
+                        (click)="toggleDropdown()"
                         openGetAppPopup>
                         Download App
                     </app-primary-button>

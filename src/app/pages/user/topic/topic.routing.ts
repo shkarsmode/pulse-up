@@ -1,45 +1,41 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { TopicComponent } from './topic.component';
-import { AppRoutes } from '../../../shared/enums/app-routes.enum';
-import { HowItWorksComponent } from './how-it-works/how-it-works.component';
-import { SuggestComponent } from './suggest/suggest.component';
 import { ContactInfoComponent } from './contact-info/contact-info.component';
+import { HowItWorksComponent } from './how-it-works/how-it-works.component';
 import { SubmittedComponent } from './submitted/submitted.component';
+import { SuggestComponent } from './suggest/suggest.component';
+import { TopicComponent } from './topic.component';
 
 const routes: Routes = [
     {
-      path: '',
-      component: TopicComponent,
-      children: [
-        {
-          path: 'how-it-works',
-          component: HowItWorksComponent,
-        },
-        {
-          path: 'suggest',
-          component: SuggestComponent,
-        },
-        {
-          path: 'contact-info',
-          component: ContactInfoComponent,
-        },
-        {
-          path: 'submitted',
-          component: SubmittedComponent,
-        }
-
-
-      ]
-
-    }
+        path: '',
+        component: TopicComponent,
+        children: [
+            {
+                path: 'how-it-works',
+                component: HowItWorksComponent,
+            },
+            {
+                path: 'suggest',
+                component: SuggestComponent,
+            },
+            {
+                path: 'contact-info',
+                component: ContactInfoComponent,
+            },
+            {
+                path: 'submitted',
+                component: SubmittedComponent,
+            },
+        ],
+    },
 ];
 
 @NgModule({
-  imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+    imports: [RouterModule.forChild(routes)],
+    exports: [RouterModule],
 })
-export class TopicRoutingModule { }
+export class TopicRoutingModule {}
 
 /*     {
       path: UserRoutes.USER,
