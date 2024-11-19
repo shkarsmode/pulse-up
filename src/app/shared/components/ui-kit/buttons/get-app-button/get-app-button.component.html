@@ -1,33 +1,29 @@
 @if (design === 'old') {
-
-  <button (click)="onClick()" appRippleEffect>
-
-      @if (platformService.value === "iOS") {
-          <svg-icon src="assets/svg/a-store.svg" id="icon"/>
-          <span> Download on the App Store </span>
-      } 
-      @else {
-          <svg-icon src="assets/svg/g-play.svg" id="icon" />
-          <span> Get it on Google Play </span>
-      }
-
-  </button>
-
+    <button
+        (click)="onClick()"
+        appRippleEffect>
+        @if (platformService.value === "iOS") {
+            <svg-icon src="assets/svg/a-store.svg" id="icon" />
+            <span> Download on the App Store </span>
+        }
+        @else {
+            <svg-icon src="assets/svg/g-play.svg" id="icon" />
+            <span> Get it on Google Play </span>
+        }
+    </button>
 }
 
-@else { 
+@else {
+    <a class="btn" [href]="links.APP_STORE">
+        <svg-icon src="assets/svg/a-store.svg" id="icon" />
+        <p>Download on the <br /> <span class="big-txt">App Store</span></p>
+    </a>
 
-
-  <a class="btn" [href]="links.APP_STORE" >
-    <svg-icon src="assets/svg/a-store.svg" id="icon"/>
-    <p>Download on the <br/> <span class="big-txt">App Store</span></p>
-  </a>
-
-  <a class="btn" href="google.com" >
-    <svg-icon src="assets/svg/g-play.svg" id="icon" />
-    <p>Get it on <br/> <span class="big-txt">Google Play</span></p>
-  </a>
-
-
-
+    <a
+        [href]="links.GOOGLE_APP_STORE"
+        class="btn"
+        target="_blank">
+        <svg-icon src="assets/svg/g-play.svg" id="icon" />
+        <p>Get it on <br /> <span class="big-txt">Google Play</span></p>
+    </a>
 }

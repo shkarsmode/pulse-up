@@ -6,48 +6,78 @@
     position: relative;
     // padding: 0 20px;
 
-    &.preview {
-        &:before {
-            content: 'Click to interact';
-            position: absolute;
-
-            display: flex;
-            justify-content: center;
-            align-items: center;
-
-            left: 0px;
-            top: 50%;
-
-            width: 100%;
-            height: 50px;
-
-            transform: translateY(-50%);
-
-            font-size: 25px;
-            font-weight: 600;
-            color: white;
-
-            background-color: #5e00cc4d;
-            backdrop-filter: blur(6px);
-
-            z-index: 1;
-
-            border-radius: 10px;
-            pointer-events: none;
-            opacity: 0;
-
-            transition: all .5s;
-            transition-delay: 0s;
-        }
-
-        &:hover {
-            &:before {
-                opacity: 1;
-                transition-delay: 0.8s;
+    &:hover {
+        &.preview {
+            cursor: pointer !important;
+            
+            .expand {
+                scale: 1.15;
+                transform: rotate(-90deg);
             }
         }
-
     }
+
+    // &.preview {
+    //     &:before {
+    //         content: 'Click to interact';
+    //         position: absolute;
+
+    //         display: flex;
+    //         justify-content: center;
+    //         align-items: center;
+
+    //         left: 0px;
+    //         top: 50%;
+
+    //         width: 100%;
+    //         height: 50px;
+
+    //         transform: translateY(-50%);
+
+    //         font-size: 25px;
+    //         font-weight: 600;
+    //         color: white;
+
+    //         background-color: #5e00cc4d;
+    //         backdrop-filter: blur(6px);
+
+    //         z-index: 1;
+
+    //         border-radius: 10px;
+    //         pointer-events: none;
+    //         opacity: 0;
+
+    //         transition: all .5s;
+    //         transition-delay: 0s;
+    //     }
+
+    //     &:hover {
+    //         &:before {
+    //             opacity: 1;
+    //             transition-delay: 0.8s;
+    //         }
+    //     }
+
+    // }
+}
+
+.expand {
+    position: absolute;
+    right: 15px;
+    bottom: 15px;
+    width: 25px;
+    height: auto;
+
+    transition: all .3s;
+
+    svg-icon {
+        width: inherit;
+
+        ::ng-deep svg {
+            width: inherit;
+        }
+    }
+    width: 25px;
 }
 
 .map-container {

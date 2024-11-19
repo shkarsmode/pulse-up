@@ -144,6 +144,12 @@
 
 <!-- FEATURES -->
 
+@if (isPreview) {
+    <div class="expand">
+        <svg-icon src="assets/svg/extend.svg"/>
+    </div>
+}
+
 @if (isSearch) {
     <app-input-search 
         id="search" 
