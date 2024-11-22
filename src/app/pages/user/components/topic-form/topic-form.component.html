@@ -11,7 +11,7 @@
                     #customIcon
                     type="file"
                     accept=".jpg, .png, .jpeg"
-                    (change)="onFileSelected($event)">
+                    (change)="onFileSelected($event, 'icon')">
             
                 <div class="custom-icon">
                     <img
@@ -60,10 +60,45 @@
                 placeholder="This is what will be seen when one clicks on the pulse"
                 formControlName="description"
                 tabindex="3"
+                [class.padding-lg]="!!selectedTypeOfPicture"
                 [class.has-error]="
                     !!topicForm.get('description')?.invalid && !!topicForm.get('description')?.dirty
                 ">
             </textarea>
+            <div class="description-pictures">
+                <svg-icon 
+                    [class.active]="selectedTypeOfPicture === 'img'"
+                    (click)="openInputForDescription('img')"
+                    src="assets/svg/form/image.svg"/>
+                <svg-icon 
+                    [class.active]="selectedTypeOfPicture === 'gif'"
+                    (click)="openInputForDescription('gif')"
+                    src="assets/svg/form/gif.svg"/>
+                <svg-icon
+                    [class.active]="selectedTypeOfPicture === 'smile'"
+                    (click)="openInputForDescription('smile')"
+                    src="assets/svg/form/smile.svg" />
+            </div>
+
+            @if (topicForm.get('picture')?.value?.name) {
+                <div
+                    class="description-picture"
+                    (click)="deleteChosenPicture()">
+                    <span>
+                        {{ topicForm.get('picture')?.value.name }}
+                    </span>
+                    <svg-icon src="assets/svg/close.svg"/>
+                </div>
+            }
+
+            <input
+                hidden
+                class="description-pictures__input"
+                (change)="onFileSelected($event, 'picture')"
+                #descriptionPictures
+                accept=".jpg,.png,.jpeg"
+                type="file">
+            
         </div>
     
         <div class="group">

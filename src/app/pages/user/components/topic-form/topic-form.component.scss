@@ -23,6 +23,86 @@ form {
     flex-direction: column;
     gap: 8px;
     width: 100%;
+
+    position: relative;
+}
+
+.description-pictures {
+    display: flex;
+    justify-self: center;
+    align-items: center;
+
+    column-gap: 16px;
+
+    position: absolute;
+    bottom: 15px;
+    left: 15px;
+
+    z-index: 1;
+
+    svg-icon {
+        height: 16px;
+        cursor: pointer;
+        transition: all .15s;
+
+        &.active {
+            ::ng-deep svg path {
+                fill: var(--accent-color);
+            }
+        }
+
+        &:hover {
+            scale: 1.15
+        }
+    }
+}
+
+.description-picture {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    column-gap: 7px;
+
+    position: absolute;
+    bottom: 40px;
+    left: 15px;
+
+    font-size: 13px;
+    background: var(--accent-color);
+
+    border-radius: 10px;
+    padding: 3px 10px;
+
+    color: white;
+    z-index: 1;
+
+    cursor: pointer;
+
+    span {
+        text-overflow: ellipsis;
+        overflow: hidden;
+        max-width: 150px;
+        white-space: nowrap;
+    }
+
+    svg-icon {
+        position: relative;
+        display: block;
+        scale: 0.8;
+        height: 14px;
+
+        transition: all .1s;
+
+        ::ng-deep svg path {
+            fill: white;
+        }
+    }
+
+    &:hover {
+        svg-icon {
+            scale: 0.9;
+        }
+    }
 }
 
 label {
@@ -75,6 +155,26 @@ app-primary-button::ng-deep button {
 textarea {
     resize: vertical;
     height: 180px;
+    padding-bottom: 40px;
+
+    &.padding-lg {
+        padding-bottom: 62px;
+    }
+}
+
+.group:has(textarea):after {
+    position: absolute;
+    background: rgb(255 255 255 / 79%);
+    content: '';
+    bottom: -2px;
+    width: calc(100% - 20px);
+    margin: 3px 10px;
+    height: 42px;
+    backdrop-filter: blur(2px);
+}
+
+.group:has(textarea.padding-lg):after {
+    height: 67px;
 }
 
 

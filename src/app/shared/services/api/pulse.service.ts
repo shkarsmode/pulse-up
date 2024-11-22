@@ -59,6 +59,7 @@ export class PulseService {
         title: string;
         description: string;
         keywords: string[];
+        picture: any;
         category: string;
         location: {
             country: string;
@@ -79,6 +80,9 @@ export class PulseService {
         }
         if (params.location.city) {
             formData.append('Location.City', params.location.city);
+        }
+        if (params.picture) {
+            formData.append('Picture', params.picture);
         }
         formData.append('Author.Name', params.author.name);
         formData.append('Author.PhoneNumber', params.author.phoneNumber);

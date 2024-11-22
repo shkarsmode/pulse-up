@@ -11,6 +11,7 @@ export class PulsePlaceholderComponent implements OnInit {
     @Input() public info: any;
 
     public selectedIcon: string | ArrayBuffer | null;
+    public selectedPicture: string | ArrayBuffer | null;
 
     private readonly router: Router = inject(Router);
     private readonly sendTopicService: SendTopicService =
@@ -18,17 +19,25 @@ export class PulsePlaceholderComponent implements OnInit {
 
     public ngOnInit(): void {
         this.redirectIfNoDataFound();
-        this.updateSelectedIcon();
+        this.updateSelectedFiles();
     }
 
-    public updateSelectedIcon(): void {
-        const file = this.sendTopicService.currentTopic.get('icon')?.value;
+    public updateSelectedFiles(): void {
+        const fileIcon = this.sendTopicService.currentTopic.get('icon')?.value;
+        const filePicture = this.sendTopicService.currentTopic.get('picture')?.value;
 
-        if (file) {
+        if (fileIcon) {
             const reader = new FileReader();
 
             reader.onload = () => (this.selectedIcon = reader.result);
-            reader.readAsDataURL(file);
+            reader.readAsDataURL(fileIcon);
+        }
+
+        if (filePicture) {
+            const reader = new FileReader();
+
+            reader.onload = () => (this.selectedPicture = reader.result);
+            reader.readAsDataURL(filePicture);
         }
     }
 

@@ -24,6 +24,7 @@ export class SendTopicService {
             description: ['', Validators.required],
             category: ['', Validators.required],
             keywords: ['', Validators.required],
+            picture: [''],
         });
 
         this.userForm = this.formBuilder.group({
@@ -43,6 +44,7 @@ export class SendTopicService {
             title: this.currentTopic.value.headline,
             description: this.currentTopic.value.description,
             category: this.currentTopic.value.category,
+            picture: this.currentTopic.value.picture ?? null,
             keywords: this.topicsArrayKeywords,
             author: {
                 name: this.userForm.value.name,
