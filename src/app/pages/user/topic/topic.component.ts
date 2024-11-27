@@ -9,6 +9,7 @@ import { Component } from '@angular/core';
             align-items: center;
             justify-content: center;
             height: fit-content;
+            height: 100%;
             width: 100%;
             max-width: 1030px;
             border-radius: 20px;

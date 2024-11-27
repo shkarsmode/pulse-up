@@ -5,9 +5,8 @@
     (onInput)="handleInputChange($event)">
 </app-input>
 
-@if(isAddIcon) {
-    <button openComingSoonPopup [isAddPulsePopup]="true">
+@if (isAddIcon) {
+    <button [routerLink]="'/user/topic/how-it-works'">
         <svg-icon src="assets/svg/add.svg" style="height: 22px;" />
     </button>
-   
 }
