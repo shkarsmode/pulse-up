@@ -35,6 +35,7 @@ h2 {
         height: 100%;
         justify-content: space-between;
     }
+
 }
 
 .back-btn {
@@ -81,4 +82,31 @@ h2 {
     display: flex;
     flex-direction: column;
     gap: 24px;
+}
+
+@media screen and (max-width: 1060px) {
+    :host {
+        flex-direction: column;
+        align-items: center;
+        max-height: 100%;
+        height: 100%;
+        position: relative;
+    }
+
+    .contact-info {
+        padding: 0;
+        padding-top: 45px;
+        padding-bottom: 30px;
+        position: unset;
+    }
+
+    .pulse {
+        padding: 30px;
+        margin-bottom: 30px;
+    }
+
+    .back-btn {
+        left: -8px;
+        top: 14px;
+    }
 }

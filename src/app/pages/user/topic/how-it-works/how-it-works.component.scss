@@ -1,4 +1,4 @@
-@use '../../../../../styles/mixins' as *;
+@use '../../../../../styles/mixins'as *;
 
 :host {
 
@@ -58,7 +58,7 @@ ul {
                 height: 16px;
             }
         }
-        
+
         p {
             grid-area: 2 / 2 / 3 / 3;
         }
@@ -66,7 +66,7 @@ ul {
     }
 }
 
-:host > p {
+:host>p {
     margin-top: 16px;
     color: var(--dark-grey-color);
 }
@@ -77,13 +77,29 @@ app-primary-button {
 
 }
 
-app-primary-button::ng-deep button{
-        height: 48px;
-        width: 100% !important;
+app-primary-button::ng-deep button {
+    height: 48px;
+    width: 100% !important;
 }
 
 
+@media screen and (max-height: 820px) and (max-width: 500px) {
+    h1 {
+        font-size: 25px;
+        margin-top: 16px;
+    }
 
+    :host {
+        padding: 0;
+    }
 
+    p {
+        font-size: 14px;
+    }
+}
 
-
+@media screen and (max-width: 400px) {
+    h1 {
+        font-size: 22px;
+    }
+}

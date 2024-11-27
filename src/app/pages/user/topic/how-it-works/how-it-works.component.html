@@ -1,36 +1,32 @@
+<svg-icon [src]="'assets/svg/logo/logo-3d.svg'" />
 
+<h1>How Topic Submissions Work</h1>
 
-    <svg-icon [src]="'assets/svg/logo/logo-3d.svg'" />
+<h2 id="list-name"> Before You Submit a Topic:</h2> 
 
-    <h1>How Topic Submissions Work</h1>
+<ul>
+    <li>
+        <svg-icon [src]="'assets/svg/marker.svg'" />
+        <h2> All topics are moderated </h2> 
+        <p> We review every submission to ensure it aligns with our community guidelines. </p>
+    <li>
+        <svg-icon [src]="'assets/svg/marker.svg'" />
+        <h2> Topics aren’t added automatically </h2>
+        <p> If your submission is approved, it will appear on the map after moderation. </p>    
+    </li>
+    <li>
+        <svg-icon [src]="'assets/svg/marker.svg'" />
+        <h2>We may reach out </h2> 
+        <p>In some cases, we’ll contact you for additional information or clarification.</p>
+    </li>
+</ul>
 
-    <h2 id="list-name"> Before You Submit a Topic:</h2> 
-    
-    <ul>
-        <li>
-            <svg-icon [src]="'assets/svg/marker.svg'" />
-            <h2> All topics are moderated </h2> 
-            <p> We review every submission to ensure it aligns with our community guidelines. </p>
-        <li>
-            <svg-icon [src]="'assets/svg/marker.svg'" />
-            <h2> Topics aren’t added automatically </h2>
-            <p> If your submission is approved, it will appear on the map after moderation. </p>    
-        </li>
-        <li>
-            <svg-icon [src]="'assets/svg/marker.svg'" />
-            <h2>We may reach out </h2> 
-            <p>In some cases, we’ll contact you for additional information or clarification.</p>
-        </li>
-    </ul>
-    
-    <p>
-        By submitting a topic, you agree to our guidelines and understand that your topic may be rejected if it doesn’t meet our criteria.
-    </p>
-    
-    <app-primary-button 
-        [routerLink]="'/'+ TopicRoutes.SUGGEST"
-        [routerLinkActive]="TopicRoutes.SUGGEST"> 
-        Got it!
-     </app-primary-button>
-        
+<p>
+    By submitting a topic, you agree to our guidelines and understand that your topic may be rejected if it doesn’t meet our criteria.
+</p>
 
+<app-primary-button 
+    [routerLink]="'/'+ TopicRoutes.SUGGEST"
+    [routerLinkActive]="TopicRoutes.SUGGEST"> 
+    Got it!
+</app-primary-button>

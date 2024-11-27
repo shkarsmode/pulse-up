@@ -17,7 +17,7 @@ enum CommunityRoutes {
 }
 
 
-enum TopicRoutes {
+export enum TopicRoutes {
     HOW_IT_WORKS = 'user/topic/how-it-works',
     SUGGEST = 'user/topic/suggest',
     CONTACT_INFO = 'user/topic/contact-info',

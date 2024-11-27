@@ -137,3 +137,9 @@ label svg-icon {
         font-size: 12px;
     }
 }
+
+@media screen and (max-width: 768px) {
+    .info {
+        transform: translate(0%, -112%);
+    }
+}
