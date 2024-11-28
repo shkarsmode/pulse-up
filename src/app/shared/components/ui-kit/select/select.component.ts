@@ -61,7 +61,7 @@ export class SelectComponent
     public isPasswordVisible: boolean;
 
     @Input() public options: Array<string> = [];
-    @Input() public isShowInfo: boolean = true;
+    @Input() public isShowInfo: boolean = false;
     @Input() public info: { title: string; description: string };
 
     private _autofillSubject: BehaviorSubject<boolean> =
@@ -72,6 +72,7 @@ export class SelectComponent
     private readonly INPUT_IN_FOCUS_CLASS = 'app-ui-input--focus';
     private readonly INPUT_HAS_VALUE_CLASS = 'app-ui-input--has-value';
     private _value = '';
+    private boundedFunction: (event: any) => void;
 
     disabled: boolean;
     onTouched: () => void;
@@ -104,31 +105,55 @@ export class SelectComponent
         this.selectRef.nativeElement.addEventListener('blur', () => {
             this.isSelectOpen = false;
         });
+
+        this.boundedFunction = this.handleOnOutsideClick.bind(this);
+
+        document.addEventListener('click', this.boundedFunction);
     }
 
+    private handleOnOutsideClick(event: any): void {
+        if (event.target?.nodeName !== 'svg' && this.isShowInfo) {
+            this.isShowInfo = false;
+        }
+    }
     public toggleOpenState(): void {
-        this.isSelectOpen = !this.isSelectOpen;
+        setTimeout(() => {
+            this.isSelectOpen = !this.isSelectOpen;
+        }, 100);
     }
 
+    public timerOfShowInfo: any;
     public onInputEvent(event: Event): void {
         this.onInput.emit(event);
-        this.isShowInfo = true;
+        setTimeout(() => {
+            this.isShowInfo = true;
+        });
+        clearTimeout(this.timerOfShowInfo);
 
         setTimeout(() => {
             this.isSelectOpen = false;
         }, 0);
 
-        setTimeout(() => {
+        this.timerOfShowInfo = setTimeout(() => {
             this.isShowInfo = false;
         }, 1500);
     }
 
+    public toggleInfoToolTip(): void {
+        setTimeout(() => {
+            this.isShowInfo = !this.isShowInfo;
+        });
+        clearTimeout(this.timerOfShowInfo);
+    }
+
     public onInfoMouseOver(): void {
         this.isShowInfo = true;
+        clearTimeout(this.timerOfShowInfo);
     }
 
     public onInfoMouseLeave(): void {
         this.isShowInfo = false;
+        clearTimeout(this.timerOfShowInfo);
     }
 
     public ngAfterViewInit(): void {}
@@ -154,5 +179,9 @@ export class SelectComponent
     public onAutoFill(event: any): void {
         this._autofillSubject.next(event.complete);
         this.emitAutofill.emit();
+    }
+
+    public ngOnDestroy(): void {
+        document.removeEventListener('click', this.boundedFunction);
     }
 }

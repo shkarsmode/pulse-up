@@ -1,4 +1,4 @@
-@use '../../../../../styles/mixins' as *;
+@use '../../../../../styles/mixins'as *;
 
 
 :host {
@@ -8,11 +8,9 @@
 }
 
 .wrap {
-    background: linear-gradient(
-        267.31deg, 
-        rgba(119, 0, 238, 0.04) 1.01%, 
-        rgba(119, 0, 238, 0.04) 99.02%
-    );
+    background: linear-gradient(267.31deg,
+            rgba(119, 0, 238, 0.04) 1.01%,
+            rgba(119, 0, 238, 0.04) 99.02%);
 
     border-radius: 20px;
     max-width: 1030px;
@@ -39,11 +37,11 @@ h1 {
 
 @media screen and (max-width: 650px) {
 
-    
+
     :host {
         display: flex;
         justify-content: center;
-        padding:0px
+        padding: 0px
     }
 
 
@@ -57,11 +55,15 @@ h1 {
         height: 80px;
         min-width: 80px !important;
         max-height: 80px;
+
+        border-radius: 8px;
+        padding: 5px;
+        overflow: hidden;
     }
 
     app-large-pulse {
         min-height: 112px;
-    } 
+    }
 
     app-large-pulse::ng-deep h3 {
         @include title-20px;
@@ -78,13 +80,13 @@ h1 {
         gap: 8px;
     }
 
-    app-large-pulse::ng-deep .bottom svg{
+    app-large-pulse::ng-deep .bottom svg {
         width: 16.8px;
         height: 14px;
     }
 
     app-large-pulse::ng-deep .bottom div {
-        margin: 0 !important; 
+        margin: 0 !important;
     }
 
 
@@ -96,4 +98,3 @@ h1 {
         margin-bottom: 16px;
     }
 }
-

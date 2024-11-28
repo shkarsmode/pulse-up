@@ -1,0 +1,27 @@
+<div
+    class="chips-input-wrapper">
+    <label for="chips-input">Keywords <span class="limit">({{ chips.length }}/{{ limit }})</span></label>
+    <div class="chips-container">
+        @for (chip of chips; track chip; let i = $index ) {
+            <span class="chip">
+                {{ chip }}
+                <button
+                    type="button"
+                    aria-label="Remove tag"
+                    (click)="removeChip(i)">
+                    <svg-icon src="assets/svg/close.svg" />
+                </button>
+            </span>
+        }
+        <input
+            id="chips-input"
+            type="text"
+            [(ngModel)]="inputValue"
+            [disabled]="chips.length === limit"
+            [hidden]="chips.length === limit"
+            (keydown)="addChip($event)"
+            maxlength="40"
+            [placeholder]="chips.length === limit ? '' : 'Add a tag...'"
+        />
+    </div>
+</div>

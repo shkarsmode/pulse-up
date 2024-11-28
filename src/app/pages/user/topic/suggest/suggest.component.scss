@@ -1,4 +1,4 @@
-@use '../../../../../styles/mixins' as *;
+@use '../../../../../styles/mixins'as *;
 
 :host {
     display: flex;
@@ -11,4 +11,11 @@
 
 h1 {
     @include title-32px;
+}
+
+.description {
+    font-size: 14px;
+    color: var(--dark-grey-color);
+    margin-top: -10px;
+    line-height: 1.2;
 }

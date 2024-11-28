@@ -37,6 +37,13 @@ export class TopicFormComponent {
         this.categoriesForForm = this.categories.map(
             (category) => category.name
         );
+        this.setIconIfItExists();
+    }
+
+    private setIconIfItExists(): void {
+        if (this.topicForm.get('icon')?.value) {
+            this.updateSelectedFile('icon');
+        }
     }
 
     public openInputForDescription(acceptType: 'img' | 'gif' | 'smile'): void {

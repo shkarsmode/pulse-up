@@ -4,13 +4,12 @@
         @if (info) {
             <svg-icon
                 [class.shown]="isShowInfo"
-                (mouseover)="onInfoMouseOver()"
-                (mouseleave)="onInfoMouseLeave()"
-                (click)="onInfoMouseLeave()"
+                (click)="toggleInfoToolTip()"
                 src="assets/svg/info.svg" />
             <div
                 class="info"
-                [class.shown]="isShowInfo">
+                [class.shown]="isShowInfo"
+                (click)="onInfoMouseLeave()">
                 <div class="title">{{ info.title }}</div>
                 <div class="description">{{ info.description }}</div>
             </div>

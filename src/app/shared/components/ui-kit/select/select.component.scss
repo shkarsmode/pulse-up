@@ -25,6 +25,9 @@ select {
     appearance: none;
     cursor: pointer;
 
+    background-color: white;
+    appearance: none;
+
     &::placeholder {
         color: var(--dark-grey-color);
         font-size: 16px;

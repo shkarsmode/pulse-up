@@ -10,11 +10,13 @@
     {{ info.description }}
 </div>
 
-<div class="description-img">
-    <img
-        [src]="selectedPicture"
-        alt="Picture">
-</div>
+@if (selectedPicture) {
+    <div class="description-img">
+        <img
+            [src]="selectedPicture"
+            alt="Picture">
+    </div>
+}
 
 <div class="category">
     <span>Category:</span>
