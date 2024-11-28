@@ -1,5 +1,5 @@
 export const version = {
   "major": 1,
   "minor": 0,
-  "patch": 5
+  "patch": 9
 };
