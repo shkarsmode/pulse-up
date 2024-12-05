@@ -1,6 +1,6 @@
 export const environment = {
     production: false,
-    apiUrl: 'http://pulse-dev-api.eastus.azurecontainer.io:8080',
+    apiUrl: 'https://app-pulseapi-dev-fvdbe3fwhsghczfn.eastus2-01.azurewebsites.net',
     mapboxToken:
         'pk.eyJ1IjoidmliZXNwb3QiLCJhIjoiY2p4YnN5cHY3MDB3NDN4czVrOWtpanU4aCJ9.nexbisROPDgIPDPUPm5tvQ',
     mapStyleUrl:

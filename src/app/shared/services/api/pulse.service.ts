@@ -34,7 +34,7 @@ export class PulseService {
     ): Observable<IPulse[]> {
         let paramUrl = '';
 
-        params['topicState'] = 'Active';
+        params['topicState'] = 'All';
         const keys = (Object.keys(params) as Array<keyof typeof params>)
             .filter(key => !!params[key]);
 
