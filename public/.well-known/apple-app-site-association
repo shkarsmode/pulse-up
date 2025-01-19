@@ -5,7 +5,8 @@
       {
         "appID": "F3NVCH942C.com.go-pulse",
         "paths": [
-          "/pulse/*"
+          "*",
+          "/*"
         ]
       }
     ]
