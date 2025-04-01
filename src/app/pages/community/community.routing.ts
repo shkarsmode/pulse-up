@@ -7,6 +7,7 @@ import { TermsComponent } from './terms/terms.component';
 import { SupportComponent } from './support/support.component';
 import { InvalidLinkComponent } from './invalid-link/invalid-link.component';
 import { NotFoundComponent } from './not-found/not-found.component';
+import { ChildSafetyComponent } from './child-safety/child-safety.component';
 
 const routes: Routes = [
     {
@@ -28,6 +29,10 @@ const routes: Routes = [
             {
                 path: AppRoutes.Community.INVALID_LINK,
                 component: InvalidLinkComponent,
+            },
+            {
+                path: AppRoutes.Community.CHILD_SAFETY,
+                component: ChildSafetyComponent,
             },
             {
                 path: AppRoutes.Community.NOT_FOUND,
