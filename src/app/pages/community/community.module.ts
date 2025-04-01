@@ -5,6 +5,7 @@ import { InvalidLinkComponent } from './invalid-link/invalid-link.component';
 import { SupportComponent } from './support/support.component';
 import { TermsComponent } from './terms/terms.component';
 import { NotFoundComponent } from './not-found/not-found.component';
+import { ChildSafetyComponent } from './child-safety/child-safety.component';
 import { SvgIconComponent } from 'angular-svg-icon';
 import { PrimaryButtonComponent } from '../../shared/components/ui-kit/buttons/primary-button/primary-button.component';
 import { RouterLink, RouterLinkActive } from '@angular/router';
@@ -22,6 +23,7 @@ import { FooterComponent } from '../../shared/components/footer/footer.component
     TermsComponent,
     NotFoundComponent,
     CommunityComponent,
+    ChildSafetyComponent,
   ],
   imports: [
     CommonModule,

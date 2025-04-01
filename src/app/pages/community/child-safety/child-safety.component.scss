@@ -1,0 +1,83 @@
+@use '../../../../styles/mixins' as *;
+
+:host {
+    display: block;
+    padding: 0px 20px 30px 20px;
+    width: 100%;
+    color: rgba(21, 32, 50, 1);
+}
+
+.wrap {
+    margin: 0 auto;
+    max-width: 570px;
+}
+
+h1 {
+    @include title-32px;
+    text-align: left;
+    color: #000000;
+    margin-bottom: 8px;
+}
+
+small {
+    @include text-16px;
+    color: var(--dark-grey-color);
+    text-align: left;
+    display: inline-block;
+    margin-bottom: 30px;
+}
+
+h2 {
+    @include link-16px;
+    color: #000000;
+    text-align: left;
+    font-weight: 600;
+    margin-bottom: 8px;
+}
+
+p, address {
+    @include text-14px;
+    font-weight: 400;
+    text-align: left;
+    color: #000000;
+    opacity: .8;
+    font-style: normal;
+    margin-bottom: 16px;
+}
+
+a {
+
+    color: var(--accent-color);
+
+    &:hover {
+        color: var(--accent-color-hover);
+    }
+
+    text-decoration: underline;
+}
+
+
+ul {
+    list-style-type: disc;
+    @include text-14px;
+    line-height: 16.71px;
+
+    li {
+        text-align: left;
+        color: #000000;
+        opacity: .8;
+        margin: 0px 8px 12px 20px;
+    }
+}
+
+strong {
+    color: #000000 !important;
+    font-weight: 600;
+}
+
+@media screen and (max-width: 650px) {
+    :host {
+        padding: 24px 20px;
+    }
+}
+

@@ -14,6 +14,7 @@ enum CommunityRoutes {
     SUPPORT = 'support',
     NOT_FOUND = 'page-not-found',
     INVALID_LINK = 'invalid-link',
+    CHILD_SAFETY = 'child-safety',
 }
 
 
