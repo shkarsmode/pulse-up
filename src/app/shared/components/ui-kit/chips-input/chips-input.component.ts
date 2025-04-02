@@ -49,13 +49,22 @@ export class ChipsInputComponent implements ControlValueAccessor {
     public addChip(event: KeyboardEvent): void {
         const input = event.target as HTMLInputElement;
 
+        const sanitizeInput = (str: string): string => {
+            const regex = /[^a-zA-Z0-9\s]/g;
+            return str.replace(regex, '');
+        };
+
+        
+        setTimeout(() => {
+            input.value = sanitizeInput(this.inputValue);   
+        });
+
         if (
-            (event.key === 'Enter' ||
-                (event.key === ',') || (event.key === ';')) &&
-            this.inputValue.trim() &&
+            (event.key === 'Enter' || event.key === ',' || event.key === ';') &&
+            this.inputValue.trim().length > 1 &&
             this.chips.length < this.limit
-        ) {
-            const chip = this.inputValue.trim();
+        ) { 
+            const chip = sanitizeInput(this.inputValue.trim());
             if (!this.chips.includes(chip)) {
                 this.chips.push(chip);
                 this.onChange(this.chips);

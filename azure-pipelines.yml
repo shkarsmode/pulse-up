@@ -5,7 +5,7 @@
 
 trigger:
 # NB! dev env: master, prod env: release
-- master
+- release
 
 pool:
   vmImage: ubuntu-latest
@@ -18,8 +18,8 @@ steps:
 
 - script: |
     npm install
-    npm run build:dev
-  displayName: 'npm install and build (dev)'
+    npm run build
+  displayName: 'npm install and build'
 
 - task: CopyFiles@2
   inputs:
