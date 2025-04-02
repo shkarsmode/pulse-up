@@ -35,6 +35,14 @@ h2 {
     margin-bottom: 8px;
 }
 
+h3 {
+    @include link-14px;
+    color: #000000;
+    text-align: left;
+    font-weight: 600;
+    margin-bottom: 8px;
+}
+
 p, address {
     @include text-14px;
     font-weight: 400;
@@ -67,6 +75,11 @@ ul {
         color: #000000;
         opacity: .8;
         margin: 0px 8px 12px 20px;
+
+        ul {
+            margin-top: 12px;
+            list-style-type: circle;
+        }
     }
 }
 
