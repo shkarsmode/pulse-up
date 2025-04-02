@@ -5,7 +5,7 @@
 
 trigger:
 # NB! dev env: master, prod env: release
-- release
+- master
 
 pool:
   vmImage: ubuntu-latest
