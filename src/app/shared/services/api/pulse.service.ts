@@ -197,6 +197,8 @@ export class PulseService {
                     const objH3Pulses = {};
                     response.forEach(
                         (res: { id: string; topics: any; votes: number }) => {
+                            if (!res.topics) return;
+                            
                             const sortedEntries = Object.entries(
                                 res.topics
                             ).sort((a: any, b: any) => a[1] - b[1]);
