@@ -46,7 +46,6 @@ export class SliderComponent implements OnInit {
 
     private refreshSplideInstance(): void {
         if (this.splideInstance) {
-            console.log(this.splideInstance)
             this.splideInstance.refresh();
         }
     }

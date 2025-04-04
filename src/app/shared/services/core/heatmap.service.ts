@@ -6,9 +6,9 @@ import * as mapboxgl from 'mapbox-gl';
 })
 export class HeatmapService {
     map: mapboxgl.Map;
-    heatmapData: any
+    heatmapData: any;
     public heatmapStyles: any = {
-        'heatmap-intensity': 0.02,
+        'heatmap-intensity': 0.35,
         'heatmap-color': [
             'interpolate',
             ['linear'],
@@ -242,11 +242,9 @@ export class HeatmapService {
             ['linear'],
             ['zoom'],
             0,
-            0.3,
+            0.45,
             15,
-            0.3,
-            16,
-            0,
+            0.45,
         ],
     };
 
@@ -264,17 +262,13 @@ export class HeatmapService {
     }
 
     public addHeatmapToMap(): void {
-        this.map.addLayer(
-            {
-                id: 'vibes-heat',
-                type: 'heatmap',
-                source: 'vibes',
-                paint: {
-                    ...this.heatmapStyles,
-                }
-            }
-        );
+        this.map.addLayer({
+            id: 'vibes-heat',
+            type: 'heatmap',
+            source: 'vibes',
+            paint: {
+                ...this.heatmapStyles,
+            },
+        });
     }
-
-        
 }

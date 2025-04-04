@@ -98,7 +98,6 @@ export class MapComponent implements OnInit {
 
     public onMapLoad(map: mapboxgl.Map) {
         this.map = map;
-        console.log('Map', this.map);
 
         this.map.dragRotate?.disable();
         this.map.touchZoomRotate.disableRotation();
@@ -210,9 +209,8 @@ export class MapComponent implements OnInit {
                             Object.keys(heatmap).length)
                 )
             )
-            .subscribe((votes) => { 
+            .subscribe((votes) => {
                 this.heatMapData$.next(votes)
-
                 this.updateCurrentLocationAreaName();
             });
     }
