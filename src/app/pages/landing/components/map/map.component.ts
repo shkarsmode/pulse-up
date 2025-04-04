@@ -127,6 +127,10 @@ export class MapComponent implements OnInit {
 
         this.map.addSource('hexagons', {
             type: 'geojson',
+            data: {
+                type: 'FeatureCollection',
+                features: [],
+            },
         });
 
         this.map.addSource(sourceId, {
