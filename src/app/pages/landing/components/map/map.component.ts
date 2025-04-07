@@ -29,6 +29,7 @@ export class MapComponent implements OnInit {
     }
 
     public markers: any = [];
+    public weights: any = [];
     public readonly mapboxStylesUrl: string = inject(MAPBOX_STYLE);
     public center: [number, number] = [-100.661, 37.7749];
     public heatmapIntensity: number = 0.1;
@@ -49,7 +50,7 @@ export class MapComponent implements OnInit {
 
     constructor(
         public mapLocationService: MapLocationService,
-    ) {}
+    ) { }
 
     public ngOnInit(): void {
         // if (this.isPreview) {}
@@ -182,7 +183,7 @@ export class MapComponent implements OnInit {
             .getH3PulsesForMap(_ne.lat, _ne.lng, _sw.lat, _sw.lng, resolution)
             .pipe(
                 first(),
-                filter(() => !this.pulseId)
+                filter(() => !this.pulseId),
             )
             .subscribe((h3PulsesData) => this.h3Pulses$.next(h3PulsesData));
     }
@@ -205,8 +206,8 @@ export class MapComponent implements OnInit {
                 filter(() => this.isToShowHeatmap),
                 tap(
                     (heatmap) =>
-                        (this.heatmapDataPointsCount =
-                            Object.keys(heatmap).length)
+                    (this.heatmapDataPointsCount =
+                        Object.keys(heatmap).length)
                 )
             )
             .subscribe((votes) => {
@@ -223,6 +224,7 @@ export class MapComponent implements OnInit {
                     (key: string) => ({
                         coords: h3.h3ToGeo(key),
                         value: heatmap[key],
+                        h3Index: key,
                     })
                 );
 
@@ -267,6 +269,10 @@ export class MapComponent implements OnInit {
                 );
 
                 this.heatmapService.heatmapData.setData(heatmapGeoJSON);
+
+                if (this.pulseId) {
+                    this.addWeightsToMap(updatedHeatmapData)
+                }
             });
     }
 
@@ -330,6 +336,18 @@ export class MapComponent implements OnInit {
                 h3Index,
             });
         });
+    }
+
+    private addWeightsToMap(data: any): void {
+        this.weights = [];
+        data.forEach((item: any) => {
+            this.weights.push({
+                lat: item.coords[0],
+                lng: item.coords[1],
+                value: item.value,
+                h3Index: item.h3Index,
+            });
+        })
     }
 
     private addH3PolygonsToMap(): void {
@@ -437,18 +455,18 @@ export class MapComponent implements OnInit {
         let minZoom = this.map.getMinZoom();
         let maxZoom = this.map.getMaxZoom();
         let currentZoom = this.map.getZoom();
-        
-        if(sign === '+' && currentZoom < maxZoom) {
+
+        if (sign === '+' && currentZoom < maxZoom) {
             this.map.setZoom(currentZoom + 2); // Zoom in (increase zoom level)
-        } 
-        if(sign === '-' && currentZoom > minZoom) {
+        }
+        if (sign === '-' && currentZoom > minZoom) {
             this.map.setZoom(currentZoom - 2); // Zoom out (decrease zoom level)
         }
-        
+
         return;
     }
 
 
-    
+
 
 }
