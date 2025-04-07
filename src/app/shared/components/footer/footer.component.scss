@@ -73,7 +73,21 @@ ul {
     opacity: .4;
 }
 
+.footer-logo_desctop {
+    display: block;
+}
+.footer-logo_mobile {
+    display: none;
+}
 
+@media screen and (max-width: 760px) {
+    .footer-logo_desctop {
+        display: none;
+    }
+    .footer-logo_mobile {
+        display: block;
+    }
+}
 
 @media screen and (max-width: 650px) {
     .version {
