@@ -3,7 +3,7 @@
     "apps": [],
     "details": [
       {
-        "appID": "F3NVCH942C.com.go-pulse",
+        "appID": "F3NVCH942C.com.pulseup",
         "paths": [
           "*",
           "/*"
@@ -12,9 +12,9 @@
     ]
   },
   "activitycontinuation": {
-    "apps": ["F3NVCH942C.com.go-pulse"]
+    "apps": ["F3NVCH942C.com.pulseup"]
   },
   "webcredentials": {
-    "apps": ["F3NVCH942C.com.go-pulse"]
+    "apps": ["F3NVCH942C.com.pulseup"]
   }
 }
