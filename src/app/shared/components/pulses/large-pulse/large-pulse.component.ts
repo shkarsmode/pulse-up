@@ -19,6 +19,6 @@ export class LargePulseComponent {
 
     @HostListener('click')
     public onPulseClick(): void {
-        this.router.navigateByUrl(`pulse/${this.pulse.id}`);
+        this.router.navigateByUrl(`topic/${this.pulse.id}`);
     }
 }
