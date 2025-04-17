@@ -3,9 +3,9 @@
 enum LandingRoutes {
     HOME = '',
     MAP = 'map',
-    PULSES = 'pulses',
-    PULSE = 'pulse/:id',
-    HEATMAP = 'pulse/:id/heatmap',
+    TOPICS = 'topics',
+    TOPIC = 'topic/:id',
+    HEATMAP = 'topic/:id/heatmap',
 }
 
 enum CommunityRoutes {
