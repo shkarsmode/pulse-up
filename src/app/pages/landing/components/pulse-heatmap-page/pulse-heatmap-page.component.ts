@@ -51,7 +51,7 @@ export class PulseHeatmapPageComponent {
     }
 
     public backToPulsePage(): void {
-        this.router.navigateByUrl(`pulse/${this.pulse.id}`);
+        this.router.navigateByUrl(`topic/${this.pulse.id}`);
     }
 
 }

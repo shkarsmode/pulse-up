@@ -85,7 +85,6 @@ export class PulsePageComponent implements OnInit {
             const isTruncated = visibleHeight < fullHeight;
 
             this.isReadMore = !isTruncated;
-            console.log(this.isReadMore, fullHeight, visibleHeight);
         }, 100);
     }
 

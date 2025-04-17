@@ -28,11 +28,11 @@ const routes: Routes = [
                 canDeactivate: [FooterCleanupGuard],
             },
             {
-                path: Landing.PULSES,
+                path: Landing.TOPICS,
                 component: PulsesComponent,
             },
             {
-                path: Landing.PULSE,
+                path: Landing.TOPIC,
                 component: PulsePageComponent,
             },
             {

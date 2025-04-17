@@ -29,14 +29,15 @@ export class PulseService {
             country?: string;
             state?: string;
             city?: string;
-            topicState?: string
+            topicState?: string;
         } = {}
     ): Observable<IPulse[]> {
         let paramUrl = '';
 
         params['topicState'] = 'All';
-        const keys = (Object.keys(params) as Array<keyof typeof params>)
-            .filter(key => !!params[key]);
+        const keys = (Object.keys(params) as Array<keyof typeof params>).filter(
+            (key) => !!params[key]
+        );
 
         keys.forEach((param, index) => {
             if (params[param]) {
@@ -115,24 +116,76 @@ export class PulseService {
     ): Observable<{
         [key: string]: number;
     }> {
-        console.log('resolution', resolution);
+        if (topicId) {
+            return this.getMapVotesByTopicId(
+                NElatitude,
+                NElongitude,
+                SWlatitude,
+                SWlongitude,
+                resolution,
+                topicId
+            );
+        }
+
+        return this.getMapVotesForLast24Hours(
+            NElatitude,
+            NElongitude,
+            SWlatitude,
+            SWlongitude,
+            resolution
+        );
+    }
+
+    private getMapVotesForLast24Hours(
+        NElatitude: number,
+        NElongitude: number,
+        SWlatitude: number,
+        SWlongitude: number,
+        resolution: number = 1
+    ): Observable<{
+        [key: string]: number;
+    }> {
         return this.http
             .get<Array<{ id: string; votes: number; children: any }>>(
                 this.apiUrl +
-                    `/map?NE.latitude=${NElatitude}&NE.longitude=${NElongitude}&SW.latitude=${SWlatitude}&SW.longitude=${SWlongitude}&resolution=${resolution}` +
-                    (topicId ? `&topicId=${topicId}` : '')
+                    `/map?NE.latitude=${NElatitude}&NE.longitude=${NElongitude}&SW.latitude=${SWlatitude}&SW.longitude=${SWlongitude}&resolution=${resolution}`
             )
             .pipe(
-                map((response) =>
-                    response.reduce(
+                map((response) => {
+                    const votesPerCells = response.reduce(
                         (acc, h3Cell) => ({
                             ...acc,
                             ...this.getH3CellsFromChildren(h3Cell),
                         }),
                         {}
-                    )
-                )
+                    );
+                    return votesPerCells;
+                })
             );
+    }
+
+    private getMapVotesByTopicId(
+        NElatitude: number,
+        NElongitude: number,
+        SWlatitude: number,
+        SWlongitude: number,
+        resolution: number = 1,
+        topicId: number
+    ): Observable<{
+        [key: string]: number;
+    }> {
+        const baseUrl = this.apiUrl + '/map/votes';
+        const params = new URLSearchParams({
+            'NE.latitude': NElatitude.toString(),
+            'NE.longitude': NElongitude.toString(),
+            'SW.latitude': SWlatitude.toString(),
+            'SW.longitude': SWlongitude.toString(),
+            resolution: resolution.toString(),
+            topicId: topicId.toString(),
+        });
+        return this.http.get<{ [key: string]: number }>(
+            `${baseUrl}?${params.toString()}`
+        );
     }
 
     private getH3CellsFromChildren = ({
@@ -198,7 +251,6 @@ export class PulseService {
                     response.forEach(
                         (res: { id: string; topics: any; votes: number }) => {
                             if (!res.topics) return;
-                            
                             const sortedEntries = Object.entries(
                                 res.topics
                             ).sort((a: any, b: any) => a[1] - b[1]);

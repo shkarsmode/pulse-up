@@ -1,4 +1,11 @@
-import { Component, DestroyRef, HostBinding, inject, Input, OnInit } from '@angular/core';
+import {
+    Component,
+    DestroyRef,
+    HostBinding,
+    inject,
+    Input,
+    OnInit,
+} from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import * as h3 from 'h3-js';
 import mapboxgl from 'mapbox-gl';
@@ -29,6 +36,7 @@ export class MapComponent implements OnInit {
     }
 
     public markers: any = [];
+    public weights: any = [];
     public readonly mapboxStylesUrl: string = inject(MAPBOX_STYLE);
     public center: [number, number] = [-100.661, 37.7749];
     public heatmapIntensity: number = 0.1;
@@ -37,7 +45,8 @@ export class MapComponent implements OnInit {
     public isToShowH3: boolean = true;
     public heatmapDataPointsCount: number = 0;
     public readonly pulseService: PulseService = inject(PulseService);
-    public isToShoDebugger: string | null = localStorage.getItem('show-debugger');
+    public isToShoDebugger: string | null =
+        localStorage.getItem('show-debugger');
 
     private readonly h3Pulses$: Subject<any> = new Subject();
     private readonly heatMapData$: Subject<{ [key: string]: number }> =
@@ -45,18 +54,31 @@ export class MapComponent implements OnInit {
 
     private readonly destroyed: DestroyRef = inject(DestroyRef);
     private readonly heatmapService: HeatmapService = inject(HeatmapService);
+    private zoomResolutionMap: { [key: number]: number } = {
+        0: 1,
+        1: 1,
+        2: 1,
+        3: 1,
+        3.3: 2,
+        4: 2,
+        5: 3,
+        6.5: 4,
+        7: 4,
+        8: 5,
+        9: 6,
+        10: 6,
+    };
+    private zoomLevels = Object.keys(this.zoomResolutionMap)
+        .map(Number)
+        .sort((a, b) => a - b);
 
-
-    constructor(
-        public mapLocationService: MapLocationService,
-    ) {}
+    constructor(public mapLocationService: MapLocationService) {}
 
     public ngOnInit(): void {
         // if (this.isPreview) {}
         this.subscribeOnDataH3Pulses();
         this.subscribeOnDataListHeatmap();
     }
-
 
     public onChangeHeatmapSettings(): void {
         this.map.setPaintProperty(
@@ -98,7 +120,6 @@ export class MapComponent implements OnInit {
 
     public onMapLoad(map: mapboxgl.Map) {
         this.map = map;
-        console.log('Map', this.map);
 
         this.map.dragRotate?.disable();
         this.map.touchZoomRotate.disableRotation();
@@ -210,9 +231,8 @@ export class MapComponent implements OnInit {
                             Object.keys(heatmap).length)
                 )
             )
-            .subscribe((votes) => { 
-                this.heatMapData$.next(votes)
-
+            .subscribe((votes) => {
+                this.heatMapData$.next(votes);
                 this.updateCurrentLocationAreaName();
             });
     }
@@ -225,6 +245,7 @@ export class MapComponent implements OnInit {
                     (key: string) => ({
                         coords: h3.h3ToGeo(key),
                         value: heatmap[key],
+                        h3Index: key,
                     })
                 );
 
@@ -269,32 +290,27 @@ export class MapComponent implements OnInit {
                 );
 
                 this.heatmapService.heatmapData.setData(heatmapGeoJSON);
+
+                if (this.pulseId) {
+                    this.addWeightsToMap(updatedHeatmapData);
+                }
             });
     }
 
     public getResolutionBasedOnMapZoom(): number {
         const zoom = this.map?.getZoom();
+        if (zoom === undefined || zoom === null) return 7;
 
-        const zoomResolutionMap: { [key: number]: number } = {
-            0: 1,
-            1: 1,
-            2: 1,
-            3: 1,
-            4: 2,
-            5: 2,
-            6: 3,
-            7: 4,
-            8: 4,
-            9: 5,
-            10: 6,
-            11: 7,
-            12: 7,
-            13: 7,
-            14: 7,
-            15: 7,
-        };
+        let resolution = 7;
+        for (const level of this.zoomLevels) {
+            if (zoom >= level) {
+                resolution = this.zoomResolutionMap[level];
+            } else {
+                break;
+            }
+        }
 
-        return zoomResolutionMap[Math.floor(zoom)] || 7;
+        return resolution;
     }
 
     private convertH3ToGeoJSON(data: any) {
@@ -330,6 +346,18 @@ export class MapComponent implements OnInit {
                 lat,
                 icon: data[h3Index].icon,
                 h3Index,
+            });
+        });
+    }
+
+    private addWeightsToMap(data: any): void {
+        this.weights = [];
+        data.forEach((item: any) => {
+            this.weights.push({
+                lat: item.coords[0],
+                lng: item.coords[1],
+                value: item.value,
+                h3Index: item.h3Index,
             });
         });
     }
@@ -424,33 +452,29 @@ export class MapComponent implements OnInit {
         return radius;
     }
 
-
     private updateCurrentLocationAreaName() {
-        const coordinates = this.mapLocationService.getMapCoordinatesWebClient(this.map);
+        const coordinates = this.mapLocationService.getMapCoordinatesWebClient(
+            this.map
+        );
         this.mapLocationService.getLocationFilter(
             coordinates,
             this.map.getBounds().toArray()
         );
-        // console.log(this.mapLocationService.mapLocationFilter)    
+        // console.log(this.mapLocationService.mapLocationFilter)
     }
 
-
-    public zoomMapClick(sign: "+" | "-"): void {
+    public zoomMapClick(sign: '+' | '-'): void {
         let minZoom = this.map.getMinZoom();
         let maxZoom = this.map.getMaxZoom();
         let currentZoom = this.map.getZoom();
-        
-        if(sign === '+' && currentZoom < maxZoom) {
+
+        if (sign === '+' && currentZoom < maxZoom) {
             this.map.setZoom(currentZoom + 2); // Zoom in (increase zoom level)
-        } 
-        if(sign === '-' && currentZoom > minZoom) {
+        }
+        if (sign === '-' && currentZoom > minZoom) {
             this.map.setZoom(currentZoom - 2); // Zoom out (decrease zoom level)
         }
-        
+
         return;
     }
-
-
-    
-
 }
