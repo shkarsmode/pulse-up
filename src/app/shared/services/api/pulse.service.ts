@@ -11,6 +11,7 @@ export class PulseService {
     public appStoreUrl: string;
     public blobUrlPrefix: string;
     public googlePlayUrl: string;
+    public shareTopicBaseUrl: string;
     public minVoteInterval: number;
     public latestAppVersionNumber: number;
     public currentHeatmapDepth: number = 3;
@@ -228,6 +229,7 @@ export class PulseService {
                 this.minVoteInterval = settings.minVoteInterval;
                 this.appStoreUrl = settings.appStoreUrl;
                 this.googlePlayUrl = settings.googlePlayUrl;
+                this.shareTopicBaseUrl = settings.shareTopicBaseUrl;
             })
         );
     }
