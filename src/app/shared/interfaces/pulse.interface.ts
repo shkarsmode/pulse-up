@@ -10,7 +10,7 @@ export interface IPulse {
     startsAt: string;
     endsAt: string;
     location: Location;
-    stats: Stats;
+    stats?: Stats;
     picture: string;
     shareKey: string;
 }
