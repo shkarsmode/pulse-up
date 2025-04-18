@@ -22,21 +22,21 @@
                 <span class="pulse__stats-title">Fans</span>
                 <svg-icon src="assets/svg/fans.svg" />
                 <span class="pulse__stats-count">{{
-                    pulse.stats.totalUniqueUsers | formatNumber
+                    pulse.stats?.totalUniqueUsers || 0 | formatNumber
                 }}</span>
             </div>
             <div>
                 <span class="pulse__stats-title">Lifetime</span>
                 <svg-icon src="assets/svg/pulse.svg" />
                 <span class="pulse__stats-count">{{
-                    pulse.stats.totalVotes | formatNumber
+                    pulse.stats?.totalVotes || 0 | formatNumber
                 }}</span>
             </div>
             <div>
                 <span class="pulse__stats-title">24 hours</span>
                 <svg-icon src="assets/svg/pulse_time_icon.svg" />
                 <span class="pulse__stats-count">{{
-                    pulse.stats.lastDayVotes | formatNumber
+                    pulse.stats?.lastDayVotes || 0 | formatNumber
                 }}</span>
             </div>
         </div>
