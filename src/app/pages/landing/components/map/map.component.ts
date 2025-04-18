@@ -47,6 +47,7 @@ export class MapComponent implements OnInit {
     public readonly pulseService: PulseService = inject(PulseService);
     public isToShoDebugger: string | null =
         localStorage.getItem('show-debugger');
+    public currResolution = 1;
 
     private readonly h3Pulses$: Subject<any> = new Subject();
     private readonly heatMapData$: Subject<{ [key: string]: number }> =
@@ -115,7 +116,7 @@ export class MapComponent implements OnInit {
     private subscribeOnDataH3Pulses(): void {
         this.h3Pulses$
             .pipe(takeUntilDestroyed(this.destroyed))
-            .subscribe(this.addMarkersAndUpdateH3Polygons.bind(this));
+            .subscribe(this.addMarkersAndUpdateH3Polygons.bind(this));  
     }
 
     public onMapLoad(map: mapboxgl.Map) {
@@ -131,6 +132,7 @@ export class MapComponent implements OnInit {
         this.addH3PolygonsToMap();
         this.updateH3Pulses();
         this.updateHeatmapForMap();
+        this.currResolution = this.getResolutionBasedOnMapZoom();
     }
 
     public handleZoomEnd = () => {
@@ -141,6 +143,7 @@ export class MapComponent implements OnInit {
     public handleMoveEnd = () => {
         this.updateH3Pulses();
         this.updateHeatmapForMap();
+        this.currResolution = this.getResolutionBasedOnMapZoom();
     };
 
     private addInitialLayersAndSourcesToDisplayData(): void {
@@ -199,9 +202,13 @@ export class MapComponent implements OnInit {
 
         const { _ne, _sw } = this.map.getBounds();
         const resolution = this.getResolutionBasedOnMapZoom();
+        const NELat = _ne.lat;
+        const NELng = Math.min(_ne.lng, 180);
+        const SWLat = _sw.lat;
+        const SWLng = Math.max(_sw.lng, -180);
 
         this.pulseService
-            .getH3PulsesForMap(_ne.lat, _ne.lng, _sw.lat, _sw.lng, resolution)
+            .getH3PulsesForMap(NELat, NELng, SWLat, SWLng, resolution)
             .pipe(
                 first(),
                 filter(() => !this.pulseId)
@@ -212,13 +219,16 @@ export class MapComponent implements OnInit {
     private updateHeatmapForMap(): void {
         const { _ne, _sw } = this.map.getBounds();
         const resolution = this.getResolutionBasedOnMapZoom();
-
+        const NELat = _ne.lat;
+        const NELng = Math.min(_ne.lng, 180);
+        const SWLat = _sw.lat;
+        const SWLng = Math.max(_sw.lng, -180);
         this.pulseService
             .getMapVotes(
-                _ne.lat,
-                _ne.lng,
-                _sw.lat,
-                _sw.lng,
+                NELat,
+                NELng,
+                SWLat,
+                SWLng,
                 resolution > 9 ? 7 : resolution,
                 this.pulseId
             )
@@ -372,7 +382,7 @@ export class MapComponent implements OnInit {
             northWest,
             southEast,
             resolution
-        );
+        ).filter((h3Index) => !this.isHexagonCrossesAntimeridian(h3Index));
 
         const hexagonFeatures = hexagons.map((hex) =>
             this.h3ToPolygonFeature(hex)
@@ -476,5 +486,22 @@ export class MapComponent implements OnInit {
         }
 
         return;
+    }
+
+    private isHexagonCrossesAntimeridian(h3Index: string) {
+        const boundary = h3.h3ToGeoBoundary(h3Index, true);
+
+        let crosses = false;
+        for (let i = 0; i < boundary.length - 1; i++) {
+            const lon1 = boundary[i][0];
+            const lon2 = boundary[i + 1][0];
+
+            if (Math.abs(lon1 - lon2) > 180) {
+                crosses = true;
+                break;
+            }
+        }
+
+        return crosses;
     }
 }
