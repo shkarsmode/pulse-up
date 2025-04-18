@@ -12,6 +12,7 @@ export interface IPulse {
     location: Location;
     stats: Stats;
     picture: string;
+    shareKey: string;
 }
 
 interface Author {

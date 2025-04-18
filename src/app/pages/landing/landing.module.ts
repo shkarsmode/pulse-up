@@ -34,8 +34,11 @@ import { PulsePageComponent } from './components/pulse-page/pulse-page.component
 import { InputSearchComponent } from './components/pulses/components/input-search/input-search.component';
 import { PromoteAdsComponent } from './components/pulses/components/promote-ads/promote-ads.component';
 import { PulsesComponent } from './components/pulses/pulses.component';
+import { MenuComponent } from '../../shared/components/ui-kit/menu/menu.component';
 import { LandingComponent } from './landing.component';
 import { LandingRoutingModule } from './landing.routing';
+import { SocialsButtonComponent } from '../../shared/components/ui-kit/buttons/socials-button/socials-button.component';
+import { CopyButtonComponent } from '../../shared/components/ui-kit/buttons/copy-button/copy-button.component';
 
 @NgModule({
     declarations: [
@@ -62,6 +65,9 @@ import { LandingRoutingModule } from './landing.routing';
         HeaderComponent,
         FooterComponent,
         SvgIconComponent,
+        MenuComponent,
+        CopyButtonComponent,
+        SocialsButtonComponent,
         LoadImgPathDirective,
         TopPulseCardComponent,
         LargePulseComponent,
