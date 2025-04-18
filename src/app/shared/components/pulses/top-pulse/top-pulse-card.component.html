@@ -15,17 +15,17 @@
         <div>
             <span class="title">Fans</span>
             <svg-icon src="assets/svg/fans.svg" />
-            <span class="count">{{ pulse.stats.totalUniqueUsers | formatNumber }}</span>
+            <span class="count">{{ pulse.stats?.totalUniqueUsers || 0 | formatNumber }}</span>
         </div>
         <div>
             <span class="title">Lifetime</span>
             <svg-icon src="assets/svg/pulse.svg" />
-            <span class="count">{{ pulse.stats.totalVotes | formatNumber }}</span>
+            <span class="count">{{ pulse.stats?.totalVotes || 0 | formatNumber }}</span>
         </div>
         <div>
             <span class="title">24 hour</span>
             <svg-icon src="assets/svg/pulse_time_icon.svg" />
-            <span class="count">{{ pulse.stats.lastDayVotes | formatNumber }}</span>
+            <span class="count">{{ pulse.stats?.lastDayVotes || 0 | formatNumber }}</span>
         </div>
     </div>
 </div>
