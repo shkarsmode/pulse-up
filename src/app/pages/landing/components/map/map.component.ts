@@ -29,6 +29,13 @@ export class MapComponent implements OnInit {
     @Input() public isSearch: boolean = false;
     @Input() public isZoomButton: boolean = false;
     @Input() public isLocationName: boolean = false;
+    @Input() public isRounded: boolean = false;
+    @Input() public zoom: [number] = [1];
+    @Input() public minZoom: number = 1;
+    @Input() public maxBounds: mapboxgl.LngLatBoundsLike = [
+        [-180, -80],
+        [180, 85],
+    ];
 
     @HostBinding('class.preview')
     public get isPreviewMap() {
@@ -47,7 +54,6 @@ export class MapComponent implements OnInit {
     public readonly pulseService: PulseService = inject(PulseService);
     public isToShoDebugger: string | null =
         localStorage.getItem('show-debugger');
-    public currResolution = 1;
 
     private readonly h3Pulses$: Subject<any> = new Subject();
     private readonly heatMapData$: Subject<{ [key: string]: number }> =
@@ -116,7 +122,7 @@ export class MapComponent implements OnInit {
     private subscribeOnDataH3Pulses(): void {
         this.h3Pulses$
             .pipe(takeUntilDestroyed(this.destroyed))
-            .subscribe(this.addMarkersAndUpdateH3Polygons.bind(this));  
+            .subscribe(this.addMarkersAndUpdateH3Polygons.bind(this));
     }
 
     public onMapLoad(map: mapboxgl.Map) {
@@ -132,7 +138,6 @@ export class MapComponent implements OnInit {
         this.addH3PolygonsToMap();
         this.updateH3Pulses();
         this.updateHeatmapForMap();
-        this.currResolution = this.getResolutionBasedOnMapZoom();
     }
 
     public handleZoomEnd = () => {
@@ -143,7 +148,6 @@ export class MapComponent implements OnInit {
     public handleMoveEnd = () => {
         this.updateH3Pulses();
         this.updateHeatmapForMap();
-        this.currResolution = this.getResolutionBasedOnMapZoom();
     };
 
     private addInitialLayersAndSourcesToDisplayData(): void {

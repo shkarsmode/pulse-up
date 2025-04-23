@@ -88,6 +88,9 @@
     border-radius: 20px;
     cursor: grab;
 }
+.map-container_rounded {
+    border-radius: 20px;
+}
 
 ::ng-deep .mapboxgl-control-container {
     display: none;
@@ -98,8 +101,8 @@
     justify-content: center;
     align-items: center;
 
-    // width: 48px;
-    // height: 48px;
+    width: 48px;
+    height: 48px;
     border-radius: 50%;
 
     border: 1px solid #fff;
