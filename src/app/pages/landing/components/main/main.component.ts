@@ -3,8 +3,7 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { MediaQueryService } from '@/app/shared/services/core/media-query.service';
 import { AppRoutes } from '@/app/shared/enums/app-routes.enum';
 import { ResponsiveMapConfig } from '@/app/shared/interfaces/responsive-map-config.interface';
-
-
+import { MetaService } from '@/app/shared/services/core/meta.service';
 
 @Component({
     selector: 'app-main',
@@ -12,10 +11,14 @@ import { ResponsiveMapConfig } from '@/app/shared/interfaces/responsive-map-conf
     styleUrl: './main.component.scss',
 })
 export class MainComponent {
-    private mediaService = inject(MediaQueryService);
+    private mediaService: MediaQueryService = inject(MediaQueryService);
+    private readonly metaService: MetaService = inject(MetaService);
     private isMobile = toSignal(this.mediaService.mediaQuery('max', 'SM'));
     private isSmallMobile = toSignal(this.mediaService.mediaQuery('max', 'XS'));
-    private readonly configMap: Record<'xs' | 'sm' | "default", ResponsiveMapConfig> = {
+    private readonly configMap: Record<
+        'xs' | 'sm' | 'default',
+        ResponsiveMapConfig
+    > = {
         xs: {
             zoom: [1.9],
             minZoom: 1.9,
@@ -44,7 +47,8 @@ export class MainComponent {
     public routes = AppRoutes;
     public zoom: [number] = this.configMap.default.zoom;
     public minZoom: number = this.configMap.default.minZoom;
-    public maxBounds: mapboxgl.LngLatBoundsLike = this.configMap.default.maxBounds;
+    public maxBounds: mapboxgl.LngLatBoundsLike =
+        this.configMap.default.maxBounds;
 
     constructor() {
         effect(() => {
@@ -58,5 +62,12 @@ export class MainComponent {
             this.minZoom = config.minZoom;
             this.maxBounds = config.maxBounds;
         });
+        this.metaService.setTitle(
+            'Pulse Up | Support What Matters – Track Real-Time Public Sentiment'
+        );
+        this.metaService.setMetaTag(
+            'description',
+            'Pulse Up is a real-time public opinion app where users support causes anonymously. Discover trending topics, civic issues, and social sentiment mapped by location.'
+        );
     }
 }

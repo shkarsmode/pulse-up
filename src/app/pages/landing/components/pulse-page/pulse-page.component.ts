@@ -10,6 +10,7 @@ import { catchError, first, Observable, of, take } from 'rxjs';
 import { AppRoutes } from '../../../../shared/enums/app-routes.enum';
 import { IPulse } from '../../../../shared/interfaces';
 import { PulseService } from '../../../../shared/services/api/pulse.service';
+import { MetaService } from '@/app/shared/services/core/meta.service';
 
 @Component({
     selector: 'app-pulse-page',
@@ -29,6 +30,7 @@ export class PulsePageComponent implements OnInit {
     private readonly router: Router = inject(Router);
     private readonly route: ActivatedRoute = inject(ActivatedRoute);
     private readonly pulseService: PulseService = inject(PulseService);
+    private readonly metaService: MetaService = inject(MetaService);
 
     public ngOnInit(): void {
         this.initPulseUrlIdListener();
@@ -73,7 +75,15 @@ export class PulsePageComponent implements OnInit {
             this.isLoading = false;
             this.determineIfNeedToRemoveShowMoreButton();
             this.createLink(pulse.description);
-            this.pulseUrl = this.pulseService.shareTopicBaseUrl + pulse.shareKey;
+            this.pulseUrl =
+                this.pulseService.shareTopicBaseUrl + pulse.shareKey;
+            this.metaService.setTitle(
+                `${pulse.title} | Support What Matters – Pulse Up`
+            );
+            this.metaService.setMetaTag(
+                'description',
+                `Support '${pulse.title}' anonymously and see how it’s trending in real time across the map. Track public sentiment and join the pulse.`
+            );
         });
     }
 

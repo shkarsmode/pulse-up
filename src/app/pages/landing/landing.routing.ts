@@ -20,6 +20,10 @@ const routes: Routes = [
             {
                 path: Landing.HOME,
                 component: MainComponent,
+                data: {
+                    title: "Pulse Up | Support What Matters – Track Real-Time Public Sentiment",
+                    description: "Pulse Up is a real-time public opinion app where users support causes anonymously. Discover trending topics, civic issues, and social sentiment mapped by location."
+                }
             },
             {
                 path: Landing.MAP,
