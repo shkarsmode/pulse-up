@@ -188,6 +188,7 @@ export class MapComponent implements OnInit {
             paint: {
                 'line-color': '#FFFFFF',
                 'line-width': 1.5,
+                "line-opacity": 0.25,
             },
         });
     }
