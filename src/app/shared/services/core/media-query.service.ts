@@ -1,20 +1,11 @@
 import { Injectable } from '@angular/core';
 import { Observable, fromEvent, map, startWith } from 'rxjs';
+import { Breakpoints } from '../../enums/breakpoints.enum';
 
 @Injectable({
     providedIn: 'root',
 })
 export class MediaQueryService {
-    private readonly BREAKPOINTS = {
-        /*you can use fixed breakpoints or customize the behavior
-      with a function parameter */
-        xl: '1200px',
-        lg: '992px',
-        md: '768px',
-        sm: '576px',
-        xs: '480px',
-        "2xs": '375px',
-    };
 
     private activeMediaQueries: { [key: string]: Observable<boolean> } = {};
 
@@ -22,7 +13,7 @@ export class MediaQueryService {
     set the number of pixels*/
     mediaQuery(
         type: 'min' | 'max',
-        breakPoint: keyof typeof this.BREAKPOINTS
+        breakPoint: keyof typeof Breakpoints
     ): Observable<boolean> {
         /*creates a string to identify the media query 
       Inside the activeMediaQueries obj*/
@@ -35,7 +26,7 @@ export class MediaQueryService {
 
         /* else create a new media query observable and add it to the 
        activeMediaQueries obj */
-        const mqText = `(${type}-width: ${this.BREAKPOINTS[breakPoint]})`;
+        const mqText = `(${type}-width: ${Breakpoints[breakPoint]})`;
         const mediaQuery = window.matchMedia(mqText);
 
         const dynamicMediaQuery = fromEvent<MediaQueryList>(

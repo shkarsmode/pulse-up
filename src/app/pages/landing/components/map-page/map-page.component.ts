@@ -1,12 +1,7 @@
+import { ResponsiveMapConfig } from '@/app/shared/interfaces/responsive-map-config.interface';
 import { Component, effect, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { MediaQueryService } from '@app/shared/services/core/media-query.service';
-
-interface MapConfig {
-    zoom: [number];
-    minZoom: number;
-    maxBounds: mapboxgl.LngLatBoundsLike;
-}
 
 @Component({
     selector: 'app-map-page',
@@ -15,11 +10,11 @@ interface MapConfig {
 })
 export class MapPageComponent {
     private mediaService = inject(MediaQueryService);
-    private isMobile = toSignal(this.mediaService.mediaQuery('max', 'sm'));
-    private isLaptop = toSignal(this.mediaService.mediaQuery('max', 'xl'));
+    private isMobile = toSignal(this.mediaService.mediaQuery('max', 'SM'));
+    private isLaptop = toSignal(this.mediaService.mediaQuery('max', 'XL'));
     private readonly configMap: Record<
         'mobile' | 'laptop' | 'default',
-        MapConfig
+        ResponsiveMapConfig
     > = {
         mobile: {
             zoom: [2],
@@ -49,7 +44,8 @@ export class MapPageComponent {
 
     public zoom: [number] = this.configMap.default.zoom;
     public minZoom: number = this.configMap.default.minZoom;
-    public maxBounds: mapboxgl.LngLatBoundsLike = this.configMap.default.maxBounds;
+    public maxBounds: mapboxgl.LngLatBoundsLike =
+        this.configMap.default.maxBounds;
     public center: [number, number] = [-100.661, 37.7749];
 
     constructor() {
