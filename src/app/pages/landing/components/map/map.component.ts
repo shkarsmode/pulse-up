@@ -5,6 +5,7 @@ import {
     inject,
     Input,
     OnInit,
+    Output,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import * as h3 from 'h3-js';
@@ -42,6 +43,9 @@ export class MapComponent implements OnInit {
     public get isPreviewMap() {
         return this.isPreview;
     }
+
+    @Output() public mapLoaded: Subject<mapboxgl.Map> =
+        new Subject<mapboxgl.Map>();
 
     public markers: any = [];
     public weights: any = [];
@@ -138,6 +142,8 @@ export class MapComponent implements OnInit {
         this.addH3PolygonsToMap();
         this.updateH3Pulses();
         this.updateHeatmapForMap();
+
+        this.mapLoaded.next(this.map);
     }
 
     public handleZoomEnd = () => {

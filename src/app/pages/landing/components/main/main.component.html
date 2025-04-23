@@ -4,12 +4,9 @@
         [isPreview]="true"
         [routerLink]="'/' + routes.Landing.MAP"
         [routerLinkActive]="routes.Landing.MAP"
-        [maxBounds]="[
-            [-164, -85],
-            [163, 85]
-        ]"
-        [zoom]="[2.8]"
-        [minZoom]="2.8"
+        [maxBounds]="maxBounds"
+        [zoom]="zoom"
+        [minZoom]="minZoom"
     />
 
     <app-top-pulses />
