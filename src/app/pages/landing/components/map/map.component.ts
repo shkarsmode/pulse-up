@@ -5,6 +5,7 @@ import {
     inject,
     Input,
     OnInit,
+    Output,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import * as h3 from 'h3-js';
@@ -29,16 +30,26 @@ export class MapComponent implements OnInit {
     @Input() public isSearch: boolean = false;
     @Input() public isZoomButton: boolean = false;
     @Input() public isLocationName: boolean = false;
+    @Input() public isRounded: boolean = false;
+    @Input() public zoom: [number] = [1];
+    @Input() public minZoom: number = 1;
+    @Input() public maxBounds: mapboxgl.LngLatBoundsLike = [
+        [-180, -80],
+        [180, 85],
+    ];
+    @Input() public center: [number, number] = [-100.661, 37.7749];
 
     @HostBinding('class.preview')
     public get isPreviewMap() {
         return this.isPreview;
     }
 
+    @Output() public mapLoaded: Subject<mapboxgl.Map> =
+        new Subject<mapboxgl.Map>();
+
     public markers: any = [];
     public weights: any = [];
     public readonly mapboxStylesUrl: string = inject(MAPBOX_STYLE);
-    public center: [number, number] = [-100.661, 37.7749];
     public heatmapIntensity: number = 0.1;
 
     public map: mapboxgl.Map;
@@ -47,7 +58,6 @@ export class MapComponent implements OnInit {
     public readonly pulseService: PulseService = inject(PulseService);
     public isToShoDebugger: string | null =
         localStorage.getItem('show-debugger');
-    public currResolution = 1;
 
     private readonly h3Pulses$: Subject<any> = new Subject();
     private readonly heatMapData$: Subject<{ [key: string]: number }> =
@@ -116,7 +126,7 @@ export class MapComponent implements OnInit {
     private subscribeOnDataH3Pulses(): void {
         this.h3Pulses$
             .pipe(takeUntilDestroyed(this.destroyed))
-            .subscribe(this.addMarkersAndUpdateH3Polygons.bind(this));  
+            .subscribe(this.addMarkersAndUpdateH3Polygons.bind(this));
     }
 
     public onMapLoad(map: mapboxgl.Map) {
@@ -132,7 +142,8 @@ export class MapComponent implements OnInit {
         this.addH3PolygonsToMap();
         this.updateH3Pulses();
         this.updateHeatmapForMap();
-        this.currResolution = this.getResolutionBasedOnMapZoom();
+
+        this.mapLoaded.next(this.map);
     }
 
     public handleZoomEnd = () => {
@@ -143,7 +154,6 @@ export class MapComponent implements OnInit {
     public handleMoveEnd = () => {
         this.updateH3Pulses();
         this.updateHeatmapForMap();
-        this.currResolution = this.getResolutionBasedOnMapZoom();
     };
 
     private addInitialLayersAndSourcesToDisplayData(): void {
@@ -184,6 +194,7 @@ export class MapComponent implements OnInit {
             paint: {
                 'line-color': '#FFFFFF',
                 'line-width': 1.5,
+                "line-opacity": 0.25,
             },
         });
     }
@@ -197,6 +208,7 @@ export class MapComponent implements OnInit {
     }
 
     private updateH3Pulses(): void {
+        if (!this.map) return;
         this.map?.setPaintProperty('hexagons', 'fill-opacity', 0);
         this.addH3PolygonsToMap();
 
@@ -217,6 +229,7 @@ export class MapComponent implements OnInit {
     }
 
     private updateHeatmapForMap(): void {
+        if (!this.map) return;
         const { _ne, _sw } = this.map.getBounds();
         const resolution = this.getResolutionBasedOnMapZoom();
         const NELat = _ne.lat;
@@ -373,6 +386,7 @@ export class MapComponent implements OnInit {
     }
 
     private addH3PolygonsToMap(): void {
+        if (!this.map) return;
         const bounds = this.map.getBounds();
         const northWest = bounds.getNorthWest();
         const southEast = bounds.getSouthEast();
@@ -463,6 +477,7 @@ export class MapComponent implements OnInit {
     }
 
     private updateCurrentLocationAreaName() {
+        if (!this.map) return;
         const coordinates = this.mapLocationService.getMapCoordinatesWebClient(
             this.map
         );

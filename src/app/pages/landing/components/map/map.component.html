@@ -1,14 +1,12 @@
 <mgl-map
     class="map-container"
+    [class.map-container_rounded]="isRounded"
     [style]="mapboxStylesUrl"
     [center]="center"
     [interactive]="!isPreview"
-    [maxBounds]="[
-        [-180, -80],
-        [180, 85]
-    ]"
-    [zoom]="[1]"
-    [minZoom]="1"
+    [maxBounds]="maxBounds"
+    [zoom]="zoom"
+    [minZoom]="minZoom"
     [maxZoom]="10"
     (load)="onMapLoad($event)"
     (zoomEnd)="handleZoomEnd()"
@@ -35,10 +33,6 @@
             [src]="marker.icon"
             alt="icon"
             appLoadImgPath
-            [ngStyle]="{
-                width: currResolution === 1 ? '24px' : '48px',
-                height: currResolution === 1 ? '24px' : '48px',
-            }"
         />
     </mgl-marker>
     } @for (weight of weights; track weight.h3Index) {

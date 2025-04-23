@@ -1,10 +1,14 @@
 <div class="container">
     <app-map
         [isHideDebugger]="true"
-        [isPreview]="true" 
-        [routerLink]="'/'+ routes.Landing.MAP"
-        [routerLinkActive]="routes.Landing.MAP"/>
-    
+        [isPreview]="true"
+        [routerLink]="'/' + routes.Landing.MAP"
+        [routerLinkActive]="routes.Landing.MAP"
+        [maxBounds]="maxBounds"
+        [zoom]="zoom"
+        [minZoom]="minZoom"
+    />
+
     <app-top-pulses />
 
     <app-about-section />

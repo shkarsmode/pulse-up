@@ -36,7 +36,6 @@ export class UserComponent implements OnInit {
 
     private initRouteListenerToChangeFooterVisibility(): void {
         this.route.data.subscribe(() => {
-            console.log(window.location.pathname)
             this.isToShowFooter = true;
             if (window.location.pathname.includes('/user/topic'))
                 this.isToShowFooter = false;
