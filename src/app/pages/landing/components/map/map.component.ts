@@ -5,7 +5,6 @@ import {
     inject,
     Input,
     OnInit,
-    Output,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import * as h3 from 'h3-js';
@@ -44,9 +43,6 @@ export class MapComponent implements OnInit {
         return this.isPreview;
     }
 
-    @Output() public mapLoaded: Subject<mapboxgl.Map> =
-        new Subject<mapboxgl.Map>();
-
     public markers: any = [];
     public weights: any = [];
     public readonly mapboxStylesUrl: string = inject(MAPBOX_STYLE);
@@ -66,8 +62,8 @@ export class MapComponent implements OnInit {
     private readonly destroyed: DestroyRef = inject(DestroyRef);
     private readonly heatmapService: HeatmapService = inject(HeatmapService);
     private zoomResolutionMap: { [key: number]: number } = {
-        0: 1,
-        1: 1,
+        0: 0,
+        1: 0,
         2: 1,
         3: 1,
         3.3: 2,
@@ -139,11 +135,9 @@ export class MapComponent implements OnInit {
         this.heatmapService.addHeatmapToMap();
 
         this.addInitialLayersAndSourcesToDisplayData();
-        this.addH3PolygonsToMap();
+        // this.addH3PolygonsToMap();
         this.updateH3Pulses();
         this.updateHeatmapForMap();
-
-        this.mapLoaded.next(this.map);
     }
 
     public handleZoomEnd = () => {
@@ -194,7 +188,7 @@ export class MapComponent implements OnInit {
             paint: {
                 'line-color': '#FFFFFF',
                 'line-width': 1.5,
-                "line-opacity": 0.25,
+                'line-opacity': 0.6,
             },
         });
     }
@@ -205,12 +199,13 @@ export class MapComponent implements OnInit {
         // this.map?.setPaintProperty('hexagons', 'fill-opacity', 0.15);
 
         this.addMarkersToMap(h3PulsesData);
+        this.addH3PolygonsToMap(Object.keys(h3PulsesData));
     }
 
     private updateH3Pulses(): void {
         if (!this.map) return;
         this.map?.setPaintProperty('hexagons', 'fill-opacity', 0);
-        this.addH3PolygonsToMap();
+        // this.addH3PolygonsToMap();
 
         const { _ne, _sw } = this.map.getBounds();
         const resolution = this.getResolutionBasedOnMapZoom();
@@ -385,18 +380,15 @@ export class MapComponent implements OnInit {
         });
     }
 
-    private addH3PolygonsToMap(): void {
-        if (!this.map) return;
-        const bounds = this.map.getBounds();
-        const northWest = bounds.getNorthWest();
-        const southEast = bounds.getSouthEast();
-        const resolution = this.getResolutionBasedOnMapZoom();
+    private addH3PolygonsToMap(h3Indexes: string[]): void {
+        // const bounds = this.map.getBounds();
+        // const northWest = bounds.getNorthWest();
+        // const southEast = bounds.getSouthEast();
+        // const resolution = this.getResolutionBasedOnMapZoom();
 
-        const hexagons = this.getHexagonsForBounds(
-            northWest,
-            southEast,
-            resolution
-        ).filter((h3Index) => !this.isHexagonCrossesAntimeridian(h3Index));
+        const hexagons = h3Indexes.filter(
+            (h3Index) => !this.isHexagonCrossesAntimeridian(h3Index)
+        );
 
         const hexagonFeatures = hexagons.map((hex) =>
             this.h3ToPolygonFeature(hex)
@@ -437,7 +429,6 @@ export class MapComponent implements OnInit {
                 hexagons.push(hex);
             }
         }
-
         return [...new Set(hexagons)];
     }
 
@@ -477,7 +468,6 @@ export class MapComponent implements OnInit {
     }
 
     private updateCurrentLocationAreaName() {
-        if (!this.map) return;
         const coordinates = this.mapLocationService.getMapCoordinatesWebClient(
             this.map
         );
