@@ -1,5 +1,5 @@
-import { Component } from '@angular/core';
-import { Router } from '@angular/router';
+import { Component, inject } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
     selector: 'app-landing',
@@ -7,13 +7,18 @@ import { Router } from '@angular/router';
     styleUrl: './landing.component.scss',
 })
 export class LandingComponent {
-    showFooter = true;
+    public isToShowFooter: boolean = true;
+    private readonly route: ActivatedRoute = inject(ActivatedRoute);
 
-    constructor(private router: Router) {}
+    public ngOnInit(): void {
+        this.initRouteListenerToChangeFooterVisibility();
+    }
 
-    ngOnInit() {
-        if (this.router.url.includes('/map')) {
-            this.showFooter = false;
-        }
+    private initRouteListenerToChangeFooterVisibility(): void {
+        this.route.data.subscribe(() => {
+            this.isToShowFooter = true;
+            if (window.location.pathname.includes('/map'))
+                this.isToShowFooter = false;
+        });
     }
 }

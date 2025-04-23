@@ -4,4 +4,6 @@
     <router-outlet></router-outlet>
 </div>
 
-<app-footer *ngIf="showFooter"/>
+@if (isToShowFooter) {
+    <app-footer />
+}
