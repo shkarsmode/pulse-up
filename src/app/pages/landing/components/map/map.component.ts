@@ -36,6 +36,7 @@ export class MapComponent implements OnInit {
         [-180, -80],
         [180, 85],
     ];
+    @Input() public center: [number, number] = [-100.661, 37.7749];
 
     @HostBinding('class.preview')
     public get isPreviewMap() {
@@ -45,7 +46,6 @@ export class MapComponent implements OnInit {
     public markers: any = [];
     public weights: any = [];
     public readonly mapboxStylesUrl: string = inject(MAPBOX_STYLE);
-    public center: [number, number] = [-100.661, 37.7749];
     public heatmapIntensity: number = 0.1;
 
     public map: mapboxgl.Map;
