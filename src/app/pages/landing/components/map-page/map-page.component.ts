@@ -6,7 +6,6 @@ interface MapConfig {
     zoom: [number];
     minZoom: number;
     maxBounds: mapboxgl.LngLatBoundsLike;
-    center: [number, number];
 }
 
 @Component({
@@ -38,7 +37,6 @@ export class MapPageComponent {
                 [-150, -85],
                 [164, 85],
             ],
-            center: [-100.661, 37.7749],
         },
         laptop: {
             zoom: [2.8],
@@ -47,7 +45,6 @@ export class MapPageComponent {
                 [-164, -85],
                 [150, 85],
             ],
-            center: [-100.661, 37.7749],
         },
         desktop: {
             zoom: [1],
@@ -56,7 +53,6 @@ export class MapPageComponent {
                 [-180, -80],
                 [180, 85],
             ],
-            center: [-100.661, 37.7749],
         },
     };
 
@@ -71,7 +67,7 @@ export class MapPageComponent {
             this.zoom = config.zoom;
             this.minZoom = config.minZoom;
             this.maxBounds = config.maxBounds;
-            this.center = config.center;
+            this.center = [...this.center];
         });
     }
 }

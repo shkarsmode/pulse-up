@@ -202,6 +202,7 @@ export class MapComponent implements OnInit {
     }
 
     private updateH3Pulses(): void {
+        if (!this.map) return;
         this.map?.setPaintProperty('hexagons', 'fill-opacity', 0);
         this.addH3PolygonsToMap();
 
@@ -222,6 +223,7 @@ export class MapComponent implements OnInit {
     }
 
     private updateHeatmapForMap(): void {
+        if (!this.map) return;
         const { _ne, _sw } = this.map.getBounds();
         const resolution = this.getResolutionBasedOnMapZoom();
         const NELat = _ne.lat;
@@ -378,6 +380,7 @@ export class MapComponent implements OnInit {
     }
 
     private addH3PolygonsToMap(): void {
+        if (!this.map) return;
         const bounds = this.map.getBounds();
         const northWest = bounds.getNorthWest();
         const southEast = bounds.getSouthEast();
@@ -468,6 +471,7 @@ export class MapComponent implements OnInit {
     }
 
     private updateCurrentLocationAreaName() {
+        if (!this.map) return;
         const coordinates = this.mapLocationService.getMapCoordinatesWebClient(
             this.map
         );
