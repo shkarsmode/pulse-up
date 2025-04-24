@@ -1,11 +1,11 @@
-@import url('./_reset.scss');
-@import url('./_fonts.scss');
-@import url('./_variables.scss');
-@import url('./_materials.scss');
-@import url('./animations/index.scss');
-@import url('./_uikit.scss');
-@import 'mapbox-gl/dist/mapbox-gl.css';
-@import '@splidejs/splide/css';
+@import url("./_reset.scss");
+@import url("./_fonts.scss");
+@import url("./_variables.scss");
+@import url("./_materials.scss");
+@import url("./animations/index.scss");
+@import url("./_uikit.scss");
+@import "mapbox-gl/dist/mapbox-gl.css";
+@import "@splidejs/splide/css";
 
 *,
 html {
@@ -17,7 +17,7 @@ html {
 }
 
 body {
-    font-family: 'SFProText', sans-serif;
+    font-family: "SFProText", sans-serif;
     height: 100%;
     // padding: 30px 35px;
     color: var(--black-color);
@@ -51,7 +51,7 @@ input,
 select,
 textarea,
 input {
-    font-family: 'SFProText', sans-serif;
+    font-family: "SFProText", sans-serif;
 }
 
 h1 {
@@ -92,9 +92,6 @@ h3 {
     border: 0;
 }
 
-@media screen and (max-width: 800px) {
-
-    .hide-footer app-footer {
-        display: none;
-    }
+.hide-footer app-footer {
+    display: none;
 }
