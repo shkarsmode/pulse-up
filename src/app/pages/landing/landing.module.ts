@@ -39,6 +39,7 @@ import { LandingComponent } from './landing.component';
 import { LandingRoutingModule } from './landing.routing';
 import { SocialsButtonComponent } from '../../shared/components/ui-kit/buttons/socials-button/socials-button.component';
 import { CopyButtonComponent } from '../../shared/components/ui-kit/buttons/copy-button/copy-button.component';
+import { AboutComponent } from './about/about.component';
 
 @NgModule({
     declarations: [
@@ -54,6 +55,7 @@ import { CopyButtonComponent } from '../../shared/components/ui-kit/buttons/copy
         MapPageComponent,
         PulseHeatmapPageComponent,
         AboutSectionComponent,
+        AboutComponent,
     ],
     imports: [
         CommonModule,

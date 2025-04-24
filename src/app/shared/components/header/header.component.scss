@@ -170,7 +170,7 @@ ul {
                     flex-direction: column;
                     // gap: 24px;
                     height: 100%;
-                    padding: 48px 20px;
+                    padding: 24px 20px;
 
                     transition: all .3s linear;
                     transition-delay: .2s;
@@ -207,17 +207,8 @@ ul {
                             font-weight: 400;
 
 
-                            &:first-child {
+                            &:not(:nth-child(3)~li) {
                                 color: var(--accent-color);
-                                font-weight: 600;
-                            }
-
-                            &:nth-child(2) {
-                                color: var(--accent-color);
-                                font-weight: 600;
-                            }
-
-                            &:nth-child(3) {
                                 font-weight: 600;
                             }
 

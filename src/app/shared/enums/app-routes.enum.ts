@@ -6,6 +6,7 @@ enum LandingRoutes {
     TOPICS = 'topics',
     TOPIC = 'topic/:id',
     HEATMAP = 'topic/:id/heatmap',
+    ABOUT = 'about',
 }
 
 enum CommunityRoutes {

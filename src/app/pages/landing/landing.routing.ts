@@ -9,6 +9,7 @@ import { MapPageComponent } from './components/map-page/map-page.component';
 import { PulseHeatmapPageComponent } from './components/pulse-heatmap-page/pulse-heatmap-page.component';
 import { FooterGuard } from '../../shared/components/footer/footer.guard';
 import { FooterCleanupGuard } from '../../shared/components/footer/footerCleanup.guard';
+import { AboutComponent } from './about/about.component';
 
 let Landing = AppRoutes.Landing;
 
@@ -39,7 +40,10 @@ const routes: Routes = [
                 path: Landing.HEATMAP,
                 component: PulseHeatmapPageComponent,
             },
-
+            {
+                path: Landing.ABOUT,
+                component: AboutComponent,
+            }
         ],
     },
 ];
