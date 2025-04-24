@@ -1,3 +1,5 @@
+@use '../../../../styles/mixins' as *;
+
 :host {
     display: block;
     padding: 30px 20px;
@@ -33,8 +35,13 @@ ul {
     column-gap: 40px;
     row-gap: 10px;
     flex-wrap: wrap;
-    // min-width: 220px;
-    // width: 100%;
+
+    @include media-lg {
+        column-gap: 24px;
+    }
+    @include media-md {
+        column-gap: 16px;
+    }
 
     li {
         font-size: 16px;
@@ -106,7 +113,7 @@ ul {
     .mobile {
         position: relative;
         padding: 0;
-        height: 79px;
+        height: 80px;
         display: flex;
         z-index: 1002;
 

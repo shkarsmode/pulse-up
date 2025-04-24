@@ -40,6 +40,7 @@ import { LandingRoutingModule } from './landing.routing';
 import { SocialsButtonComponent } from '../../shared/components/ui-kit/buttons/socials-button/socials-button.component';
 import { CopyButtonComponent } from '../../shared/components/ui-kit/buttons/copy-button/copy-button.component';
 import { AboutComponent } from './about/about.component';
+import { MainHeroComponent } from './components/main/components/main-hero/main-hero.component';
 
 @NgModule({
     declarations: [
@@ -56,6 +57,7 @@ import { AboutComponent } from './about/about.component';
         PulseHeatmapPageComponent,
         AboutSectionComponent,
         AboutComponent,
+        MainHeroComponent
     ],
     imports: [
         CommonModule,

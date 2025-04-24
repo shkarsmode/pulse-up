@@ -10,6 +10,8 @@ import { PulseHeatmapPageComponent } from './components/pulse-heatmap-page/pulse
 import { FooterGuard } from '../../shared/components/footer/footer.guard';
 import { FooterCleanupGuard } from '../../shared/components/footer/footerCleanup.guard';
 import { AboutComponent } from './about/about.component';
+import { HeaderGuard } from '@/app/shared/components/header/header.guard';
+import { HeaderCleanupGuard } from '@/app/shared/components/header/header-cleanup.guard';
 
 let Landing = AppRoutes.Landing;
 
@@ -21,6 +23,8 @@ const routes: Routes = [
             {
                 path: Landing.HOME,
                 component: MainComponent,
+                canActivate: [HeaderGuard],
+                canDeactivate: [HeaderCleanupGuard],
             },
             {
                 path: Landing.MAP,
