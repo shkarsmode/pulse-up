@@ -135,15 +135,9 @@ export class MapComponent implements OnInit {
         this.heatmapService.addHeatmapToMap();
 
         this.addInitialLayersAndSourcesToDisplayData();
-        // this.addH3PolygonsToMap();
         this.updateH3Pulses();
         this.updateHeatmapForMap();
     }
-
-    public handleZoomEnd = () => {
-        // this.updateH3Pulses();
-        // this.updateHeatmapForMap();
-    };
 
     public handleMoveEnd = () => {
         this.updateH3Pulses();
@@ -205,7 +199,6 @@ export class MapComponent implements OnInit {
     private updateH3Pulses(): void {
         if (!this.map) return;
         this.map?.setPaintProperty('hexagons', 'fill-opacity', 0);
-        // this.addH3PolygonsToMap();
 
         const { _ne, _sw } = this.map.getBounds();
         const resolution = this.getResolutionBasedOnMapZoom();
@@ -381,11 +374,6 @@ export class MapComponent implements OnInit {
     }
 
     private addH3PolygonsToMap(h3Indexes: string[]): void {
-        // const bounds = this.map.getBounds();
-        // const northWest = bounds.getNorthWest();
-        // const southEast = bounds.getSouthEast();
-        // const resolution = this.getResolutionBasedOnMapZoom();
-
         const hexagons = h3Indexes.filter(
             (h3Index) => !this.isHexagonCrossesAntimeridian(h3Index)
         );
