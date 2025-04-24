@@ -9,6 +9,7 @@ import { MapPageComponent } from './components/map-page/map-page.component';
 import { PulseHeatmapPageComponent } from './components/pulse-heatmap-page/pulse-heatmap-page.component';
 import { FooterGuard } from '../../shared/components/footer/footer.guard';
 import { FooterCleanupGuard } from '../../shared/components/footer/footerCleanup.guard';
+import { metaTagsData } from '@/assets/data/meta-tags';
 
 let Landing = AppRoutes.Landing;
 
@@ -16,14 +17,12 @@ const routes: Routes = [
     {
         path: '',
         component: LandingComponent,
+        
         children: [
             {
                 path: Landing.HOME,
                 component: MainComponent,
-                data: {
-                    title: "Pulse Up | Support What Matters – Track Real-Time Public Sentiment",
-                    description: "Pulse Up is a real-time public opinion app where users support causes anonymously. Discover trending topics, civic issues, and social sentiment mapped by location."
-                }
+                data: metaTagsData.home,
             },
             {
                 path: Landing.MAP,
@@ -34,6 +33,7 @@ const routes: Routes = [
             {
                 path: Landing.TOPICS,
                 component: PulsesComponent,
+                data: metaTagsData.topics,
             },
             {
                 path: Landing.TOPIC,

@@ -1,0 +1,12 @@
+export const metaTagsData = {
+    home: {
+        title: 'Pulse Up | Support What Matters – Track Real-Time Public Sentiment',
+        description:
+            'Pulse Up is a real-time public opinion app where users support causes anonymously. Discover trending topics, civic issues, and social sentiment mapped by location.',
+    },
+    topics: {
+        title: 'Explore Trending Topics | Support What Matters on Pulse Up',
+        description:
+            'Discover what people are supporting right now on Pulse Up. Track trending topics, global causes, local issues, and real-time public sentiment across the map.',
+    },
+};

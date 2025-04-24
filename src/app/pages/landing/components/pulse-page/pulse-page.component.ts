@@ -77,13 +77,6 @@ export class PulsePageComponent implements OnInit {
             this.createLink(pulse.description);
             this.pulseUrl =
                 this.pulseService.shareTopicBaseUrl + pulse.shareKey;
-            this.metaService.setTitle(
-                `${pulse.title} | Support What Matters – Pulse Up`
-            );
-            this.metaService.setMetaTag(
-                'description',
-                `Support '${pulse.title}' anonymously and see how it’s trending in real time across the map. Track public sentiment and join the pulse.`
-            );
         });
     }
 

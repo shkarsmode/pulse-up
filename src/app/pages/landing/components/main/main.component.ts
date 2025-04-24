@@ -4,6 +4,7 @@ import { MediaQueryService } from '@/app/shared/services/core/media-query.servic
 import { AppRoutes } from '@/app/shared/enums/app-routes.enum';
 import { ResponsiveMapConfig } from '@/app/shared/interfaces/responsive-map-config.interface';
 import { MetaService } from '@/app/shared/services/core/meta.service';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
     selector: 'app-main',
@@ -12,7 +13,8 @@ import { MetaService } from '@/app/shared/services/core/meta.service';
 })
 export class MainComponent {
     private mediaService: MediaQueryService = inject(MediaQueryService);
-    private readonly metaService: MetaService = inject(MetaService);
+    private activatedRoute: ActivatedRoute = inject(ActivatedRoute);
+    private metaService: MetaService = inject(MetaService);
     private isMobile = toSignal(this.mediaService.mediaQuery('max', 'SM'));
     private isSmallMobile = toSignal(this.mediaService.mediaQuery('max', 'XS'));
     private readonly configMap: Record<
@@ -62,12 +64,9 @@ export class MainComponent {
             this.minZoom = config.minZoom;
             this.maxBounds = config.maxBounds;
         });
-        this.metaService.setTitle(
-            'Pulse Up | Support What Matters – Track Real-Time Public Sentiment'
-        );
-        this.metaService.setMetaTag(
-            'description',
-            'Pulse Up is a real-time public opinion app where users support causes anonymously. Discover trending topics, civic issues, and social sentiment mapped by location.'
-        );
+    }
+
+    ngOnInit() {
+        this.metaService.updateMetaTags(this.activatedRoute);
     }
 }
