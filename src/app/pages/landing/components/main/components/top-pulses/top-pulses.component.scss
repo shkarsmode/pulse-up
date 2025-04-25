@@ -1,4 +1,4 @@
-@use '../../../../../../../styles/mixins' as *;
+@use "../../../../../../../styles/mixins" as *;
 
 h2 {
     @include title-32px;
@@ -14,6 +14,21 @@ h2 {
     gap: 30px;
 }
 
+.pulses__button {
+    display: flex;
+    justify-content: center;
+    margin-top: 40px;
+
+    app-secondary-button  {
+        width: 100%;
+        max-width: 200px;
+
+        @include media-xs {
+            max-width: 100%;
+        }
+    }
+}
+
 @media screen and (max-width: 500px) {
     h2 {
         @include title-20px;
@@ -26,9 +41,7 @@ h2 {
 }
 
 @media screen and (max-width: 1080px) {
-        .pulses {
-            flex-direction: column;
-        }
+    .pulses {
+        flex-direction: column;
+    }
 }
-
-

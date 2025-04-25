@@ -13,11 +13,13 @@ export interface IPulse {
     stats?: Stats;
     picture: string;
     shareKey: string;
+    category: string;
 }
 
 interface Author {
     id: string;
     name: string;
+    username: string;
     picture: string;
     createdAt: string;
     lastVotedAt: string;

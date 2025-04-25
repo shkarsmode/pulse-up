@@ -1,10 +1,17 @@
-<h2>Top 3 Topics in last 24 hours</h2>
+<h2>What’s Trending Right Now?</h2>
 
 <div class="pulses">
     @for (pulse of pulses; track pulse.id; let i = $index) {
-        <app-top-pulse-card 
-            [pulse]="pulse"
-            [index]="i + 1">
-        </app-top-pulse-card>
+    <app-top-pulse-card [pulse]="pulse" [index]="i + 1">
+    </app-top-pulse-card>
     }
+</div>
+
+<div class="pulses__button">
+    <app-secondary-button 
+        [routerLink]="'/' + AppRoutes.Landing.TOPICS"
+        routerLinkActive="active"
+        [fullWidth]="true">
+        See more
+    </app-secondary-button>
 </div>

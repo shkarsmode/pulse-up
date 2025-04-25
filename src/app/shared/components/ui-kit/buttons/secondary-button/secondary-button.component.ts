@@ -11,6 +11,7 @@ import { RippleEffectDirective } from '../../../../directives/ripple-effect';
 export class SecondaryButtonComponent {
     @Input() public type: string = 'button';
     @Input() public disabled: boolean = false;
+    @Input() public fullWidth: boolean = false;
 
     @Output() public handleClick: EventEmitter<void> = new EventEmitter<void>();
 

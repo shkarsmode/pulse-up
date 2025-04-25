@@ -76,6 +76,7 @@ h3 {
 }
 
 .page-container {
+    width: 100%;
     max-width: 1070px;
     margin: 0 auto;
     padding: 0 20px;
@@ -94,4 +95,15 @@ h3 {
 
 .hide-footer app-footer {
     display: none;
+}
+.header-transparent app-header {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 100;
+
+    @media screen and (max-width: 760px) {
+        background-color: var(--white-color);
+    }
 }
