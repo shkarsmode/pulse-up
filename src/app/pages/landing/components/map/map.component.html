@@ -10,8 +10,7 @@
     [maxZoom]="10"
     (load)="onMapLoad($event)"
     (zoomEnd)="handleZoomEnd()"
-    (moveEnd)="handleMoveEnd()"
->
+    (moveEnd)="handleMoveEnd()">
     <!-- <mgl-layer 
         id="heatmap-layer" 
         type="heatmap" 
@@ -29,24 +28,43 @@
 
     @for (marker of markers; track marker.h3Index) {
     <mgl-marker [lngLat]="[marker.lng, marker.lat]">
-        <img
+        @if (isToShowTooltip) {
+            <button
+                placement="bottom"
+                class="marker-button"
+                ngxTooltip
+                [template]="tooltip"
+                (hideEnd)="onMarkerLeave()"
+                (mouseenter)="onMarkerHover(marker)"
+                aria-label="show pulse details">
+                <img
+                [src]="marker.icon"
+                alt="icon"
+                appLoadImgPath />
+            </button>
+        } @else {
+            <img
             [src]="marker.icon"
             alt="icon"
-            appLoadImgPath
-        />
+            appLoadImgPath />
+        }
     </mgl-marker>
     } @for (weight of weights; track weight.h3Index) {
-    <mgl-marker [lngLat]="[weight.lng, weight.lat]" className="weight-marker">
-        <span class="weight-marker__text">{{
-            weight.value | formatNumber
-        }}</span>
+    <mgl-marker
+        [lngLat]="[weight.lng, weight.lat]"
+        className="weight-marker">
+        <span class="weight-marker__text">{{ weight.value | formatNumber }}</span>
     </mgl-marker>
     }
 </mgl-map>
 
 @if (isToShoDebugger) {
-<div class="debugger" [class.hidden]="isHideDebugger">
-    <div class="hide" (click)="isHideDebugger = !isHideDebugger">
+<div
+    class="debugger"
+    [class.hidden]="isHideDebugger">
+    <div
+        class="hide"
+        (click)="isHideDebugger = !isHideDebugger">
         @if (isHideDebugger) { Show } @else { Hide }
     </div>
     @if (!isHideDebugger) {
@@ -104,8 +122,7 @@
                 (onInput)="onChangeHeatmapSettings()"
                 max="3"
                 min="1"
-                inputType="number"
-            />
+                inputType="number" />
         </span>
     </div>
 
@@ -114,8 +131,7 @@
         <span>
             <app-input
                 [(ngModel)]="heatmapIntensity"
-                (onInput)="onChangeHeatmapSettings()"
-            />
+                (onInput)="onChangeHeatmapSettings()" />
         </span>
     </div>
 
@@ -147,7 +163,10 @@
     <!-- <svg-icon src="assets/svg/extend.svg" /> -->
 </div>
 } @if (isSearch) {
-<app-input-search id="search" [isAddIcon]="false" openComingSoonPopup />
+<app-input-search
+    id="search"
+    [isAddIcon]="false"
+    openComingSoonPopup />
 } @if (isLocationName) {
 <div id="map-area-name">
     <svg-icon [src]="'assets/svg/location.svg'" />
@@ -155,11 +174,27 @@
 </div>
 } @if (isZoomButton) {
 <div class="zoom-button">
-    <button class="zoom-button__icon" (click)="zoomMapClick('+')"></button>
+    <button
+        class="zoom-button__icon"
+        (click)="zoomMapClick('+')"></button>
 
-    <button class="zoom-button__icon" (click)="zoomMapClick('-')"></button>
+    <button
+        class="zoom-button__icon"
+        (click)="zoomMapClick('-')"></button>
 </div>
 }
+
+<ng-template #tooltip>
+    <div
+        class="map-tooltip"
+        [class.map-tooltip--loading]="!tooltipData">
+        @if (tooltipData) {
+            <app-top-pulse-card [pulse]="tooltipData" />
+        } @else {
+            <app-spinner />
+        }
+    </div>
+</ng-template>
 
 <!-- <div
     class="extend"

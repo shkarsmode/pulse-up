@@ -1,15 +1,17 @@
 <div class="top">
     <div class="logo">
+        @if (index !== undefined) {
         <div class="budge">
             @if (index === 1) {
-                <svg-icon src="assets/svg/cup.svg"/>
+            <svg-icon src="assets/svg/cup.svg" />
             }
             {{ index }}
         </div>
-        <img 
-            [src]="pulse.icon" 
-            alt="trump" 
-            appLoadImgPath>
+        }
+        <img
+            [src]="pulse.icon"
+            alt="trump"
+            appLoadImgPath />
     </div>
     <div class="stats">
         <div>

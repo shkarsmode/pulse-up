@@ -42,6 +42,7 @@ import { CopyButtonComponent } from '../../shared/components/ui-kit/buttons/copy
 import { AboutComponent } from './about/about.component';
 import { MainHeroComponent } from './components/main/components/main-hero/main-hero.component';
 import { MainMapComponent } from './components/main/components/main-map/main-map.component';
+import { NgxTooltip } from '@ngx-popovers/tooltip';
 
 @NgModule({
     declarations: [
@@ -87,7 +88,7 @@ import { MainMapComponent } from './components/main/components/main-map/main-map
         ComingSoonPopupDirective,
         FlatButtonDirective,
         FadeInDirective,
-
+        NgxTooltip,
         NgxMapboxGLModule.withConfig({
             accessToken: environment.mapboxToken,
         }),

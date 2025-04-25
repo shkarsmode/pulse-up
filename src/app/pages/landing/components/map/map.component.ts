@@ -14,6 +14,8 @@ import { PulseService } from '../../../../shared/services/api/pulse.service';
 import { HeatmapService } from '../../../../shared/services/core/heatmap.service';
 import { MapLocationService } from '../../../../shared/services/core/map-location.service';
 import { MAPBOX_STYLE } from '../../../../shared/tokens/tokens';
+import { IMapMarker } from '@/app/shared/interfaces/map-marker.interface';
+import { IPulse } from '@/app/shared/interfaces';
 
 @Component({
     selector: 'app-map',
@@ -24,6 +26,7 @@ export class MapComponent implements OnInit {
     @Input() public pulseId: number;
     @Input() public isPreview: boolean = false;
     @Input() public isToShowHeatmap: boolean = true;
+    @Input() public isToShowTooltip: boolean = false;
     @Input() public isHideDebugger: boolean = false;
 
     @Input() public isSearch: boolean = false;
@@ -43,7 +46,7 @@ export class MapComponent implements OnInit {
         return this.isPreview;
     }
 
-    public markers: any = [];
+    public markers: IMapMarker[] = [];
     public weights: any = [];
     public readonly mapboxStylesUrl: string = inject(MAPBOX_STYLE);
     public heatmapIntensity: number = 0.1;
@@ -54,6 +57,7 @@ export class MapComponent implements OnInit {
     public readonly pulseService: PulseService = inject(PulseService);
     public isToShoDebugger: string | null =
         localStorage.getItem('show-debugger');
+    public tooltipData: IPulse | null = null;
 
     private readonly h3Pulses$: Subject<any> = new Subject();
     private readonly heatMapData$: Subject<{ [key: string]: number }> =
@@ -79,7 +83,7 @@ export class MapComponent implements OnInit {
         .map(Number)
         .sort((a, b) => a - b);
 
-    constructor(public mapLocationService: MapLocationService) {}
+    constructor(public mapLocationService: MapLocationService) { }
 
     public ngOnInit(): void {
         // if (this.isPreview) {}
@@ -243,8 +247,8 @@ export class MapComponent implements OnInit {
                 filter(() => this.isToShowHeatmap),
                 tap(
                     (heatmap) =>
-                        (this.heatmapDataPointsCount =
-                            Object.keys(heatmap).length)
+                    (this.heatmapDataPointsCount =
+                        Object.keys(heatmap).length)
                 )
             )
             .subscribe((votes) => {
@@ -362,6 +366,7 @@ export class MapComponent implements OnInit {
                 lat,
                 icon: data[h3Index].icon,
                 h3Index,
+                topicId: data[h3Index].topicId,
             });
         });
     }
@@ -501,5 +506,15 @@ export class MapComponent implements OnInit {
         }
 
         return crosses;
+    }
+
+    public onMarkerHover(marker: IMapMarker): void {
+        this.pulseService.getById(marker.topicId).subscribe((pulse) => {
+            this.tooltipData = pulse;
+        })
+    }
+
+    public onMarkerLeave(): void {
+        this.tooltipData = null;
     }
 }
