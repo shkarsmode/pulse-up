@@ -14,14 +14,14 @@
 }
 
 @else {
-    <a class="btn" [href]="links.APP_STORE">
+    <a class="btn btn--{{theme}}" [href]="links.APP_STORE">
         <svg-icon src="assets/svg/a-store.svg" id="icon" />
         <p>Download on the <br /> <span class="big-txt">App Store</span></p>
     </a>
 
     <a
         [href]="links.GOOGLE_APP_STORE"
-        class="btn"
+        class="btn btn--{{theme}}"
         target="_blank">
         <svg-icon src="assets/svg/g-play.svg" id="icon" />
         <p>Get it on <br /> <span class="big-txt">Google Play</span></p>

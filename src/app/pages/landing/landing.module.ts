@@ -24,7 +24,7 @@ import { SpinnerComponent } from '../../shared/components/ui-kit/spinner/spinner
 import { LoadImgPathDirective } from '../../shared/directives/load-img-path/load-img-path.directive';
 import { FormatNumberPipe } from '../../shared/pipes/format-number.pipe';
 import { AboutSectionComponent } from './components/main/components/about-section/about-section.component';
-import { MainBannerComponent } from './components/main/components/main-banner/main-banner.component';
+import { AdBannerComponent } from '@/app/shared/components/banners/ad-banner/ad-banner.component';
 import { TopPulsesComponent } from './components/main/components/top-pulses/top-pulses.component';
 import { MainComponent } from './components/main/main.component';
 import { MapPageComponent } from './components/map-page/map-page.component';
@@ -47,7 +47,6 @@ import { NgxTooltip } from '@ngx-popovers/tooltip';
 @NgModule({
     declarations: [
         LandingComponent,
-        MainBannerComponent,
         MainComponent,
         MapComponent,
         PulsesComponent,
@@ -92,6 +91,7 @@ import { NgxTooltip } from '@ngx-popovers/tooltip';
         NgxMapboxGLModule.withConfig({
             accessToken: environment.mapboxToken,
         }),
+        AdBannerComponent,
     ],
     schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
