@@ -1,120 +1,75 @@
-@use '../../../../../../../styles/mixins' as *;
+@use "../../../../../../../styles/mixins" as *;
 
-:host {
-    display: flex;
-    justify-content: space-between;
-    column-gap: 80px;
-    row-gap: 24px;
+.about__content {
     width: 100%;
-    flex-wrap: wrap;
-}
-img {
-    align-self: flex-start;
-
-}
-
-h1 {
-    @include title-32px;
-}
-
-p {
-    @include text-16px;
-}
-
-.text  {
-    align-self: center;
-    display: flex;
-    flex-direction: column;
-    transition: all .4s linear;
-    max-width: 500px;
-
-
-    p {
-        margin-top: 16px;
-        padding: 0;
-    } 
-    
-}
-
-.wrapper {
     display: grid;
-    grid-template-rows: 0fr;
-    transition: grid-template-rows 0.5s ease-out;
-    p {
-        margin: 0;
-        padding: 0;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-items: center;
+    column-gap: 24px;
+
+    @include media-md {
+        display: flex;
+        flex-direction: column-reverse;
+        align-items: center;
+        column-gap: 0;
+        row-gap: 24px;
     }
 }
 
-.wrapper.is-open {
-    grid-template-rows: 1fr;
+.about__info {
+    flex: 1 1 0;
+    max-width: 480px;
 
-    p {
-        margin-top: 16px;
+    @include media-md {
+        max-width: 100%;
     }
 }
 
-.inner {
-    overflow: hidden;
-}
-
-button {
-    @include link-16px;
-    color: var(--accent-color);
-    padding: 0;
-    width: fit-content;
-    cursor: pointer;
-    margin-top: 16px;
+.about__image {
+    display: flex;
+    justify-content: flex-end;
     
-}
-
-@media screen and (max-width: 1080px) {
-    :host {
-        justify-content: center;
-        
-    }
-
-    h1,p {
-        text-align: center;
-    }
-
-    button {
-        align-self: center;
-    }
-}
-
-@media screen and (max-width: 500px) {
-    h1 {
-        @include title-20px;
-    }
-
-    p {
-        @include text-14px;
-    }
-
-    button {
-        @include link-14px;
-    }
-
-    :host {
-        justify-content: center;
-        
-    }
-    h1,p {
-        text-align: left;
-    }
-
-    button {
-        align-self: flex-start;
-    }
-}
-
-@media screen and (max-width: 500px) {
-
     img {
         width: 100%;
+        height: auto;
+        max-width: 430px;
+        max-height: 340px;
+        border-radius: 20px;
+        object-fit: cover;
     }
 }
 
+.about__heading {
+    @include title-32px;
+    margin-bottom: 16px;
+    max-width: 460px;
 
+    @include media-sm {
+        @include title-20px;
+    }
+}
 
+.about__text {
+    @include text-14px;
+    margin-bottom: 8px;
+}
+
+.about__action {
+    margin-top: 40px;
+}
+
+.about__action {
+    @include media-lg {
+        display: flex;
+        justify-content: center;
+    }
+    app-secondary-button {
+        display: block;
+        width: 100%;
+        max-width: 200px;
+
+        @include media-xs {
+            max-width: 100%;
+        }
+    }
+}

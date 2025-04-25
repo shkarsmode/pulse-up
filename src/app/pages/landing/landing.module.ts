@@ -41,6 +41,7 @@ import { SocialsButtonComponent } from '../../shared/components/ui-kit/buttons/s
 import { CopyButtonComponent } from '../../shared/components/ui-kit/buttons/copy-button/copy-button.component';
 import { AboutComponent } from './about/about.component';
 import { MainHeroComponent } from './components/main/components/main-hero/main-hero.component';
+import { MainMapComponent } from './components/main/components/main-map/main-map.component';
 
 @NgModule({
     declarations: [
@@ -57,7 +58,8 @@ import { MainHeroComponent } from './components/main/components/main-hero/main-h
         PulseHeatmapPageComponent,
         AboutSectionComponent,
         AboutComponent,
-        MainHeroComponent
+        MainHeroComponent,
+        MainMapComponent
     ],
     imports: [
         CommonModule,

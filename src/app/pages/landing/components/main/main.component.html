@@ -1,19 +1,19 @@
 <app-main-hero />
 
-<div class="container">
-    <app-map
-        [isHideDebugger]="true"
-        [isPreview]="true"
-        [routerLink]="'/' + routes.Landing.MAP"
-        [routerLinkActive]="routes.Landing.MAP"
-        [maxBounds]="maxBounds"
-        [zoom]="zoom"
-        [minZoom]="minZoom"
-    />
+<div class="page-container">
+    <div class="main_container">
+        <section class="section">
+            <app-top-pulses />
+        </section>
 
-    <app-top-pulses />
+        <section class="section">
+            <app-about-section />
+        </section>
 
-    <app-about-section />
+        <section class="section">
+            <app-main-map/>
+        </section>
 
-    <app-main-banner />
+        <app-main-banner />
+    </div>
 </div>

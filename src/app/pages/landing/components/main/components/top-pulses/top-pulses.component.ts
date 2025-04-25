@@ -2,6 +2,7 @@ import { Component, inject, OnInit } from '@angular/core';
 import { first } from 'rxjs';
 import { IPulse } from '../../../../../../shared/interfaces';
 import { PulseService } from '../../../../../../shared/services/api/pulse.service';
+import { AppRoutes } from '@/app/shared/enums/app-routes.enum';
 
 @Component({
     selector: 'app-top-pulses',
@@ -10,6 +11,7 @@ import { PulseService } from '../../../../../../shared/services/api/pulse.servic
 })
 export class TopPulsesComponent implements OnInit {
     public pulses: IPulse[] = [];
+    public AppRoutes = AppRoutes;
 
     private readonly pulseService: PulseService = inject(PulseService);
 
