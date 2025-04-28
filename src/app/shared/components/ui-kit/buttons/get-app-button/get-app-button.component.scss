@@ -36,17 +36,51 @@
 
         }
 
+        &.btn--light {
+            background: var(--white-color);
+            p {
+                color: var(--black-color);
+            }
+        }
+        &.btn--dark {
+            background: var(--black-color);
+            p {
+                color: var(--white-color);
+            }
+            svg-icon {
+                filter: invert(100%);
+            }
+        }
+        &.btn--dark:hover {
+            background: var(--white-color);
+            p {
+                color: var(--black-color);
+            }
+            svg-icon {
+                filter: invert(0%);
+            }
+        }
+        &.btn--light:hover {
+            background: var(--black-color);
+            p {
+                color: var(--white-color);
+            }
+            svg-icon {
+                filter: brightness(100);
+            }
+        }
+
  
     }
 
-    .btn:hover {
-        background: black;
-        color: white;
+    // .btn:hover {
+    //     background: black;
+    //     color: white;
 
-        svg-icon {
-            filter: brightness(100);
-        }
-    }
+    //     svg-icon {
+    //         filter: brightness(100);
+    //     }
+    // }
 }
 
 

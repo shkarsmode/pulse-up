@@ -24,7 +24,7 @@ import { SpinnerComponent } from '../../shared/components/ui-kit/spinner/spinner
 import { LoadImgPathDirective } from '../../shared/directives/load-img-path/load-img-path.directive';
 import { FormatNumberPipe } from '../../shared/pipes/format-number.pipe';
 import { AboutSectionComponent } from './components/main/components/about-section/about-section.component';
-import { MainBannerComponent } from './components/main/components/main-banner/main-banner.component';
+import { AdBannerComponent } from '@/app/shared/components/banners/ad-banner/ad-banner.component';
 import { TopPulsesComponent } from './components/main/components/top-pulses/top-pulses.component';
 import { MainComponent } from './components/main/main.component';
 import { MapPageComponent } from './components/map-page/map-page.component';
@@ -39,11 +39,15 @@ import { LandingComponent } from './landing.component';
 import { LandingRoutingModule } from './landing.routing';
 import { SocialsButtonComponent } from '../../shared/components/ui-kit/buttons/socials-button/socials-button.component';
 import { CopyButtonComponent } from '../../shared/components/ui-kit/buttons/copy-button/copy-button.component';
+import { AboutComponent } from './about/about.component';
+import { MainHeroComponent } from './components/main/components/main-hero/main-hero.component';
+import { MainMapComponent } from './components/main/components/main-map/main-map.component';
+import { NgxTooltip } from '@ngx-popovers/tooltip';
+import { MainMapGlobeComponent } from './components/main/components/main-map-globe/main-map-globe.component';
 
 @NgModule({
     declarations: [
         LandingComponent,
-        MainBannerComponent,
         MainComponent,
         MapComponent,
         PulsesComponent,
@@ -54,6 +58,10 @@ import { CopyButtonComponent } from '../../shared/components/ui-kit/buttons/copy
         MapPageComponent,
         PulseHeatmapPageComponent,
         AboutSectionComponent,
+        AboutComponent,
+        MainHeroComponent,
+        MainMapComponent,
+        MainMapGlobeComponent
     ],
     imports: [
         CommonModule,
@@ -81,10 +89,11 @@ import { CopyButtonComponent } from '../../shared/components/ui-kit/buttons/copy
         ComingSoonPopupDirective,
         FlatButtonDirective,
         FadeInDirective,
-
+        NgxTooltip,
         NgxMapboxGLModule.withConfig({
             accessToken: environment.mapboxToken,
         }),
+        AdBannerComponent,
     ],
     schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })

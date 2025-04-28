@@ -9,6 +9,9 @@ import { MapPageComponent } from './components/map-page/map-page.component';
 import { PulseHeatmapPageComponent } from './components/pulse-heatmap-page/pulse-heatmap-page.component';
 import { FooterGuard } from '../../shared/components/footer/footer.guard';
 import { FooterCleanupGuard } from '../../shared/components/footer/footerCleanup.guard';
+import { AboutComponent } from './about/about.component';
+import { HeaderGuard } from '@/app/shared/components/header/header.guard';
+import { HeaderCleanupGuard } from '@/app/shared/components/header/header-cleanup.guard';
 import { metaTagsData } from '@/assets/data/meta-tags';
 
 let Landing = AppRoutes.Landing;
@@ -22,7 +25,8 @@ const routes: Routes = [
             {
                 path: Landing.HOME,
                 component: MainComponent,
-                data: metaTagsData.home,
+                canActivate: [HeaderGuard],
+                canDeactivate: [HeaderCleanupGuard],
             },
             {
                 path: Landing.MAP,
@@ -43,7 +47,10 @@ const routes: Routes = [
                 path: Landing.HEATMAP,
                 component: PulseHeatmapPageComponent,
             },
-
+            {
+                path: Landing.ABOUT,
+                component: AboutComponent,
+            }
         ],
     },
 ];

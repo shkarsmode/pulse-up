@@ -1,0 +1,24 @@
+<section class="hero">
+    <div class="page-container">
+        <div class="hero__content">
+            <h1 class="hero__title">
+                People Should Decide What Matters – Not Algorithms
+            </h1>
+            <p class="hero__description">
+                Tap to support what matters, discover trending topics, and raise
+                awareness — anonymously.
+            </p>
+            <div class="hero_actions">
+                <app-secondary-button
+                    class="hero_app-button"
+                    (handleClick)="openStore()"
+                >
+                    Get the App
+                </app-secondary-button>
+                <app-primary-button class="hero_trending-button" [routerLink]="'/topics'">
+                    See What’s Trending
+                </app-primary-button>
+            </div>
+        </div>
+    </div>
+</section>

@@ -18,6 +18,7 @@ import { PlatformService } from './../../../../services/core/platform.service';
 })
 export class GetAppButtonComponent {
     @Input() design: 'old' | 'new' = 'new';
+    @Input() theme: 'light' | 'dark' = 'light';
 
     public links = AppLinksEnum;
 

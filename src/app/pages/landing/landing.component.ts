@@ -6,19 +6,4 @@ import { ActivatedRoute } from '@angular/router';
     templateUrl: './landing.component.html',
     styleUrl: './landing.component.scss',
 })
-export class LandingComponent {
-    public isToShowFooter: boolean = true;
-    private readonly route: ActivatedRoute = inject(ActivatedRoute);
-
-    public ngOnInit(): void {
-        this.initRouteListenerToChangeFooterVisibility();
-    }
-
-    private initRouteListenerToChangeFooterVisibility(): void {
-        this.route.data.subscribe(() => {
-            this.isToShowFooter = true;
-            if (window.location.pathname.includes('/map'))
-                this.isToShowFooter = false;
-        });
-    }
-}
+export class LandingComponent {}

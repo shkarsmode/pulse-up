@@ -1,0 +1,19 @@
+<div class="map">
+  <h2 class="map__title">Explore What’s Trending Near You</h2>
+  <app-map
+      [isHideDebugger]="true"
+      [isZoomButton]="true"
+      [zoom]="[1]"
+      [minZoom]="1" 
+      projection="globe"
+      [isToShowTooltip]="true"
+      (mapLoaded)="onMapLoaded($event)"/>
+  <div class="map__button">
+      <app-secondary-button
+          [routerLink]="'/' + AppRoutes.Landing.MAP"
+          routerLinkActive="active"
+          [fullWidth]="true">
+          Explore Map
+      </app-secondary-button>
+  </div>
+</div>
