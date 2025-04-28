@@ -13,7 +13,6 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import * as h3 from 'h3-js';
 import mapboxgl from 'mapbox-gl';
 import { debounceTime, filter, first, Subject, tap } from 'rxjs';
-import throttle from 'lodash.throttle';
 import { PulseService } from '../../../../shared/services/api/pulse.service';
 import { HeatmapService } from '../../../../shared/services/core/heatmap.service';
 import { MapLocationService } from '../../../../shared/services/core/map-location.service';
@@ -39,6 +38,7 @@ export class MapComponent implements OnInit {
     @Input() public isRounded: boolean = false;
     @Input() public zoom: [number] = [1];
     @Input() public minZoom: number = 1;
+    @Input() public isToEnableZoom: boolean = true;
     @Input() public maxBounds: mapboxgl.LngLatBoundsLike = [
         [-180, -80],
         [180, 85],
@@ -171,10 +171,11 @@ export class MapComponent implements OnInit {
         // this.updateHeatmapForMap();
     };
 
-    public handleMoveEnd = throttle(() => {
+    public handleMoveEnd = () => {
+        if (this.isGlobeProjection) return;
         this.updateH3Pulses();
         this.updateHeatmapForMap();
-    }, this.isGlobeProjection ? 2000 : 0, );
+    };
 
     private addInitialLayersAndSourcesToDisplayData(): void {
         const sourceId = 'h3-polygons';
@@ -238,7 +239,6 @@ export class MapComponent implements OnInit {
         const NELng = Math.min(_ne.lng, 180);
         const SWLat = _sw.lat;
         const SWLng = Math.max(_sw.lng, -180);
-
         this.pulseService
             .getH3PulsesForMap(NELat, NELng, SWLat, SWLng, resolution)
             .pipe(
@@ -276,7 +276,9 @@ export class MapComponent implements OnInit {
             )
             .subscribe((votes) => {
                 this.heatMapData$.next(votes);
-                this.updateCurrentLocationAreaName();
+                if (this.isLocationName) {
+                    this.updateCurrentLocationAreaName();
+                }
             });
     }
 

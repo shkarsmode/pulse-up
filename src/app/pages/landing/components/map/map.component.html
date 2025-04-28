@@ -11,7 +11,8 @@
     [projection]="projection"
     (load)="onMapLoad($event)"
     (zoomEnd)="handleZoomEnd()"
-    (moveEnd)="handleMoveEnd()">
+    (moveEnd)="handleMoveEnd()"
+    [scrollZoom]="isToEnableZoom">
     <!-- <mgl-layer 
         id="heatmap-layer" 
         type="heatmap" 

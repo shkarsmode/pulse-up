@@ -19,3 +19,10 @@
     }
   }
 }
+
+.map__globe {
+  @include media-xs {
+    margin-left: -20px;
+    margin-right: -20px;
+  }
+}
