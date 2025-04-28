@@ -1,81 +1,99 @@
 @if (pulse) {
-    <div class="pulse"
-        fadeIn [childrenFadeIn]="true">
-
-        <div class="pulse__header">
-            <img
-                class="pulse__header-logo"
-                [src]="pulse.icon"
-                alt="pulse icon"
-                appLoadImgPath>
-            <div class="pulse__header-title">
-                <h2>{{ pulse.title }}</h2>
-                <div>
-                    <svg-icon src="assets/svg/author.svg" />
-                    {{ pulse.author.name }}
-                </div>
+<div class="pulse" fadeIn [childrenFadeIn]="true">
+    <div class="pulse__header">
+        <img
+            class="pulse__header-logo"
+            [src]="pulse.icon"
+            alt="pulse icon"
+            appLoadImgPath
+        />
+        <div class="pulse__header-title">
+            <h2>{{ pulse.title }}</h2>
+            <div>
+                <svg-icon src="assets/svg/author.svg" />
+                {{ pulse.author.name }}
             </div>
         </div>
-    
-        <div class="pulse__stats">
+    </div>
 
-            <div class="pulse__stats-wrap">
-                <div>
-                    <span class="pulse__stats-title">Fans</span>
-                    <svg-icon src="assets/svg/fans.svg" />
-                    <span class="pulse__stats-count">{{ pulse.stats.totalUniqueUsers | formatNumber }}</span>
-                </div>
-                <div>
-                    <span class="pulse__stats-title">Lifetime</span>
-                    <svg-icon src="assets/svg/pulse.svg" />
-                    <span class="pulse__stats-count">{{ pulse.stats.totalVotes | formatNumber }}</span>
-                </div>
-                <div>
-                    <span class="pulse__stats-title">24 hours</span>
-                    <svg-icon src="assets/svg/pulse_time_icon.svg" />
-                    <span class="pulse__stats-count">{{ pulse.stats.lastDayVotes | formatNumber }}</span>
-                </div>
+    <div class="pulse__stats">
+        <div class="pulse__stats-wrap">
+            <div>
+                <span class="pulse__stats-title">Fans</span>
+                <svg-icon src="assets/svg/fans.svg" />
+                <span class="pulse__stats-count">{{
+                    pulse.stats?.totalUniqueUsers || 0 | formatNumber
+                }}</span>
             </div>
+            <div>
+                <span class="pulse__stats-title">Lifetime</span>
+                <svg-icon src="assets/svg/pulse.svg" />
+                <span class="pulse__stats-count">{{
+                    pulse.stats?.totalVotes || 0 | formatNumber
+                }}</span>
+            </div>
+            <div>
+                <span class="pulse__stats-title">24 hours</span>
+                <svg-icon src="assets/svg/pulse_time_icon.svg" />
+                <span class="pulse__stats-count">{{
+                    pulse.stats?.lastDayVotes || 0 | formatNumber
+                }}</span>
+            </div>
+        </div>
 
-            <div class="pulse__buttons">
-                <app-primary-button 
-                    class="pulse__stats-button"
-                    openGetAppPopup >
-                    <svg-icon src="assets/svg/heart.svg" />
-                    <span>Tap to Pulse</span>
-                    <svg-icon src="assets/svg/logo/logo-v2.svg" heartBeatAnimation />
-                </app-primary-button>
-                <button flatButton openComingSoonPopup>
+        <div class="pulse__buttons">
+            <app-primary-button class="pulse__stats-button" openGetAppPopup>
+                <svg-icon src="assets/svg/heart.svg" />
+                <span>Tap to Pulse</span>
+                <svg-icon
+                    src="assets/svg/logo/logo-v2.svg"
+                    heartBeatAnimation
+                />
+            </app-primary-button>
+            <app-menu [content]="menuContent">
+                <button flatButton>
                     <svg-icon src="assets/svg/icon_share.svg"></svg-icon>
                 </button>
-            </div>
-            
-        </div>
-
-        <hr class="divider">
-
-        <div class="pulse__info">
-            <div class="pulse__info-description">
-                <div 
-                    class="pulse__info-description-text"
-                    [class.pulse__info-description-text--read-more]="isReadMore"
-                    #description
-                    [innerHTML]="pulse.description">
+            </app-menu>
+            <ng-template #menuContent>
+                <div class="pulse__socials">
+                    <app-copy-button
+                        link="{{ pulseUrl }}"
+                        (handleClick)="onCopyLink($event)"
+                    />
+                    <app-socials-button [variant]="'facebook'" />
+                    <app-socials-button [variant]="'x'" />
+                    <app-socials-button [variant]="'email'" />
                 </div>
-                @if (!isReadMore) {
-                    <div 
-                        class="pulse__info-description-read-more"
-                        (click)="onReadMore()">
-                        Read More
-                    </div>
-                }
+            </ng-template>
+        </div>
+    </div>
+
+    <hr class="divider" />
+
+    <div class="pulse__info">
+        <div class="pulse__info-description">
+            <div
+                class="pulse__info-description-text"
+                [class.pulse__info-description-text--read-more]="isReadMore"
+                #description
+                [innerHTML]="pulse.description"
+            ></div>
+            @if (!isReadMore) {
+            <div
+                class="pulse__info-description-read-more"
+                (click)="onReadMore()"
+            >
+                Read More
             </div>
-            <div class="pulse__info-keywords">
-                @for (keyword of pulse.keywords; track keyword) {
-                    <div>{{ keyword }}</div>
-                }
-            </div>
-<!--     
+            }
+        </div>
+        <div class="pulse__info-keywords">
+            @for (keyword of pulse.keywords; track keyword) {
+            <div>{{ keyword }}</div>
+            }
+        </div>
+        <!--     
             <div class="pulse__info-links">
                 <svg-icon src="assets/svg/link.svg" />
                 Official team website
@@ -84,46 +102,41 @@
                 <svg-icon src="assets/svg/link.svg" />
                 Game schedule
             </div> -->
-    
-            <div class="pulse__info-activity">
-                Active from Sept 10, 2024, to Sept 13, 2024
-            </div>
-            
-            <div class="pulse__info-media">
-                <img 
-                    [src]="pulse.picture" 
-                    [alt]="pulse.title" 
-                    appLoadImgPath>
 
-                <div class="pulse__info-media__map"
-
-                    [routerLink]="'/topic/'+pulse.id+'/heatmap'">
-
-                    <div class="pulse__info-media__map-clickbait">
-                        <svg-icon src="assets/svg/time-icon-large.svg" />
-                        <h3>View Heatmap</h3>
-                    </div>
-
-                    <app-map
-                        [pulseId]="pulse.id"
-                        [isToShowHeatmap]="true" 
-                        [isHideDebugger]="true"/>
-                </div>
-                
-            </div>
-            
+        <div class="pulse__info-activity">
+            Active from Sept 10, 2024, to Sept 13, 2024
         </div>
 
-        <h2 class="pulse__slider-title">You may also like</h2>
-        <app-slider>
-            @for (pulse of topPulses; track pulse.id; let i = $index) {
-                <li class="splide__slide">
-                    <app-top-pulse-card
-                        [index]="i + 1"
-                        [pulse]="pulse" />
-                </li>
-            }
-        </app-slider>
-        
+        <div class="pulse__info-media">
+            <img [src]="pulse.picture" [alt]="pulse.title" appLoadImgPath />
+
+            <div
+                class="pulse__info-media__map"
+                [routerLink]="'/topic/' + pulse.id + '/heatmap'"
+            >
+                <div class="pulse__info-media__map-clickbait">
+                    <svg-icon src="assets/svg/time-icon-large.svg" />
+                    <h3>View Heatmap</h3>
+                </div>
+
+                <app-map
+                    [pulseId]="pulse.id"
+                    [isToShowHeatmap]="true"
+                    [isHideDebugger]="true"
+                    [zoom]="[1.5]"
+                    [minZoom]="1.5"
+                />
+            </div>
+        </div>
     </div>
+
+    <h2 class="pulse__slider-title">You may also like</h2>
+    <app-slider>
+        @for (pulse of topPulses; track pulse.id; let i = $index) {
+        <li class="splide__slide">
+            <app-top-pulse-card [index]="i + 1" [pulse]="pulse" />
+        </li>
+        }
+    </app-slider>
+</div>
 }

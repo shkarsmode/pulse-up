@@ -1,0 +1,25 @@
+.socials-btn {
+    width: 42px;
+    height: 42px;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.socials-btn_facebook {
+    background-color: #1877F2;
+}
+.socials-btn_x {
+    background-color: #000000;
+}
+.socials-btn_email {
+    background-color: #FF961C;
+}
+.socials-btn__icon {
+    display: flex;
+    svg {
+        width: 20px;
+        height: 20px;
+        color: #FFFFFF;
+    }
+}

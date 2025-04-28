@@ -1,3 +1,5 @@
+@use "../../../../styles/mixins" as *;
+
 :host {
     display: block;
     padding: 20px;
@@ -5,19 +7,22 @@
 }
 
 footer {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin: 0 auto;
-
     width: 100%;
     max-width: 1170px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: calc(50% - 62px) 124px calc(50% - 62px);
+    align-items: center;
 
+    @media screen and (max-width: 850px) {
+        grid-template-columns: 100%;
+        row-gap: 16px;
+    }
 }
 
 
 
-.right-side {
+.left-side {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -26,20 +31,29 @@ footer {
     width: auto;
 }
 
+.right-side {
+    @include text-14px;
+    text-align: right;
+    color: var(--dark-grey-color);
+
+    @media screen and (max-width: 850px) {
+        text-align: center;
+    }
+}
+
 ul {
     display: flex;
-    justify-content: space-between;
     gap: 40px;
     width: 100%;
     flex-wrap: wrap;
 
-    li {
-        font-size: 16px;
-        font-weight: 400;
-        color: var(--black-color);
+    @media screen and (max-width: 850px) {
+        justify-content: center;
+    }
 
-        // &:last-child {
-        // }
+    li {
+        @include text-14px;
+        color: var(--black-color);
 
         a {
             position: relative;
@@ -71,6 +85,13 @@ ul {
     font-weight: 400;
     font-size: 14px;
     opacity: .4;
+}
+
+.footer-logo {
+    @media screen and (max-width: 850px) {
+        display: flex;
+        justify-content: center;
+    }
 }
 
 .footer-logo_desctop {

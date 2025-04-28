@@ -1,13 +1,7 @@
 
 <footer>
-    <a class="footer-logo_desctop" routerLink="/">
-        <svg-icon src="assets/svg/logo.svg" />
-    </a>
-    <a class="footer-logo_mobile" routerLink="/">
-        <svg-icon src="assets/svg/logo-mobile.svg" />
-    </a>
     
-    <div class="right-side">
+    <div class="left-side">
         <ul>
             <li>
                 <a [routerLink]="'/' + CommunityRoutes.TERMS" [routerLinkActive]="CommunityRoutes.TERMS">
@@ -26,6 +20,17 @@
             </li>
         </ul>
     </div>
+
+    <div class="footer-logo">
+        <a class="footer-logo_desctop" routerLink="/">
+            <svg-icon src="assets/svg/logo.svg" />
+        </a>
+        <a class="footer-logo_mobile" routerLink="/">
+            <svg-icon src="assets/svg/logo-mobile.svg" />
+        </a>
+    </div>
+
+    <small class="right-side">All right reserved</small>
 
     @if (isToShowVersionOfApp) {
         <div class="version">

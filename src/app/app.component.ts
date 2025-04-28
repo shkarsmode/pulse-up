@@ -3,6 +3,8 @@ import { combineLatest, take } from 'rxjs';
 import { AuthenticationService } from './shared/services/api/authentication.service';
 import { PulseService } from './shared/services/api/pulse.service';
 import { LoadingService } from './shared/services/core/loading.service';
+import { MetadataService } from './shared/services/core/metadata.service';
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
     selector: 'app-root',
@@ -17,17 +19,20 @@ import { LoadingService } from './shared/services/core/loading.service';
 })
 export class AppComponent {
     public isLoading: boolean = false;
+    private router: Router = inject(Router);
+    private activatedRoute: ActivatedRoute = inject(ActivatedRoute);
     private readonly authenticationService: AuthenticationService = inject(
         AuthenticationService
     );
     private readonly pulseService: PulseService = inject(
         PulseService
     );
-
     private readonly loadingService: LoadingService = inject( LoadingService);
+    private readonly metadataService: MetadataService = inject(MetadataService);
 
     public ngOnInit() {
         this.sendInitialQueries();
+        this.metadataService.listenToRouteChanges(this.router, this.activatedRoute);
     }
 
     private sendInitialQueries(): void {

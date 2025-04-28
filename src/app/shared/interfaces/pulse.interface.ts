@@ -10,13 +10,16 @@ export interface IPulse {
     startsAt: string;
     endsAt: string;
     location: Location;
-    stats: Stats;
+    stats?: Stats;
     picture: string;
+    shareKey: string;
+    category: string;
 }
 
 interface Author {
     id: string;
     name: string;
+    username: string;
     picture: string;
     createdAt: string;
     lastVotedAt: string;

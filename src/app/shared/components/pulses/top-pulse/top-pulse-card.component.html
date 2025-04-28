@@ -1,31 +1,33 @@
 <div class="top">
     <div class="logo">
+        @if (index !== undefined) {
         <div class="budge">
             @if (index === 1) {
-                <svg-icon src="assets/svg/cup.svg"/>
+            <svg-icon src="assets/svg/cup.svg" />
             }
             {{ index }}
         </div>
-        <img 
-            [src]="pulse.icon" 
-            alt="trump" 
-            appLoadImgPath>
+        }
+        <img
+            [src]="pulse.icon"
+            alt="topic"
+            appLoadImgPath />
     </div>
     <div class="stats">
         <div>
             <span class="title">Fans</span>
             <svg-icon src="assets/svg/fans.svg" />
-            <span class="count">{{ pulse.stats.totalUniqueUsers | formatNumber }}</span>
+            <span class="count">{{ pulse.stats?.totalUniqueUsers || 0 | formatNumber }}</span>
         </div>
         <div>
             <span class="title">Lifetime</span>
             <svg-icon src="assets/svg/pulse.svg" />
-            <span class="count">{{ pulse.stats.totalVotes | formatNumber }}</span>
+            <span class="count">{{ pulse.stats?.totalVotes || 0 | formatNumber }}</span>
         </div>
         <div>
             <span class="title">24 hour</span>
             <svg-icon src="assets/svg/pulse_time_icon.svg" />
-            <span class="count">{{ pulse.stats.lastDayVotes | formatNumber }}</span>
+            <span class="count">{{ pulse.stats?.lastDayVotes || 0 | formatNumber }}</span>
         </div>
     </div>
 </div>

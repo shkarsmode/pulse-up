@@ -176,6 +176,7 @@
 
         &-keywords {
             display: flex;
+            flex-wrap: wrap;
             gap: 8px;
             margin-bottom: 11px;
 
@@ -277,6 +278,11 @@
     ::ng-deep .map-container {
         height: 180px;
         margin-top: 0px !important;
+    }
+
+    &__socials {
+        display: flex;
+        column-gap: 12px;
     }
 
 }

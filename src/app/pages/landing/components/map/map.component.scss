@@ -82,11 +82,14 @@
 
 .map-container {
     height: 700px;
-    max-width: 1170px;
+    // max-width: 1170px;
     width: 100%;
     overflow: hidden;
     border-radius: 20px;
     cursor: grab;
+}
+.map-container_rounded {
+    border-radius: 20px;
 }
 
 ::ng-deep .mapboxgl-control-container {
@@ -361,4 +364,25 @@
         scale: .8;
     }
 
+}
+
+.marker-button {
+    display: flex;
+    padding: 0;
+    cursor: pointer;
+}
+
+.map-tooltip {
+    width: 323px;
+    min-height: 195px;
+    border-radius: 10px;
+    background-color: var(--white-color);
+
+    &.map-tooltip--loading {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 1px solid var(--light-grey-color);
+        box-shadow: 0px 3px 10px 0px rgba(0, 0, 0, 0.12);
+    }
 }

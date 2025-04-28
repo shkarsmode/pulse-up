@@ -1,11 +1,11 @@
-@import url('./_reset.scss');
-@import url('./_fonts.scss');
-@import url('./_variables.scss');
-@import url('./_materials.scss');
-@import url('./animations/index.scss');
-@import url('./_uikit.scss');
-@import 'mapbox-gl/dist/mapbox-gl.css';
-@import '@splidejs/splide/css';
+@import url("./_reset.scss");
+@import url("./_fonts.scss");
+@import url("./_variables.scss");
+@import url("./_materials.scss");
+@import url("./animations/index.scss");
+@import url("./_uikit.scss");
+@import "mapbox-gl/dist/mapbox-gl.css";
+@import "@splidejs/splide/css";
 
 *,
 html {
@@ -17,7 +17,7 @@ html {
 }
 
 body {
-    font-family: 'SFProText', sans-serif;
+    font-family: "SFProText", sans-serif;
     height: 100%;
     // padding: 30px 35px;
     color: var(--black-color);
@@ -51,7 +51,7 @@ input,
 select,
 textarea,
 input {
-    font-family: 'SFProText', sans-serif;
+    font-family: "SFProText", sans-serif;
 }
 
 h1 {
@@ -75,9 +75,35 @@ h3 {
     width: 100%;
 }
 
-@media screen and (max-width: 800px) {
+.page-container {
+    width: 100%;
+    max-width: 1070px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
 
-    .hide-footer app-footer {
-        display: none;
+.visualy-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    border: 0;
+}
+
+.hide-footer app-footer {
+    display: none;
+}
+.header-transparent app-header {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 100;
+
+    @media screen and (max-width: 760px) {
+        background-color: var(--white-color);
     }
 }

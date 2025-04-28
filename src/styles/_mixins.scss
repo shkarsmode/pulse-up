@@ -64,3 +64,49 @@
     font-weight: 400;
     line-height: 14.32px;
 }
+
+@mixin media-4xl {
+    @media screen and (max-width: 1599px) {
+        @content;
+    }
+}
+@mixin media-3xl {
+    @media screen and (max-width: 1399px) {
+        @content;
+    }
+}
+@mixin media-2xl {
+    @media screen and (max-width: 1199px) {
+        @content;
+    }
+}
+@mixin media-xl {
+    @media screen and (max-width: 1024px) {
+        @content;
+    }
+}
+@mixin media-lg {
+    @media screen and (max-width: 991px) {
+        @content;
+    }
+}
+@mixin media-md {
+    @media screen and (max-width: 768px) {
+        @content;
+    }
+}
+@mixin media-sm {
+    @media screen and (max-width: 576px) {
+        @content;
+    }
+}
+@mixin media-xs {
+    @media screen and (max-width: 480px) {
+        @content;
+    }
+}
+@mixin media-2xs {
+    @media screen and (max-width: 375px) {
+        @content;
+    }
+}

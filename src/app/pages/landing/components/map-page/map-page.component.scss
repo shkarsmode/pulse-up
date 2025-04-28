@@ -7,8 +7,8 @@
 
 .map-page {
     width: 100%; 
-    max-width: 1170px;
-    height: 770px;
+    // max-width: 1170px;
+    // height: 770px;
     margin: 0 auto;
 
     position: relative;
@@ -16,29 +16,23 @@
 
 
 
+:host {
+    padding: 0;
+}
 
-@media screen and (max-width: 800px) {
+app-map {
+    height: 100%;
+}
 
-    :host {
-        padding: 0;
-    }
+app-map::ng-deep .map-container {
+    padding: 0;
+    border-radius: 0px;
+    width: 100vw;
+    height: calc(100%);
+}
 
-    app-map {
-        height: 100%;
-    }
-
-    app-map::ng-deep .map-container {
-        padding: 0;
-        border-radius: 0px;
-        width: 100vw;
-        height: calc(100%);
-    }
-
-    .map-page {
-        height: calc(100%);
-    }
-
-
+.map-page {
+    height: calc(100%);
 }
 
 //this is because on the same screen size header becomes 80px height

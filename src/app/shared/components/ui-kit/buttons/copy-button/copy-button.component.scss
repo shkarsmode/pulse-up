@@ -1,0 +1,17 @@
+.copy-button {
+    width: 42px;
+    height: 42px;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #6b7280;
+}
+.copy-button__icon {
+    display: flex;
+    svg {
+        width: 20px;
+        height: 20px;
+        color: #ffffff;
+    }
+}

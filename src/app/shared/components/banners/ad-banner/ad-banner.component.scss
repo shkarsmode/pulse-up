@@ -4,102 +4,109 @@
     position: relative;
     display: flex;
     overflow: hidden;
-    height: 236px;
-    max-width: 570px;
+    height: 320px;
     width: 100%;
+    border-radius: 20px;
+    background-color: #F5EDFE;
 }
 
 .ad-banner__info {
+    max-width: 370px;
+    height: 100%;
     display: flex;
     flex-direction: column;
-    gap: 20px;
-    height: 100%;
     justify-content: center;
-    margin-left: 30px;    
-    max-width: 295px;
-
+    margin-left: 100px;    
+    row-gap: 40px;
     z-index: 1;
+
+    @include media-lg {
+        margin-left: 24px;
+    }
 }
 
 h1 {
-    font-size: 20px;
-    font-weight: 600;
-    line-height: 23.87px;
-    text-align: left;
-    opacity: .8;
+    @include title-32px;
+
+    @include media-xs {
+        @include link-18px;
+        text-align: center;
+    }
 }
 
 img {
     position: absolute;
     width: 100%;
     height: 100%;
+    object-fit: cover;
+    object-position: right center;
 }
 
-#ad-banner_mobile {
-    display: none;
-}
+// #ad-banner_mobile {
+//     display: none;
+// }
 
-@media screen and (max-width: 600px) {
+// @media screen and (max-width: 600px) {
 
-    :host::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        z-index: -1; /* Place behind the content */
-        background: linear-gradient(126.06deg, #7700EE 18.37%, rgba(119, 0, 238, 0.3) 74.42%);
-        opacity: 0.2; /* Set the opacity for the background */
-    }
+//     :host::before {
+//         content: '';
+//         position: absolute;
+//         top: 0;
+//         left: 0;
+//         right: 0;
+//         bottom: 0;
+//         z-index: -1; /* Place behind the content */
+//         background: linear-gradient(126.06deg, #7700EE 18.37%, rgba(119, 0, 238, 0.3) 74.42%);
+//         opacity: 0.2; /* Set the opacity for the background */
+//     }
 
-    #ad-banner_mobile {
-        display: block;
-    }
+//     #ad-banner_mobile {
+//         display: block;
+//     }
     
-    #ad-banner_desktop {
-        display: none;
-    }
+//     #ad-banner_desktop {
+//         display: none;
+//     }
 
-    :host {
-        overflow: hidden;
-    }
+//     :host {
+//         overflow: hidden;
+//     }
 
-    img {
-        position: relative;
-        width: 161px;
-        rotate: 11deg;
-        height: 335px;
-        transform: translate(25px, 15px);
-    }
+//     img {
+//         position: relative;
+//         width: 161px;
+//         rotate: 11deg;
+//         height: 335px;
+//         transform: translate(25px, 15px);
+//     }
 
-    h1 {
-        @include link-18px;
-        width: 181px;
-    }
+//     h1 {
+//         @include link-18px;
+//         width: 181px;
+//     }
 
-    app-get-app-button::ng-deep button > span {
-        font-size: 14px !important;
-    }
+//     app-get-app-button::ng-deep button > span {
+//         font-size: 14px !important;
+//     }
 
-    :host {
-        height: 211px;
-        border-radius: 20px;
-    }
+//     :host {
+//         height: 211px;
+//         border-radius: 20px;
+//     }
 
-}
+// }
 
-@media screen and (max-width: 400px) {
-    img {
-        transform: translate(10px, 15px);
-    }
-}
+// @media screen and (max-width: 400px) {
+//     img {
+//         transform: translate(10px, 15px);
+//     }
+// }
 
-@media screen and (max-width: 350px) {
+// @media screen and (max-width: 350px) {
 
-    h1 {
-        width: 165px;
-    }
+//     h1 {
+//         width: 165px;
+//     }
 
-}
+// }
 

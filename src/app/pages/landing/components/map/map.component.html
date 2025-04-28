@@ -1,15 +1,14 @@
 <mgl-map
     class="map-container"
+    [class.map-container_rounded]="isRounded"
     [style]="mapboxStylesUrl"
     [center]="center"
     [interactive]="!isPreview"
-    [maxBounds]="[
-        [-164, -85],
-        [163, 85]
-    ]"
-    [zoom]="[2.8]"
-    [minZoom]="2.8"
+    [maxBounds]="maxBounds"
+    [zoom]="zoom"
+    [minZoom]="minZoom"
     [maxZoom]="10"
+    [projection]="projection"
     (load)="onMapLoad($event)"
     (zoomEnd)="handleZoomEnd()"
     (moveEnd)="handleMoveEnd()">
@@ -29,157 +28,176 @@
     </mgl-layer> -->
 
     @for (marker of markers; track marker.h3Index) {
-        <mgl-marker [lngLat]="[marker.lng, marker.lat]">
-            <img
+    <mgl-marker [lngLat]="[marker.lng, marker.lat]">
+        @if (isToShowTooltip) {
+            <button
+                placement="bottom"
+                class="marker-button"
+                ngxTooltip
+                [template]="tooltip"
+                (hideEnd)="onTooltipHide()"
+                (mouseenter)="onMarkerHover(marker)"
+                (click)="onMarkerClick(marker)"
+                aria-label="show pulse details">
+                <img
                 [src]="marker.icon"
-                alt="icon" 
-                appLoadImgPath/>
-        </mgl-marker>
-    }
-
-    @for (weight of weights; track weight.h3Index) {
-        <mgl-marker [lngLat]="[weight.lng, weight.lat]" className="weight-marker">
-            <span class="weight-marker__text">{{ weight.value | formatNumber }}</span>
-        </mgl-marker>
+                alt="icon"
+                appLoadImgPath />
+            </button>
+        } @else {
+            <img
+            [src]="marker.icon"
+            alt="icon"
+            appLoadImgPath />
+        }
+    </mgl-marker>
+    } @for (weight of weights; track weight.h3Index) {
+    <mgl-marker
+        [lngLat]="[weight.lng, weight.lat]"
+        className="weight-marker">
+        <span class="weight-marker__text">{{ weight.value | formatNumber }}</span>
+    </mgl-marker>
     }
 </mgl-map>
 
-
 @if (isToShoDebugger) {
-    <div class="debugger" [class.hidden]="isHideDebugger">
-        <div class="hide" (click)="isHideDebugger = !isHideDebugger">
-            @if (isHideDebugger) {
-                Show
-            } @else {
-                Hide
-            }
-        </div>
-        @if (!isHideDebugger) {
-            <div>
-                <span>Zoom</span>
-                <span>{{ map?.getZoom() | number: '0.1-4' }}</span>
-            </div>
-            <div>
-                <span>Resolution</span>
-                <span>{{ getResolutionBasedOnMapZoom() }}</span>
-            </div>
-            <div>
-                <span>Steps for h3 cells</span>
-                <span>{{ getStepBasedOnZoom() }}</span>
-            </div>
-            <div>
-                <span>Opacity for cells</span>
-                <span>0.15</span>
-            </div>
-            <div>
-                <span>Count of markers</span>
-                <span>{{ markers.length }}</span>
-            </div>
-            <div>
-                <span>Cells border width</span>
-                <span>1.5</span>
-            </div>
-            <div>
-                <span>Version of h3-js</span>
-                <span>^3.3.0</span>
-            </div>
-            <div>
-                <span>Is for preview map</span>
-                <span>{{ isPreview }}</span>
-            </div>
-            <div>
-                <span>Center (lng/lat)</span>
-                <span>
-                    {{ 
-                        map?.getCenter()?.lng | number: '0.1-2'
-                    }} /
-                    {{
-                        map?.getCenter()?.lat | number: '0.1-2'
-                    }}
-                </span>
-            </div>
-    
-            <div>
-                <span>Heatmap data points count</span>
-                <span>{{ heatmapDataPointsCount }}</span>
-            </div>
-    
-            <div>
-                <span>Heatmap depth</span>
-                <span class="restricted">1-3</span>
-                <span>
-                    <app-input 
-                        [(ngModel)]="pulseService.currentHeatmapDepth"
-                        (onInput)="onChangeHeatmapSettings()"
-                        max="3"
-                        min="1"
-                        inputType="number" />
-                </span>
-            </div>
-    
-            <div>
-                <span>Heatmap Intensity</span>
-                <span>
-                    <app-input 
-                        [(ngModel)]="heatmapIntensity"
-                        (onInput)="onChangeHeatmapSettings()"/>
-                </span>
-            </div>
-    
-            <div>
-                <span>Toggle h3 cells</span>
-                <span>
-                    <app-secondary-button (handleClick)="toggleH3CellsVisibility()">
-                        {{ isToShowH3 ? 'Off' : 'On' }}
-                    </app-secondary-button>
-                </span>
-            </div>
-            
-            <div>
-                <span>Toggle heatmap</span>
-                <span>
-                    <app-secondary-button (handleClick)="toggleHeatmapVisibility()">
-                        {{ isToShowHeatmap ? 'Off' : 'On' }}
-                    </app-secondary-button>
-                </span>
-            </div>
-        }
+<div
+    class="debugger"
+    [class.hidden]="isHideDebugger">
+    <div
+        class="hide"
+        (click)="isHideDebugger = !isHideDebugger">
+        @if (isHideDebugger) { Show } @else { Hide }
     </div>
-}
+    @if (!isHideDebugger) {
+    <div>
+        <span>Zoom</span>
+        <span>{{ map?.getZoom() | number : "0.1-4" }}</span>
+    </div>
+    <div>
+        <span>Resolution</span>
+        <span>{{ getResolutionBasedOnMapZoom() }}</span>
+    </div>
+    <div>
+        <span>Steps for h3 cells</span>
+        <span>{{ getStepBasedOnZoom() }}</span>
+    </div>
+    <div>
+        <span>Opacity for cells</span>
+        <span>0.15</span>
+    </div>
+    <div>
+        <span>Count of markers</span>
+        <span>{{ markers.length }}</span>
+    </div>
+    <div>
+        <span>Cells border width</span>
+        <span>1.5</span>
+    </div>
+    <div>
+        <span>Version of h3-js</span>
+        <span>^3.3.0</span>
+    </div>
+    <div>
+        <span>Is for preview map</span>
+        <span>{{ isPreview }}</span>
+    </div>
+    <div>
+        <span>Center (lng/lat)</span>
+        <span>
+            {{ map?.getCenter()?.lng | number : "0.1-2" }} /
+            {{ map?.getCenter()?.lat | number : "0.1-2" }}
+        </span>
+    </div>
 
+    <div>
+        <span>Heatmap data points count</span>
+        <span>{{ heatmapDataPointsCount }}</span>
+    </div>
+
+    <div>
+        <span>Heatmap depth</span>
+        <span class="restricted">1-3</span>
+        <span>
+            <app-input
+                [(ngModel)]="pulseService.currentHeatmapDepth"
+                (onInput)="onChangeHeatmapSettings()"
+                max="3"
+                min="1"
+                inputType="number" />
+        </span>
+    </div>
+
+    <div>
+        <span>Heatmap Intensity</span>
+        <span>
+            <app-input
+                [(ngModel)]="heatmapIntensity"
+                (onInput)="onChangeHeatmapSettings()" />
+        </span>
+    </div>
+
+    <div>
+        <span>Toggle h3 cells</span>
+        <span>
+            <app-secondary-button (handleClick)="toggleH3CellsVisibility()">
+                {{ isToShowH3 ? "Off" : "On" }}
+            </app-secondary-button>
+        </span>
+    </div>
+
+    <div>
+        <span>Toggle heatmap</span>
+        <span>
+            <app-secondary-button (handleClick)="toggleHeatmapVisibility()">
+                {{ isToShowHeatmap ? "Off" : "On" }}
+            </app-secondary-button>
+        </span>
+    </div>
+    }
+</div>
+}
 
 <!-- FEATURES -->
 
 @if (isPreview) {
-    <div class="expand">
-        <svg-icon src="assets/svg/extend.svg"/>
+<div class="expand">
+    <!-- <svg-icon src="assets/svg/extend.svg" /> -->
+</div>
+} @if (isSearch) {
+<app-input-search
+    id="search"
+    [isAddIcon]="false"
+    openComingSoonPopup />
+} @if (isLocationName) {
+<div id="map-area-name">
+    <svg-icon [src]="'assets/svg/location.svg'" />
+    <h3>{{ mapLocationService.mapLocationFilter }}</h3>
+</div>
+} @if (isZoomButton) {
+<div class="zoom-button">
+    <button
+        class="zoom-button__icon"
+        (click)="zoomMapClick('+')"></button>
+
+    <button
+        class="zoom-button__icon"
+        (click)="zoomMapClick('-')"></button>
+</div>
+}
+
+<!-- TOOLTIP -->
+<ng-template #tooltip>
+    <div
+        class="map-tooltip"
+        [class.map-tooltip--loading]="!tooltipData">
+        @if (tooltipData) {
+            <app-top-pulse-card [pulse]="tooltipData" />
+        } @else {
+            <app-spinner />
+        }
     </div>
-}
-
-@if (isSearch) {
-    <app-input-search 
-        id="search" 
-        [isAddIcon]="false" 
-        openComingSoonPopup />
-}
-
-
-@if (isLocationName) {
-    <div id="map-area-name">
-        <svg-icon [src]="'assets/svg/location.svg'"/>
-        <h3>{{ mapLocationService.mapLocationFilter }}</h3>
-    </div>
-}
-
-@if (isZoomButton) {
-    <div class="zoom-button">
-        <button class="zoom-button__icon"
-            (click)="zoomMapClick('+')"></button>
-
-        <button class="zoom-button__icon"
-            (click)="zoomMapClick('-')"></button>
-    </div>
-}
+</ng-template>
 
 <!-- <div
     class="extend"
