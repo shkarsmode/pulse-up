@@ -1,5 +1,4 @@
 import { Component } from '@angular/core';
-import throttle from 'lodash.throttle';
 import { AppRoutes } from '@/app/shared/enums/app-routes.enum';
 
 @Component({
@@ -24,45 +23,30 @@ export class MainMapGlobeComponent {
   public onMapLoaded(map: mapboxgl.Map) {
     this.map = map;
     this.spinGlobe();
-    // Pause spinning on interaction
-    this.map.on('mousedown', () => {
+
+    // Pause spinning on user interaction (mouse or touch)
+    const onUserInteractionStart = () => {
       this.userInteracting = true;
-    });
+    };
 
-    // Restart spinning the globe when interaction is complete
-    this.map.on('mouseup', () => {
+    const onUserInteractionEnd = () => {
       this.userInteracting = false;
       this.spinGlobe();
-    });
+    };
 
-    // These events account for cases where the mouse has moved
-    // off the map, so 'mouseup' will not be fired.
-    this.map.on('dragend', () => {
-      this.userInteracting = false;
-      this.spinGlobe();
-    });
-    this.map.on('pitchend', () => {
-      this.userInteracting = false;
-      this.spinGlobe();
-    });
-    this.map.on('rotateend', () => {
-      this.userInteracting = false;
-      this.spinGlobe();
-    });
+    this.map.on('mousedown', onUserInteractionStart);
+    this.map.on('touchstart', onUserInteractionStart);
 
-    // When animation is complete, start spinning if there is no ongoing interaction
+    this.map.on('mouseup', onUserInteractionEnd);
+    this.map.on('touchend', onUserInteractionEnd);
+
+    this.map.on('dragend', onUserInteractionEnd);
+    this.map.on('pitchend', onUserInteractionEnd);
+    this.map.on('rotateend', onUserInteractionEnd);
+
     this.map.on('moveend', () => {
       this.spinGlobe();
     });
-
-    this.map.on('zoomstart', () => {
-      this.userInteracting = true;
-    });
-
-    this.map.on('zoomend', throttle(() => {
-      this.userInteracting = false;
-      this.spinGlobe();
-    }, 300, { leading: true, trailing: false }));
   }
 
   spinGlobe() {
