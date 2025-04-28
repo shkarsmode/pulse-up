@@ -1,34 +1,30 @@
-import {
-    Component,
-    ElementRef,
-    inject,
-    OnInit,
-    ViewChild,
-} from '@angular/core';
-import { ActivatedRoute, ParamMap, Router } from '@angular/router';
-import { catchError, first, Observable, of, take } from 'rxjs';
-import { AppRoutes } from '../../../../shared/enums/app-routes.enum';
-import { IPulse } from '../../../../shared/interfaces';
-import { PulseService } from '../../../../shared/services/api/pulse.service';
+import { Component, ElementRef, inject, OnInit, ViewChild } from "@angular/core";
+import { ActivatedRoute, ParamMap, Router } from "@angular/router";
+import { catchError, first, Observable, of, take } from "rxjs";
+import { AppRoutes } from "@/app/shared/enums/app-routes.enum";
+import { IPulse } from "@/app/shared/interfaces";
+import { PulseService } from "@/app/shared/services/api/pulse.service";
+import { MetadataService } from "@/app/shared/services/core/metadata.service";
 
 @Component({
-    selector: 'app-pulse-page',
-    templateUrl: './pulse-page.component.html',
-    styleUrl: './pulse-page.component.scss',
+    selector: "app-pulse-page",
+    templateUrl: "./pulse-page.component.html",
+    styleUrl: "./pulse-page.component.scss",
 })
 export class PulsePageComponent implements OnInit {
     public pulse: IPulse;
     public isReadMore: boolean = false;
     public isLoading: boolean = true;
     public topPulses: IPulse[] = [];
-    public pulseUrl: string = '';
+    public pulseUrl: string = "";
 
-    @ViewChild('description', { static: false })
+    @ViewChild("description", { static: false })
     public description: ElementRef<HTMLDivElement>;
 
     private readonly router: Router = inject(Router);
     private readonly route: ActivatedRoute = inject(ActivatedRoute);
     private readonly pulseService: PulseService = inject(PulseService);
+    private readonly metadataService: MetadataService = inject(MetadataService);
 
     public ngOnInit(): void {
         this.initPulseUrlIdListener();
@@ -53,13 +49,11 @@ export class PulsePageComponent implements OnInit {
     }
 
     private initPulseUrlIdListener(): void {
-        this.route.paramMap
-            .pipe(take(1))
-            .subscribe(this.handlePulseUrlIdListener.bind(this));
+        this.route.paramMap.pipe(take(1)).subscribe(this.handlePulseUrlIdListener.bind(this));
     }
 
     private handlePulseUrlIdListener(data: ParamMap): void {
-        const id = data.get('id')!;
+        const id = data.get("id")!;
 
         // if (!id || 'number' !== typeof id) {
         //     console.error('Invalid pulse ID');
@@ -74,6 +68,11 @@ export class PulsePageComponent implements OnInit {
             this.determineIfNeedToRemoveShowMoreButton();
             this.createLink(pulse.description);
             this.pulseUrl = this.pulseService.shareTopicBaseUrl + pulse.shareKey;
+            this.metadataService.setTitle(`${pulse.title} | Support What Matters – Pulse Up`);
+            this.metadataService.setMetaTag(
+                "description",
+                `Support '${pulse.title}' anonymously and see how it’s trending in real time across the map. Track public sentiment and join the pulse.`,
+            );
         });
     }
 
@@ -81,11 +80,9 @@ export class PulsePageComponent implements OnInit {
         return this.pulseService.getById(id).pipe(
             first(),
             catchError((error) => {
-                this.router.navigateByUrl(
-                    '/' + AppRoutes.Community.INVALID_LINK
-                );
+                this.router.navigateByUrl("/" + AppRoutes.Community.INVALID_LINK);
                 return of(error);
-            })
+            }),
         ) as Observable<IPulse>;
     }
 
@@ -121,10 +118,9 @@ export class PulsePageComponent implements OnInit {
 
         if (!link) return;
 
-        this.pulse.description = value.replace(link, '');
+        this.pulse.description = value.replace(link, "");
 
-        this.pulse.description =
-            this.pulse.description + `<a href="${link}">${link}</a>`;
+        this.pulse.description = this.pulse.description + `<a href="${link}">${link}</a>`;
     }
 
     private extractUrl(value: string): string | null {
