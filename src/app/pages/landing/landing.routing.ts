@@ -27,6 +27,7 @@ const routes: Routes = [
                 component: MainComponent,
                 canActivate: [HeaderGuard],
                 canDeactivate: [HeaderCleanupGuard],
+                data: metaTagsData.home,
             },
             {
                 path: Landing.MAP,
