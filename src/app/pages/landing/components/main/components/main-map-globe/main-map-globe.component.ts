@@ -64,7 +64,7 @@ export class MainMapGlobeComponent {
       center.lng -= distancePerSecond;
       // Smoothly animate the map over one second.
       // When this animation is complete, it calls a 'moveend' event.
-      this.map.easeTo({ center, duration: 1000, easing: (n) => n });
+      this.map.easeTo({ center, duration: 500, easing: (n) => n });
     }
 
   }
