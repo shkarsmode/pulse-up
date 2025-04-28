@@ -8,6 +8,7 @@
     [zoom]="zoom"
     [minZoom]="minZoom"
     [maxZoom]="10"
+    [projection]="projection"
     (load)="onMapLoad($event)"
     (zoomEnd)="handleZoomEnd()"
     (moveEnd)="handleMoveEnd()">
@@ -34,8 +35,9 @@
                 class="marker-button"
                 ngxTooltip
                 [template]="tooltip"
-                (hideEnd)="onMarkerLeave()"
+                (hideEnd)="onTooltipHide()"
                 (mouseenter)="onMarkerHover(marker)"
+                (click)="onMarkerClick(marker)"
                 aria-label="show pulse details">
                 <img
                 [src]="marker.icon"
@@ -184,6 +186,7 @@
 </div>
 }
 
+<!-- TOOLTIP -->
 <ng-template #tooltip>
     <div
         class="map-tooltip"

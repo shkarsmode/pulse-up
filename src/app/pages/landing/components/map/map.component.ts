@@ -1,15 +1,19 @@
 import {
     Component,
     DestroyRef,
+    EventEmitter,
     HostBinding,
     inject,
     Input,
     OnInit,
+    Output,
 } from '@angular/core';
+import { Router } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import * as h3 from 'h3-js';
 import mapboxgl from 'mapbox-gl';
-import { filter, first, Subject, tap } from 'rxjs';
+import { debounceTime, filter, first, Subject, tap } from 'rxjs';
+import throttle from 'lodash.throttle';
 import { PulseService } from '../../../../shared/services/api/pulse.service';
 import { HeatmapService } from '../../../../shared/services/core/heatmap.service';
 import { MapLocationService } from '../../../../shared/services/core/map-location.service';
@@ -40,6 +44,8 @@ export class MapComponent implements OnInit {
         [180, 85],
     ];
     @Input() public center: [number, number] = [-100.661, 37.7749];
+    @Input() public projection: mapboxgl.Projection["name"] = "mercator";
+    @Output() public mapLoaded: EventEmitter<mapboxgl.Map> = new EventEmitter<mapboxgl.Map>();
 
     @HostBinding('class.preview')
     public get isPreviewMap() {
@@ -55,6 +61,7 @@ export class MapComponent implements OnInit {
     public isToShowH3: boolean = true;
     public heatmapDataPointsCount: number = 0;
     public readonly pulseService: PulseService = inject(PulseService);
+    private readonly router: Router = inject(Router);
     public isToShoDebugger: string | null =
         localStorage.getItem('show-debugger');
     public tooltipData: IPulse | null = null;
@@ -62,6 +69,7 @@ export class MapComponent implements OnInit {
     private readonly h3Pulses$: Subject<any> = new Subject();
     private readonly heatMapData$: Subject<{ [key: string]: number }> =
         new Subject();
+    private markerHover$ = new Subject<IMapMarker>();
 
     private readonly destroyed: DestroyRef = inject(DestroyRef);
     private readonly heatmapService: HeatmapService = inject(HeatmapService);
@@ -83,7 +91,20 @@ export class MapComponent implements OnInit {
         .map(Number)
         .sort((a, b) => a - b);
 
-    constructor(public mapLocationService: MapLocationService) { }
+    constructor(public mapLocationService: MapLocationService) {
+        this.markerHover$.pipe(
+            debounceTime(300)
+        ).subscribe((marker) => {
+            this.tooltipData = null;
+            this.pulseService.getById(marker.topicId).subscribe((pulse) => {
+                this.tooltipData = pulse;
+            });
+        });
+    }
+
+    private get isGlobeProjection(): boolean {
+        return this.map?.getProjection().name === 'globe';
+    }
 
     public ngOnInit(): void {
         // if (this.isPreview) {}
@@ -141,6 +162,8 @@ export class MapComponent implements OnInit {
         this.addInitialLayersAndSourcesToDisplayData();
         this.updateH3Pulses();
         this.updateHeatmapForMap();
+
+        this.mapLoaded.next(this.map);
     }
 
     public handleZoomEnd = () => {
@@ -148,10 +171,10 @@ export class MapComponent implements OnInit {
         // this.updateHeatmapForMap();
     };
 
-    public handleMoveEnd = () => {
+    public handleMoveEnd = throttle(() => {
         this.updateH3Pulses();
         this.updateHeatmapForMap();
-    };
+    }, this.isGlobeProjection ? 2000 : 0, );
 
     private addInitialLayersAndSourcesToDisplayData(): void {
         const sourceId = 'h3-polygons';
@@ -509,12 +532,16 @@ export class MapComponent implements OnInit {
     }
 
     public onMarkerHover(marker: IMapMarker): void {
-        this.pulseService.getById(marker.topicId).subscribe((pulse) => {
-            this.tooltipData = pulse;
-        })
+        this.tooltipData = null;
+        this.markerHover$.next(marker);
     }
 
-    public onMarkerLeave(): void {
+    public onTooltipHide(): void {
         this.tooltipData = null;
+    }
+
+    public onMarkerClick(marker: IMapMarker): void {
+        this.tooltipData = null;
+        this.router.navigateByUrl(`topic/${marker.topicId}`);
     }
 }
