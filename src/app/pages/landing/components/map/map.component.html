@@ -34,8 +34,9 @@
                 class="marker-button"
                 ngxTooltip
                 [template]="tooltip"
-                (hideEnd)="onMarkerLeave()"
+                (hideEnd)="onTooltipHide()"
                 (mouseenter)="onMarkerHover(marker)"
+                (click)="onMarkerClick(marker)"
                 aria-label="show pulse details">
                 <img
                 [src]="marker.icon"

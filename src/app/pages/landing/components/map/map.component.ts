@@ -6,6 +6,7 @@ import {
     Input,
     OnInit,
 } from '@angular/core';
+import { Router } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import * as h3 from 'h3-js';
 import mapboxgl from 'mapbox-gl';
@@ -55,6 +56,7 @@ export class MapComponent implements OnInit {
     public isToShowH3: boolean = true;
     public heatmapDataPointsCount: number = 0;
     public readonly pulseService: PulseService = inject(PulseService);
+    private readonly router: Router = inject(Router);
     public isToShoDebugger: string | null =
         localStorage.getItem('show-debugger');
     public tooltipData: IPulse | null = null;
@@ -523,7 +525,12 @@ export class MapComponent implements OnInit {
         this.markerHover$.next(marker);
     }
 
-    public onMarkerLeave(): void {
+    public onTooltipHide(): void {
         this.tooltipData = null;
+    }
+
+    public onMarkerClick(marker: IMapMarker): void {
+        this.tooltipData = null;
+        this.router.navigateByUrl(`topic/${marker.topicId}`);
     }
 }
