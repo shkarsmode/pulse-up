@@ -9,7 +9,7 @@ import {
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import * as h3 from 'h3-js';
 import mapboxgl from 'mapbox-gl';
-import { filter, first, Subject, tap } from 'rxjs';
+import { debounceTime, filter, first, Subject, tap } from 'rxjs';
 import { PulseService } from '../../../../shared/services/api/pulse.service';
 import { HeatmapService } from '../../../../shared/services/core/heatmap.service';
 import { MapLocationService } from '../../../../shared/services/core/map-location.service';
@@ -62,6 +62,7 @@ export class MapComponent implements OnInit {
     private readonly h3Pulses$: Subject<any> = new Subject();
     private readonly heatMapData$: Subject<{ [key: string]: number }> =
         new Subject();
+    private markerHover$ = new Subject<IMapMarker>();
 
     private readonly destroyed: DestroyRef = inject(DestroyRef);
     private readonly heatmapService: HeatmapService = inject(HeatmapService);
@@ -83,7 +84,16 @@ export class MapComponent implements OnInit {
         .map(Number)
         .sort((a, b) => a - b);
 
-    constructor(public mapLocationService: MapLocationService) { }
+    constructor(public mapLocationService: MapLocationService) {
+        this.markerHover$.pipe(
+            debounceTime(300)
+        ).subscribe((marker) => {
+            this.tooltipData = null;
+            this.pulseService.getById(marker.topicId).subscribe((pulse) => {
+                this.tooltipData = pulse;
+            });
+        });
+    }
 
     public ngOnInit(): void {
         // if (this.isPreview) {}
@@ -509,9 +519,8 @@ export class MapComponent implements OnInit {
     }
 
     public onMarkerHover(marker: IMapMarker): void {
-        this.pulseService.getById(marker.topicId).subscribe((pulse) => {
-            this.tooltipData = pulse;
-        })
+        this.tooltipData = null;
+        this.markerHover$.next(marker);
     }
 
     public onMarkerLeave(): void {
