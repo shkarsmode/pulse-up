@@ -1,16 +1,19 @@
 import {
     Component,
     DestroyRef,
+    EventEmitter,
     HostBinding,
     inject,
     Input,
     OnInit,
+    Output,
 } from '@angular/core';
 import { Router } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import * as h3 from 'h3-js';
 import mapboxgl from 'mapbox-gl';
 import { debounceTime, filter, first, Subject, tap } from 'rxjs';
+import throttle from 'lodash.throttle';
 import { PulseService } from '../../../../shared/services/api/pulse.service';
 import { HeatmapService } from '../../../../shared/services/core/heatmap.service';
 import { MapLocationService } from '../../../../shared/services/core/map-location.service';
@@ -41,6 +44,8 @@ export class MapComponent implements OnInit {
         [180, 85],
     ];
     @Input() public center: [number, number] = [-100.661, 37.7749];
+    @Input() public projection: mapboxgl.Projection["name"] = "mercator";
+    @Output() public mapLoaded: EventEmitter<mapboxgl.Map> = new EventEmitter<mapboxgl.Map>();
 
     @HostBinding('class.preview')
     public get isPreviewMap() {
@@ -95,6 +100,10 @@ export class MapComponent implements OnInit {
                 this.tooltipData = pulse;
             });
         });
+    }
+
+    private get isGlobeProjection(): boolean {
+        return this.map?.getProjection().name === 'globe';
     }
 
     public ngOnInit(): void {
@@ -153,6 +162,8 @@ export class MapComponent implements OnInit {
         this.addInitialLayersAndSourcesToDisplayData();
         this.updateH3Pulses();
         this.updateHeatmapForMap();
+
+        this.mapLoaded.next(this.map);
     }
 
     public handleZoomEnd = () => {
@@ -160,10 +171,10 @@ export class MapComponent implements OnInit {
         // this.updateHeatmapForMap();
     };
 
-    public handleMoveEnd = () => {
+    public handleMoveEnd = throttle(() => {
         this.updateH3Pulses();
         this.updateHeatmapForMap();
-    };
+    }, this.isGlobeProjection ? 2000 : 0, );
 
     private addInitialLayersAndSourcesToDisplayData(): void {
         const sourceId = 'h3-polygons';
