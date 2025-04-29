@@ -22,6 +22,7 @@ export class MainMapGlobeComponent {
 
   public onMapLoaded(map: mapboxgl.Map) {
     this.map = map;
+    this.removeLabelsFromMap();
     this.spinGlobe();
 
     // Pause spinning on user interaction (mouse or touch)
@@ -49,7 +50,7 @@ export class MainMapGlobeComponent {
     });
   }
 
-  spinGlobe() {
+  private spinGlobe() {
     if (!this.map) return;
     const zoom = this.map.getZoom();
     if (this.spinEnabled && !this.userInteracting && zoom < this.maxSpinZoom) {
@@ -67,5 +68,16 @@ export class MainMapGlobeComponent {
       this.map.easeTo({ center, duration: 500, easing: (n) => n });
     }
 
+  }
+
+  private removeLabelsFromMap() {
+    if (!this.map) return;
+    const layers = this.map.getStyle().layers;
+    if (!layers) return;
+    for (const layer of layers) {
+      if (layer.type === 'symbol') {
+        this.map.removeLayer(layer.id);
+      }
+    }
   }
 }
