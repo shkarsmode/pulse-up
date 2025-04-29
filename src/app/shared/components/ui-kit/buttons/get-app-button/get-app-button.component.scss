@@ -1,10 +1,25 @@
 @use '../../../../../../styles/_mixins.scss' as *;
 
-:host {
+.get-app-button {
     display: flex;
     column-gap: 10px;
     row-gap: 16px;
     transition: all .3s ease-in-out;
+
+    @include media-sm {
+        flex-direction: column;
+    }
+
+    &.get-app-button--android {
+        .btn:first-child {
+            display: none;
+        }
+    }
+    &.get-app-button--ios {
+        .btn:last-child {
+            display: none;
+        }
+    }
     
     .btn {
         box-shadow: 0px 3px 10px 0px #00000026;
@@ -18,8 +33,9 @@
         border-radius: 40px;
         transition: all .2s ease-in-out;
 
-   
-
+        @include media-sm {
+            min-width: 220px;
+        }
 
         p {
             font-size: 10px;
@@ -127,21 +143,5 @@ button {
     
 }
 
-
-
-
-
-@media screen and (max-width: 500px) {
-    :host {
-        flex-direction: column;
-    
-        .btn {
-            min-width: 220px;
-        }
-        
-    }
-    
-
-}
 
 
