@@ -17,6 +17,7 @@ export class PrimaryButtonComponent {
     @Input() public disabled: boolean = false;
     @Input() public href: string = "";
     @Input() public target: "_blank" | "_self" | "_parent" | "_top" = '_self' as const;
+    @Input() public color: string;
 
     @Output() public handleClick: EventEmitter<void> = new EventEmitter<void>();
 

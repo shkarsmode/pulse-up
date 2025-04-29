@@ -6,7 +6,8 @@
         [class.disabled]="disabled"
         (click)="onClick()"
         appRippleEffect
-        [target]="target">
+        [target]="target"
+        [ngStyle]="color ? { 'background-color': color } : {}">
         <ng-container *ngTemplateOutlet="linkTemplate"></ng-container>
     </a>
 </ng-container>
@@ -17,7 +18,8 @@
         [type]="type"
         [disabled]="disabled"
         (click)="onClick()"
-        appRippleEffect>
+        appRippleEffect
+        [ngStyle]="color ? { 'background-color': color } : {}">
         <ng-container *ngTemplateOutlet="linkTemplate"></ng-container>
     </button>
 </ng-template>
