@@ -165,6 +165,10 @@ export class MapComponent implements OnInit {
         this.updateH3Pulses();
         this.updateHeatmapForMap();
 
+        this.map.on('resize', () => {
+          this.map?.triggerRepaint();
+        })
+
         this.mapLoaded.next(this.map);
     }
 
