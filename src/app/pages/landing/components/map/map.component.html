@@ -8,11 +8,12 @@
     [zoom]="zoom"
     [minZoom]="minZoom"
     [maxZoom]="10"
+    [scrollZoom]="isScrollZoomEnabled"
+    [doubleClickZoom]="isDoubleClickZoomEnabled"
     [projection]="projection"
     (load)="onMapLoad($event)"
     (zoomEnd)="handleZoomEnd()"
-    (moveEnd)="handleMoveEnd()"
-    [scrollZoom]="isToEnableZoom">
+    (moveEnd)="handleMoveEnd()">
     <!-- <mgl-layer 
         id="heatmap-layer" 
         type="heatmap" 
@@ -39,17 +40,22 @@
                 (hideEnd)="onTooltipHide()"
                 (mouseenter)="onMarkerHover(marker)"
                 (click)="onMarkerClick(marker)"
-                aria-label="show pulse details">
+                aria-label="Show topic details">
                 <img
                 [src]="marker.icon"
                 alt="icon"
                 appLoadImgPath />
             </button>
         } @else {
-            <img
-            [src]="marker.icon"
-            alt="icon"
-            appLoadImgPath />
+            <button
+                class="marker-button"
+                (click)="onMarkerClick(marker)"
+                aria-label="Show topic details">
+                <img
+                [src]="marker.icon"
+                alt="icon"
+                appLoadImgPath />
+            </button>
         }
     </mgl-marker>
     } @for (weight of weights; track weight.h3Index) {

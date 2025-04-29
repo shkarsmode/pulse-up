@@ -3,12 +3,15 @@
     <div class="map__globe">
         <app-map
             [isHideDebugger]="true"
-            [zoom]="[1]"
+            [zoom]="[zoom]"
             [minZoom]="1"
             projection="globe"
             [isToShowTooltip]="true"
-            [isToEnableZoom]="false"
-            (mapLoaded)="onMapLoaded($event)" />
+            [isScrollZoomEnabled]="false"
+            [isDoubleClickZoomEnabled]="false"
+            [maxBounds]="undefined"
+            (mapLoaded)="onMapLoaded($event)"
+            (markerClick)="onMarkerClick()"/>
     </div>
     <div class="map__button">
         <app-secondary-button
