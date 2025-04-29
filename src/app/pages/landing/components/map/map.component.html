@@ -8,11 +8,12 @@
     [zoom]="zoom"
     [minZoom]="minZoom"
     [maxZoom]="10"
+    [scrollZoom]="isScrollZoomEnabled"
+    [doubleClickZoom]="isDoubleClickZoomEnabled"
     [projection]="projection"
     (load)="onMapLoad($event)"
     (zoomEnd)="handleZoomEnd()"
-    (moveEnd)="handleMoveEnd()"
-    [scrollZoom]="isToEnableZoom">
+    (moveEnd)="handleMoveEnd()">
     <!-- <mgl-layer 
         id="heatmap-layer" 
         type="heatmap" 
