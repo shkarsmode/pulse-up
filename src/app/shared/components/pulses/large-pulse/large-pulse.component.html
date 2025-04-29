@@ -9,11 +9,11 @@
     <div class="description">{{ pulse.description }}</div>
     <div class="bottom">
         <div>
-            <svg-icon src="assets/svg/icon_ author.svg" />
-            {{ pulse.author.name }}
+            <!-- <svg-icon src="assets/svg/icon_ author.svg" /> -->
+            <span class="author">{{ pulse.author.name }}</span>
         </div>
         <div>
-            <svg-icon src="assets/svg/hour.svg" />
+            <svg-icon src="assets/svg/pulse.svg" />
             {{ pulse.stats?.lastDayVotes || 0 | formatNumber }}
             in last 24h
         </div>

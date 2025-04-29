@@ -1,3 +1,5 @@
+@use "../../../../../styles/mixins" as *;
+
 :host {
     display: flex;
     padding: 20px;
@@ -93,6 +95,7 @@
     }
 
     svg-icon {
-        height: 19px;
+        width: 24px;
+        height: 24px;
     }
 }
