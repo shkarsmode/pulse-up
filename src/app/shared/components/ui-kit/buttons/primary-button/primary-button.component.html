@@ -1,8 +1,27 @@
-<button
-    class="primary-button"
-    [disabled]="disabled"
-    [type]="type"
-    (click)="onClick()"
-    appRippleEffect>
+<ng-container *ngIf="href; else buttonTemplate">
+    <a
+        class="primary-button"
+        [href]="disabled ? null : href"
+        [attr.aria-disabled]="disabled"
+        [class.disabled]="disabled"
+        (click)="onClick()"
+        appRippleEffect
+        [target]="target">
+        <ng-container *ngTemplateOutlet="linkTemplate"></ng-container>
+    </a>
+</ng-container>
+
+<ng-template #buttonTemplate>
+    <button
+        class="primary-button"
+        [type]="type"
+        [disabled]="disabled"
+        (click)="onClick()"
+        appRippleEffect>
+        <ng-container *ngTemplateOutlet="linkTemplate"></ng-container>
+    </button>
+</ng-template>
+
+<ng-template #linkTemplate>
     <ng-content></ng-content>
-</button>
+</ng-template>
