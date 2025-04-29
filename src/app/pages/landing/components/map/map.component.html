@@ -199,7 +199,7 @@
         class="map-tooltip"
         [class.map-tooltip--loading]="!tooltipData">
         @if (tooltipData) {
-            <app-top-pulse-card [pulse]="tooltipData" />
+            <app-top-pulse-card [pulse]="tooltipData" [interactive]="false"/>
         } @else {
             <app-spinner />
         }

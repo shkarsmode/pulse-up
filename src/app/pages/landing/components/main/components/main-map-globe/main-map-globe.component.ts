@@ -61,9 +61,17 @@ export class MainMapGlobeComponent {
     this.map.on('moveend', () => {
       this.spinGlobe();
     });
+
+    this.map.on('click', () => {
+      this.navigateToMapPage();
+    });
   }
 
   public onMarkerClick() {
+    this.navigateToMapPage();
+  }
+
+  private navigateToMapPage() {
     this.router.navigateByUrl(`/${this.AppRoutes.Landing.MAP}`);
   }
 
