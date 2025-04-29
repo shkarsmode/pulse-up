@@ -1,4 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, effect, inject } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { MediaQueryService } from '@/app/shared/services/core/media-query.service';
 import { AppRoutes } from '@/app/shared/enums/app-routes.enum';
 
 @Component({
@@ -8,17 +10,25 @@ import { AppRoutes } from '@/app/shared/enums/app-routes.enum';
 })
 export class MainMapGlobeComponent {
   private map: mapboxgl.Map | null = null;
-  public AppRoutes = AppRoutes
-
+  private mediaService = inject(MediaQueryService);
+  private isMobile = toSignal(this.mediaService.mediaQuery('max', 'SM'));
   // At low zooms, complete a revolution every two minutes.
   private secondsPerRevolution = 120;
   // Above zoom level 5, do not rotate.
   private maxSpinZoom = 5;
   // Rotate at intermediate speeds between zoom levels 3 and 5.
   private slowSpinZoom = 3;
-
   private userInteracting = false;
   private spinEnabled = true;
+
+  public AppRoutes = AppRoutes
+  public zoom = 1.5;
+
+  constructor() {
+    effect(() => {
+      this.zoom = this.isMobile() ? 1 : 1.5;
+    })
+  }
 
   public onMapLoaded(map: mapboxgl.Map) {
     this.map = map;

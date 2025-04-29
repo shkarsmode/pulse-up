@@ -39,7 +39,7 @@ export class MapComponent implements OnInit {
     @Input() public zoom: [number] = [1];
     @Input() public minZoom: number = 1;
     @Input() public isToEnableZoom: boolean = true;
-    @Input() public maxBounds: mapboxgl.LngLatBoundsLike = [
+    @Input() public maxBounds: mapboxgl.LngLatBoundsLike | undefined = [
         [-180, -80],
         [180, 85],
     ];

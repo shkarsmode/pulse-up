@@ -3,11 +3,12 @@
     <div class="map__globe">
         <app-map
             [isHideDebugger]="true"
-            [zoom]="[1.5]"
+            [zoom]="[zoom]"
             [minZoom]="1"
             projection="globe"
             [isToShowTooltip]="true"
             [isToEnableZoom]="false"
+            [maxBounds]="undefined"
             (mapLoaded)="onMapLoaded($event)"/>
     </div>
     <div class="map__button">
