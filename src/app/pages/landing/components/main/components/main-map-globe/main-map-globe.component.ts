@@ -1,7 +1,9 @@
 import { Component, effect, inject } from '@angular/core';
+import { Router } from '@angular/router';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { MediaQueryService } from '@/app/shared/services/core/media-query.service';
 import { AppRoutes } from '@/app/shared/enums/app-routes.enum';
+import { IMapMarker } from '@/app/shared/interfaces/map-marker.interface';
 
 @Component({
   selector: 'app-main-map-globe',
@@ -10,6 +12,7 @@ import { AppRoutes } from '@/app/shared/enums/app-routes.enum';
 })
 export class MainMapGlobeComponent {
   private map: mapboxgl.Map | null = null;
+  private router: Router = inject(Router);
   private mediaService = inject(MediaQueryService);
   private isMobile = toSignal(this.mediaService.mediaQuery('max', 'SM'));
   // At low zooms, complete a revolution every two minutes.
@@ -58,6 +61,10 @@ export class MainMapGlobeComponent {
     this.map.on('moveend', () => {
       this.spinGlobe();
     });
+  }
+
+  public onMarkerClick() {
+    this.router.navigateByUrl(`/${this.AppRoutes.Landing.MAP}`);
   }
 
   private spinGlobe() {

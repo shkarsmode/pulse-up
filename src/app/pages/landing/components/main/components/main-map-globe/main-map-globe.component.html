@@ -9,7 +9,8 @@
             [isToShowTooltip]="true"
             [isToEnableZoom]="false"
             [maxBounds]="undefined"
-            (mapLoaded)="onMapLoaded($event)"/>
+            (mapLoaded)="onMapLoaded($event)"
+            (markerClick)="onMarkerClick()"/>
     </div>
     <div class="map__button">
         <app-secondary-button

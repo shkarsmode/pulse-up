@@ -46,6 +46,7 @@ export class MapComponent implements OnInit {
     @Input() public center: [number, number] = [-100.661, 37.7749];
     @Input() public projection: mapboxgl.Projection["name"] = "mercator";
     @Output() public mapLoaded: EventEmitter<mapboxgl.Map> = new EventEmitter<mapboxgl.Map>();
+    @Output() public markerClick: EventEmitter<IMapMarker> = new EventEmitter<IMapMarker>();
 
     @HostBinding('class.preview')
     public get isPreviewMap() {
@@ -547,6 +548,6 @@ export class MapComponent implements OnInit {
 
     public onMarkerClick(marker: IMapMarker): void {
         this.tooltipData = null;
-        this.router.navigateByUrl(`topic/${marker.topicId}`);
+        this.markerClick.emit(marker);
     }
 }
