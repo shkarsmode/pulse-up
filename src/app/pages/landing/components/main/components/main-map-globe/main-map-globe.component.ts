@@ -61,7 +61,7 @@ export class MainMapGlobeComponent {
         distancePerSecond *= zoomDif;
       }
       const center = this.map.getCenter();
-      center.lng -= distancePerSecond;
+      center.lng += distancePerSecond;
       // Smoothly animate the map over one second.
       // When this animation is complete, it calls a 'moveend' event.
       this.map.easeTo({ center, duration: 500, easing: (n) => n });
