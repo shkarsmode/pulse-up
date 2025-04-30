@@ -1,0 +1,18 @@
+<div class="popup">
+    <app-close-button
+        id="close"
+        (handleClick)="onCloseDialog()" />
+
+    <svg-icon
+        class="heart"
+        src="assets/svg/logo/logo64.svg"
+        heartBeatAnimation
+        [isBlink]="true" />
+
+    <h2>You're Almost There!</h2>
+
+    <p>To create your topic, you'll need to download the Pulse Up app.</p>
+    <p>This is just temporary — we’re working on bringing this feature to the web soon! 🚀</p>
+
+    <app-get-app-button [design]="'new'" />
+</div>

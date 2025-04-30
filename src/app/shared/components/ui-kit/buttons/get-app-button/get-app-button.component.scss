@@ -8,16 +8,16 @@
 
     @include media-sm {
         flex-direction: column;
-    }
 
-    &.get-app-button--android {
-        .btn:first-child {
-            display: none;
+        &.get-app-button--android {
+            .btn:first-child {
+                display: none;
+            }
         }
-    }
-    &.get-app-button--ios {
-        .btn:last-child {
-            display: none;
+        &.get-app-button--ios {
+            .btn:last-child {
+                display: none;
+            }
         }
     }
     

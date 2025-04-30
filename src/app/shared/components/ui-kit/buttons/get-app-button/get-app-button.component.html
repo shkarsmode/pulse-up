@@ -14,7 +14,7 @@
 }
 
 @else {
-    <div class="get-app-button get-app-button--{{ platform }}">
+    <div class="get-app-button" [ngClass]="classes">
         <a class="btn btn--{{ theme }}" [href]="links.APP_STORE">
             <svg-icon src="assets/svg/a-store.svg" id="icon" />
             <p>Download on the <br /> <span class="big-txt">App Store</span></p>
