@@ -8,17 +8,18 @@
             <ng-content></ng-content>
         </ul>
     </div>
+    <ul class="splide__pagination"></ul>
 </section>
 
 <button
-    class="splide__arrow--prev"
+    class="splide__arrow splide__arrow--prev"
     (click)="goToPrev()"
     [disabled]="splideInstance.index === 0">
     <svg-icon src="assets/svg/arrow-left.svg" />
 </button>
 
 <button
-    class="splide__arrow--next"
+    class="splide__arrow splide__arrow--next"
     (click)="goToNext()"
     [disabled]="splideInstance.index === splideInstance.length - 1">
     <svg-icon src="assets/svg/arrow-left.svg" />

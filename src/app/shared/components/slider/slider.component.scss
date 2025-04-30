@@ -1,17 +1,80 @@
+@use "../../../../styles/mixins" as *;
+
 :host {
     position: relative;
 
     display: flex;
     align-items: center;
     justify-content: center;
+}
 
-    >button {
-        position: absolute;
+.splide__arrow {
+    position: absolute;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    width: 48px;
+    height: 48px;
+    border-radius: 10px;
+    border: 1px solid #e6e7ed;
+    rotate: 180deg;
+    background-color: transparent;
+    transform: translateY(50%);
+
+    &:hover {
+        box-shadow: 0px 0px 2px 2px #e6e7ed77;
+        cursor: pointer;
+    }
+
+    &:active {
+        box-shadow: 0px 0px 2px 2px #c9cacf64;
+    }
+
+    &:disabled {
+        opacity: 0.4;
+        box-shadow: none;
+        cursor: not-allowed;
+    }
+
+    &.splide__arrow--prev {
         left: 0px;
 
-        &:last-child {
-            right: 0px;
-            left: unset;
+        @include media-xs {
+            left: calc(50% - 80px);
+            transform: translateX(50%);
+        }
+    }
+    &.splide__arrow--next {
+        right: 0px;
+
+        @include media-xs {
+            right: calc(50% - 80px);
+            transform: translateX(-50%);
+        }
+    }
+
+    @include media-xs {
+        top: auto;
+        bottom: 0px;
+    }
+}
+
+.splide__pagination {
+    display: none;
+    bottom: 14px;
+
+    @include media-xs {
+        display: flex;
+    }
+
+    &::ng-deep .splide__pagination__page {
+        margin: 3px 4px;
+        border: 1px solid var(--dark-grey-color);
+        background-color: transparent;
+
+        &.is-active {
+            background-color: var(--dark-grey-color);
         }
     }
 }
@@ -19,6 +82,10 @@
 :host ::ng-deep .splide {
     display: flex;
     justify-content: center;
+
+    @include media-xs {
+        padding-bottom: 56px;
+    }
 
     &__track {
         width: 400px;
@@ -29,36 +96,4 @@
         justify-content: center;
         padding: 15px 0;
     }
-
-    &__arrow--prev,
-    &__arrow--next {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-
-        width: 48px;
-        height: 48px;
-        border-radius: 10px;
-        border: 1px solid #E6E7ED;
-        rotate: 180deg;
-
-        &:hover {
-            box-shadow: 0px 0px 2px 2px #e6e7ed77;
-            cursor: pointer;
-        }
-
-        &:active {
-            box-shadow: 0px 0px 2px 2px #c9cacf64;
-        }
-
-        &:disabled {
-            opacity: 0.4;
-            box-shadow: none;
-            cursor: not-allowed;
-        }
-    }
-
-    // &__arrow--prev {
-    //     rotate: 180deg;
-    // }
 }

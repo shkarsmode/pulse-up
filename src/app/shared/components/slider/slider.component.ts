@@ -19,7 +19,7 @@ export class SliderComponent implements OnInit {
     private mutationObserver: MutationObserver;
     private options: Options = {
         arrows: false,
-        pagination: false,
+        pagination: true,
         perPage: 1,
     };
 
