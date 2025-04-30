@@ -67,6 +67,8 @@ export class MapPageComponent {
     }
 
     public onMarkerClick(marker: IMapMarker) {
-        this.router.navigateByUrl(`topic/${marker.topicId}`);
+        let newRelativeUrl = this.router.createUrlTree([`topic/${marker.topicId}`]);
+        let baseUrl = window.location.href.replace(this.router.url, '');
+        window.open(baseUrl + newRelativeUrl, '_blank');
     }
 }
