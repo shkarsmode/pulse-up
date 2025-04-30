@@ -1,4 +1,4 @@
-@use '../../../../../styles/mixins'as *;
+@use "../../../../../styles/mixins" as *;
 
 :host {
     display: block;
@@ -9,9 +9,9 @@
 
     border-radius: 10px;
 
-    box-shadow: 0px 3px 20px 0px #0000001F;
+    box-shadow: 0px 3px 20px 0px #0000001f;
 
-    transition: all .3s;
+    transition: all 0.3s;
 
     &:hover {
         box-shadow: 0px 3px 20px 0px #00000036;
@@ -102,9 +102,13 @@
 }
 
 .bottom {
-
     h3 {
         @include title-20px;
+        display: -webkit-box;
+        -webkit-line-clamp: 5;
+        line-clamp: 5;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
     }
 
     div {
@@ -122,4 +126,5 @@
     }
 }
 
-@media screen and (max-width: 500px) {}
+@media screen and (max-width: 500px) {
+}
