@@ -1,25 +1,20 @@
 <div class="about__content">
     <div class="about__info">
-        <h2 class="about__heading">
-            A New Way to Decide What Matters
-        </h2>
+        <h2 class="about__heading">A New Way to Decide What Matters</h2>
         <p class="about__text">
-            We believe that what truly matters should be decided by people — not
-            algorithms, corporations, or gatekeepers. Every day, important
-            issues, causes, and trends shape our world, but too often, what gets
-            attention is driven by algorithms that prioritize engagement over
-            truth, divisiveness over unity, and profit over people’s real
-            concerns.
-
+            We believe that what truly matters should be decided by people — not algorithms,
+            corporations, or gatekeepers. Every day, important issues, causes, and trends shape our
+            world, but too often, what gets attention is driven by algorithms that prioritize
+            engagement over truth, divisiveness over unity, and profit over people’s real concerns.
         </p>
         <p class="about__text">
-            Pulse Up lets anyone show support for a cause, trend, or event —
-            with complete anonymity. Supporting what matters shouldn’t feel like
-            a burden — it should be effortless, exciting, and empowering. That’s
-            why we designed Pulse Up to be quick, engaging, and rewarding.
+            Pulse Up lets anyone show support for a cause, trend, or event — with complete
+            anonymity. Supporting what matters shouldn’t feel like a burden — it should be
+            effortless, exciting, and empowering. That’s why we designed Pulse Up to be quick,
+            engaging, and rewarding.
         </p>
         <div class="about__action">
-            <app-secondary-button 
+            <app-secondary-button
                 [routerLink]="'/' + AppRoutes.Landing.ABOUT"
                 routerLinkActive="active"
                 [fullWidth]="true">
@@ -28,6 +23,22 @@
         </div>
     </div>
     <div class="about__image">
-        <img src="assets/img/about-1.png" />
+        <picture>
+            <source
+                srcset="assets/img/about-1.webp"
+                type="image/webp" />
+            <source
+                srcset="assets/img/about-1.avif"
+                type="image/avif" />
+            <source
+                srcset="assets/img/about-1.png"
+                type="image/png" />
+            <img
+                src="assets/img/about-1.png"
+                width="430"
+                height="340"
+                alt="people supporting a cause"
+                loading="lazy" />
+        </picture>
     </div>
 </div>

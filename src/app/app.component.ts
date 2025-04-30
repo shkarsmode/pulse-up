@@ -45,15 +45,7 @@ export class AppComponent {
         combineLatest([anonymousUser$, settings$])
             .pipe(take(1))
             .subscribe((_) => {
-                setTimeout(() => { 
-                    // this.loadingService.isLoading = false;
-                    this.isLoading = false;
-                    // setTimeout(() => {
-                    //     this.isLoading = false
-                    // }, 1000);
-
-                }, 1000);
-                
+                this.isLoading = false;
             });
     }
 }

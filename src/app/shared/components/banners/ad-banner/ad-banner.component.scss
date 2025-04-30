@@ -8,6 +8,16 @@
     border-radius: 20px;
     background-color: #F5EFFE;
     background-image: url('/assets/img/ad-banner-bg.png');
+    background-image: -webkit-image-set(
+        "/assets/img/ad-banner-bg.avif" type("image/avif"),
+        "/assets/img/ad-banner-bg.webp" type("image/webp"),
+        "/assets/img/ad-banner-bg.png" type("image/png")
+    );
+    background-image: image-set(
+        "/assets/img/ad-banner-bg.avif" type("image/avif"),
+        "/assets/img/ad-banner-bg.webp" type("image/webp"),
+        "/assets/img/ad-banner-bg.png" type("image/png")
+    );
     background-repeat: no-repeat;
     background-position: calc(100% + 90px) bottom;
     background-size: 700px;
@@ -15,6 +25,16 @@
     @media screen and (max-width: 900px) {
         padding-bottom: 174px;
         background-image: url('/assets/img/ad-banner-bg-sm.png');
+        background-image: -webkit-image-set(
+            "/assets/img/ad-banner-bg-sm.avif" type("image/avif"),
+            "/assets/img/ad-banner-bg-sm.webp" type("image/webp"),
+            "/assets/img/ad-banner-bg-sm.png" type("image/png")
+        );
+        background-image: image-set(
+            "/assets/img/ad-banner-bg-sm.avif" type("image/avif"),
+            "/assets/img/ad-banner-bg-sm.webp" type("image/webp"),
+            "/assets/img/ad-banner-bg-sm.png" type("image/png")
+        );
         background-position: calc(50% - 22px) bottom;
         background-size: 650px;
     }

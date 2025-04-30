@@ -9,6 +9,16 @@
     justify-content: center;
     padding-top: var(--header-height);
     background-image: url("/assets/img/hero-bg.png");
+    background-image: -webkit-image-set(
+        "/assets/img/hero-bg.webp" type("image/webp"),
+        "/assets/img/hero-bg.avif" type("image/avif"),
+        "/assets/img/hero-bg.png" type("image/png")
+    );
+    background-image: image-set(
+        "/assets/img/hero-bg.webp" type("image/webp"),
+        "/assets/img/hero-bg.avif" type("image/avif"),
+        "/assets/img/hero-bg.png" type("image/png")
+    );
     background-repeat: no-repeat;
     background-size: cover;
     background-position: center center;
@@ -17,6 +27,16 @@
 
     @include media-sm {
         background-image: url("/assets/img/hero-bg-sm.png");
+        background-image: -webkit-image-set(
+            "/assets/img/hero-bg-sm.webp" type("image/webp"),
+            "/assets/img/hero-bg-sm.avif" type("image/avif"),
+            "/assets/img/hero-bg-sm.png" type("image/png")
+        );
+        background-image: image-set(
+            "/assets/img/hero-bg-sm.webp" type("image/webp"),
+            "/assets/img/hero-bg-sm.avif" type("image/avif"),
+            "/assets/img/hero-bg-sm.png" type("image/png")
+        );
     }
 
     &::before {
@@ -29,6 +49,16 @@
         height: 526px;
         transform: translate(-50%, -50%);
         background-image: url("/assets/img/hero-icons.png");
+        background-image: -webkit-image-set(
+            "/assets/img/hero-icons.webp" type("image/webp"),
+            "/assets/img/hero-icons.avif" type("image/avif"),
+            "/assets/img/hero-icons.png" type("image/png")
+        );
+        background-image: image-set(
+            "/assets/img/hero-icons.webp" type("image/webp"),
+            "/assets/img/hero-icons.avif" type("image/avif"),
+            "/assets/img/hero-icons.png" type("image/png")
+        );
         background-repeat: no-repeat;
         background-size: contain;
         background-position: center center;
@@ -41,10 +71,30 @@
             top: calc(50% + 50px);
             height: 380px;
             background-image: url("/assets/img/hero-icons-sm.png");
+            background-image: -webkit-image-set(
+                "/assets/img/hero-icons-sm.webp" type("image/webp"),
+                "/assets/img/hero-icons-sm.avif" type("image/avif"),
+                "/assets/img/hero-icons-sm.png" type("image/png")
+            );
+            background-image: image-set(
+                "/assets/img/hero-icons-sm.webp" type("image/webp"),
+                "/assets/img/hero-icons-sm.avif" type("image/avif"),
+                "/assets/img/hero-icons-sm.png" type("image/png")
+            );
         }
         @media screen and (max-width: 991px) and (max-height: 400px) and (orientation: landscape) {
             top: calc(50% + 65px);
             background-image: url("/assets/img/hero-icons-xs.png");
+            background-image: -webkit-image-set(
+                "/assets/img/hero-icons-xs.webp" type("image/webp"),
+                "/assets/img/hero-icons-xs.avif" type("image/avif"),
+                "/assets/img/hero-icons-xs.png" type("image/png")
+            );
+            background-image: image-set(
+                "/assets/img/hero-icons-xs.webp" type("image/webp"),
+                "/assets/img/hero-icons-xs.avif" type("image/avif"),
+                "/assets/img/hero-icons-xs.png" type("image/png")
+            );
         }
         @media screen and (max-width: 710px), (max-height: 360px) and (orientation: landscape) {
             display: none;

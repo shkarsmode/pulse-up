@@ -219,9 +219,19 @@ export class MapComponent implements OnInit {
             source: sourceId,
             layout: {},
             paint: {
-                'line-color': '#FFFFFF',
+                'line-color': '#5e00cc',
                 'line-width': 1.5,
-                'line-opacity': 0.6,
+                'line-opacity': 0.1,
+            },
+        });
+        this.map?.addLayer({
+            id: 'h3-polygons-layer-fill',
+            type: 'fill',
+            source: sourceId,
+            layout: {},
+            paint: {
+                "fill-color": '#FFFFFF',
+                "fill-opacity": 0.3,
             },
         });
     }
