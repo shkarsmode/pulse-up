@@ -44,6 +44,7 @@ import { MainHeroComponent } from './components/main/components/main-hero/main-h
 import { MainMapComponent } from './components/main/components/main-map/main-map.component';
 import { NgxTooltip } from '@ngx-popovers/tooltip';
 import { MainMapGlobeComponent } from './components/main/components/main-map-globe/main-map-globe.component';
+import { AddTopicPopupDirective } from '@/app/shared/components/popups/add-topic-popup/add-topic-popup.directive';
 
 @NgModule({
     declarations: [
@@ -94,6 +95,7 @@ import { MainMapGlobeComponent } from './components/main/components/main-map-glo
             accessToken: environment.mapboxToken,
         }),
         AdBannerComponent,
+        AddTopicPopupDirective,
     ],
     schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
