@@ -41,7 +41,6 @@ import { SocialsButtonComponent } from '../../shared/components/ui-kit/buttons/s
 import { CopyButtonComponent } from '../../shared/components/ui-kit/buttons/copy-button/copy-button.component';
 import { AboutComponent } from './about/about.component';
 import { MainHeroComponent } from './components/main/components/main-hero/main-hero.component';
-import { MainMapComponent } from './components/main/components/main-map/main-map.component';
 import { NgxTooltip } from '@ngx-popovers/tooltip';
 import { MainMapGlobeComponent } from './components/main/components/main-map-globe/main-map-globe.component';
 import { AddTopicPopupDirective } from '@/app/shared/components/popups/add-topic-popup/add-topic-popup.directive';
@@ -61,7 +60,6 @@ import { AddTopicPopupDirective } from '@/app/shared/components/popups/add-topic
         AboutSectionComponent,
         AboutComponent,
         MainHeroComponent,
-        MainMapComponent,
         MainMapGlobeComponent
     ],
     imports: [

@@ -5,24 +5,19 @@
     display: flex;
     // align-items: center;
     flex-direction: column;
-
-
-    ::ng-deep .map-container {
-        height: 500px !important;
-        width: 100%;
-        overflow: hidden;
-        border-radius: 20px;
-        cursor: grab;
-        margin-top: 0px !important;
-    }
 }
 
+:host {
+    ::ng-deep .map-container {
+        height: 500px !important;
+    }
+}
 
 @media screen and (max-width: 500px) {
 
     :host {
         ::ng-deep .map-container {
-            height: 480px !important;
+            height: 400px !important;
         }
     }
 }
