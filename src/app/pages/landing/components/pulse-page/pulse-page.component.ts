@@ -17,6 +17,7 @@ export class PulsePageComponent implements OnInit {
     public isLoading: boolean = true;
     public topPulses: IPulse[] = [];
     public pulseUrl: string = "";
+    public shortPulseDescription: string = "";
 
     @ViewChild("description", { static: false })
     public description: ElementRef<HTMLDivElement>;
@@ -63,6 +64,7 @@ export class PulsePageComponent implements OnInit {
 
         const pulse = this.getPulseById(id);
         pulse.subscribe((pulse) => {
+            this.shortPulseDescription = pulse.description.replace(/\n/g, " ");
             this.pulse = pulse;
             this.isLoading = false;
             this.determineIfNeedToRemoveShowMoreButton();
@@ -92,8 +94,8 @@ export class PulsePageComponent implements OnInit {
 
             const fullHeight = textElement!.scrollHeight;
             const visibleHeight = textElement!.clientHeight + 2;
-            const isTruncated = visibleHeight < fullHeight;
-
+            const heightDiff = fullHeight - visibleHeight;
+            const isTruncated = heightDiff > 19;
             this.isReadMore = !isTruncated;
         }, 100);
     }
