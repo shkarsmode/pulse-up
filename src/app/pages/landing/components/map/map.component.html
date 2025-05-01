@@ -43,6 +43,8 @@
                 aria-label="Show topic details">
                 <img
                 [src]="marker.icon"
+                width="46"
+                height="46"
                 alt="icon"
                 appLoadImgPath />
             </button>
@@ -53,6 +55,8 @@
                 aria-label="Show topic details">
                 <img
                 [src]="marker.icon"
+                width="46"
+                height="46"
                 alt="icon"
                 appLoadImgPath />
             </button>
@@ -185,11 +189,13 @@
 <div class="zoom-button">
     <button
         class="zoom-button__icon"
-        (click)="zoomMapClick('+')"></button>
+        (click)="zoomMapClick('+')"
+        aria-label="zoom in the map"></button>
 
     <button
         class="zoom-button__icon"
-        (click)="zoomMapClick('-')"></button>
+        (click)="zoomMapClick('-')"
+        aria-label="zoom out the map"></button>
 </div>
 }
 

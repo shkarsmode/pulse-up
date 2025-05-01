@@ -1,29 +1,39 @@
-
 @font-face {
-    font-family: 'SFProText';
-    src: url('/assets/fonts/sf-pro-text/SFProText-Regular.ttf') format('truetype');
+    font-family: "SFProText";
+    src: url("/assets/fonts/sf-pro-text/sf-pro-text-regular-webfont.woff2") format("woff2"),
+        url("/assets/fonts/sf-pro-text/sf-pro-text-regular-webfont.woff") format("woff"),
+        url("/assets/fonts/sf-pro-text/SFProText-Regular.ttf") format("truetype");
     font-weight: 400;
     font-style: normal;
+    font-display: swap;
 }
 
-
 @font-face {
-    font-family: 'SFProText';
-    src: url('/assets/fonts/sf-pro-text/SFProText-Light.ttf') format('truetype');
+    font-family: "SFProText";
+    src: url("/assets/fonts/sf-pro-text/SFProText-Light.woff2") format("woff2"),
+        url("/assets/fonts/sf-pro-text/SFProText-Light.woff") format("woff"),
+        url("/assets/fonts/sf-pro-text/SFProText-Light.ttf") format("truetype");
     font-weight: 300;
     font-style: normal;
+    font-display: swap;
 }
 
 @font-face {
-    font-family: 'SFProText';
-    src: url('/assets/fonts/sf-pro-text/SFProText-Semibold.ttf') format('truetype');
+    font-family: "SFProText";
+    src: url("/assets/fonts/sf-pro-text/sf-pro-text-semibold-webfont.woff2") format("woff2"),
+        url("/assets/fonts/sf-pro-text/sf-pro-text-semibold-webfont.woff") format("woff"),
+        url("/assets/fonts/sf-pro-text/SFProText-Semibold.ttf") format("truetype");
     font-weight: 500;
     font-style: normal;
+    font-display: swap;
 }
 
 @font-face {
-    font-family: 'SFProText';
-    src: url('/assets/fonts/sf-pro-text/SFProText-Bold.ttf') format('truetype');
+    font-family: "SFProText";
+    src: url("/assets/fonts/sf-pro-text/sf-pro-text-bold-webfont.woff2") format("woff2"),
+        url("/assets/fonts/sf-pro-text/sf-pro-text-bold-webfont.woff") format("woff"),
+        url("/assets/fonts/sf-pro-text/SFProText-Bold.ttf") format("truetype");
     font-weight: 600;
     font-style: normal;
+    font-display: swap;
 }

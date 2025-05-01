@@ -4,6 +4,8 @@
         <img
             class="pulse__header-logo"
             [src]="pulse.icon"
+            width="160"
+            height="160"
             alt="pulse icon"
             appLoadImgPath
         />
@@ -108,7 +110,12 @@
         </div>
 
         <div class="pulse__info-media">
-            <img [src]="pulse.picture" [alt]="pulse.title" appLoadImgPath />
+            <img 
+                [src]="pulse.picture" 
+                width="275" 
+                height="180" 
+                [alt]="pulse.title" 
+                appLoadImgPath />
 
             <div
                 class="pulse__info-media__map"
