@@ -1,6 +1,7 @@
 @use '../../../../../styles/mixins'as *;
 
 :host {
+    height: 100%;
     display: flex;
     justify-content: center;
     position: relative;
@@ -81,8 +82,9 @@
 }
 
 .map-container {
-    height: 700px;
+    // height: 700px;
     // max-width: 1170px;
+    height: 100%;
     width: 100%;
     overflow: hidden;
     border-radius: 20px;
