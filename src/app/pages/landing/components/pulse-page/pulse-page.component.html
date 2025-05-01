@@ -140,7 +140,7 @@
     <app-slider>
         @for (pulse of topPulses; track pulse.id; let i = $index) {
         <li class="splide__slide">
-            <app-top-pulse-card [index]="i + 1" [pulse]="pulse" />
+            <app-top-pulse-card [pulse]="pulse" />
         </li>
         }
     </app-slider>
