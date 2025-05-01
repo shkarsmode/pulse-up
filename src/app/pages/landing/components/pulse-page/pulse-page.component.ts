@@ -120,7 +120,7 @@ export class PulsePageComponent implements OnInit {
 
         this.pulse.description = value.replace(link, "");
 
-        this.pulse.description = this.pulse.description + `<a href="${link}">${link}</a>`;
+        this.pulse.description = this.pulse.description + `<a href="${link}" rel="nofollow" target="_blank">${link}</a>`;
     }
 
     private extractUrl(value: string): string | null {
