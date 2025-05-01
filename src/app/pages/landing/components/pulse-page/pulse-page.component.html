@@ -78,7 +78,7 @@
                 class="pulse__info-description-text"
                 [class.pulse__info-description-text--read-more]="isReadMore"
                 #description
-                [innerHTML]="pulse.description"
+                [innerHTML]="isReadMore ? pulse.description : shortPulseDescription"
             ></div>
             @if (!isReadMore) {
             <div
