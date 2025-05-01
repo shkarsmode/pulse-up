@@ -214,14 +214,14 @@ export class MapComponent implements OnInit {
         });
 
         this.map?.addLayer({
-            id: 'h3-polygons-layer',
+            id: 'h3-polygons-layer-line',
             type: 'line',
             source: sourceId,
             layout: {},
             paint: {
-                'line-color': '#5e00cc',
-                'line-width': 1.5,
-                'line-opacity': 0.1,
+                'line-color': '#FFFFFF',
+                'line-width': 2,
+                'line-opacity': 0.5,
             },
         });
         this.map?.addLayer({
