@@ -11,15 +11,25 @@ import { ActivatedRoute, Router } from "@angular/router";
     template: `
         <div
             [attr.aria-busy]="isLoading"
-            aria-live="polite">
-            <app-loading-page [isVisible]="isLoading"/>
-            <div [attr.aria-disabled]="isLoading">
+            aria-live="polite"
+            class="height-full">
+            <app-loading-page [isVisible]="isLoading" />
+            <div
+                [attr.aria-disabled]="isLoading"
+                class="height-full">
                 @if (!isLoading) {
-                    <router-outlet></router-outlet>
+                <router-outlet></router-outlet>
                 }
             </div>
         </div>
     `,
+    styles: [
+        `
+            .height-full {
+                height: 100%;
+            }
+        `,
+    ],
 })
 export class AppComponent {
     public isLoading: boolean = false;
