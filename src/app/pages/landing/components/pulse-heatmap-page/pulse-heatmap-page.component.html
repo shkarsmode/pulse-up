@@ -13,18 +13,24 @@
             </span>
         </app-secondary-button>
     </div>
-    <div class="pulse__header">
-        <img
-            class="pulse__header-logo"
-            [src]="pulse.icon"
-            width="160"
-            height="160"
-            alt="pulse icon"
-            appLoadImgPath />
-        <div class="pulse__header-title">
-            <h2>{{ pulse.title }}</h2>
-            <div>
-                {{ pulse.author.name }}
+    <div class="pulse__header pulse-header">
+        <div class="pulse-header__row">
+            <img
+                class="pulse__header-logo"
+                [src]="pulse.icon"
+                width="160"
+                height="160"
+                alt="pulse icon"
+                appLoadImgPath />
+            <div class="pulse__header-title">
+                <h2>{{ pulse.title }}</h2>
+                <div>
+                    {{ pulse.author.name }}
+                </div>
+                <div class="pulse__last-votes">
+                    {{ pulse.stats?.lastDayVotes || 0 | formatNumber }}
+                    Pulses received in last 24 hours
+                </div>
             </div>
         </div>
     </div>
