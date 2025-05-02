@@ -285,9 +285,10 @@ export class MapComponent implements OnInit {
                 first(),
                 filter(() => this.isToShowHeatmap),
                 tap(
-                    (heatmap) =>
-                    (this.heatmapDataPointsCount =
-                        Object.keys(heatmap).length)
+                    (heatmap) => {
+                        (this.heatmapDataPointsCount =
+                            Object.keys(heatmap).length)
+                    }
                 )
             )
             .subscribe((votes) => {
@@ -301,7 +302,20 @@ export class MapComponent implements OnInit {
     private subscribeOnDataListHeatmap(): void {
         this.heatMapData$
             .pipe(takeUntilDestroyed(this.destroyed))
-            .subscribe((heatmap: { [key: string]: number }) => {
+            .subscribe((heatmapData: { [key: string]: number }) => {
+                const resolution = this.getResolutionBasedOnMapZoom();
+                let heatmap: { [key: string]: number } = {};
+                if (resolution === 0) {
+                    Object.entries(heatmapData).forEach(([h3Index, numberOfVotes]) => {
+                        const parsedIndex = h3Index.split(":").at(-1);
+                        if (parsedIndex) {
+                            heatmap[parsedIndex] = numberOfVotes;
+                        }
+                    })
+                } else {
+                    heatmap = heatmapData;
+                }
+                
                 const updatedHeatmapData = Object.keys(heatmap).map(
                     (key: string) => ({
                         coords: h3.h3ToGeo(key),
@@ -516,7 +530,6 @@ export class MapComponent implements OnInit {
             coordinates,
             this.map.getBounds().toArray()
         );
-        // console.log(this.mapLocationService.mapLocationFilter)
     }
 
     public zoomMapClick(sign: '+' | '-'): void {
