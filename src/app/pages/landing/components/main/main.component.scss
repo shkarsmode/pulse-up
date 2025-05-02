@@ -3,25 +3,8 @@
 :host {
     width: 100%;
     display: flex;
-    // align-items: center;
     flex-direction: column;
 }
-
-:host {
-    ::ng-deep .map-container {
-        height: 500px !important;
-    }
-}
-
-@media screen and (max-width: 500px) {
-
-    :host {
-        ::ng-deep .map-container {
-            height: 400px !important;
-        }
-    }
-}
-
 
 section.section {
     padding-top: 75px;
