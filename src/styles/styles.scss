@@ -103,7 +103,7 @@ h3 {
     right: 0;
     z-index: 100;
 
-    @media screen and (max-width: 760px) {
-        background-color: var(--white-color);
+    header.mobile {
+        border: 0;
     }
 }
