@@ -82,7 +82,7 @@
 
     @include media-4xl {
         flex: 1 0 500px;
-        height: 500px;
+        height: 540px;
     }
     @include media-lg {
         flex: 1;
@@ -90,6 +90,10 @@
         max-width: 540px;
     }
     @include media-sm {
+        flex: 1 0 400px;
+        height: 400px;
+    }
+    @include media-2xs {
         flex: 1 0 340px;
         height: 340px;
     }
@@ -98,9 +102,12 @@
         height: 600px !important;
 
         @include media-4xl {
-            height: 500px !important;
+            height: 540px !important;
         }
         @include media-sm {
+            height: 400px !important;
+        }
+        @include media-2xs {
             height: 340px !important;
         }
     }
