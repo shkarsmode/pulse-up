@@ -12,7 +12,7 @@ import { MetadataService } from "@/app/shared/services/core/metadata.service";
     styleUrl: "./pulse-page.component.scss",
 })
 export class PulsePageComponent implements OnInit {
-    public pulse: IPulse;
+    public pulse: IPulse | null = null;
     public isReadMore: boolean = false;
     public isLoading: boolean = true;
     public topPulses: IPulse[] = [];
@@ -50,18 +50,13 @@ export class PulsePageComponent implements OnInit {
     }
 
     private initPulseUrlIdListener(): void {
-        this.route.paramMap.pipe(take(1)).subscribe(this.handlePulseUrlIdListener.bind(this));
+        this.route.paramMap.subscribe(this.handlePulseUrlIdListener.bind(this));
     }
 
     private handlePulseUrlIdListener(data: ParamMap): void {
         const id = data.get("id")!;
-
-        // if (!id || 'number' !== typeof id) {
-        //     console.error('Invalid pulse ID');
-        //     this.router.navigateByUrl('/');
-        //     return;
-        // }
-
+        this.pulse = null;
+        this.isLoading = true;
         const pulse = this.getPulseById(id);
         pulse.subscribe((pulse) => {
             this.shortPulseDescription = pulse.description.replace(/\n/g, " ");
@@ -118,7 +113,7 @@ export class PulsePageComponent implements OnInit {
     private createLink(value: string): void {
         let link = this.extractUrl(value);
 
-        if (!link) return;
+        if (!link || !this.pulse) return;
 
         this.pulse.description = value.replace(link, "");
 
