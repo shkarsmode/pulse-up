@@ -105,7 +105,7 @@
             </div> -->
 
         <div class="pulse__info-activity">
-            Active from Sept 10, 2024, to Sept 13, 2024
+            Active from {{ pulse.startsAt | date: 'MMM d, y' }}, to {{ pulse.endsAt | date: 'MMM d, y' }}
         </div>
 
         <div class="pulse__info-media">
