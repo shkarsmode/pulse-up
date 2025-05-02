@@ -45,7 +45,7 @@
     width: 100%;
     max-width: 1210px;
     margin: 0 auto;
-    padding: 0 20px;
+    padding: var(--header-height) 20px 0;
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -54,8 +54,19 @@
         min-height: calc(100svh - var(--header-height));
         justify-content: center;
         flex-direction: column-reverse;
-        row-gap: 32px;
-        padding: 0 0 60px;
+        row-gap: 24px;
+        padding-left: 0;
+        padding-right: 0;
+        padding-top: 0;
+        padding-bottom: 60px;
+    }
+    @include media-2xs {
+        row-gap: 16px;
+        padding-bottom: 24px;
+    }
+    @include media-3xs {
+        row-gap: 8px;
+        padding-bottom: 8px;
     }
 }
 .hero__content {
@@ -64,18 +75,54 @@
     @include media-lg {
         flex: 0;
         padding: 0 20px;
+        max-width: 500px;
     }
 }
 .hero__map {
     display: flex;
     flex-direction: column;
     justify-content: center;
-    flex: 0 0 500px;
-    height: 500px;
+    flex: 0 0 600px;
+    height: 600px;
+    max-width: 600px;
 
+    @include media-4xl {
+        flex: 1 0 500px;
+        height: 540px;
+        max-width: 540px;
+    }
     @include media-lg {
         flex: 1;
         width: 100%;
+        max-width: 540px;
+    }
+    @include media-sm {
+        flex: 1 0 400px;
+        height: 400px;
+    }
+    @include media-2xs {
+        flex: 1 0 300px;
+        height: 320px;
+    }
+    @include media-3xs {
+        height: 300px;
+    }
+
+    &::ng-deep .map-container {
+        height: 600px !important;
+
+        @include media-4xl {
+            height: 540px !important;
+        }
+        @include media-sm {
+            height: 400px !important;
+        }
+        @include media-2xs {
+            height: 320px !important;
+        }
+        @include media-3xs {
+            height: 300px !important;
+        }
     }
 }
 .hero__title {
@@ -88,6 +135,9 @@
     @include media-sm {
         @include title-24px;
     }
+    @include media-xs {
+        @include title-20px;
+    }
 }
 .hero__description {
     @include text-16px;
@@ -96,45 +146,41 @@
     @include media-lg {
         text-align: center;
     }
+    @include media-sm {
+        max-width: 300px;
+        margin: 0 auto 40px;
+    }
+    @include media-xs {
+        margin-bottom: 24px;
+    }
+    @include media-2xs {
+        @include text-14px;
+        margin-bottom: 16px;
+    }
+    @media screen and (max-height: 600px) {
+        display: none;
+    }
 }
-.hero_actions {
-    max-width: 200px;
+.hero__actions {
+    display: flex;
+    column-gap: 16px;
     &::ng-deep button {
         min-height: 48px;
+        padding: 12px 16px;
     }
     @include media-lg {
         margin: 0 auto;
     }
+    @include media-2xs {
+        flex-direction: column;
+        row-gap: 8px;
+    }
 }
-// .hero__content {
-//     width: 100%;
-//     max-width: 600px;
-//     margin: 0 auto;
-//     padding: 24px 0;
-//     position: relative;
-//     z-index: 1;
-
-//     @media screen and (max-width: 1024px) and (max-height: 575px) and (orientation: landscape) {
-//         max-width: 480px;
-//     }
-//     @media screen and (max-width: 720px) and (orientation: portrait) {
-//         max-width: 480px;
-//     }
-// }
-
-// .hero_app-button::ng-deep button {
-//     min-width: 200px;
-
-//     @include media-xs {
-//         min-width: 100%;
-//     }
-// }
-// .hero_trending-button::ng-deep button {
-//     padding-top: 16px;
-//     padding-bottom: 16px;
-//     min-width: 240px;
-
-//     @include media-xs {
-//         min-width: 100%;
-//     }
-// }
+.hero__button {
+    width: 100%;
+    max-width: 200px;
+    
+    @include media-xs {
+        max-width: 100%;
+    }
+}

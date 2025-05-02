@@ -6,20 +6,30 @@
                 Tap to support what matters, discover trending topics, and raise awareness —
                 anonymously.
             </p>
-            <div class="hero_actions">
-                <app-primary-button
-                    [fullWidth]="true"
-                    class="hero_app-button"
-                    (handleClick)="openStore()">
-                    Get Pulse Up
-                </app-primary-button>
+            <div class="hero__actions">
+                <div class="hero__button">
+                    <app-primary-button
+                        [fullWidth]="true"
+                        class="hero_app-button"
+                        (handleClick)="openStore()">
+                        Get Pulse Up
+                    </app-primary-button>
+                </div>
+                <div class="hero__button">
+                    <app-secondary-button
+                        [routerLink]="'/' + AppRoutes.Landing.MAP"
+                        routerLinkActive="active"
+                        [fullWidth]="true">
+                        Explore Map
+                    </app-secondary-button>
+                </div>
             </div>
         </div>
         <div class="hero__map">
             <app-map
                 [isHideDebugger]="true"
                 [zoom]="[zoom]"
-                [minZoom]="1"
+                [minZoom]="0.45"
                 projection="globe"
                 [isToShowTooltip]="true"
                 [isScrollZoomEnabled]="false"
@@ -29,26 +39,4 @@
                 (markerClick)="onMarkerClick()" />
         </div>
     </div>
-    <!-- <div class="page-container">
-        <div class="hero__content">
-            <h1 class="hero__title">
-                People Should Decide What Matters – Not Algorithms
-            </h1>
-            <p class="hero__description">
-                Tap to support what matters, discover trending topics, and raise
-                awareness — anonymously.
-            </p>
-            <div class="hero_actions">
-                <app-secondary-button
-                    class="hero_app-button"
-                    (handleClick)="openStore()"
-                >
-                    Get the App
-                </app-secondary-button>
-                <app-primary-button class="hero_trending-button" [routerLink]="'/topics'">
-                    See What’s Trending
-                </app-primary-button>
-            </div>
-        </div>
-    </div> -->
 </section>
