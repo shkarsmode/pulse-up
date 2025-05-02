@@ -80,6 +80,11 @@
     display: flex;
     margin-bottom: 12px;
 }
+.pulse-back {
+    &::ng-deep button {
+        padding: 12px 24px;
+    }
+}
 .pulse-back__inner {
     display: flex;
     align-items: center ;
@@ -96,7 +101,7 @@
 	width: 8px;
 }
 
-@media screen and (max-width: 500px) {
+@media screen and (max-width: 1200px) {
 
     .pulse__header {
         gap: 16px;
