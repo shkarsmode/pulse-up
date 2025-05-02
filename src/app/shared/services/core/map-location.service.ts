@@ -39,7 +39,7 @@ export class MapLocationService {
                         visibleBounds
                     );
                 } else {
-                    console.log('fetchNativeLocation');
+                    this.mapLocationFilter = 'World';
                 }
             })
             .catch((err) => console.log('fetch err - ', err));

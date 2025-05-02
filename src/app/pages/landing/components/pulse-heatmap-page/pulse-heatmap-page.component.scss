@@ -53,7 +53,7 @@
     }
 
     app-map::ng-deep .map-container {
-        height: 400px !important;
+        height: 600px !important;
         width: 100%;
         overflow: hidden;
         border-radius: 20px;
@@ -76,12 +76,37 @@
 
 }
 
+.pulse__back {
+    display: flex;
+    margin-bottom: 12px;
+}
+.pulse-back {
+    &::ng-deep button {
+        padding: 12px 24px;
+    }
+}
+.pulse-back__inner {
+    display: flex;
+    align-items: center ;
+    gap: 8px;
+}
+.pulse-back__icon {
+    border-style: solid;
+	border-width: 2px 2px 0 0;
+	display: inline-block;
+	height: 8px;
+	transform: rotate(-135deg);
+	position: relative;
+	vertical-align: top;
+	width: 8px;
+}
 
-@media screen and (max-width: 500px) {
+@media screen and (max-width: 1200px) {
 
     .pulse__header {
         gap: 16px;
         margin-bottom: 16px;
+        justify-content: flex-start;
     
         &-logo {
     
@@ -112,7 +137,7 @@
 @media screen and (max-width: 650px) {
 
     :host {
-        padding: 24px 20px 48px;
+        padding: 20px 20px 48px;
     }
 
 }

@@ -1,7 +1,18 @@
-<div class="pulse"
-     fadeIn [childrenFadeIn]="true"
-     *ngIf="!isLoading">
-
+<div
+    class="pulse"
+    fadeIn
+    [childrenFadeIn]="true"
+    *ngIf="!isLoading">
+    <div class="pulse__back">
+        <app-secondary-button
+            class="pulse-back"
+            (handleClick)="backToPulsePage()">
+            <span class="pulse-back__inner">
+                <span class="pulse-back__icon"></span>
+                <span>Back</span>
+            </span>
+        </app-secondary-button>
+    </div>
     <div class="pulse__header">
         <img
             class="pulse__header-logo"
@@ -9,7 +20,7 @@
             width="160"
             height="160"
             alt="pulse icon"
-            appLoadImgPath>
+            appLoadImgPath />
         <div class="pulse__header-title">
             <h2>{{ pulse.title }}</h2>
             <div>
@@ -20,18 +31,11 @@
 
     <app-map
         [pulseId]="pulse.id"
-        [isToShowHeatmap]="true" 
+        [isToShowHeatmap]="true"
         [isHideDebugger]="true"
         [isLocationName]="true"
         [center]="center"
         [zoom]="zoom"
         [minZoom]="minZoom"
-        [maxBounds]="maxBounds"/>
-
-    <app-primary-button 
-        class="pulse__button"
-        (handleClick)="backToPulsePage()"> 
-        View Pulse 
-    </app-primary-button>
-
+        [maxBounds]="maxBounds" />
 </div>
