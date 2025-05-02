@@ -61,7 +61,12 @@
         padding-bottom: 60px;
     }
     @include media-2xs {
+        row-gap: 16px;
         padding-bottom: 24px;
+    }
+    @include media-3xs {
+        row-gap: 8px;
+        padding-bottom: 8px;
     }
 }
 .hero__content {
@@ -79,10 +84,12 @@
     justify-content: center;
     flex: 0 0 600px;
     height: 600px;
+    max-width: 600px;
 
     @include media-4xl {
         flex: 1 0 500px;
         height: 540px;
+        max-width: 540px;
     }
     @include media-lg {
         flex: 1;
@@ -94,8 +101,11 @@
         height: 400px;
     }
     @include media-2xs {
-        flex: 1 0 340px;
-        height: 340px;
+        flex: 1 0 300px;
+        height: 320px;
+    }
+    @include media-3xs {
+        height: 300px;
     }
 
     &::ng-deep .map-container {
@@ -108,7 +118,10 @@
             height: 400px !important;
         }
         @include media-2xs {
-            height: 340px !important;
+            height: 320px !important;
+        }
+        @include media-3xs {
+            height: 300px !important;
         }
     }
 }
@@ -121,6 +134,9 @@
     }
     @include media-sm {
         @include title-24px;
+    }
+    @include media-xs {
+        @include title-20px;
     }
 }
 .hero__description {
@@ -137,45 +153,34 @@
     @include media-xs {
         margin-bottom: 24px;
     }
+    @include media-2xs {
+        @include text-14px;
+        margin-bottom: 16px;
+    }
+    @media screen and (max-height: 600px) {
+        display: none;
+    }
 }
-.hero_actions {
-    max-width: 200px;
+.hero__actions {
+    display: flex;
+    column-gap: 16px;
     &::ng-deep button {
         min-height: 48px;
+        padding: 12px 16px;
     }
     @include media-lg {
         margin: 0 auto;
     }
+    @include media-2xs {
+        flex-direction: column;
+        row-gap: 8px;
+    }
 }
-// .hero__content {
-//     width: 100%;
-//     max-width: 600px;
-//     margin: 0 auto;
-//     padding: 24px 0;
-//     position: relative;
-//     z-index: 1;
-
-//     @media screen and (max-width: 1024px) and (max-height: 575px) and (orientation: landscape) {
-//         max-width: 480px;
-//     }
-//     @media screen and (max-width: 720px) and (orientation: portrait) {
-//         max-width: 480px;
-//     }
-// }
-
-// .hero_app-button::ng-deep button {
-//     min-width: 200px;
-
-//     @include media-xs {
-//         min-width: 100%;
-//     }
-// }
-// .hero_trending-button::ng-deep button {
-//     padding-top: 16px;
-//     padding-bottom: 16px;
-//     min-width: 240px;
-
-//     @include media-xs {
-//         min-width: 100%;
-//     }
-// }
+.hero__button {
+    width: 100%;
+    max-width: 200px;
+    
+    @include media-xs {
+        max-width: 100%;
+    }
+}

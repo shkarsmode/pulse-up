@@ -1,4 +1,5 @@
 export enum Breakpoints {
+    XXXS = '320px',
     XXS = '375px',
     XS = '480px',
     SM = '576px',
