@@ -103,7 +103,9 @@ h3 {
     right: 0;
     z-index: 100;
 
-    header.mobile {
-        border: 0;
+    header {
+        &.mobile {
+            border: 0;
+        }
     }
 }

@@ -136,8 +136,8 @@ ul {
             position: absolute;
             z-index: 1000;
             width: calc(100%);
-            height: calc(100dvh - 79px);
-            top: 79px;
+            height: 100dvh;
+            top: 0;
             overflow: hidden;
 
             //close
@@ -194,6 +194,14 @@ ul {
                         opacity: 1;
                         scale: 1;
                         // transform: translateY(0px);
+                    }
+
+                    .right-side__top {
+                        display: flex;
+                        justify-content: flex-end;
+                        align-items: center;
+                        height: 32px;
+                        width: 100%;
                     }
 
                     ul {
@@ -275,7 +283,6 @@ ul {
             }
         }
     }
-
 }
 
 .scale {
