@@ -139,7 +139,7 @@
 
     <h2 class="pulse__slider-title">You may also like</h2>
     <app-slider>
-        @for (pulse of topPulses; track pulse.id; let i = $index) {
+        @for (pulse of suggestions; track pulse.id; let i = $index) {
         <li class="splide__slide">
             <app-top-pulse-card [pulse]="pulse" />
         </li>
