@@ -24,19 +24,26 @@
                     </app-secondary-button>
                 </div>
             </div>
+            <div>
+                <mat-checkbox class="example-margin" (change)="toggleIsMapAnimated()">Toggle map animation</mat-checkbox>
+            </div>
+            <div>
+                <mat-checkbox class="example-margin" (change)="toggleIsMarkersAnimated()">Toggle markers animation</mat-checkbox>
+            </div>
         </div>
-        <div class="hero__map">
+        <div class="hero__map" [class.hero__map--animated]="isMapAnimated">
             <app-map
-                [isHideDebugger]="true"
+                [isHideDebugger]="true"s
                 [zoom]="[zoom]"
                 [minZoom]="0.45"
                 projection="globe"
                 [isToShowTooltip]="true"
                 [isScrollZoomEnabled]="false"
                 [isDoubleClickZoomEnabled]="false"
+                [isMarkerAnimated]="isMarkersAnimated"
                 [maxBounds]="undefined"
                 (mapLoaded)="onMapLoaded($event)"
-                (markerClick)="onMarkerClick()" />
+                (markerClick)="onMarkerClick()"/>
         </div>
     </div>
 </section>

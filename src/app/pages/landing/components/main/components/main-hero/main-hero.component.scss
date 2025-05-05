@@ -124,6 +124,10 @@
             height: 300px !important;
         }
     }
+
+    &.hero__map--animated {
+        animation: 2s pulse 1s ease-in-out infinite; 
+    }
 }
 .hero__title {
     @include title-32px;
@@ -182,5 +186,17 @@
     
     @include media-xs {
         max-width: 100%;
+    }
+}
+
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+    }
+    10% {
+        transform: scale(1.035);
+    }
+    100% {
+        transform: scale(1);
     }
 }
