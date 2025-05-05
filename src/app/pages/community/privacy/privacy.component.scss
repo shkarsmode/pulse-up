@@ -94,3 +94,16 @@ strong {
     }
 }
 
+.font-regular {
+    font-weight: 400;
+}
+.decoration-none {
+    text-decoration: none;
+}
+.text-black {
+    color: #000;
+
+    &:hover {
+        color: #000;
+    }
+}
