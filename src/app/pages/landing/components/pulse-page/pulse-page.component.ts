@@ -15,7 +15,7 @@ export class PulsePageComponent implements OnInit {
     public pulse: IPulse | null = null;
     public isReadMore: boolean = false;
     public isLoading: boolean = true;
-    public topPulses: IPulse[] = [];
+    public suggestions: IPulse[] = [];
     public pulseUrl: string = "";
     public shortPulseDescription: string = "";
 
@@ -29,16 +29,6 @@ export class PulsePageComponent implements OnInit {
 
     public ngOnInit(): void {
         this.initPulseUrlIdListener();
-        this.setTopPulses();
-    }
-
-    private setTopPulses(): void {
-        this.pulseService
-            .get()
-            .pipe(first())
-            .subscribe((pulses) => {
-                this.topPulses = pulses.slice(0, 3);
-            });
     }
 
     public onReadMore(): void {
@@ -64,6 +54,7 @@ export class PulsePageComponent implements OnInit {
             this.isLoading = false;
             this.determineIfNeedToRemoveShowMoreButton();
             this.createLink(pulse.description);
+            this.updateSuggestions();
             this.pulseUrl = this.pulseService.shareTopicBaseUrl + pulse.shareKey;
             this.metadataService.setTitle(`${pulse.title} | Support What Matters – Pulse Up`);
             this.metadataService.setMetaTag(
@@ -95,20 +86,21 @@ export class PulsePageComponent implements OnInit {
         }, 100);
     }
 
-    // private createLink(value: string): void {
-    //     let link = value.split(' ').find(word => word.startsWith('http'));
-    //     // if(!link) return;
-
-    //     this.pulse.description = value.split(' ').filter(el => el !== link).join(' ');
-
-    //     let a = document.createElement('a') as HTMLElement;
-    //     a.innerText = link;
-    //     a.href = link;
-
-    //     console.log(a);
-    //     this.description.nativeElement.appendChild(a);
-
-    // }
+    private updateSuggestions(): void {
+        this.pulseService
+            .get()
+            .pipe(first())
+            .subscribe((pulses) => {
+                const category = this.pulse?.category;
+                const sameCategoryTopics = pulses
+                    .filter((pulse) => pulse.category === category)
+                    .filter((pulse) => pulse.id !== this.pulse?.id);
+                this.suggestions =
+                    category && sameCategoryTopics.length
+                        ? sameCategoryTopics.slice(0, 3)
+                        : pulses.slice(0, 3);
+            });
+    }
 
     private createLink(value: string): void {
         let link = this.extractUrl(value);
@@ -117,7 +109,8 @@ export class PulsePageComponent implements OnInit {
 
         this.pulse.description = value.replace(link, "");
 
-        this.pulse.description = this.pulse.description + `<a href="${link}" rel="nofollow" target="_blank">${link}</a>`;
+        this.pulse.description =
+            this.pulse.description + `<a href="${link}" rel="nofollow" target="_blank">${link}</a>`;
     }
 
     private extractUrl(value: string): string | null {
