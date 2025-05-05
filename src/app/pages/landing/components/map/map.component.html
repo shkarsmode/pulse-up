@@ -32,7 +32,10 @@
     </mgl-layer> -->
 
     @for (marker of markers; track marker.h3Index) {
-    <mgl-marker [lngLat]="[marker.lng, marker.lat]">
+        @let opacity = 0;
+    <mgl-marker 
+        [lngLat]="[marker.lng, marker.lat]" 
+        [ngStyle]="{ opacity }">
         @if (isToShowTooltip) {
             <button
                 placement="bottom"
@@ -42,6 +45,7 @@
                 (hideEnd)="onTooltipHide()"
                 (mouseenter)="onMarkerHover(marker)"
                 (click)="onMarkerClick(marker)"
+                onload="(event) => opacity = 1"
                 aria-label="Show topic details">
                 <img
                 [src]="marker.icon"
