@@ -9,7 +9,7 @@
 
 .wrap {
     margin: 0 auto;
-    max-width: 570px;
+    max-width: 600px;
 }
 
 h1 {
@@ -94,3 +94,16 @@ strong {
     }
 }
 
+.font-regular {
+    font-weight: 400;
+}
+.decoration-none {
+    text-decoration: none;
+}
+.text-black {
+    color: #000;
+
+    &:hover {
+        color: #000;
+    }
+}
