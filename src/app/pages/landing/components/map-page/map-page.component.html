@@ -5,13 +5,15 @@
 
     <app-map
         [isHideDebugger]="true"
-        [isSearch]="true"
+        [isSearch]="false"
         [isLocationName]="true" 
         [isZoomButton]="true"   
         [zoom]="zoom" 
         [minZoom]="minZoom"
         [maxBounds]="maxBounds"
         [center]="center"
+        [isToShowTooltip]="true"
+        (markerClick)="onMarkerClick($event)"
     />
         
 </div>

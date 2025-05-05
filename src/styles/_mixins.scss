@@ -9,6 +9,13 @@
     line-height: 38.19px;
 }
 
+@mixin title-24px {
+    //styleName: Title 24px;
+    font-size: 24px;
+    font-weight: 600;
+    line-height: 1;
+}
+
 @mixin title-20px {
     //styleName: Title 20px;
     font-size: 20px;
@@ -107,6 +114,11 @@
 }
 @mixin media-2xs {
     @media screen and (max-width: 375px) {
+        @content;
+    }
+}
+@mixin media-3xs {
+    @media screen and (max-width: 320px) {
         @content;
     }
 }

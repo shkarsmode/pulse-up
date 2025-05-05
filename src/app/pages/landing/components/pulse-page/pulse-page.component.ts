@@ -12,11 +12,12 @@ import { MetadataService } from "@/app/shared/services/core/metadata.service";
     styleUrl: "./pulse-page.component.scss",
 })
 export class PulsePageComponent implements OnInit {
-    public pulse: IPulse;
+    public pulse: IPulse | null = null;
     public isReadMore: boolean = false;
     public isLoading: boolean = true;
-    public topPulses: IPulse[] = [];
+    public suggestions: IPulse[] = [];
     public pulseUrl: string = "";
+    public shortPulseDescription: string = "";
 
     @ViewChild("description", { static: false })
     public description: ElementRef<HTMLDivElement>;
@@ -28,16 +29,6 @@ export class PulsePageComponent implements OnInit {
 
     public ngOnInit(): void {
         this.initPulseUrlIdListener();
-        this.setTopPulses();
-    }
-
-    private setTopPulses(): void {
-        this.pulseService
-            .get()
-            .pipe(first())
-            .subscribe((pulses) => {
-                this.topPulses = pulses.slice(0, 3);
-            });
     }
 
     public onReadMore(): void {
@@ -49,24 +40,21 @@ export class PulsePageComponent implements OnInit {
     }
 
     private initPulseUrlIdListener(): void {
-        this.route.paramMap.pipe(take(1)).subscribe(this.handlePulseUrlIdListener.bind(this));
+        this.route.paramMap.subscribe(this.handlePulseUrlIdListener.bind(this));
     }
 
     private handlePulseUrlIdListener(data: ParamMap): void {
         const id = data.get("id")!;
-
-        // if (!id || 'number' !== typeof id) {
-        //     console.error('Invalid pulse ID');
-        //     this.router.navigateByUrl('/');
-        //     return;
-        // }
-
+        this.pulse = null;
+        this.isLoading = true;
         const pulse = this.getPulseById(id);
         pulse.subscribe((pulse) => {
+            this.shortPulseDescription = pulse.description.replace(/\n/g, " ");
             this.pulse = pulse;
             this.isLoading = false;
             this.determineIfNeedToRemoveShowMoreButton();
             this.createLink(pulse.description);
+            this.updateSuggestions();
             this.pulseUrl = this.pulseService.shareTopicBaseUrl + pulse.shareKey;
             this.metadataService.setTitle(`${pulse.title} | Support What Matters – Pulse Up`);
             this.metadataService.setMetaTag(
@@ -92,35 +80,37 @@ export class PulsePageComponent implements OnInit {
 
             const fullHeight = textElement!.scrollHeight;
             const visibleHeight = textElement!.clientHeight + 2;
-            const isTruncated = visibleHeight < fullHeight;
-
+            const heightDiff = fullHeight - visibleHeight;
+            const isTruncated = heightDiff > 19;
             this.isReadMore = !isTruncated;
         }, 100);
     }
 
-    // private createLink(value: string): void {
-    //     let link = value.split(' ').find(word => word.startsWith('http'));
-    //     // if(!link) return;
-
-    //     this.pulse.description = value.split(' ').filter(el => el !== link).join(' ');
-
-    //     let a = document.createElement('a') as HTMLElement;
-    //     a.innerText = link;
-    //     a.href = link;
-
-    //     console.log(a);
-    //     this.description.nativeElement.appendChild(a);
-
-    // }
+    private updateSuggestions(): void {
+        this.pulseService
+            .get()
+            .pipe(first())
+            .subscribe((pulses) => {
+                const category = this.pulse?.category;
+                const sameCategoryTopics = pulses
+                    .filter((pulse) => pulse.category === category)
+                    .filter((pulse) => pulse.id !== this.pulse?.id);
+                this.suggestions =
+                    category && sameCategoryTopics.length
+                        ? sameCategoryTopics.slice(0, 3)
+                        : pulses.slice(0, 3);
+            });
+    }
 
     private createLink(value: string): void {
         let link = this.extractUrl(value);
 
-        if (!link) return;
+        if (!link || !this.pulse) return;
 
         this.pulse.description = value.replace(link, "");
 
-        this.pulse.description = this.pulse.description + `<a href="${link}">${link}</a>`;
+        this.pulse.description =
+            this.pulse.description + `<a href="${link}" rel="nofollow" target="_blank">${link}</a>`;
     }
 
     private extractUrl(value: string): string | null {

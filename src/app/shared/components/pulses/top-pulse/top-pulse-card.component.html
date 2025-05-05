@@ -10,7 +10,9 @@
         }
         <img
             [src]="pulse.icon"
-            alt="topic"
+            width="68"
+            height="68"
+            [alt]="pulse.title"
             appLoadImgPath />
     </div>
     <div class="stats">
@@ -21,12 +23,12 @@
         </div>
         <div>
             <span class="title">Lifetime</span>
-            <svg-icon src="assets/svg/pulse.svg" />
+            <svg-icon src="assets/svg/chart-simple-solid.svg" />
             <span class="count">{{ pulse.stats?.totalVotes || 0 | formatNumber }}</span>
         </div>
         <div>
             <span class="title">24 hour</span>
-            <svg-icon src="assets/svg/pulse_time_icon.svg" />
+            <svg-icon src="assets/svg/pulse.svg" />
             <span class="count">{{ pulse.stats?.lastDayVotes || 0 | formatNumber }}</span>
         </div>
     </div>
@@ -35,7 +37,6 @@
 <div class="bottom">
     <h3>{{ pulse.title }}</h3>
     <div>
-        <svg-icon src="assets/svg/author.svg" />
         {{ pulse.author.name }}
     </div>
 </div>

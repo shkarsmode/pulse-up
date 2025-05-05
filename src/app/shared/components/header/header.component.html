@@ -43,11 +43,11 @@
 
         <div class="buttons">
 
-            <app-secondary-button
+            <!-- <app-secondary-button
                 [routerLink]="'/' + AppRoutes.User.Topic.HOW_IT_WORKS"
                 routerLinkActive="active">
                 Add a topic
-            </app-secondary-button>
+            </app-secondary-button> -->
     
             <app-primary-button
                 openGetAppPopup>
@@ -62,7 +62,7 @@
 
 <!-- MOBILE DESIGN -->
 
-<header class="mobile">
+<header class="mobile" [class.active]="isMobileDropdown">
     <div class="mobile__top-bar">
         <a 
             class="logo"
@@ -71,9 +71,7 @@
             <svg-icon src="assets/svg/logo-mobile.svg" ></svg-icon>
         </a>
 
-        <app-burger-button 
-            [isOpen]="isMobileDropdown" 
-            (click)="toggleDropdown()" />
+        <app-burger-button (click)="toggleDropdown()" />
     
     </div>
 
@@ -87,7 +85,12 @@
             <div 
                 class="right-side"
                 [class.active]="isMobileDropdown">
-                <div></div>
+                <div class="right-side__top">
+                    <app-burger-button 
+                        [isOpen]="isMobileDropdown" 
+                        (click)="toggleDropdown()" />
+                
+                </div>
 
                 <ul [class.scale]="!isMobileDropdown">
                     <li>
@@ -143,13 +146,13 @@
                 </ul>
         
                 <div>
-                    <app-secondary-button
+                    <!-- <app-secondary-button
                         [class.scale]="!isMobileDropdown"
                         [routerLink]="'/' + AppRoutes.User.Topic.HOW_IT_WORKS"
                         (click)="toggleDropdown()"
                         routerLinkActive="active">
                         Add a topic
-                    </app-secondary-button>
+                    </app-secondary-button> -->
                     <app-primary-button
                         [class.scale]="!isMobileDropdown"
                         (click)="toggleDropdown()"

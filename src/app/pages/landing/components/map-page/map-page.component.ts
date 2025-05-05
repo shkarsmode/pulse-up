@@ -1,6 +1,8 @@
-import { ResponsiveMapConfig } from '@/app/shared/interfaces/responsive-map-config.interface';
 import { Component, effect, inject } from '@angular/core';
+import { Router } from '@angular/router';
 import { toSignal } from '@angular/core/rxjs-interop';
+import { IMapMarker } from '@/app/shared/interfaces/map-marker.interface';
+import { ResponsiveMapConfig } from '@/app/shared/interfaces/responsive-map-config.interface';
 import { MediaQueryService } from '@app/shared/services/core/media-query.service';
 
 @Component({
@@ -9,6 +11,7 @@ import { MediaQueryService } from '@app/shared/services/core/media-query.service
     styleUrl: './map-page.component.scss',
 })
 export class MapPageComponent {
+    private router: Router = inject(Router);
     private mediaService = inject(MediaQueryService);
     private isMobile = toSignal(this.mediaService.mediaQuery('max', 'SM'));
     private isLaptop = toSignal(this.mediaService.mediaQuery('max', 'XL'));
@@ -61,5 +64,11 @@ export class MapPageComponent {
             this.maxBounds = config.maxBounds;
             this.center = [...this.center];
         });
+    }
+
+    public onMarkerClick(marker: IMapMarker) {
+        let newRelativeUrl = this.router.createUrlTree([`topic/${marker.topicId}`]);
+        let baseUrl = window.location.href.replace(this.router.url, '');
+        window.open(baseUrl + newRelativeUrl, '_blank');
     }
 }

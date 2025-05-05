@@ -1,10 +1,11 @@
 @use '../../../../../styles/mixins'as *;
 
 :host {
+    height: 100%;
     display: flex;
+    align-items: center;
     justify-content: center;
     position: relative;
-    // padding: 0 20px;
 
     &:hover {
         &.preview {
@@ -16,49 +17,6 @@
             }
         }
     }
-
-    // &.preview {
-    //     &:before {
-    //         content: 'Click to interact';
-    //         position: absolute;
-
-    //         display: flex;
-    //         justify-content: center;
-    //         align-items: center;
-
-    //         left: 0px;
-    //         top: 50%;
-
-    //         width: 100%;
-    //         height: 50px;
-
-    //         transform: translateY(-50%);
-
-    //         font-size: 25px;
-    //         font-weight: 600;
-    //         color: white;
-
-    //         background-color: #5e00cc4d;
-    //         backdrop-filter: blur(6px);
-
-    //         z-index: 1;
-
-    //         border-radius: 10px;
-    //         pointer-events: none;
-    //         opacity: 0;
-
-    //         transition: all .5s;
-    //         transition-delay: 0s;
-    //     }
-
-    //     &:hover {
-    //         &:before {
-    //             opacity: 1;
-    //             transition-delay: 0.8s;
-    //         }
-    //     }
-
-    // }
 }
 
 .expand {
@@ -81,8 +39,9 @@
 }
 
 .map-container {
-    height: 700px;
+    // height: 700px;
     // max-width: 1170px;
+    height: 100%;
     width: 100%;
     overflow: hidden;
     border-radius: 20px;

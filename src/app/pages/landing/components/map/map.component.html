@@ -8,6 +8,10 @@
     [zoom]="zoom"
     [minZoom]="minZoom"
     [maxZoom]="10"
+    [scrollZoom]="isScrollZoomEnabled"
+    [doubleClickZoom]="isDoubleClickZoomEnabled"
+    [touchPitch]="touchPitch"
+    [touchZoomRotate]="touchZoomRotate"
     [projection]="projection"
     (load)="onMapLoad($event)"
     (zoomEnd)="handleZoomEnd()"
@@ -28,7 +32,10 @@
     </mgl-layer> -->
 
     @for (marker of markers; track marker.h3Index) {
-    <mgl-marker [lngLat]="[marker.lng, marker.lat]">
+        @let opacity = 0;
+    <mgl-marker 
+        [lngLat]="[marker.lng, marker.lat]" 
+        [ngStyle]="{ opacity }">
         @if (isToShowTooltip) {
             <button
                 placement="bottom"
@@ -38,17 +45,27 @@
                 (hideEnd)="onTooltipHide()"
                 (mouseenter)="onMarkerHover(marker)"
                 (click)="onMarkerClick(marker)"
-                aria-label="show pulse details">
+                onload="(event) => opacity = 1"
+                aria-label="Show topic details">
                 <img
                 [src]="marker.icon"
+                width="46"
+                height="46"
                 alt="icon"
                 appLoadImgPath />
             </button>
         } @else {
-            <img
-            [src]="marker.icon"
-            alt="icon"
-            appLoadImgPath />
+            <button
+                class="marker-button"
+                (click)="onMarkerClick(marker)"
+                aria-label="Show topic details">
+                <img
+                [src]="marker.icon"
+                width="46"
+                height="46"
+                alt="icon"
+                appLoadImgPath />
+            </button>
         }
     </mgl-marker>
     } @for (weight of weights; track weight.h3Index) {
@@ -178,11 +195,13 @@
 <div class="zoom-button">
     <button
         class="zoom-button__icon"
-        (click)="zoomMapClick('+')"></button>
+        (click)="zoomMapClick('+')"
+        aria-label="zoom in the map"></button>
 
     <button
         class="zoom-button__icon"
-        (click)="zoomMapClick('-')"></button>
+        (click)="zoomMapClick('-')"
+        aria-label="zoom out the map"></button>
 </div>
 }
 
@@ -192,7 +211,7 @@
         class="map-tooltip"
         [class.map-tooltip--loading]="!tooltipData">
         @if (tooltipData) {
-            <app-top-pulse-card [pulse]="tooltipData" />
+            <app-top-pulse-card [pulse]="tooltipData" [interactive]="false"/>
         } @else {
             <app-spinner />
         }

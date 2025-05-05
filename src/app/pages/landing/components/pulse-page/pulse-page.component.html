@@ -4,13 +4,14 @@
         <img
             class="pulse__header-logo"
             [src]="pulse.icon"
+            width="160"
+            height="160"
             alt="pulse icon"
             appLoadImgPath
         />
         <div class="pulse__header-title">
             <h2>{{ pulse.title }}</h2>
             <div>
-                <svg-icon src="assets/svg/author.svg" />
                 {{ pulse.author.name }}
             </div>
         </div>
@@ -27,14 +28,14 @@
             </div>
             <div>
                 <span class="pulse__stats-title">Lifetime</span>
-                <svg-icon src="assets/svg/pulse.svg" />
+                <svg-icon src="assets/svg/chart-simple-solid.svg" />
                 <span class="pulse__stats-count">{{
                     pulse.stats?.totalVotes || 0 | formatNumber
                 }}</span>
             </div>
             <div>
                 <span class="pulse__stats-title">24 hours</span>
-                <svg-icon src="assets/svg/pulse_time_icon.svg" />
+                <svg-icon src="assets/svg/pulse.svg" />
                 <span class="pulse__stats-count">{{
                     pulse.stats?.lastDayVotes || 0 | formatNumber
                 }}</span>
@@ -77,7 +78,7 @@
                 class="pulse__info-description-text"
                 [class.pulse__info-description-text--read-more]="isReadMore"
                 #description
-                [innerHTML]="pulse.description"
+                [innerHTML]="isReadMore ? pulse.description : shortPulseDescription"
             ></div>
             @if (!isReadMore) {
             <div
@@ -104,11 +105,17 @@
             </div> -->
 
         <div class="pulse__info-activity">
-            Active from Sept 10, 2024, to Sept 13, 2024
+            Active from {{ pulse.startsAt | date: 'MMM d, y' }}, to {{ pulse.endsAt | date: 'MMM d, y' }}
         </div>
 
         <div class="pulse__info-media">
-            <img [src]="pulse.picture" [alt]="pulse.title" appLoadImgPath />
+            <img 
+                *ngIf="pulse.picture"
+                [src]="pulse.picture" 
+                width="275" 
+                height="180" 
+                [alt]="pulse.title" 
+                appLoadImgPath />
 
             <div
                 class="pulse__info-media__map"
@@ -132,11 +139,13 @@
 
     <h2 class="pulse__slider-title">You may also like</h2>
     <app-slider>
-        @for (pulse of topPulses; track pulse.id; let i = $index) {
+        @for (pulse of suggestions; track pulse.id; let i = $index) {
         <li class="splide__slide">
-            <app-top-pulse-card [index]="i + 1" [pulse]="pulse" />
+            <app-top-pulse-card [pulse]="pulse" />
         </li>
         }
     </app-slider>
 </div>
+} @else {
+    <app-spinner />
 }

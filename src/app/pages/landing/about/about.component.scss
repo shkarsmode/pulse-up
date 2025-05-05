@@ -88,8 +88,9 @@
     margin-top: 40px;
 }
 
-.section__action::ng-deep button {
-    padding: 16px 31px;
+.section__action::ng-deep a {
+    min-height: 48px;
+    min-width: 200px;
     @include media-xs {
         width: 100%;
     }

@@ -14,16 +14,18 @@
 }
 
 @else {
-    <a class="btn btn--{{theme}}" [href]="links.APP_STORE">
-        <svg-icon src="assets/svg/a-store.svg" id="icon" />
-        <p>Download on the <br /> <span class="big-txt">App Store</span></p>
-    </a>
+    <div class="get-app-button" [ngClass]="classes">
+        <a class="btn btn--{{ theme }}" [href]="links.APP_STORE">
+            <svg-icon src="assets/svg/a-store.svg" id="icon" />
+            <p>Download on the <br /> <span class="big-txt">App Store</span></p>
+        </a>
 
-    <a
-        [href]="links.GOOGLE_APP_STORE"
-        class="btn btn--{{theme}}"
-        target="_blank">
-        <svg-icon src="assets/svg/g-play.svg" id="icon" />
-        <p>Get it on <br /> <span class="big-txt">Google Play</span></p>
-    </a>
+        <a
+            [href]="links.GOOGLE_APP_STORE"
+            class="btn btn--{{ theme }}"
+            target="_blank">
+            <svg-icon src="assets/svg/g-play.svg" id="icon" />
+            <p>Get it on <br /> <span class="big-txt">Google Play</span></p>
+        </a>
+    </div>
 }

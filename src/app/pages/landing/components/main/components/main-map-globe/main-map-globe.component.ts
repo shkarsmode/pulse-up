@@ -1,6 +1,9 @@
-import { Component } from '@angular/core';
-import throttle from 'lodash.throttle';
+import { Component, effect, inject } from '@angular/core';
+import { Router } from '@angular/router';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { MediaQueryService } from '@/app/shared/services/core/media-query.service';
 import { AppRoutes } from '@/app/shared/enums/app-routes.enum';
+import { IMapMarker } from '@/app/shared/interfaces/map-marker.interface';
 
 @Component({
   selector: 'app-main-map-globe',
@@ -9,63 +12,70 @@ import { AppRoutes } from '@/app/shared/enums/app-routes.enum';
 })
 export class MainMapGlobeComponent {
   private map: mapboxgl.Map | null = null;
-  public AppRoutes = AppRoutes
-
+  private router: Router = inject(Router);
+  private mediaService = inject(MediaQueryService);
+  private isMobile = toSignal(this.mediaService.mediaQuery('max', 'SM'));
   // At low zooms, complete a revolution every two minutes.
   private secondsPerRevolution = 120;
   // Above zoom level 5, do not rotate.
   private maxSpinZoom = 5;
   // Rotate at intermediate speeds between zoom levels 3 and 5.
   private slowSpinZoom = 3;
-
   private userInteracting = false;
   private spinEnabled = true;
 
+  public AppRoutes = AppRoutes
+  public zoom = 1.5;
+
+  constructor() {
+    effect(() => {
+      this.zoom = this.isMobile() ? 1 : 1.5;
+    })
+  }
+
   public onMapLoaded(map: mapboxgl.Map) {
     this.map = map;
+    this.removeLabelsFromMap();
     this.spinGlobe();
-    // Pause spinning on interaction
-    this.map.on('mousedown', () => {
+
+    // Pause spinning on user interaction (mouse or touch)
+    const onUserInteractionStart = () => {
       this.userInteracting = true;
-    });
+    };
 
-    // Restart spinning the globe when interaction is complete
-    this.map.on('mouseup', () => {
+    const onUserInteractionEnd = () => {
       this.userInteracting = false;
       this.spinGlobe();
-    });
+    };
 
-    // These events account for cases where the mouse has moved
-    // off the map, so 'mouseup' will not be fired.
-    this.map.on('dragend', () => {
-      this.userInteracting = false;
-      this.spinGlobe();
-    });
-    this.map.on('pitchend', () => {
-      this.userInteracting = false;
-      this.spinGlobe();
-    });
-    this.map.on('rotateend', () => {
-      this.userInteracting = false;
-      this.spinGlobe();
-    });
+    this.map.on('mousedown', onUserInteractionStart);
+    this.map.on('touchstart', onUserInteractionStart);
 
-    // When animation is complete, start spinning if there is no ongoing interaction
+    this.map.on('mouseup', onUserInteractionEnd);
+    this.map.on('touchend', onUserInteractionEnd);
+
+    this.map.on('dragend', onUserInteractionEnd);
+    this.map.on('pitchend', onUserInteractionEnd);
+    this.map.on('rotateend', onUserInteractionEnd);
+
     this.map.on('moveend', () => {
       this.spinGlobe();
     });
 
-    this.map.on('zoomstart', () => {
-      this.userInteracting = true;
+    this.map.on('click', () => {
+      this.navigateToMapPage();
     });
-
-    this.map.on('zoomend', throttle(() => {
-      this.userInteracting = false;
-      this.spinGlobe();
-    }, 300, { leading: true, trailing: false }));
   }
 
-  spinGlobe() {
+  public onMarkerClick() {
+    this.navigateToMapPage();
+  }
+
+  private navigateToMapPage() {
+    this.router.navigateByUrl(`/${this.AppRoutes.Landing.MAP}`);
+  }
+
+  private spinGlobe() {
     if (!this.map) return;
     const zoom = this.map.getZoom();
     if (this.spinEnabled && !this.userInteracting && zoom < this.maxSpinZoom) {
@@ -77,11 +87,22 @@ export class MainMapGlobeComponent {
         distancePerSecond *= zoomDif;
       }
       const center = this.map.getCenter();
-      center.lng -= distancePerSecond;
+      center.lng += distancePerSecond;
       // Smoothly animate the map over one second.
       // When this animation is complete, it calls a 'moveend' event.
-      this.map.easeTo({ center, duration: 1000, easing: (n) => n });
+      this.map.easeTo({ center, duration: 500, easing: (n) => n });
     }
 
+  }
+
+  private removeLabelsFromMap() {
+    if (!this.map) return;
+    const layers = this.map.getStyle().layers;
+    if (!layers) return;
+    for (const layer of layers) {
+      if (layer.type === 'symbol') {
+        this.map.removeLayer(layer.id);
+      }
+    }
   }
 }
