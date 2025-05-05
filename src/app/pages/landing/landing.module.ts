@@ -42,8 +42,9 @@ import { CopyButtonComponent } from '../../shared/components/ui-kit/buttons/copy
 import { AboutComponent } from './about/about.component';
 import { MainHeroComponent } from './components/main/components/main-hero/main-hero.component';
 import { NgxTooltip } from '@ngx-popovers/tooltip';
-import { MainMapGlobeComponent } from './components/main/components/main-map-globe/main-map-globe.component';
 import { AddTopicPopupDirective } from '@/app/shared/components/popups/add-topic-popup/add-topic-popup.directive';
+import { MarkerIconComponent } from './components/map/components/marker-icon.component';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 
 @NgModule({
     declarations: [
@@ -60,7 +61,7 @@ import { AddTopicPopupDirective } from '@/app/shared/components/popups/add-topic
         AboutSectionComponent,
         AboutComponent,
         MainHeroComponent,
-        MainMapGlobeComponent
+        MarkerIconComponent,
     ],
     imports: [
         CommonModule,
@@ -94,6 +95,7 @@ import { AddTopicPopupDirective } from '@/app/shared/components/popups/add-topic
         }),
         AdBannerComponent,
         AddTopicPopupDirective,
+        MatCheckboxModule,
     ],
     schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })

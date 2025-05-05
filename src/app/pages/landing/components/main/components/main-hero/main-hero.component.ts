@@ -31,6 +31,9 @@ export class MainHeroComponent {
     public AppRoutes = AppRoutes;
     public zoom = 1.5;
 
+    public isMapAnimated: boolean = false;
+    public isMarkersAnimated: boolean = false;
+
     private readonly platformService: PlatformService = inject(PlatformService);
 
     constructor() {
@@ -88,6 +91,14 @@ export class MainHeroComponent {
     public openStore(): void {
         if (this.platformService.value == "iOS") window.open(AppLinksEnum.APP_STORE);
         else window.open(AppLinksEnum.GOOGLE_APP_STORE);
+    }
+
+    public toggleIsMapAnimated() {
+        this.isMapAnimated = !this.isMapAnimated;
+    }
+
+    public toggleIsMarkersAnimated() {
+        this.isMarkersAnimated = !this.isMarkersAnimated;
     }
 
     private navigateToMapPage() {

@@ -31,41 +31,37 @@
         }">
     </mgl-layer> -->
 
-    @for (marker of markers; track marker.h3Index) {
-        @let opacity = 0;
-    <mgl-marker 
-        [lngLat]="[marker.lng, marker.lat]" 
+    @for (marker of markers; track marker.h3Index) { 
+    @let opacity = 0;
+    <mgl-marker
+        [lngLat]="[marker.lng, marker.lat]"
         [ngStyle]="{ opacity }">
         @if (isToShowTooltip) {
-            <button
-                placement="bottom"
-                class="marker-button"
-                ngxTooltip
-                [template]="tooltip"
-                (hideEnd)="onTooltipHide()"
-                (mouseenter)="onMarkerHover(marker)"
-                (click)="onMarkerClick(marker)"
-                onload="(event) => opacity = 1"
-                aria-label="Show topic details">
-                <img
-                [src]="marker.icon"
-                width="46"
-                height="46"
-                alt="icon"
-                appLoadImgPath />
-            </button>
+        <button
+            placement="bottom"
+            class="marker-button"
+            ngxTooltip
+            [template]="tooltip"
+            (hideEnd)="onTooltipHide()"
+            (mouseenter)="onMarkerHover(marker)"
+            (click)="onMarkerClick(marker)"
+            onload="(event) => opacity = 1"
+            aria-label="Show topic details">
+            <app-marker-icon
+                [icon]="marker.icon"
+                [isAnimated]="isMarkerAnimated"
+                [animationDelay]="marker.delay" />
+        </button>
         } @else {
-            <button
-                class="marker-button"
-                (click)="onMarkerClick(marker)"
-                aria-label="Show topic details">
-                <img
-                [src]="marker.icon"
-                width="46"
-                height="46"
-                alt="icon"
-                appLoadImgPath />
-            </button>
+        <button
+            class="marker-button"
+            (click)="onMarkerClick(marker)"
+            aria-label="Show topic details">
+            <app-marker-icon
+                [icon]="marker.icon"
+                [isAnimated]="isMarkerAnimated"
+                [animationDelay]="marker.delay" />
+        </button>
         }
     </mgl-marker>
     } @for (weight of weights; track weight.h3Index) {
@@ -211,9 +207,11 @@
         class="map-tooltip"
         [class.map-tooltip--loading]="!tooltipData">
         @if (tooltipData) {
-            <app-top-pulse-card [pulse]="tooltipData" [interactive]="false"/>
+        <app-top-pulse-card
+            [pulse]="tooltipData"
+            [interactive]="false" />
         } @else {
-            <app-spinner />
+        <app-spinner />
         }
     </div>
 </ng-template>
