@@ -3,6 +3,7 @@ import { inject, Injectable } from "@angular/core";
 import { first, map, Observable, tap } from "rxjs";
 import { IPulse, ISettings } from "../../interfaces";
 import { API_URL } from "../../tokens/tokens";
+import { ITopPulse } from "../../interfaces/top-pulse.interface";
 
 @Injectable({
     providedIn: "root",
@@ -235,7 +236,7 @@ export class PulseService {
         SWlatitude: number,
         SWlongitude: number,
         resolution: number = 1,
-    ) {
+    ): Observable<Record<string, ITopPulse>> {
         if (resolution >= 8) resolution = 7;
         const searchParams = new URLSearchParams({
             "NE.latitude": NElatitude.toString(),
@@ -244,6 +245,19 @@ export class PulseService {
             "SW.longitude": SWlongitude.toString(),
             resolution: resolution.toString(),
         });
-        return this.http.get(`${this.apiUrl}/map/top?${searchParams.toString()}`);
+        return this.http
+            .get<Record<string, ITopPulse>>(`${this.apiUrl}/map/top?${searchParams.toString()}`)
+            .pipe(
+                map((response) => {
+                    if (resolution > 0) return response;
+                    return Object.entries(response).reduce((prev, [key, value]) => {
+                        const h3Index = key.split(":").at(-1);
+                        if (h3Index) {
+                            prev[h3Index] = value;
+                        }
+                        return prev;
+                    }, {} as Record<string, ITopPulse>);
+                }),
+            );
     }
 }
