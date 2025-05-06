@@ -45,6 +45,9 @@ import { NgxTooltip } from '@ngx-popovers/tooltip';
 import { AddTopicPopupDirective } from '@/app/shared/components/popups/add-topic-popup/add-topic-popup.directive';
 import { MarkerIconComponent } from './components/map/components/marker-icon.component';
 import { MatCheckboxModule } from '@angular/material/checkbox';
+import { GlobeMapComponent } from './components/map-page/components/globe-map/globe-map.component';
+import { MercatorMapComponent } from './components/map-page/components/mercator-map/mercator-map.component';
+import { SwitchComponent } from '@/app/shared/components/ui-kit/switch/switch/switch.component';
 
 @NgModule({
     declarations: [
@@ -62,6 +65,8 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
         AboutComponent,
         MainHeroComponent,
         MarkerIconComponent,
+        GlobeMapComponent,
+        MercatorMapComponent,
     ],
     imports: [
         CommonModule,
@@ -96,6 +101,7 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
         AdBannerComponent,
         AddTopicPopupDirective,
         MatCheckboxModule,
+        SwitchComponent,
     ],
     schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })

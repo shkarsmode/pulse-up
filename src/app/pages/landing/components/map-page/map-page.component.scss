@@ -6,12 +6,9 @@
 }
 
 .map-page {
-    width: 100%; 
-    // max-width: 1170px;
-    // height: 770px;
-    margin: 0 auto;
-
     position: relative;
+    width: 100%; 
+    margin: 0 auto;
 }
 
 
@@ -33,6 +30,13 @@ app-map::ng-deep .map-container {
 
 .map-page {
     height: calc(100%);
+}
+
+.map-page__switch {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    z-index: 1;
 }
 
 //this is because on the same screen size header becomes 80px height
