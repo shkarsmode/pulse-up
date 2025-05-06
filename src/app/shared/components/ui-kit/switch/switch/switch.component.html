@@ -1,0 +1,5 @@
+<div class="switch-container" [style]="{ color }">
+    <span>{{ label.left }}</span>
+    <mat-slide-toggle [aria-label]="ariaLabel" (change)="onChange($event)"/>
+    <span>{{ label.right }}</span>
+</div>

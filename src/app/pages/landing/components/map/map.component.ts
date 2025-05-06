@@ -10,7 +10,7 @@ import {
 } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import * as h3 from "h3-js";
-import mapboxgl, { EventData, MapStyleDataEvent } from "mapbox-gl";
+import mapboxgl, { EventData, Fog, MapStyleDataEvent } from "mapbox-gl";
 import { debounceTime, filter, first, Subject, tap } from "rxjs";
 import { PulseService } from "../../../../shared/services/api/pulse.service";
 import { HeatmapService } from "../../../../shared/services/core/heatmap.service";
@@ -53,6 +53,8 @@ export class MapComponent implements OnInit {
     @Input() public center: [number, number] = [-100.661, 37.7749];
     @Input() public projection: mapboxgl.Projection["name"] = "mercator";
     @Input() public isLabelsHidden: boolean = false;
+    @Input() public isMapStatic: boolean = false;
+    @Input() public fog: Fog;
     @Output() public mapLoaded: EventEmitter<mapboxgl.Map> = new EventEmitter<mapboxgl.Map>();
     @Output() public markerClick: EventEmitter<IMapMarker> = new EventEmitter<IMapMarker>();
 
@@ -104,10 +106,6 @@ export class MapComponent implements OnInit {
                 this.tooltipData = pulse;
             });
         });
-    }
-
-    private get isGlobeProjection(): boolean {
-        return this.map?.getProjection().name === "globe";
     }
 
     public ngOnInit(): void {
@@ -164,6 +162,10 @@ export class MapComponent implements OnInit {
         });
 
         this.mapLoaded.next(this.map);
+
+        if(this.fog) {
+            this.map.setFog(this.fog);
+        }
     }
 
     public handleZoomEnd = () => {
@@ -172,7 +174,7 @@ export class MapComponent implements OnInit {
     };
 
     public handleMoveEnd = () => {
-        if (this.isGlobeProjection) return;
+        if (this.isMapStatic) return;
         this.updateH3Pulses();
         this.updateHeatmapForMap();
     };

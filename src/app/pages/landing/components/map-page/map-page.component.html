@@ -1,20 +1,18 @@
-
-
 <div class="map-page">
-
-
-    <app-map
-        [isHideDebugger]="true"
-        [isSearch]="false"
-        [isLocationName]="true" 
-        [isZoomButton]="true"   
-        [zoom]="zoom" 
-        [minZoom]="minZoom"
-        [maxBounds]="maxBounds"
-        [center]="center"
-        [isToShowTooltip]="true"
-        (markerClick)="onMarkerClick($event)"
-    />
-        
+    <div
+        class="map-page__switch"
+        [class.map-page__switch--contrast]="projection === 'globe'">
+        <app-switch
+            [label]="{
+                left: 'Mercator',
+                right: 'Globe'
+            }"
+            [color]="projection === 'globe' ? '#fff' : '#000'"
+            (change)="onSwitchChange($event)" />
+    </div>
+    @if (projection === "globe") {
+    <app-globe-map (markerClick)="onMarkerClick($event)" />
+    } @else {
+    <app-mercator-map (markerClick)="onMarkerClick($event)" />
+    }
 </div>
-
