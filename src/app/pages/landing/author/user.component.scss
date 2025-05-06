@@ -1,0 +1,47 @@
+@use "../../../../styles/mixins" as *;
+
+.user-header__top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    column-gap: 16px;
+}
+.user-header__name {
+    @include title-32px;
+}
+.user-header__username {
+    text-align: center;
+    color: var(--dark-grey-color);
+}
+
+.user-header__stats {
+    margin-top: 20px;
+}
+
+.user-header-stats {
+    display: flex;
+    justify-content: center;
+    gap: 44px;
+}
+
+.user-header-stats__item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 64px;
+    @include text-14px;
+    color: var(--dark-grey-color);
+}
+
+.user-header-stats__title {
+    text-align: center;
+    margin-bottom: 8px;
+    color: var(--dark-grey-color);
+}
+
+.user-header-stats__count {
+    margin-top: 6px;
+    @include text-14px;
+    color: var(--dark-grey-color);
+    font-weight: 600;
+}
