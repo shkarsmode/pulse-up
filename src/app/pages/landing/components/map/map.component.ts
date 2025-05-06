@@ -10,7 +10,7 @@ import {
 } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import * as h3 from "h3-js";
-import mapboxgl from "mapbox-gl";
+import mapboxgl, { EventData, MapStyleDataEvent } from "mapbox-gl";
 import { debounceTime, filter, first, Subject, tap } from "rxjs";
 import { PulseService } from "../../../../shared/services/api/pulse.service";
 import { HeatmapService } from "../../../../shared/services/core/heatmap.service";
@@ -52,6 +52,7 @@ export class MapComponent implements OnInit {
     ];
     @Input() public center: [number, number] = [-100.661, 37.7749];
     @Input() public projection: mapboxgl.Projection["name"] = "mercator";
+    @Input() public isLabelsHidden: boolean = false;
     @Output() public mapLoaded: EventEmitter<mapboxgl.Map> = new EventEmitter<mapboxgl.Map>();
     @Output() public markerClick: EventEmitter<IMapMarker> = new EventEmitter<IMapMarker>();
 
@@ -547,5 +548,17 @@ export class MapComponent implements OnInit {
     public onMarkerClick(marker: IMapMarker): void {
         this.tooltipData = null;
         this.markerClick.emit(marker);
+    }
+
+    public onStyleData(style: MapStyleDataEvent & EventData): void {
+        if(!this.isLabelsHidden) return;
+        const map = style.target;
+        const layers = map.getStyle().layers;
+        if (!layers) return;
+        for (const layer of layers) {
+            if (layer.type === "symbol") {
+                map.setLayoutProperty(layer.id, "visibility", "none");
+            }
+        }
     }
 }

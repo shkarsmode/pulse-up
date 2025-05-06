@@ -31,9 +31,6 @@ export class MainHeroComponent {
     public AppRoutes = AppRoutes;
     public zoom = 1.5;
 
-    public isMapAnimated: boolean = false;
-    public isMarkersAnimated: boolean = false;
-
     private readonly platformService: PlatformService = inject(PlatformService);
 
     constructor() {
@@ -52,7 +49,6 @@ export class MainHeroComponent {
 
     public onMapLoaded(map: mapboxgl.Map) {
         this.map = map;
-        this.removeLabelsFromMap();
         this.spinGlobe();
 
         // Pause spinning on user interaction (mouse or touch)
@@ -93,14 +89,6 @@ export class MainHeroComponent {
         else window.open(AppLinksEnum.GOOGLE_APP_STORE);
     }
 
-    public toggleIsMapAnimated() {
-        this.isMapAnimated = !this.isMapAnimated;
-    }
-
-    public toggleIsMarkersAnimated() {
-        this.isMarkersAnimated = !this.isMarkersAnimated;
-    }
-
     private navigateToMapPage() {
         this.router.navigateByUrl(`/${this.AppRoutes.Landing.MAP}`);
     }
@@ -120,17 +108,6 @@ export class MainHeroComponent {
             // Smoothly animate the map over one second.
             // When this animation is complete, it calls a 'moveend' event.
             this.map.easeTo({ center, duration: 500, easing: (n) => n });
-        }
-    }
-
-    private removeLabelsFromMap() {
-        if (!this.map) return;
-        const layers = this.map.getStyle().layers;
-        if (!layers) return;
-        for (const layer of layers) {
-            if (layer.type === "symbol") {
-                this.map.removeLayer(layer.id);
-            }
         }
     }
 }
