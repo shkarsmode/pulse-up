@@ -1,11 +1,11 @@
-import { HttpClient } from '@angular/common/http';
-import { inject, Injectable } from '@angular/core';
-import { first, map, Observable, tap } from 'rxjs';
-import { IPulse, ISettings } from '../../interfaces';
-import { API_URL } from '../../tokens/tokens';
+import { HttpClient } from "@angular/common/http";
+import { inject, Injectable } from "@angular/core";
+import { first, map, Observable, tap } from "rxjs";
+import { IPulse, ISettings } from "../../interfaces";
+import { API_URL } from "../../tokens/tokens";
 
 @Injectable({
-    providedIn: 'root',
+    providedIn: "root",
 })
 export class PulseService {
     public appStoreUrl: string;
@@ -31,18 +31,18 @@ export class PulseService {
             state?: string;
             city?: string;
             topicState?: string;
-        } = {}
+        } = {},
     ): Observable<IPulse[]> {
-        let paramUrl = '';
+        let paramUrl = "";
 
-        params['topicState'] = 'All';
+        params["topicState"] = "All";
         const keys = (Object.keys(params) as Array<keyof typeof params>).filter(
-            (key) => !!params[key]
+            (key) => !!params[key],
         );
 
         keys.forEach((param, index) => {
             if (params[param]) {
-                const separator = index === 0 ? '?' : '&';
+                const separator = index === 0 ? "?" : "&";
                 paramUrl += `${separator}${param}=${params[param]}`;
             }
         });
@@ -51,8 +51,8 @@ export class PulseService {
             tap((pulses) =>
                 pulses.forEach((pulse) => {
                     this.actualTopicsImageKeyMap[pulse.id] = pulse.icon;
-                })
-            )
+                }),
+            ),
         );
     }
 
@@ -76,31 +76,28 @@ export class PulseService {
     }): Observable<{ requestId: string }> {
         const formData = new FormData();
 
-        formData.append('Location.Country', params.location.country);
+        formData.append("Location.Country", params.location.country);
         if (params.location.state) {
-            formData.append('Location.State', params.location.state);
+            formData.append("Location.State", params.location.state);
         }
         if (params.location.city) {
-            formData.append('Location.City', params.location.city);
+            formData.append("Location.City", params.location.city);
         }
         if (params.picture) {
-            formData.append('Picture', params.picture);
+            formData.append("Picture", params.picture);
         }
-        formData.append('Author.Name', params.author.name);
-        formData.append('Author.PhoneNumber', params.author.phoneNumber);
+        formData.append("Author.Name", params.author.name);
+        formData.append("Author.PhoneNumber", params.author.phoneNumber);
         if (params.author.email) {
-            formData.append('Author.Email', params.author.email);
+            formData.append("Author.Email", params.author.email);
         }
-        formData.append('Title', params.title);
-        formData.append('Description', params.description);
-        formData.append('Category', params.category);
-        formData.append('Keywords', params.keywords.join(','));
-        formData.append('Icon', params.icon);
+        formData.append("Title", params.title);
+        formData.append("Description", params.description);
+        formData.append("Category", params.category);
+        formData.append("Keywords", params.keywords.join(","));
+        formData.append("Icon", params.icon);
 
-        return this.http.post<{ requestId: string }>(
-            `${this.apiUrl}/topics/create`,
-            formData
-        );
+        return this.http.post<{ requestId: string }>(`${this.apiUrl}/topics/create`, formData);
     }
 
     public getById(id: string | number): Observable<IPulse> {
@@ -113,7 +110,7 @@ export class PulseService {
         SWlatitude: number,
         SWlongitude: number,
         resolution: number = 1,
-        topicId?: number
+        topicId?: number,
     ): Observable<{
         [key: string]: number;
     }> {
@@ -124,7 +121,7 @@ export class PulseService {
                 SWlatitude,
                 SWlongitude,
                 resolution,
-                topicId
+                topicId,
             );
         }
 
@@ -133,7 +130,7 @@ export class PulseService {
             NElongitude,
             SWlatitude,
             SWlongitude,
-            resolution
+            resolution,
         );
     }
 
@@ -142,14 +139,14 @@ export class PulseService {
         NElongitude: number,
         SWlatitude: number,
         SWlongitude: number,
-        resolution: number = 1
+        resolution: number = 1,
     ): Observable<{
         [key: string]: number;
     }> {
         return this.http
             .get<Array<{ id: string; votes: number; children: any }>>(
                 this.apiUrl +
-                    `/map?NE.latitude=${NElatitude}&NE.longitude=${NElongitude}&SW.latitude=${SWlatitude}&SW.longitude=${SWlongitude}&resolution=${resolution}`
+                    `/map?NE.latitude=${NElatitude}&NE.longitude=${NElongitude}&SW.latitude=${SWlatitude}&SW.longitude=${SWlongitude}&resolution=${resolution}`,
             )
             .pipe(
                 map((response) => {
@@ -158,10 +155,10 @@ export class PulseService {
                             ...acc,
                             ...this.getH3CellsFromChildren(h3Cell),
                         }),
-                        {}
+                        {},
                     );
                     return votesPerCells;
-                })
+                }),
             );
     }
 
@@ -171,22 +168,20 @@ export class PulseService {
         SWlatitude: number,
         SWlongitude: number,
         resolution: number = 1,
-        topicId: number
+        topicId: number,
     ): Observable<{
         [key: string]: number;
     }> {
-        const baseUrl = this.apiUrl + '/map/votes';
+        const baseUrl = this.apiUrl + "/map/votes";
         const params = new URLSearchParams({
-            'NE.latitude': NElatitude.toString(),
-            'NE.longitude': NElongitude.toString(),
-            'SW.latitude': SWlatitude.toString(),
-            'SW.longitude': SWlongitude.toString(),
+            "NE.latitude": NElatitude.toString(),
+            "NE.longitude": NElongitude.toString(),
+            "SW.latitude": SWlatitude.toString(),
+            "SW.longitude": SWlongitude.toString(),
             resolution: resolution.toString(),
             topicId: topicId.toString(),
         });
-        return this.http.get<{ [key: string]: number }>(
-            `${baseUrl}?${params.toString()}`
-        );
+        return this.http.get<{ [key: string]: number }>(`${baseUrl}?${params.toString()}`);
     }
 
     private getH3CellsFromChildren = ({
@@ -217,8 +212,8 @@ export class PulseService {
                         depth: depth - 1,
                     }),
                 }),
-                {}
-            )
+                {},
+            ),
         );
     };
 
@@ -230,7 +225,7 @@ export class PulseService {
                 this.appStoreUrl = settings.appStoreUrl;
                 this.googlePlayUrl = settings.googlePlayUrl;
                 this.shareTopicBaseUrl = settings.shareTopicBaseUrl;
-            })
+            }),
         );
     }
 
@@ -239,42 +234,16 @@ export class PulseService {
         NElongitude: number,
         SWlatitude: number,
         SWlongitude: number,
-        resolution: number = 1
+        resolution: number = 1,
     ) {
         if (resolution >= 8) resolution = 7;
-        return this.http
-            .get(
-                this.apiUrl +
-                    `/map?NE.latitude=${NElatitude}&NE.longitude=${NElongitude}&SW.latitude=${SWlatitude}&SW.longitude=${SWlongitude}&resolution=${resolution}`
-            )
-            .pipe(
-                map((response: any) => {
-                    const objH3Pulses = {};
-                    response.forEach(
-                        (res: { id: string; topics: any; votes: number }) => {
-                            if (!res.topics) return;
-                            const sortedEntries = Object.entries(
-                                res.topics
-                            ).sort((a: any, b: any) => a[1] - b[1]);
-
-                            const maxVotesOfTopic =
-                                sortedEntries[sortedEntries.length - 1][1];
-                            const maxVotedTopicId = sortedEntries.find(
-                                (entry) => entry[1] === maxVotesOfTopic
-                            )![0];
-
-                            // @ts-ignore
-                            objH3Pulses[res.id] = {
-                                topicId: maxVotedTopicId,
-                                icon: this.actualTopicsImageKeyMap[
-                                    maxVotedTopicId
-                                ],
-                                votes: res.votes,
-                            };
-                        }
-                    );
-                    return objH3Pulses;
-                })
-            );
+        const searchParams = new URLSearchParams({
+            "NE.latitude": NElatitude.toString(),
+            "NE.longitude": NElongitude.toString(),
+            "SW.latitude": SWlatitude.toString(),
+            "SW.longitude": SWlongitude.toString(),
+            resolution: resolution.toString(),
+        });
+        return this.http.get(`${this.apiUrl}/map/top?${searchParams.toString()}`);
     }
 }
