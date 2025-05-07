@@ -10,10 +10,10 @@
 
     border-radius: 10px;
 
-    box-shadow: 0px 3px 20px 0px #0000001F;
+    box-shadow: 0px 3px 20px 0px #0000001f;
     background-color: white;
 
-    transition: all .3s;
+    transition: all 0.3s;
 
     overflow: hidden;
 
@@ -22,6 +22,10 @@
     }
 
     cursor: pointer;
+
+    @media screen and (max-width: 650px) {
+        min-height: 112px;
+    }
 }
 
 .top {
@@ -46,6 +50,17 @@
     justify-content: center;
     align-items: center;
 
+    @media screen and (max-width: 650px) {
+        width: 80px;
+        height: 80px;
+        min-width: 80px !important;
+        max-height: 80px;
+
+        border-radius: 8px;
+        padding: 5px;
+        overflow: hidden;
+    }
+
     img {
         max-width: 100%;
         max-height: 100%;
@@ -59,10 +74,19 @@
 }
 
 .right {
+    width: 100%;
     flex-grow: 1;
     display: flex;
     flex-direction: column;
     justify-content: center;
+    overflow: hidden;
+
+    h3 {
+        @media screen and (max-width: 650px) {
+            @include title-20px;
+            margin-bottom: 8px;
+        }
+    }
 }
 
 .bottom {
@@ -83,9 +107,18 @@
     -webkit-line-clamp: 3;
     /* after 3 line show ... */
     -webkit-box-orient: vertical;
+
+    @media screen and (max-width: 650px) {
+        display: none;
+    }
 }
 
 .bottom {
+    @media screen and (max-width: 650px) {
+        flex-direction: column;
+        @include text-14px;
+        gap: 8px;
+    }
 
     div {
         display: flex;
@@ -94,6 +127,10 @@
         color: var(--dark-grey-color);
 
         margin-top: 10px;
+
+        @media screen and (max-width: 650px) {
+            margin: 0 !important;
+        }
     }
 
     svg-icon {
@@ -102,6 +139,13 @@
         @media screen and (max-width: 650px) {
             width: 16.8px;
             height: 14px;
+        }
+
+        svg {
+            @media screen and (max-width: 650px) {
+                width: 16.8px;
+                height: 14px;
+            }
         }
     }
 }

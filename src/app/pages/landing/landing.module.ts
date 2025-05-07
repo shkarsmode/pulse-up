@@ -48,7 +48,7 @@ import { MatCheckboxModule } from "@angular/material/checkbox";
 import { GlobeMapComponent } from "./components/map-page/components/globe-map/globe-map.component";
 import { MercatorMapComponent } from "./components/map-page/components/mercator-map/mercator-map.component";
 import { SwitchComponent } from "@/app/shared/components/ui-kit/switch/switch/switch.component";
-import { UserComponent } from "./author/user.component";
+import { UserComponent } from "./user/user.component";
 import { ContainerComponent } from "@/app/shared/components/ui-kit/container/container.component";
 import { IconButtonComponent } from "@/app/shared/components/ui-kit/buttons/icon-button/icon-button.component";
 

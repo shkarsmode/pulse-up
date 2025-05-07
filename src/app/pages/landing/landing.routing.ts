@@ -13,7 +13,7 @@ import { AboutComponent } from './about/about.component';
 import { HeaderGuard } from '@/app/shared/components/header/header.guard';
 import { HeaderCleanupGuard } from '@/app/shared/components/header/header-cleanup.guard';
 import { metaTagsData } from '@/assets/data/meta-tags';
-import { UserComponent } from './author/user.component';
+import { UserComponent } from './user/user.component';
 
 let Landing = AppRoutes.Landing;
 

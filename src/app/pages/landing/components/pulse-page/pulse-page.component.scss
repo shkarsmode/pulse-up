@@ -59,7 +59,7 @@
                 text-align: center;
             }
 
-            div {
+            a {
                 display: flex;
                 align-items: center;
                 gap: 9px;
@@ -81,6 +81,10 @@
         .pulse__stats-wrap {
             display: flex;
             gap: 44px;
+
+            @media screen and (max-width: 650px) {
+                gap: 16px;
+            }
 
             >div {
                 display: flex;

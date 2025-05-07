@@ -1,4 +1,4 @@
-import { Component, Input } from "@angular/core";
+import { Component, EventEmitter, Input, Output } from "@angular/core";
 import { MatButtonModule } from "@angular/material/button";
 
 @Component({
@@ -10,7 +10,8 @@ import { MatButtonModule } from "@angular/material/button";
             mat-icon-button
             class="icon-button"
             [class.icon-button--outline]="variant === 'outline'"
-            [style]="{ width: size + 'px', height: size + 'px' }">
+            [style]="{ width: size + 'px', height: size + 'px' }"
+            (click)="onClick($event)">
             <span class="visually-hidden">{{ label }}</span>
             <ng-content></ng-content>
         </button>
@@ -33,4 +34,10 @@ export class IconButtonComponent {
     @Input() label: string = "";
     @Input() size: number = 48;
     @Input() variant: "default" | "outline" = "default";
+
+    @Output() click: EventEmitter<MouseEvent> = new EventEmitter<MouseEvent>();
+
+    public onClick(event: MouseEvent): void {
+        this.click.emit(event);
+    }
 }
