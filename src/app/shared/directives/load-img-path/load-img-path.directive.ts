@@ -1,5 +1,6 @@
 import { AfterViewInit, Directive, ElementRef, inject, OnInit, Renderer2 } from '@angular/core';
 import { PulseService } from '../../services/api/pulse.service';
+import { SettingsService } from '../../services/api/settings.service';
 
 @Directive({
     selector: '[appLoadImgPath]',
@@ -8,7 +9,7 @@ import { PulseService } from '../../services/api/pulse.service';
 export class LoadImgPathDirective implements OnInit, AfterViewInit {
     private hasPathUpdated: boolean = false;
 
-    private readonly pulseService: PulseService = inject(PulseService);
+    private readonly settingsService: SettingsService = inject(SettingsService);
     private readonly elementRef: ElementRef<HTMLImageElement> =
         inject(ElementRef);
 
@@ -35,7 +36,7 @@ export class LoadImgPathDirective implements OnInit, AfterViewInit {
     private setPrefixPathForElement(): void {
         if (this.hasPathUpdated) return;
 
-        const prefix = this.pulseService.blobUrlPrefix;
+        const prefix = this.settingsService.blobUrlPrefix;
         const fullSrc = this.elementRef.nativeElement.src;
 
         const src = new URL(fullSrc).pathname;

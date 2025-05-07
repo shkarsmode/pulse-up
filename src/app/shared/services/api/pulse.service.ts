@@ -9,11 +9,6 @@ import { ITopPulse } from "../../interfaces/top-pulse.interface";
     providedIn: "root",
 })
 export class PulseService {
-    public appStoreUrl: string;
-    public blobUrlPrefix: string;
-    public googlePlayUrl: string;
-    public shareTopicBaseUrl: string;
-    public minVoteInterval: number;
     public latestAppVersionNumber: number;
     public currentHeatmapDepth: number = 3;
     public actualTopicsImageKeyMap: { [key: string]: string } = {};
@@ -217,18 +212,6 @@ export class PulseService {
             ),
         );
     };
-
-    public getSettings(): Observable<ISettings> {
-        return this.http.get<ISettings>(`${this.apiUrl}/settings`).pipe(
-            tap((settings) => {
-                this.blobUrlPrefix = settings.blobUrlPrefix;
-                this.minVoteInterval = settings.minVoteInterval;
-                this.appStoreUrl = settings.appStoreUrl;
-                this.googlePlayUrl = settings.googlePlayUrl;
-                this.shareTopicBaseUrl = settings.shareTopicBaseUrl;
-            }),
-        );
-    }
 
     public getH3PulsesForMap(
         NElatitude: number,
