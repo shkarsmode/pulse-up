@@ -25,6 +25,13 @@ export class GetAppButtonComponent implements OnInit {
         ["get-app-button--" + this.platform]: false,
     };
 
+    get appStoreUrl(): string {
+        return this.settingsService.appStoreUrl;
+    }
+    get googlePlayUrl(): string {
+        return this.settingsService.googlePlayUrl;
+    }
+
     ngOnInit(): void {
         if (this.isOnePlatform) {
             this.classes["get-app-button--" + this.platform] = true;
