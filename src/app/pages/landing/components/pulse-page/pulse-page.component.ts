@@ -1,10 +1,11 @@
 import { Component, ElementRef, inject, OnInit, ViewChild } from "@angular/core";
 import { ActivatedRoute, ParamMap, Router } from "@angular/router";
-import { catchError, first, Observable, of, take } from "rxjs";
+import { catchError, first, Observable, of } from "rxjs";
 import { AppRoutes } from "@/app/shared/enums/app-routes.enum";
 import { IPulse } from "@/app/shared/interfaces";
 import { PulseService } from "@/app/shared/services/api/pulse.service";
 import { MetadataService } from "@/app/shared/services/core/metadata.service";
+import { SettingsService } from "@/app/shared/services/api/settings.service";
 
 @Component({
     selector: "app-pulse-page",
@@ -26,6 +27,7 @@ export class PulsePageComponent implements OnInit {
     private readonly route: ActivatedRoute = inject(ActivatedRoute);
     private readonly pulseService: PulseService = inject(PulseService);
     private readonly metadataService: MetadataService = inject(MetadataService);
+    private readonly settingsService: SettingsService = inject(SettingsService);
 
     public ngOnInit(): void {
         this.initPulseUrlIdListener();
@@ -55,7 +57,7 @@ export class PulsePageComponent implements OnInit {
             this.determineIfNeedToRemoveShowMoreButton();
             this.createLink(pulse.description);
             this.updateSuggestions();
-            this.pulseUrl = this.pulseService.shareTopicBaseUrl + pulse.shareKey;
+            this.pulseUrl = this.settingsService.shareTopicBaseUrl + pulse.shareKey;
             this.metadataService.setTitle(`${pulse.title} | Support What Matters – Pulse Up`);
             this.metadataService.setMetaTag(
                 "description",

@@ -1,9 +1,9 @@
 import { CommonModule } from "@angular/common";
 import { Component, inject, Input, OnInit } from "@angular/core";
 import { SvgIconComponent } from "angular-svg-icon";
-import { RippleEffectDirective } from "../../../../directives/ripple-effect";
-import { AppLinksEnum } from "../../../../enums/app-links.enum";
-import { PlatformService } from "./../../../../services/core/platform.service";
+import { RippleEffectDirective } from "@/app/shared/directives/ripple-effect";
+import { PlatformService } from "@/app/shared/services/core/platform.service";
+import { SettingsService } from "@/app/shared/services/api/settings.service";
 
 @Component({
     selector: "app-get-app-button",
@@ -18,12 +18,19 @@ export class GetAppButtonComponent implements OnInit {
     @Input() isOnePlatform: boolean = false;
 
     public platformService: PlatformService = inject(PlatformService);
+    public settingsService: SettingsService = inject(SettingsService);
 
-    public links = AppLinksEnum;
     public platform = this.platformService.value == "iOS" ? "ios" : "android";
     public classes = {
         ["get-app-button--" + this.platform]: false,
     };
+
+    get appStoreUrl(): string {
+        return this.settingsService.appStoreUrl;
+    }
+    get googlePlayUrl(): string {
+        return this.settingsService.googlePlayUrl;
+    }
 
     ngOnInit(): void {
         if (this.isOnePlatform) {
@@ -32,7 +39,7 @@ export class GetAppButtonComponent implements OnInit {
     }
 
     public onClick(): void {
-        if (this.platformService.value == "iOS") window.open(AppLinksEnum.APP_STORE);
-        else window.open(AppLinksEnum.GOOGLE_APP_STORE);
+        if (this.platformService.value == "iOS") window.open(this.settingsService.appStoreUrl);
+        else window.open(this.settingsService.googlePlayUrl);
     }
 }

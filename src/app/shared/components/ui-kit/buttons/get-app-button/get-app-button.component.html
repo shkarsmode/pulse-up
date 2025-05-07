@@ -1,31 +1,47 @@
 @if (design === 'old') {
-    <button
-        (click)="onClick()"
-        appRippleEffect>
-        @if (platformService.value === "iOS") {
-            <svg-icon src="assets/svg/a-store.svg" id="icon" />
-            <span> Download on the App Store </span>
-        }
-        @else {
-            <svg-icon src="assets/svg/g-play.svg" id="icon" />
-            <span> Get it on Google Play </span>
-        }
-    </button>
-}
+<button
+    (click)="onClick()"
+    appRippleEffect>
+    @if (platformService.value === "iOS") {
+    <svg-icon
+        src="assets/svg/a-store.svg"
+        id="icon" />
+    <span> Download on the App Store </span>
+    } @else {
+    <svg-icon
+        src="assets/svg/g-play.svg"
+        id="icon" />
+    <span> Get it on Google Play </span>
+    }
+</button>
+} @else {
+<div
+    class="get-app-button"
+    [ngClass]="classes">
+    <a
+        class="btn btn--{{ theme }}"
+        [href]="appStoreUrl"
+        target="_blank">
+        <svg-icon
+            src="assets/svg/a-store.svg"
+            id="icon" />
+        <p>
+            Download on the <br />
+            <span class="big-txt">App Store</span>
+        </p>
+    </a>
 
-@else {
-    <div class="get-app-button" [ngClass]="classes">
-        <a class="btn btn--{{ theme }}" [href]="links.APP_STORE">
-            <svg-icon src="assets/svg/a-store.svg" id="icon" />
-            <p>Download on the <br /> <span class="big-txt">App Store</span></p>
-        </a>
-
-        <a
-            [href]="links.GOOGLE_APP_STORE"
-            class="btn btn--{{ theme }}"
-            target="_blank">
-            <svg-icon src="assets/svg/g-play.svg" id="icon" />
-            <p>Get it on <br /> <span class="big-txt">Google Play</span></p>
-        </a>
-    </div>
+    <a
+        [href]="googlePlayUrl"
+        class="btn btn--{{ theme }}"
+        target="_blank">
+        <svg-icon
+            src="assets/svg/g-play.svg"
+            id="icon" />
+        <p>
+            Get it on <br />
+            <span class="big-txt">Google Play</span>
+        </p>
+    </a>
+</div>
 }

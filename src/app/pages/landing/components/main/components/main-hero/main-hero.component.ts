@@ -2,9 +2,9 @@ import { Component, effect, inject } from "@angular/core";
 import { Router } from "@angular/router";
 import { toSignal } from "@angular/core/rxjs-interop";
 import { PlatformService } from "@/app/shared/services/core/platform.service";
-import { AppLinksEnum } from "@/app/shared/enums/app-links.enum";
 import { AppRoutes } from "@/app/shared/enums/app-routes.enum";
 import { MediaQueryService } from "@/app/shared/services/core/media-query.service";
+import { SettingsService } from "@/app/shared/services/api/settings.service";
 
 @Component({
     selector: "app-main-hero",
@@ -14,7 +14,8 @@ import { MediaQueryService } from "@/app/shared/services/core/media-query.servic
 export class MainHeroComponent {
     private map: mapboxgl.Map | null = null;
     private router: Router = inject(Router);
-    private mediaService = inject(MediaQueryService);
+    private mediaService: MediaQueryService = inject(MediaQueryService);
+    private settingsService: SettingsService = inject(SettingsService);
     private isMobile = toSignal(this.mediaService.mediaQuery("max", "SM"));
     private isXSMobile = toSignal(this.mediaService.mediaQuery("max", "XS"));
     private isXXSMobile = toSignal(this.mediaService.mediaQuery("max", "XXS"));
@@ -85,8 +86,8 @@ export class MainHeroComponent {
     }
 
     public openStore(): void {
-        if (this.platformService.value == "iOS") window.open(AppLinksEnum.APP_STORE);
-        else window.open(AppLinksEnum.GOOGLE_APP_STORE);
+        if (this.platformService.value == "iOS") window.open(this.settingsService.appStoreUrl);
+        else window.open(this.settingsService.googlePlayUrl);
     }
 
     private navigateToMapPage() {
