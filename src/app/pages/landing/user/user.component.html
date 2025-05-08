@@ -1,0 +1,50 @@
+@if (!user) {
+<app-spinner />
+} @else {
+<app-container
+    size="md"
+    *ngIf="user">
+    <div class="user-header">
+        <div class="user-header__top">
+            <app-icon-button
+                variant="outline"
+                (onClick)="goBack()">
+                <svg-icon src="assets/svg/chevron-left.svg" />
+            </app-icon-button>
+            <h1 class="user-header__name">{{ user.name }}</h1>
+            <app-icon-button variant="outline" class="user-header__share">
+                <svg-icon src="assets/svg/icon_share.svg" />
+            </app-icon-button>
+        </div>
+        <div class="user-header__username">&#64;{{ user.username }}</div>
+        <div class="user-header__stats user-header-stats">
+            <div class="user-header-stats__item">
+                <span class="user-header-stats__title">Topics</span>
+                <svg-icon src="assets/svg/fans.svg" />
+                <span class="user-header-stats__count">
+                    {{ topics.length | formatNumber }}
+                </span>
+            </div>
+            <div class="user-header-stats__item">
+                <span class="user-header-stats__title">Lifetime</span>
+                <svg-icon src="assets/svg/chart-simple-solid.svg" />
+                <span class="user-header-stats__count">
+                    {{ totalReceivedVotes | formatNumber }}
+                </span>
+            </div>
+            <div class="user-header-stats__item">
+                <span class="user-header-stats__title">24 hours</span>
+                <svg-icon src="assets/svg/pulse.svg" />
+                <span class="user-header-stats__count">
+                    {{ votesReceivedFor24Hours | formatNumber }}
+                </span>
+            </div>
+        </div>
+    </div>
+    <div class="user-topics">
+        @for (topic of topics; track topic.id) {
+            <app-large-pulse [pulse]="topic" />
+        }
+    </div>
+</app-container>
+}
