@@ -2,8 +2,8 @@
     display: flex;
 }
 .marker-icon {
-    width: 48px;
-    height: 48px;
+    width: var(--map-marker-size);
+    height: var(--map-marker-size);
     border-radius: 50%;
     border: 1px solid #fff;
 
