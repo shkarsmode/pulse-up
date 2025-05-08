@@ -6,7 +6,8 @@
             [label]="{
                 right: 'Globe'
             }"
-            [color]="projection === 'globe' ? '#fff' : '#000'"
+            [color]="switchColor"
+            [checked]="isGlobe"
             (change)="onSwitchChange($event)" />
     </div>
     @if (projection === "globe") {

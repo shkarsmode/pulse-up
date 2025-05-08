@@ -9,6 +9,7 @@ import { MatSlideToggleChange, MatSlideToggleModule } from "@angular/material/sl
     styleUrl: "./switch.component.scss",
 })
 export class SwitchComponent {
+    @Input() checked: boolean = false;
     @Input() color: string = "#000000";
     @Input() label: { left?: string; right?: string } = {
         left: "",

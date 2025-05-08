@@ -8,6 +8,7 @@
         class="switch__button"
         [disableRipple]="true"
         [aria-label]="ariaLabel"
+        [checked]="checked"
         (change)="onChange($event)"/>
     @if (label.right) {
     <span class="switch__label">{{ label.right }}</span>

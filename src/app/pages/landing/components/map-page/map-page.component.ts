@@ -11,7 +11,7 @@ import { IMapMarker } from "@/app/shared/interfaces/map-marker.interface";
 export class MapPageComponent {
     private router: Router = inject(Router);
 
-    public projection: Projection["name"] = "mercator";
+    public projection: Projection["name"] = "globe";
     public switchClasses = {};
     public isProjectionToogleVisible = true;
 
@@ -20,6 +20,14 @@ export class MapPageComponent {
             "map-page__switch": true,
             "map-page__switch--contrast": this.projection === 'globe'
         };
+    }
+
+    get isGlobe() {
+        return this.projection === "globe";
+    }
+
+    get switchColor() {
+        return this.isGlobe ? "#FFFFFF" : "#000000";
     }
 
     public onMarkerClick(marker: IMapMarker) {
