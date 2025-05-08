@@ -15,7 +15,7 @@ export class HeaderGuard implements CanActivate {
         state: RouterStateSnapshot
     ): Observable<boolean> | Promise<boolean> | boolean {
         if (state.url === '/') {
-            document.body.classList.add('header-transparent');
+            document.body.classList.add('header-contrast');
         }
 
         return true;

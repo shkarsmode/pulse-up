@@ -8,6 +8,13 @@
     height: 24px;
 }
 
+:host-context(.header-contrast) {
+  --stick-color: var(--white-color);
+  :host-context(.mobile__dropdown.active) {
+    --stick-color: var(--dark-grey-color);
+}
+}
+
 #nav-icon3 {
     width: 22px;
     height: 22px;

@@ -72,7 +72,10 @@
 }
 .hero__content {
     flex: 1;
+    width: 100%;
     max-width: 450px;
+    color: var(--white-color);
+    text-align: center;
     @include media-lg {
         flex: 0;
         padding: 0 20px;
@@ -130,14 +133,14 @@
     @include title-32px;
     margin-bottom: 16px;
 
-    @include media-lg {
-        text-align: center;
-    }
     @include media-sm {
         @include title-24px;
     }
     @include media-xs {
         @include title-20px;
+        max-width: 300px;
+        margin-left: auto;
+        margin-right: auto;
     }
 }
 .hero__description {
@@ -158,7 +161,7 @@
         @include text-14px;
         margin-bottom: 16px;
     }
-    @media screen and (max-height: 600px) {
+    @media screen and (max-height: 500px) {
         display: none;
     }
 }
@@ -171,10 +174,6 @@
     }
     @include media-lg {
         margin: 0 auto;
-    }
-    @include media-2xs {
-        flex-direction: column;
-        row-gap: 8px;
     }
 }
 .hero__button {

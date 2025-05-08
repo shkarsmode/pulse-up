@@ -3,14 +3,13 @@
         <div class="hero__content">
             <h1 class="hero__title">People Should Decide What Matters – Not Algorithms</h1>
             <p class="hero__description">
-                Tap to support what matters, discover trending topics, and raise awareness —
-                anonymously.
+                Tap to support what matters, discover trending topics, and raise awareness — anonymously.
             </p>
             <div class="hero__actions">
                 <div class="hero__button">
                     <app-primary-button
                         [fullWidth]="true"
-                        class="hero_app-button"
+                        [contrast]="true"
                         (handleClick)="openStore()">
                         Get Pulse Up
                     </app-primary-button>
@@ -19,7 +18,8 @@
                     <app-secondary-button
                         [routerLink]="'/' + AppRoutes.Landing.MAP"
                         routerLinkActive="active"
-                        [fullWidth]="true">
+                        [fullWidth]="true"
+                        [contrast]="true">
                         Explore Map
                     </app-secondary-button>
                 </div>

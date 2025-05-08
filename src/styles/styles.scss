@@ -96,16 +96,3 @@ h3 {
 .hide-footer app-footer {
     display: none;
 }
-.header-transparent app-header {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    z-index: 100;
-
-    header {
-        &.mobile {
-            border: 0;
-        }
-    }
-}

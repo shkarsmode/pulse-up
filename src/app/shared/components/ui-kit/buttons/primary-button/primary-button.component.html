@@ -1,10 +1,8 @@
 <ng-container *ngIf="href; else buttonTemplate">
     <a
-        class="primary-button"
+        [ngClass]="classes"
         [href]="disabled ? null : href"
         [attr.aria-disabled]="disabled"
-        [class.disabled]="disabled"
-        [class.full-width]="fullWidth"
         (click)="onClick()"
         appRippleEffect
         [target]="target"
@@ -15,10 +13,9 @@
 
 <ng-template #buttonTemplate>
     <button
-        class="primary-button"
+        [ngClass]="classes"
         [type]="type"
         [disabled]="disabled"
-        [class.full-width]="fullWidth"
         (click)="onClick()"
         appRippleEffect
         [ngStyle]="color ? { 'background-color': color } : {}">
