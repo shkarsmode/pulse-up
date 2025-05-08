@@ -34,12 +34,22 @@
         background-color: var(--active-accent-color)
     }
 
-    &.disabled,
+    &.primary-button--disabled,
     &:disabled {
         opacity: 0.3;
     }
 
-    &.full-width {
+    &.primary-button--full-width {
         width: 100%;
+    }
+
+    &.primary-button--contrast {
+        background-color: var(--white-color);
+        color: var(--accent-color);
+
+        &:not(:disabled):hover {
+            background-color: var(--accent-color-hover);
+            color: var(--white-color);
+        }
     }
 }

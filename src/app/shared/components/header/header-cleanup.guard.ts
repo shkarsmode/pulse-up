@@ -7,7 +7,7 @@ import { Observable } from 'rxjs';
 })
 export class HeaderCleanupGuard implements CanDeactivate<unknown> {
     canDeactivate(): Observable<boolean> | Promise<boolean> | boolean {
-        document.body.classList.remove('header-transparent');
+        document.body.classList.remove('header-contrast');
         return true;
     }
 }

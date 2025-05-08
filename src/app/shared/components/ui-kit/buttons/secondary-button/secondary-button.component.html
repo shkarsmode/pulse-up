@@ -1,10 +1,9 @@
 <button
-    class="primary-button"
+    [ngClass]="classes"
     [disabled]="disabled"
     [type]="type"
     (click)="onClick()"
     appRippleEffect
-    rippleColor="#6d6d6d24"
-    [class.full-width]="fullWidth">
+    rippleColor="#6d6d6d24">
     <ng-content></ng-content>
 </button>
