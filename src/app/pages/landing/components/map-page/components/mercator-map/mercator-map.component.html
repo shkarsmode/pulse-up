@@ -1,11 +1,12 @@
 <app-map
     [isHideDebugger]="true"
     [isSearch]="false"
-    [isLocationName]="true"
+    [isLocationName]="false"
     [isZoomButton]="true"
     [zoom]="zoom"
     [minZoom]="minZoom"
     [maxBounds]="maxBounds"
     [center]="center"
     [isToShowTooltip]="true"
-    (markerClick)="onMarkerClick($event)" />
+    (markerClick)="onMarkerClick($event)" 
+    (zoomEnd)="onZoomEnd($event)" />

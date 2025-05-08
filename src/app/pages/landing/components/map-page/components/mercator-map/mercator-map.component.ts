@@ -12,6 +12,7 @@ import { ResponsiveMapConfig } from "@/app/shared/interfaces/responsive-map-conf
 export class MercatorMapComponent {
   private mediaService = inject(MediaQueryService);
 
+    @Output() zoomEnd: EventEmitter<number> = new EventEmitter<number>();
     @Output() markerClick: EventEmitter<IMapMarker> = new EventEmitter<IMapMarker>();
 
     private isMobile = toSignal(this.mediaService.mediaQuery('max', 'SM'));
@@ -69,5 +70,9 @@ export class MercatorMapComponent {
 
     public onMarkerClick(marker: IMapMarker): void {
         this.markerClick.emit(marker);
+    }
+
+    public onZoomEnd(zoom: number): void {
+        this.zoomEnd.emit(zoom);
     }
 }

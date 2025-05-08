@@ -1,5 +1,46 @@
-.switch-container {
+@use "../../../../../../styles/mixins" as *;
+
+.switch__container {
     display: flex;
     align-items: center;
-    column-gap: 8px;
+    column-gap: 6px;
+}
+
+.switch__label {
+    @include text-14px;
+}
+
+.switch__button {
+    &::ng-deep {
+        .mdc-switch {
+            --mdc-switch-track-width: 42px;
+            --mdc-switch-track-height: 28px;
+            --mdc-switch-unselected-track-color: var(--white-color);
+            --mat-switch-with-icon-handle-size: 22px;
+            --mdc-switch-selected-track-color: var(--accent-color);
+            --mdc-switch-unselected-handle-color: var(--dark-grey-color);
+            --mdc-switch-selected-focus-track-color: var(--accent-color);
+            --mdc-switch-selected-track-color: var(--accent-color);
+            --mdc-switch-selected-hover-track-color: var(--accent-color-hover);
+            --mdc-switch-unselected-focus-track-color: var(--white-color);
+            --mdc-switch-selected-handle-color: var(--white-color);
+            --mdc-switch-selected-hover-state-layer-color: var(--accent-color);
+            --mdc-switch-selected-pressed-state-layer-color: var(--accent-color);
+            --mdc-circular-progress-active-indicator-color: var(--accent-color);
+            --mat-full-pseudo-checkbox-selected-icon-color: var(--accent-color);
+            --mdc-switch-selected-focus-state-layer-color: var(--accent-color);
+            --mdc-switch-selected-pressed-track-color: var(--accent-color);
+            --mat-switch-selected-with-icon-handle-horizontal-margin: 0 16px;
+        }
+        .mdc-switch__track::before,
+        .mdc-switch__track::after {
+            border: none;
+        }
+        .mdc-switch__icons {
+            display: none;
+        }
+        .mdc-switch__ripple {
+            display: none;
+        }
+    }
 }

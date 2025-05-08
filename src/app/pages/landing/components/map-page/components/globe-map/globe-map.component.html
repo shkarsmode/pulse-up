@@ -1,7 +1,7 @@
 <app-map
     [isHideDebugger]="true"
     [isSearch]="false"
-    [isLocationName]="true"
+    [isLocationName]="false"
     [isZoomButton]="true"
     [zoom]="[zoom]"
     [minZoom]="0.35"
@@ -9,4 +9,5 @@
     projection="globe"
     [maxBounds]="undefined"
     [fog]="fog"
-    (markerClick)="onMarkerClick($event)" />
+    (markerClick)="onMarkerClick($event)" 
+    (zoomEnd)="onZoomEnd($event)"/>

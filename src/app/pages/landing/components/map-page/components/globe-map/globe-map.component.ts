@@ -1,8 +1,8 @@
 import { Component, effect, EventEmitter, inject, Output } from "@angular/core";
 import { toSignal } from "@angular/core/rxjs-interop";
+import { Fog } from "mapbox-gl";
 import { IMapMarker } from "@/app/shared/interfaces/map-marker.interface";
 import { MediaQueryService } from "@/app/shared/services/core/media-query.service";
-import { Fog } from "mapbox-gl";
 
 @Component({
     selector: "app-globe-map",
@@ -68,6 +68,7 @@ export class GlobeMapComponent {
     private is1600Desctop = toSignal(this.mediaService.mediaQuery("max", "XXXL"));
     private is1920Desctop = toSignal(this.mediaService.mediaQuery("max", "XXXXL"));
 
+    @Output() zoomEnd: EventEmitter<number> = new EventEmitter<number>();
     @Output() markerClick: EventEmitter<IMapMarker> = new EventEmitter<IMapMarker>();
 
     public zoom: number = 2.5;
@@ -115,5 +116,9 @@ export class GlobeMapComponent {
 
     public onMarkerClick(marker: IMapMarker): void {
         this.markerClick.emit(marker);
+    }
+
+    public onZoomEnd(zoom: number): void {
+        this.zoomEnd.emit(zoom);
     }
 }

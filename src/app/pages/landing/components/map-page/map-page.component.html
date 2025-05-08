@@ -1,18 +1,22 @@
 <div class="map-page">
     <div
-        class="map-page__switch"
-        [class.map-page__switch--contrast]="projection === 'globe'">
+        [class]="switchClasses"
+        *ngIf="isProjectionToogleVisible">
         <app-switch
             [label]="{
-                left: 'Mercator',
                 right: 'Globe'
             }"
-            [color]="projection === 'globe' ? '#fff' : '#000'"
+            [color]="switchColor"
+            [checked]="isGlobe"
             (change)="onSwitchChange($event)" />
     </div>
     @if (projection === "globe") {
-    <app-globe-map (markerClick)="onMarkerClick($event)" />
+    <app-globe-map
+        (markerClick)="onMarkerClick($event)"
+        (zoomEnd)="onZoomEnd($event)" />
     } @else {
-    <app-mercator-map (markerClick)="onMarkerClick($event)" />
+    <app-mercator-map
+        (markerClick)="onMarkerClick($event)"
+        (zoomEnd)="onZoomEnd($event)" />
     }
 </div>
