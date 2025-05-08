@@ -1,10 +1,7 @@
 <div class="map-page">
-    <div
-        class="map-page__switch"
-        [class.map-page__switch--contrast]="projection === 'globe'">
+    <div [class]="switchClasses">
         <app-switch
             [label]="{
-                left: 'Mercator',
                 right: 'Globe'
             }"
             [color]="projection === 'globe' ? '#fff' : '#000'"

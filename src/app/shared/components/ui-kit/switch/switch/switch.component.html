@@ -1,5 +1,15 @@
-<div class="switch-container" [style]="{ color }">
-    <span>{{ label.left }}</span>
-    <mat-slide-toggle [aria-label]="ariaLabel" (change)="onChange($event)"/>
-    <span>{{ label.right }}</span>
+<div
+    class="switch__container"
+    [style]="{ color }">
+    @if (label.left) {
+    <span class="switch__label">{{ label.left }}</span>
+    }
+    <mat-slide-toggle
+        class="switch__button"
+        [disableRipple]="true"
+        [aria-label]="ariaLabel"
+        (change)="onChange($event)"/>
+    @if (label.right) {
+    <span class="switch__label">{{ label.right }}</span>
+    }
 </div>
