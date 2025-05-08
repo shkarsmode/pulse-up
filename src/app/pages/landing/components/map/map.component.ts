@@ -57,6 +57,7 @@ export class MapComponent implements OnInit {
     @Input() public fog: Fog;
     @Output() public mapLoaded: EventEmitter<mapboxgl.Map> = new EventEmitter<mapboxgl.Map>();
     @Output() public markerClick: EventEmitter<IMapMarker> = new EventEmitter<IMapMarker>();
+    @Output() public zoomEnd: EventEmitter<number> = new EventEmitter<number>();
 
     @HostBinding("class.preview")
     public get isPreviewMap() {
@@ -169,6 +170,7 @@ export class MapComponent implements OnInit {
     }
 
     public handleZoomEnd = () => {
+        this.zoomEnd.emit(this.map?.getZoom() || 0);
         // this.updateH3Pulses();
         // this.updateHeatmapForMap();
     };

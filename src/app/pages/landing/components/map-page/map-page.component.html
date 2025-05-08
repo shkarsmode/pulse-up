@@ -1,5 +1,7 @@
 <div class="map-page">
-    <div [class]="switchClasses">
+    <div
+        [class]="switchClasses"
+        *ngIf="isProjectionToogleVisible">
         <app-switch
             [label]="{
                 right: 'Globe'
@@ -8,8 +10,12 @@
             (change)="onSwitchChange($event)" />
     </div>
     @if (projection === "globe") {
-    <app-globe-map (markerClick)="onMarkerClick($event)" />
+    <app-globe-map
+        (markerClick)="onMarkerClick($event)"
+        (zoomEnd)="onZoomEnd($event)" />
     } @else {
-    <app-mercator-map (markerClick)="onMarkerClick($event)" />
+    <app-mercator-map
+        (markerClick)="onMarkerClick($event)"
+        (zoomEnd)="onZoomEnd($event)" />
     }
 </div>

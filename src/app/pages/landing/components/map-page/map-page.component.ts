@@ -13,6 +13,7 @@ export class MapPageComponent {
 
     public projection: Projection["name"] = "mercator";
     public switchClasses = {};
+    public isProjectionToogleVisible = true;
 
     ngOnInit() {
         this.switchClasses = {
@@ -29,5 +30,9 @@ export class MapPageComponent {
 
     public onSwitchChange(checked: boolean) {
         this.projection = checked ? "globe" : "mercator";
+    }
+
+    public onZoomEnd(zoom: number) {
+        this.isProjectionToogleVisible = zoom >= 4 ? false : true;
     }
 }
