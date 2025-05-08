@@ -11,8 +11,12 @@ export class UserService {
     private readonly apiUrl: string = inject(API_URL);
     private readonly http: HttpClient = inject(HttpClient);
 
-    public getProfile(id: string): Observable<IAuthor> {
+    public getProfileById(id: string): Observable<IAuthor> {
         return this.http.get<IAuthor>(`${this.apiUrl}/users/${id}`);
+    }
+
+    public getProfileByUsername(username: string): Observable<IAuthor> {
+        return this.http.get<IAuthor>(`${this.apiUrl}/users/find?username=${username}`);
     }
 
     public getAllTopics(userId: string): Observable<IPulse[]> {
@@ -38,7 +42,7 @@ export class UserService {
                             map((newData) => ({
                                 items: [...items, ...newData],
                                 pageIndex: pageIndex + 1,
-                                isComplete: newData.length === 0,
+                                isComplete: newData.length < pageSize,
                             })),
                         ),
                 ),

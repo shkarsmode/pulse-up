@@ -1,8 +1,8 @@
 import { Component, inject } from "@angular/core";
 import { ActivatedRoute, ParamMap, Router } from "@angular/router";
-import { combineLatest } from "rxjs";
 import { UserService } from "@/app/shared/services/api/user.service";
 import { IAuthor, IPulse } from "@/app/shared/interfaces";
+import { Location } from "@angular/common";
 
 @Component({
     selector: "app-author",
@@ -13,13 +13,18 @@ export class UserComponent {
     public user: IAuthor | null = null;
     public topics: IPulse[] = [];
     public isLoading: boolean = true;
-    public topicId: string = "";
+    public pulseId: string = "";
     public totalReceivedVotes: number = 0;
     public votesReceivedFor24Hours: number = 0;
 
     private readonly router: Router = inject(Router);
+    private readonly location: Location = inject(Location);
     private readonly route: ActivatedRoute = inject(ActivatedRoute);
     private readonly userService: UserService = inject(UserService);
+
+    constructor() {
+        this.pulseId = this.router.getCurrentNavigation()?.extras?.state?.["pulseId"] || "";
+    }
 
     ngOnInit(): void {
         this.initUserIdListener();
@@ -30,29 +35,31 @@ export class UserComponent {
     }
 
     private handlePulseUrlIdListener(data: ParamMap): void {
-        const userId = data.get("userId")!;
-        const topicId = data.get("topicId")!;
+        const username = data.get("username")!;
         this.user = null;
         this.topics = [];
         this.isLoading = true;
-        this.topicId = topicId;
-        const user$ = this.userService.getProfile(userId);
-        const topics$ = this.userService.getAllTopics(userId);
-        combineLatest([user$, topics$]).subscribe(([user, topics]) => {
-            this.user = user;
-            this.topics = topics.map((topic) => ({
-                ...topic,
-                author: { ...topic.author, name: this.user?.name || "" },
-            }));
-            this.isLoading = false;
-            this.countVotes();
+        this.userService.getProfileByUsername(username).subscribe((user) => {
+            this.userService.getAllTopics(user.id).subscribe((topics) => {
+                this.user = user;
+                this.topics = topics.map((topic) => ({
+                    ...topic,
+                    author: { ...topic.author, name: this.user?.name || "" },
+                }));
+                this.isLoading = false;
+                this.countVotes();
+            });
         });
     }
 
     public goBack(): void {
-        this.router.navigate(["/topic", this.topicId], {
-            replaceUrl: true,
-        });
+        if (!this.pulseId) {
+            this.router.navigateByUrl("/", {
+                replaceUrl: true,
+            });
+            return;
+        }
+        this.location.back();
     }
 
     public countVotes() {
