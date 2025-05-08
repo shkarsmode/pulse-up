@@ -55,6 +55,20 @@ export class MapComponent implements OnInit {
     @Input() public isLabelsHidden: boolean = false;
     @Input() public isMapStatic: boolean = false;
     @Input() public fog: Fog;
+    @Input() public zoomResolutionMap: { [key: number]: number } = {
+        0: 0,
+        1: 0,
+        2: 1,
+        3: 1,
+        3.3: 2,
+        4: 2,
+        5: 3,
+        6.5: 4,
+        7: 4,
+        8: 5,
+        9: 6,
+        10: 6,
+    };
     @Output() public mapLoaded: EventEmitter<mapboxgl.Map> = new EventEmitter<mapboxgl.Map>();
     @Output() public markerClick: EventEmitter<IMapMarker> = new EventEmitter<IMapMarker>();
 
@@ -81,20 +95,6 @@ export class MapComponent implements OnInit {
 
     private readonly destroyed: DestroyRef = inject(DestroyRef);
     private readonly heatmapService: HeatmapService = inject(HeatmapService);
-    private zoomResolutionMap: { [key: number]: number } = {
-        0: 0,
-        1: 0,
-        2: 1,
-        3: 1,
-        3.3: 2,
-        4: 2,
-        5: 3,
-        6.5: 4,
-        7: 4,
-        8: 5,
-        9: 6,
-        10: 6,
-    };
     private zoomLevels = Object.keys(this.zoomResolutionMap)
         .map(Number)
         .sort((a, b) => a - b);

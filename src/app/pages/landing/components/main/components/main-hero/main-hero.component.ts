@@ -16,7 +16,7 @@ export class MainHeroComponent {
     private router: Router = inject(Router);
     private mediaService: MediaQueryService = inject(MediaQueryService);
     private settingsService: SettingsService = inject(SettingsService);
-    private isMobile = toSignal(this.mediaService.mediaQuery("max", "SM"));
+    private isTablet = toSignal(this.mediaService.mediaQuery("max", "MD"));
     private isXSMobile = toSignal(this.mediaService.mediaQuery("max", "XS"));
     private isXXSMobile = toSignal(this.mediaService.mediaQuery("max", "XXS"));
     private isXXXSMobile = toSignal(this.mediaService.mediaQuery("max", "XXXS"));
@@ -31,6 +31,20 @@ export class MainHeroComponent {
 
     public AppRoutes = AppRoutes;
     public zoom = 1.5;
+    public zoomResolutionMap = {
+        0: 0,
+        1: 1,
+        2: 1,
+        3: 1,
+        3.3: 2,
+        4: 2,
+        5: 3,
+        6.5: 4,
+        7: 4,
+        8: 5,
+        9: 6,
+        10: 6,
+    }
 
     private readonly platformService: PlatformService = inject(PlatformService);
 
@@ -42,9 +56,15 @@ export class MainHeroComponent {
                 ? 0.55
                 : this.isXSMobile()
                 ? 0.8
-                : this.isMobile()
+                : this.isTablet()
                 ? 1
-                : 1.5;
+                : 1.85;
+
+            if (this.isTablet()) {
+                this.zoomResolutionMap = {...this.zoomResolutionMap, 1: 0}
+            } else {
+                this.zoomResolutionMap = {...this.zoomResolutionMap, 1: 1}
+            }
         });
     }
 
