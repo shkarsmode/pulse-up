@@ -89,6 +89,7 @@ export class MapComponent implements OnInit {
     public readonly pulseService: PulseService = inject(PulseService);
     public isToShoDebugger: string | null = localStorage.getItem("show-debugger");
     public tooltipData: IPulse | null = null;
+    public isTouchDevice = false;
 
     private readonly h3Pulses$: Subject<any> = new Subject();
     private readonly heatMapData$: Subject<{ [key: string]: number }> = new Subject();
@@ -113,6 +114,7 @@ export class MapComponent implements OnInit {
         // if (this.isPreview) {}
         this.subscribeOnDataH3Pulses();
         this.subscribeOnDataListHeatmap();
+        this.checkIfTouchDevice();
     }
 
     public onChangeHeatmapSettings(): void {
@@ -137,6 +139,10 @@ export class MapComponent implements OnInit {
         this.map?.setPaintProperty("vibes-heat", "heatmap-opacity", opacity);
 
         this.isToShowHeatmap = !this.isToShowHeatmap;
+    }
+    
+    private checkIfTouchDevice(): void {
+        this.isTouchDevice = window.matchMedia('(pointer: coarse)').matches;
     }
 
     private subscribeOnDataH3Pulses(): void {

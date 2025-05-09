@@ -37,7 +37,7 @@
     <mgl-marker
         [lngLat]="[marker.lng, marker.lat]"
         [ngStyle]="{ opacity }">
-        @if (isToShowTooltip) {
+        @if (!isTouchDevice && isToShowTooltip) {
         <button
             placement="bottom"
             class="marker-button"
