@@ -16,7 +16,7 @@ export class UserService {
     }
 
     public getProfileByUsername(username: string): Observable<IAuthor> {
-        return this.http.get<IAuthor>(`${this.apiUrl}/users/find?username=${username}`);
+        return this.http.get<IAuthor>(`${this.apiUrl}/users/find`, { params: { username } });
     }
 
     public getAllTopics(userId: string): Observable<IPulse[]> {

@@ -51,6 +51,7 @@ import { SwitchComponent } from "@/app/shared/components/ui-kit/switch/switch/sw
 import { UserComponent } from "./user/user.component";
 import { ContainerComponent } from "@/app/shared/components/ui-kit/container/container.component";
 import { IconButtonComponent } from "@/app/shared/components/ui-kit/buttons/icon-button/icon-button.component";
+import { UserAvatarComponent } from './user/components/user-avatar/user-avatar.component';
 
 @NgModule({
     declarations: [
@@ -71,6 +72,7 @@ import { IconButtonComponent } from "@/app/shared/components/ui-kit/buttons/icon
         GlobeMapComponent,
         MercatorMapComponent,
         UserComponent,
+        UserAvatarComponent,
     ],
     imports: [
         CommonModule,

@@ -15,8 +15,6 @@ export class UserComponent {
     public topics: IPulse[] = [];
     public isLoading: boolean = true;
     public pulseId: string = "";
-    public totalReceivedVotes: number = 0;
-    public votesReceivedFor24Hours: number = 0;
 
     private readonly router: Router = inject(Router);
     private readonly location: Location = inject(Location);
@@ -43,14 +41,13 @@ export class UserComponent {
         this.isLoading = true;
         this.userService.getProfileByUsername(username).subscribe((user) => {
             this.userService.getAllTopics(user.id).subscribe((topics) => {
-                this.user = user;
                 this.topics = topics.map((topic) => ({
                     ...topic,
                     author: { ...topic.author, name: this.user?.name || "" },
                 }));
+                this.user = user;
                 this.isLoading = false;
-                this.countVotes();
-            });
+            })
         });
     }
 
@@ -70,25 +67,5 @@ export class UserComponent {
 
     public onCopyLink(event: MouseEvent) {
         event.stopPropagation();
-    }
-
-    public countVotes() {
-        const { total, lastDay } = this.topics.reduce(
-            (acc, topic) => {
-                if (topic.stats?.lastDayVotes) {
-                    acc.lastDay += topic.stats.lastDayVotes;
-                }
-                if (topic.stats?.totalVotes) {
-                    acc.total += topic.stats.totalVotes;
-                }
-                return acc;
-            },
-            {
-                total: 0,
-                lastDay: 0,
-            },
-        );
-        this.totalReceivedVotes = total;
-        this.votesReceivedFor24Hours = lastDay;
     }
 }
