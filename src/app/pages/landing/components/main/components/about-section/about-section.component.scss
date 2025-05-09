@@ -59,17 +59,11 @@
 }
 
 .about__action {
-    @include media-lg {
-        display: flex;
-        justify-content: center;
-    }
-    app-secondary-button {
-        display: block;
-        width: 100%;
-        max-width: 200px;
+    width: 100%;
+    max-width: 200px;
+    margin: 40px auto 0;
 
-        @include media-xs {
-            max-width: 100%;
-        }
+    @include media-xs {
+        max-width: 100%;
     }
 }

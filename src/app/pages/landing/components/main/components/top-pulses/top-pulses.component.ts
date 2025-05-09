@@ -3,6 +3,7 @@ import { first } from 'rxjs';
 import { IPulse } from '../../../../../../shared/interfaces';
 import { PulseService } from '../../../../../../shared/services/api/pulse.service';
 import { AppRoutes } from '@/app/shared/enums/app-routes.enum';
+import { Colors } from '@/app/shared/enums/colors.enum';
 
 @Component({
     selector: 'app-top-pulses',
@@ -12,6 +13,7 @@ import { AppRoutes } from '@/app/shared/enums/app-routes.enum';
 export class TopPulsesComponent implements OnInit {
     public pulses: IPulse[] = [];
     public AppRoutes = AppRoutes;
+    public buttonColor = Colors.BLACK;
 
     private readonly pulseService: PulseService = inject(PulseService);
 

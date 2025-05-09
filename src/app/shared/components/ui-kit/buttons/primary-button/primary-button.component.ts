@@ -20,6 +20,7 @@ export class PrimaryButtonComponent {
     @Input() public color: string;
     @Input() public fullWidth: boolean = false;
     @Input() public contrast: boolean = false;
+    @Input() public size: "small" | "medium" | "large" = "medium";
 
     @Output() public handleClick: EventEmitter<void> = new EventEmitter<void>();
 
@@ -28,6 +29,9 @@ export class PrimaryButtonComponent {
     ngOnInit(): void {
         this.classes = {
             'primary-button': true,
+            "secondary-button--small": this.size === "small",
+            "secondary-button--medium": this.size === "medium",
+            "secondary-button--large": this.size === "large",
             'primary-button--full-width': this.fullWidth,
             'primary-button--contrast': this.contrast,
             'primary-button--disabled': this.disabled,
