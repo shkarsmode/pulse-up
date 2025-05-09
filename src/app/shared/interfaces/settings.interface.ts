@@ -1,10 +1,12 @@
 export interface ISettings {
-    minVoteInterval: number;
-    deletedCredentialsBlockInterval: number;
-    blobUrlPrefix: string;
-    latestAppVersionNumber: number;
-    appStoreUrl: string;
-    googlePlayUrl: string;
-    shareTopicBaseUrl: string;
     apiVersion: string;
+    appStoreUrl: string;
+    blobUrlPrefix: string;
+    defaultAutoPulse: number;
+    deletedCredentialsBlockInterval: number;
+    googlePlayUrl: string;
+    latestAppVersionNumber: number;
+    minVoteInterval: number;
+    shareTopicBaseUrl: string;
+    shareUserBaseUrl: string;
 }

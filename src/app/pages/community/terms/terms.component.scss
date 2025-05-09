@@ -1,1 +1,7 @@
-@import url('../privacy/privacy.component.scss');
+@import url("../privacy/privacy.component.scss");
+
+.agent {
+    display: flex;
+    flex-wrap: wrap;
+    column-gap: 4px;
+}

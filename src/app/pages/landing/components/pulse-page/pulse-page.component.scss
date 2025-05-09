@@ -59,7 +59,7 @@
                 text-align: center;
             }
 
-            div {
+            a {
                 display: flex;
                 align-items: center;
                 gap: 9px;
@@ -81,6 +81,10 @@
         .pulse__stats-wrap {
             display: flex;
             gap: 44px;
+
+            @media screen and (max-width: 650px) {
+                gap: 16px;
+            }
 
             >div {
                 display: flex;
@@ -216,6 +220,7 @@
         &-media {
 
             display: flex;
+            justify-content: center;
             flex: 1 1 auto;
             gap: 20px;
             height: 180px;
@@ -227,12 +232,12 @@
                 min-width: 275px;
                 max-width: 100%;
                 max-height: 100%;
+                object-fit: cover;
             }
 
             &__map {
                 position: relative;
-                width: 100%;
-                min-width: 275px;
+                width: 275px;
                 cursor: pointer;
 
                 &::before {
@@ -313,10 +318,16 @@
         padding: 24px 20px 48px;
     }
 
-    .pulse__info-media img {
-        width: auto;
-        max-width: 100%;
-        object-fit: cover;
+    .pulse__info-media {
+        img {
+            width: auto;
+            max-width: 100%;
+            min-width: unset;
+        }
+
+        .pulse__info-media__map {
+            width: 100%;
+        }
     }
 
     .pulse__info-media {

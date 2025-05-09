@@ -45,12 +45,13 @@
     width: 100%;
     max-width: 1210px;
     margin: 0 auto;
-    padding: var(--header-height) 20px 0;
+    padding: var(--header-height) 10px 0;
     display: flex;
     align-items: center;
     justify-content: space-between;
+    flex-direction: row-reverse;
 
-    @include media-lg {
+    @include media-2xl {
         min-height: calc(100svh - var(--header-height));
         justify-content: center;
         flex-direction: column-reverse;
@@ -71,7 +72,10 @@
 }
 .hero__content {
     flex: 1;
+    width: 100%;
     max-width: 450px;
+    color: var(--white-color);
+    text-align: center;
     @include media-lg {
         flex: 0;
         padding: 0 20px;
@@ -82,21 +86,21 @@
     display: flex;
     flex-direction: column;
     justify-content: center;
-    flex: 0 0 600px;
-    height: 600px;
-    max-width: 600px;
+    flex: 0 0 720px;
+    height: 720px;
+    max-width: 720px;
 
-    @include media-4xl {
-        flex: 1 0 500px;
-        height: 540px;
-        max-width: 540px;
-    }
-    @include media-lg {
+    // @include media-4xl {
+    //     flex: 1 0 540px;
+    //     height: 540px;
+    //     max-width: 540px;
+    // }
+    @include media-2xl {
         flex: 1;
         width: 100%;
-        max-width: 540px;
+        // max-width: 540px;
     }
-    @include media-sm {
+    @include media-md {
         flex: 1 0 400px;
         height: 400px;
     }
@@ -109,12 +113,12 @@
     }
 
     &::ng-deep .map-container {
-        height: 600px !important;
+        height: 720px !important;
 
-        @include media-4xl {
-            height: 540px !important;
-        }
-        @include media-sm {
+        // @include media-4xl {
+        //     height: 540px !important;
+        // }
+        @include media-md {
             height: 400px !important;
         }
         @include media-2xs {
@@ -129,14 +133,14 @@
     @include title-32px;
     margin-bottom: 16px;
 
-    @include media-lg {
-        text-align: center;
-    }
     @include media-sm {
         @include title-24px;
     }
     @include media-xs {
         @include title-20px;
+        max-width: 300px;
+        margin-left: auto;
+        margin-right: auto;
     }
 }
 .hero__description {
@@ -157,28 +161,25 @@
         @include text-14px;
         margin-bottom: 16px;
     }
-    @media screen and (max-height: 600px) {
+    @media screen and (max-height: 500px) {
         display: none;
     }
 }
 .hero__actions {
     display: flex;
+    justify-content: center;
     column-gap: 16px;
-    &::ng-deep button {
-        min-height: 48px;
-        padding: 12px 16px;
-    }
     @include media-lg {
         margin: 0 auto;
     }
-    @include media-2xs {
+    @include media-3xs {
         flex-direction: column;
         row-gap: 8px;
     }
 }
 .hero__button {
     width: 100%;
-    max-width: 200px;
+    max-width: 180px;
     
     @include media-xs {
         max-width: 100%;

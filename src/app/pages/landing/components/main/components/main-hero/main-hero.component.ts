@@ -2,9 +2,9 @@ import { Component, effect, inject } from "@angular/core";
 import { Router } from "@angular/router";
 import { toSignal } from "@angular/core/rxjs-interop";
 import { PlatformService } from "@/app/shared/services/core/platform.service";
-import { AppLinksEnum } from "@/app/shared/enums/app-links.enum";
 import { AppRoutes } from "@/app/shared/enums/app-routes.enum";
 import { MediaQueryService } from "@/app/shared/services/core/media-query.service";
+import { SettingsService } from "@/app/shared/services/api/settings.service";
 
 @Component({
     selector: "app-main-hero",
@@ -14,8 +14,9 @@ import { MediaQueryService } from "@/app/shared/services/core/media-query.servic
 export class MainHeroComponent {
     private map: mapboxgl.Map | null = null;
     private router: Router = inject(Router);
-    private mediaService = inject(MediaQueryService);
-    private isMobile = toSignal(this.mediaService.mediaQuery("max", "SM"));
+    private mediaService: MediaQueryService = inject(MediaQueryService);
+    private settingsService: SettingsService = inject(SettingsService);
+    private isTablet = toSignal(this.mediaService.mediaQuery("max", "MD"));
     private isXSMobile = toSignal(this.mediaService.mediaQuery("max", "XS"));
     private isXXSMobile = toSignal(this.mediaService.mediaQuery("max", "XXS"));
     private isXXXSMobile = toSignal(this.mediaService.mediaQuery("max", "XXXS"));
@@ -30,6 +31,20 @@ export class MainHeroComponent {
 
     public AppRoutes = AppRoutes;
     public zoom = 1.5;
+    public zoomResolutionMap = {
+        0: 0,
+        1: 1,
+        2: 1,
+        3: 1,
+        3.3: 2,
+        4: 2,
+        5: 3,
+        6.5: 4,
+        7: 4,
+        8: 5,
+        9: 6,
+        10: 6,
+    }
 
     private readonly platformService: PlatformService = inject(PlatformService);
 
@@ -41,15 +56,20 @@ export class MainHeroComponent {
                 ? 0.55
                 : this.isXSMobile()
                 ? 0.8
-                : this.isMobile()
+                : this.isTablet()
                 ? 1
-                : 1.5;
+                : 1.85;
+
+            if (this.isTablet()) {
+                this.zoomResolutionMap = {...this.zoomResolutionMap, 1: 0}
+            } else {
+                this.zoomResolutionMap = {...this.zoomResolutionMap, 1: 1}
+            }
         });
     }
 
     public onMapLoaded(map: mapboxgl.Map) {
         this.map = map;
-        this.removeLabelsFromMap();
         this.spinGlobe();
 
         // Pause spinning on user interaction (mouse or touch)
@@ -86,8 +106,8 @@ export class MainHeroComponent {
     }
 
     public openStore(): void {
-        if (this.platformService.value == "iOS") window.open(AppLinksEnum.APP_STORE);
-        else window.open(AppLinksEnum.GOOGLE_APP_STORE);
+        if (this.platformService.value == "iOS") window.open(this.settingsService.appStoreUrl);
+        else window.open(this.settingsService.googlePlayUrl);
     }
 
     private navigateToMapPage() {
@@ -109,17 +129,6 @@ export class MainHeroComponent {
             // Smoothly animate the map over one second.
             // When this animation is complete, it calls a 'moveend' event.
             this.map.easeTo({ center, duration: 500, easing: (n) => n });
-        }
-    }
-
-    private removeLabelsFromMap() {
-        if (!this.map) return;
-        const layers = this.map.getStyle().layers;
-        if (!layers) return;
-        for (const layer of layers) {
-            if (layer.type === "symbol") {
-                this.map.removeLayer(layer.id);
-            }
         }
     }
 }

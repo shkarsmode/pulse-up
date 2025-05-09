@@ -7,23 +7,26 @@ import {
     Input,
     OnInit,
     Output,
-} from '@angular/core';
-import { Router } from '@angular/router';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import * as h3 from 'h3-js';
-import mapboxgl from 'mapbox-gl';
-import { debounceTime, filter, first, Subject, tap } from 'rxjs';
-import { PulseService } from '../../../../shared/services/api/pulse.service';
-import { HeatmapService } from '../../../../shared/services/core/heatmap.service';
-import { MapLocationService } from '../../../../shared/services/core/map-location.service';
-import { MAPBOX_STYLE } from '../../../../shared/tokens/tokens';
-import { IMapMarker } from '@/app/shared/interfaces/map-marker.interface';
-import { IPulse } from '@/app/shared/interfaces';
+} from "@angular/core";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
+import * as h3 from "h3-js";
+import mapboxgl, { EventData, Fog, MapStyleDataEvent } from "mapbox-gl";
+import { debounceTime, filter, first, Subject, tap } from "rxjs";
+import { PulseService } from "../../../../shared/services/api/pulse.service";
+import { HeatmapService } from "../../../../shared/services/core/heatmap.service";
+import { MapLocationService } from "../../../../shared/services/core/map-location.service";
+import { MAPBOX_STYLE } from "../../../../shared/tokens/tokens";
+import { IMapMarker } from "@/app/shared/interfaces/map-marker.interface";
+import { IPulse } from "@/app/shared/interfaces";
+
+interface IMapMarkerAnimated extends IMapMarker {
+    delay: number;
+}
 
 @Component({
-    selector: 'app-map',
-    templateUrl: './map.component.html',
-    styleUrl: './map.component.scss',
+    selector: "app-map",
+    templateUrl: "./map.component.html",
+    styleUrl: "./map.component.scss",
 })
 export class MapComponent implements OnInit {
     @Input() public pulseId: number;
@@ -42,42 +45,17 @@ export class MapComponent implements OnInit {
     @Input() public touchZoomRotate: boolean = true;
     @Input() public isScrollZoomEnabled: boolean = true;
     @Input() public isDoubleClickZoomEnabled: boolean = true;
+    @Input() public isMarkerAnimated: boolean = false;
     @Input() public maxBounds: mapboxgl.LngLatBoundsLike | undefined = [
         [-180, -80],
         [180, 85],
     ];
     @Input() public center: [number, number] = [-100.661, 37.7749];
     @Input() public projection: mapboxgl.Projection["name"] = "mercator";
-    @Output() public mapLoaded: EventEmitter<mapboxgl.Map> = new EventEmitter<mapboxgl.Map>();
-    @Output() public markerClick: EventEmitter<IMapMarker> = new EventEmitter<IMapMarker>();
-
-    @HostBinding('class.preview')
-    public get isPreviewMap() {
-        return this.isPreview;
-    }
-
-    public markers: IMapMarker[] = [];
-    public weights: any = [];
-    public readonly mapboxStylesUrl: string = inject(MAPBOX_STYLE);
-    public heatmapIntensity: number = 0.1;
-
-    public map: mapboxgl.Map | null = null;
-    public isToShowH3: boolean = true;
-    public heatmapDataPointsCount: number = 0;
-    public readonly pulseService: PulseService = inject(PulseService);
-    private readonly router: Router = inject(Router);
-    public isToShoDebugger: string | null =
-        localStorage.getItem('show-debugger');
-    public tooltipData: IPulse | null = null;
-
-    private readonly h3Pulses$: Subject<any> = new Subject();
-    private readonly heatMapData$: Subject<{ [key: string]: number }> =
-        new Subject();
-    private markerHover$ = new Subject<IMapMarker>();
-
-    private readonly destroyed: DestroyRef = inject(DestroyRef);
-    private readonly heatmapService: HeatmapService = inject(HeatmapService);
-    private zoomResolutionMap: { [key: number]: number } = {
+    @Input() public isLabelsHidden: boolean = false;
+    @Input() public isMapStatic: boolean = false;
+    @Input() public fog: Fog;
+    @Input() public zoomResolutionMap: { [key: number]: number } = {
         0: 0,
         1: 0,
         2: 1,
@@ -91,14 +69,40 @@ export class MapComponent implements OnInit {
         9: 6,
         10: 6,
     };
+    @Output() public mapLoaded: EventEmitter<mapboxgl.Map> = new EventEmitter<mapboxgl.Map>();
+    @Output() public markerClick: EventEmitter<IMapMarker> = new EventEmitter<IMapMarker>();
+    @Output() public zoomEnd: EventEmitter<number> = new EventEmitter<number>();
+
+    @HostBinding("class.preview")
+    public get isPreviewMap() {
+        return this.isPreview;
+    }
+
+    public markers: IMapMarkerAnimated[] = [];
+    public weights: any = [];
+    public readonly mapboxStylesUrl: string = inject(MAPBOX_STYLE);
+    public heatmapIntensity: number = 0.1;
+
+    public map: mapboxgl.Map | null = null;
+    public isToShowH3: boolean = true;
+    public heatmapDataPointsCount: number = 0;
+    public readonly pulseService: PulseService = inject(PulseService);
+    public isToShoDebugger: string | null = localStorage.getItem("show-debugger");
+    public tooltipData: IPulse | null = null;
+    public isTouchDevice = false;
+
+    private readonly h3Pulses$: Subject<any> = new Subject();
+    private readonly heatMapData$: Subject<{ [key: string]: number }> = new Subject();
+    private markerHover$ = new Subject<IMapMarker>();
+
+    private readonly destroyed: DestroyRef = inject(DestroyRef);
+    private readonly heatmapService: HeatmapService = inject(HeatmapService);
     private zoomLevels = Object.keys(this.zoomResolutionMap)
         .map(Number)
         .sort((a, b) => a - b);
 
     constructor(public mapLocationService: MapLocationService) {
-        this.markerHover$.pipe(
-            debounceTime(300)
-        ).subscribe((marker) => {
+        this.markerHover$.pipe(debounceTime(300)).subscribe((marker) => {
             this.tooltipData = null;
             this.pulseService.getById(marker.topicId).subscribe((pulse) => {
                 this.tooltipData = pulse;
@@ -106,22 +110,15 @@ export class MapComponent implements OnInit {
         });
     }
 
-    private get isGlobeProjection(): boolean {
-        return this.map?.getProjection().name === 'globe';
-    }
-
     public ngOnInit(): void {
         // if (this.isPreview) {}
         this.subscribeOnDataH3Pulses();
         this.subscribeOnDataListHeatmap();
+        this.checkIfTouchDevice();
     }
 
     public onChangeHeatmapSettings(): void {
-        this.map?.setPaintProperty(
-            'vibes-heat',
-            'heatmap-intensity',
-            +this.heatmapIntensity
-        );
+        this.map?.setPaintProperty("vibes-heat", "heatmap-intensity", +this.heatmapIntensity);
 
         this.updateHeatmapForMap();
     }
@@ -130,22 +127,22 @@ export class MapComponent implements OnInit {
         let lineWidth = 1.5;
         if (this.isToShowH3) lineWidth = 0;
 
-        this.map?.setPaintProperty(
-            'h3-polygons-layer',
-            'line-width',
-            lineWidth
-        );
+        this.map?.setPaintProperty("h3-polygons-layer", "line-width", lineWidth);
 
         this.isToShowH3 = !this.isToShowH3;
     }
 
     public toggleHeatmapVisibility(): void {
-        let opacity = this.heatmapService.heatmapStyles['heatmap-opacity'];
+        let opacity = this.heatmapService.heatmapStyles["heatmap-opacity"];
         if (this.isToShowHeatmap) opacity = 0;
 
-        this.map?.setPaintProperty('vibes-heat', 'heatmap-opacity', opacity);
+        this.map?.setPaintProperty("vibes-heat", "heatmap-opacity", opacity);
 
         this.isToShowHeatmap = !this.isToShowHeatmap;
+    }
+    
+    private checkIfTouchDevice(): void {
+        this.isTouchDevice = window.matchMedia('(pointer: coarse)').matches;
     }
 
     private subscribeOnDataH3Pulses(): void {
@@ -167,72 +164,77 @@ export class MapComponent implements OnInit {
         this.updateH3Pulses();
         this.updateHeatmapForMap();
 
-        this.map.on('resize', () => {
-          this.map?.triggerRepaint();
-        })
+        this.map.on("resize", () => {
+            this.map?.triggerRepaint();
+        });
 
         this.mapLoaded.next(this.map);
+
+        if (this.fog) {
+            this.map.setFog(this.fog);
+        }
     }
 
     public handleZoomEnd = () => {
+        this.zoomEnd.emit(this.map?.getZoom() || 0);
         // this.updateH3Pulses();
         // this.updateHeatmapForMap();
     };
 
     public handleMoveEnd = () => {
-        if (this.isGlobeProjection) return;
+        if (this.isMapStatic) return;
         this.updateH3Pulses();
         this.updateHeatmapForMap();
     };
 
     private addInitialLayersAndSourcesToDisplayData(): void {
-        const sourceId = 'h3-polygons';
+        const sourceId = "h3-polygons";
 
-        this.map?.addSource('hexagons', {
-            type: 'geojson',
+        this.map?.addSource("hexagons", {
+            type: "geojson",
             data: {
-                type: 'FeatureCollection',
+                type: "FeatureCollection",
                 features: [],
             },
         });
 
         this.map?.addSource(sourceId, {
-            type: 'geojson',
+            type: "geojson",
             data: {
-                type: 'FeatureCollection',
+                type: "FeatureCollection",
                 features: [],
             },
         });
 
         this.map?.addLayer({
-            id: 'hexagons',
-            type: 'fill',
-            source: 'hexagons',
+            id: "hexagons",
+            type: "fill",
+            source: "hexagons",
             layout: {},
             paint: {
-                'fill-color': '#7700EE',
-                'fill-opacity': 0, // 0.15
+                "fill-color": "#7700EE",
+                "fill-opacity": 0, // 0.15
             },
         });
 
         this.map?.addLayer({
-            id: 'h3-polygons-layer-line',
-            type: 'line',
+            id: "h3-polygons-layer-line",
+            type: "line",
             source: sourceId,
             layout: {},
             paint: {
-                'line-color': '#FFFFFF',
-                'line-width': 2,
-                'line-opacity': 0.5,
+                "line-color": "#FFFFFF",
+                "line-width": 2,
+                "line-opacity": 0.5,
             },
         });
         this.map?.addLayer({
-            id: 'h3-polygons-layer-fill',
-            type: 'fill',
+            id: "h3-polygons-layer-fill",
+            type: "fill",
             source: sourceId,
             layout: {},
             paint: {
-                "fill-color": '#FFFFFF',
+                "fill-color": "#FFFFFF",
                 "fill-opacity": 0.3,
             },
         });
@@ -240,7 +242,7 @@ export class MapComponent implements OnInit {
 
     private addMarkersAndUpdateH3Polygons(h3PulsesData: any): void {
         const geojsonData: any = this.convertH3ToGeoJSON(h3PulsesData);
-        (this.map?.getSource('hexagons') as any).setData(geojsonData);
+        (this.map?.getSource("hexagons") as any).setData(geojsonData);
         // this.map?.setPaintProperty('hexagons', 'fill-opacity', 0.15);
 
         this.addMarkersToMap(h3PulsesData);
@@ -249,7 +251,7 @@ export class MapComponent implements OnInit {
 
     private updateH3Pulses(): void {
         if (!this.map) return;
-        this.map?.setPaintProperty('hexagons', 'fill-opacity', 0);
+        this.map?.setPaintProperty("hexagons", "fill-opacity", 0);
 
         const { _ne, _sw } = this.map.getBounds();
         const resolution = this.getResolutionBasedOnMapZoom();
@@ -261,7 +263,7 @@ export class MapComponent implements OnInit {
             .getH3PulsesForMap(NELat, NELng, SWLat, SWLng, resolution)
             .pipe(
                 first(),
-                filter(() => !this.pulseId)
+                filter(() => !this.pulseId),
             )
             .subscribe((h3PulsesData) => this.h3Pulses$.next(h3PulsesData));
     }
@@ -275,23 +277,13 @@ export class MapComponent implements OnInit {
         const SWLat = _sw.lat;
         const SWLng = Math.max(_sw.lng, -180);
         this.pulseService
-            .getMapVotes(
-                NELat,
-                NELng,
-                SWLat,
-                SWLng,
-                resolution > 9 ? 7 : resolution,
-                this.pulseId
-            )
+            .getMapVotes(NELat, NELng, SWLat, SWLng, resolution > 9 ? 7 : resolution, this.pulseId)
             .pipe(
                 first(),
                 filter(() => this.isToShowHeatmap),
-                tap(
-                    (heatmap) => {
-                        (this.heatmapDataPointsCount =
-                            Object.keys(heatmap).length)
-                    }
-                )
+                tap((heatmap) => {
+                    this.heatmapDataPointsCount = Object.keys(heatmap).length;
+                }),
             )
             .subscribe((votes) => {
                 this.heatMapData$.next(votes);
@@ -313,34 +305,30 @@ export class MapComponent implements OnInit {
                         if (parsedIndex) {
                             heatmap[parsedIndex] = numberOfVotes;
                         }
-                    })
+                    });
                 } else {
                     heatmap = heatmapData;
                 }
-                
-                const updatedHeatmapData = Object.keys(heatmap).map(
-                    (key: string) => ({
-                        coords: h3.h3ToGeo(key),
-                        value: heatmap[key],
-                        h3Index: key,
-                    })
-                );
 
-                const heatmapFeatures = updatedHeatmapData.map(
-                    ({ coords, value }) => ({
-                        type: 'Feature',
-                        properties: {
-                            value: value,
-                        },
-                        geometry: {
-                            type: 'Point',
-                            coordinates: [coords[1], coords[0]],
-                        },
-                    })
-                );
+                const updatedHeatmapData = Object.keys(heatmap).map((key: string) => ({
+                    coords: h3.h3ToGeo(key),
+                    value: heatmap[key],
+                    h3Index: key,
+                }));
+
+                const heatmapFeatures = updatedHeatmapData.map(({ coords, value }) => ({
+                    type: "Feature",
+                    properties: {
+                        value: value,
+                    },
+                    geometry: {
+                        type: "Point",
+                        coordinates: [coords[1], coords[0]],
+                    },
+                }));
 
                 const heatmapGeoJSON = {
-                    type: 'FeatureCollection',
+                    type: "FeatureCollection",
                     features: heatmapFeatures,
                 };
 
@@ -351,20 +339,14 @@ export class MapComponent implements OnInit {
                 // this.heatmapIntensity = intensity;
 
                 this.map?.setPaintProperty(
-                    'vibes-heat',
-                    'heatmap-intensity',
-                    +this.heatmapIntensity
+                    "vibes-heat",
+                    "heatmap-intensity",
+                    +this.heatmapIntensity,
                 );
 
-                const heatmapRadius = this.calculateHeatmapRadius(
-                    this.map?.getZoom() || 0
-                );
+                const heatmapRadius = this.calculateHeatmapRadius(this.map?.getZoom() || 0);
 
-                this.map?.setPaintProperty(
-                    'vibes-heat',
-                    'heatmap-radius',
-                    heatmapRadius
-                );
+                this.map?.setPaintProperty("vibes-heat", "heatmap-radius", heatmapRadius);
 
                 this.heatmapService.heatmapData.setData(heatmapGeoJSON);
 
@@ -394,9 +376,9 @@ export class MapComponent implements OnInit {
         const features = Object.keys(data).map((h3Index) => {
             const polygon = h3.h3ToGeoBoundary(h3Index, true);
             return {
-                type: 'Feature',
+                type: "Feature",
                 geometry: {
-                    type: 'Polygon',
+                    type: "Polygon",
                     coordinates: [polygon],
                 },
                 properties: {
@@ -409,7 +391,7 @@ export class MapComponent implements OnInit {
         });
 
         return {
-            type: 'FeatureCollection',
+            type: "FeatureCollection",
             features,
         };
     }
@@ -424,6 +406,7 @@ export class MapComponent implements OnInit {
                 icon: data[h3Index].icon,
                 h3Index,
                 topicId: data[h3Index].topicId,
+                delay: this.randomInteger(100, 2000),
             });
         });
     }
@@ -441,20 +424,16 @@ export class MapComponent implements OnInit {
     }
 
     private addH3PolygonsToMap(h3Indexes: string[]): void {
-        const hexagons = h3Indexes.filter(
-            (h3Index) => !this.isHexagonCrossesAntimeridian(h3Index)
-        );
+        const hexagons = h3Indexes.filter((h3Index) => !this.isHexagonCrossesAntimeridian(h3Index));
 
-        const hexagonFeatures = hexagons.map((hex) =>
-            this.h3ToPolygonFeature(hex)
-        );
+        const hexagonFeatures = hexagons.map((hex) => this.h3ToPolygonFeature(hex));
 
-        const sourceId = 'h3-polygons';
+        const sourceId = "h3-polygons";
 
         const source = this.map?.getSource(sourceId) as mapboxgl.GeoJSONSource;
 
         source.setData({
-            type: 'FeatureCollection',
+            type: "FeatureCollection",
             features: hexagonFeatures,
         });
     }
@@ -474,7 +453,7 @@ export class MapComponent implements OnInit {
     private getHexagonsForBounds(
         northWest: mapboxgl.LngLat,
         southEast: mapboxgl.LngLat,
-        resolution: number
+        resolution: number,
     ): string[] {
         const hexagons = [];
         const step = this.getStepBasedOnZoom();
@@ -491,9 +470,9 @@ export class MapComponent implements OnInit {
     private h3ToPolygonFeature(hex: string): GeoJSON.Feature<GeoJSON.Polygon> {
         const boundary = h3.h3ToGeoBoundary(hex, true);
         return {
-            type: 'Feature',
+            type: "Feature",
             geometry: {
-                type: 'Polygon',
+                type: "Polygon",
                 coordinates: [boundary],
             },
             properties: {},
@@ -525,25 +504,20 @@ export class MapComponent implements OnInit {
 
     private updateCurrentLocationAreaName() {
         if (!this.map) return;
-        const coordinates = this.mapLocationService.getMapCoordinatesWebClient(
-            this.map
-        );
-        this.mapLocationService.getLocationFilter(
-            coordinates,
-            this.map.getBounds().toArray()
-        );
+        const coordinates = this.mapLocationService.getMapCoordinatesWebClient(this.map);
+        this.mapLocationService.getLocationFilter(coordinates, this.map.getBounds().toArray());
     }
 
-    public zoomMapClick(sign: '+' | '-'): void {
+    public zoomMapClick(sign: "+" | "-"): void {
         if (!this.map) return;
         let minZoom = this.map.getMinZoom();
         let maxZoom = this.map.getMaxZoom();
         let currentZoom = this.map.getZoom();
 
-        if (sign === '+' && currentZoom < maxZoom) {
+        if (sign === "+" && currentZoom < maxZoom) {
             this.map.setZoom(currentZoom + 2); // Zoom in (increase zoom level)
         }
-        if (sign === '-' && currentZoom > minZoom) {
+        if (sign === "-" && currentZoom > minZoom) {
             this.map.setZoom(currentZoom - 2); // Zoom out (decrease zoom level)
         }
 
@@ -567,6 +541,11 @@ export class MapComponent implements OnInit {
         return crosses;
     }
 
+    private randomInteger(min: number, max: number) {
+        let rand = min + Math.random() * (max + 1 - min);
+        return Math.floor(rand);
+    }
+
     public onMarkerHover(marker: IMapMarker): void {
         this.tooltipData = null;
         this.markerHover$.next(marker);
@@ -579,5 +558,20 @@ export class MapComponent implements OnInit {
     public onMarkerClick(marker: IMapMarker): void {
         this.tooltipData = null;
         this.markerClick.emit(marker);
+    }
+
+    public onStyleData(style: MapStyleDataEvent & EventData): void {
+        const map = style.target;
+        const layers = map.getStyle().layers;
+        if (!layers) return;
+        for (const layer of layers) {
+            if (layer.type === "symbol") {
+                if (this.isLabelsHidden) {
+                    map.setLayoutProperty(layer.id, "visibility", "none");
+                } else {
+                    map.setLayoutProperty(layer.id, "text-pitch-alignment", "map");
+                }
+            }
+        }
     }
 }

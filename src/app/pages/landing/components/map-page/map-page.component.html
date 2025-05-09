@@ -1,20 +1,22 @@
-
-
 <div class="map-page">
-
-
-    <app-map
-        [isHideDebugger]="true"
-        [isSearch]="false"
-        [isLocationName]="true" 
-        [isZoomButton]="true"   
-        [zoom]="zoom" 
-        [minZoom]="minZoom"
-        [maxBounds]="maxBounds"
-        [center]="center"
-        [isToShowTooltip]="true"
+    <div
+        [class]="switchClasses"
+        *ngIf="isProjectionToogleVisible">
+        <app-switch
+            [label]="{
+                right: 'Globe'
+            }"
+            [color]="switchColor"
+            [checked]="isGlobe"
+            (change)="onSwitchChange($event)" />
+    </div>
+    @if (projection === "globe") {
+    <app-globe-map
         (markerClick)="onMarkerClick($event)"
-    />
-        
+        (zoomEnd)="onZoomEnd($event)" />
+    } @else {
+    <app-mercator-map
+        (markerClick)="onMarkerClick($event)"
+        (zoomEnd)="onZoomEnd($event)" />
+    }
 </div>
-

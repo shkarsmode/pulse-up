@@ -1,40 +1,66 @@
-import { Injectable } from '@angular/core';
-import { Observable, fromEvent, map, startWith } from 'rxjs';
-import { Breakpoints } from '../../enums/breakpoints.enum';
+import { Injectable } from "@angular/core";
+import { Observable, fromEvent, map, shareReplay, startWith } from "rxjs";
+import { Breakpoints } from "../../enums/breakpoints.enum";
+
+type MediaQueryOptions = {
+    type: "min" | "max";
+    breakPoint: keyof typeof Breakpoints;
+    orientation?: "landscape" | "portrait";
+    parameter?: "width" | "height";
+};
 
 @Injectable({
-    providedIn: 'root',
+    providedIn: "root",
 })
 export class MediaQueryService {
-
     private activeMediaQueries: { [key: string]: Observable<boolean> } = {};
 
-    /*you could also set screenSize type to number and explictly 
-    set the number of pixels*/
-    mediaQuery(
-        type: 'min' | 'max',
-        breakPoint: keyof typeof Breakpoints
-    ): Observable<boolean> {
-        /*creates a string to identify the media query 
-      Inside the activeMediaQueries obj*/
-        const mediaId = `${type}-${breakPoint}`;
+    public mediaQuery(
+        type: "min" | "max",
+        breakPoint: keyof typeof Breakpoints,
+        orientation?: "landscape" | "portrait",
+        parameter?: "width" | "height",
+    ): Observable<boolean>;
+    public mediaQuery(config: MediaQueryOptions): Observable<boolean>;
 
-        //if a media-query of the same type has been already created, return it
+    // Implementation
+    public mediaQuery(
+        arg1: "min" | "max" | MediaQueryOptions,
+        breakPoint?: keyof typeof Breakpoints,
+        orientation?: "landscape" | "portrait",
+        parameter?: "width" | "height",
+    ): Observable<boolean> {
+        // Normalize arguments to config object
+        const config: MediaQueryOptions =
+            typeof arg1 === "string"
+                ? {
+                      type: arg1,
+                      breakPoint: breakPoint!,
+                      orientation,
+                      parameter,
+                  }
+                : arg1;
+
+        const { type, breakPoint: bp, orientation: orient, parameter: param } = config;
+
+        const mediaId = `${type}-${bp}-${param || "width"}-${orient || "none"}`;
+
         if (mediaId in this.activeMediaQueries) {
             return this.activeMediaQueries[mediaId];
         }
 
-        /* else create a new media query observable and add it to the 
-       activeMediaQueries obj */
-        const mqText = `(${type}-width: ${Breakpoints[breakPoint]})`;
+        let mqText = `(${type}-${param || "width"}: ${Breakpoints[bp]})`;
+
+        if (orient) {
+            mqText += ` and (orientation: ${orient})`;
+        }
+
         const mediaQuery = window.matchMedia(mqText);
 
-        const dynamicMediaQuery = fromEvent<MediaQueryList>(
-            mediaQuery,
-            'change'
-        ).pipe(
+        const dynamicMediaQuery = fromEvent<MediaQueryList>(mediaQuery, "change").pipe(
             startWith(mediaQuery),
-            map((query: MediaQueryList) => query.matches)
+            map((query: MediaQueryList) => query.matches),
+            shareReplay({ bufferSize: 1, refCount: true })
         );
 
         this.activeMediaQueries[mediaId] = dynamicMediaQuery;

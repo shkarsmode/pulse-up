@@ -39,12 +39,9 @@
 }
 
 .map-container {
-    // height: 700px;
-    // max-width: 1170px;
     height: 100%;
     width: 100%;
     overflow: hidden;
-    border-radius: 20px;
     cursor: grab;
 }
 .map-container_rounded {
@@ -60,8 +57,8 @@
     justify-content: center;
     align-items: center;
 
-    width: 48px;
-    height: 48px;
+    width: var(--map-marker-size);
+    height: var(--map-marker-size);
     border-radius: 50%;
 
     border: 1px solid #fff;
@@ -70,15 +67,9 @@
     box-shadow: 0px 4px 20px 0px #0000004D;
 
     cursor: pointer;
-    overflow: hidden;
 
     &:hover {
         box-shadow: 0px 4px 20px 0px #00000072;
-    }
-
-    img {
-        width: 100%;
-        height: 100%;
     }
 
     &.weight-marker {
