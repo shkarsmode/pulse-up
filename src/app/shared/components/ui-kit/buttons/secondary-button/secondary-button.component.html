@@ -4,6 +4,7 @@
     [type]="type"
     (click)="onClick()"
     appRippleEffect
-    rippleColor="#6d6d6d24">
+    rippleColor="#6d6d6d24"
+    [ngStyle]="color ? { 'border-color': color, color, } : {}">
     <ng-content></ng-content>
 </button>

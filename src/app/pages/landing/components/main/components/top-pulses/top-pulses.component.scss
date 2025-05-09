@@ -14,17 +14,11 @@ h2 {
 }
 
 .pulses__button {
-    display: flex;
-    justify-content: center;
-    margin-top: 40px;
-
-    app-secondary-button  {
-        width: 100%;
-        max-width: 200px;
-
-        @include media-xs {
-            max-width: 100%;
-        }
+    width: 100%;
+    max-width: 200px;
+    margin: 40px auto 0;
+    @include media-xs {
+        max-width: 100%;
     }
 }
 
