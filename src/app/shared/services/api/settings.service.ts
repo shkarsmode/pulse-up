@@ -20,6 +20,7 @@ export class SettingsService {
     public latestAppVersionNumber: number;
     public minVoteInterval: number;
     public shareTopicBaseUrl: string;
+    public shareUserBaseUrl: string;
 
     public getSettings(): Observable<ISettings> {
         return this.http.get<ISettings>(`${this.apiUrl}/settings`).pipe(
@@ -33,6 +34,7 @@ export class SettingsService {
                 this.latestAppVersionNumber = settings.latestAppVersionNumber;
                 this.minVoteInterval = settings.minVoteInterval;
                 this.shareTopicBaseUrl = settings.shareTopicBaseUrl;
+                this.shareUserBaseUrl = settings.shareUserBaseUrl;
             }),
         );
     }

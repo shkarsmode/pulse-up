@@ -3,6 +3,7 @@ import { ActivatedRoute, ParamMap, Router } from "@angular/router";
 import { UserService } from "@/app/shared/services/api/user.service";
 import { IAuthor, IPulse } from "@/app/shared/interfaces";
 import { Location } from "@angular/common";
+import { SettingsService } from "@/app/shared/services/api/settings.service";
 
 @Component({
     selector: "app-author",
@@ -21,6 +22,7 @@ export class UserComponent {
     private readonly location: Location = inject(Location);
     private readonly route: ActivatedRoute = inject(ActivatedRoute);
     private readonly userService: UserService = inject(UserService);
+    private readonly settingsService: SettingsService = inject(SettingsService);
 
     constructor() {
         this.pulseId = this.router.getCurrentNavigation()?.extras?.state?.["pulseId"] || "";
@@ -52,6 +54,10 @@ export class UserComponent {
         });
     }
 
+    get shareProfileUrl(): string {
+        return this.settingsService.shareUserBaseUrl + this.user?.username;
+    }
+
     public goBack(): void {
         if (!this.pulseId) {
             this.router.navigateByUrl("/", {
@@ -60,6 +66,10 @@ export class UserComponent {
             return;
         }
         this.location.back();
+    }
+
+    public onCopyLink(event: MouseEvent) {
+        event.stopPropagation();
     }
 
     public countVotes() {

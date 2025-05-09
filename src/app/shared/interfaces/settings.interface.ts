@@ -8,4 +8,5 @@ export interface ISettings {
     latestAppVersionNumber: number;
     minVoteInterval: number;
     shareTopicBaseUrl: string;
+    shareUserBaseUrl: string;
 }

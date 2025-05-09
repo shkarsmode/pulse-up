@@ -3,18 +3,22 @@
 } @else {
 <app-container
     size="md"
+    fadeIn
+    [childrenFadeIn]="true"
     *ngIf="user">
     <div class="user-header">
         <div class="user-header__top">
-            <app-icon-button
-                variant="outline"
-                (onClick)="goBack()">
+            <button
+                flatButton
+                (click)="goBack()">
                 <svg-icon src="assets/svg/chevron-left.svg" />
-            </app-icon-button>
+            </button>
             <h1 class="user-header__name">{{ user.name }}</h1>
-            <app-icon-button variant="outline" class="user-header__share">
-                <svg-icon src="assets/svg/icon_share.svg" />
-            </app-icon-button>
+            <app-menu [content]="menuContent">
+                <button flatButton>
+                    <svg-icon src="assets/svg/icon_share.svg" />
+                </button>
+            </app-menu>
         </div>
         <div class="user-header__username">&#64;{{ user.username }}</div>
         <div class="user-header__stats user-header-stats">
@@ -43,8 +47,19 @@
     </div>
     <div class="user-topics">
         @for (topic of topics; track topic.id) {
-            <app-large-pulse [pulse]="topic" />
+        <app-large-pulse [pulse]="topic" />
         }
     </div>
 </app-container>
 }
+
+<ng-template #menuContent>
+    <div class="profile__socials">
+        <app-copy-button
+            link="{{ shareProfileUrl }}"
+            (handleClick)="onCopyLink($event)" />
+        <app-socials-button [variant]="'facebook'" />
+        <app-socials-button [variant]="'x'" />
+        <app-socials-button [variant]="'email'" />
+    </div>
+</ng-template>
