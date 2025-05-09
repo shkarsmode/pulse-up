@@ -164,7 +164,7 @@ export class MapComponent implements OnInit {
 
         this.mapLoaded.next(this.map);
 
-        if(this.fog) {
+        if (this.fog) {
             this.map.setFog(this.fog);
         }
     }
@@ -555,13 +555,16 @@ export class MapComponent implements OnInit {
     }
 
     public onStyleData(style: MapStyleDataEvent & EventData): void {
-        if(!this.isLabelsHidden) return;
         const map = style.target;
         const layers = map.getStyle().layers;
         if (!layers) return;
         for (const layer of layers) {
             if (layer.type === "symbol") {
-                map.setLayoutProperty(layer.id, "visibility", "none");
+                if (this.isLabelsHidden) {
+                    map.setLayoutProperty(layer.id, "visibility", "none");
+                } else {
+                    map.setLayoutProperty(layer.id, "text-pitch-alignment", "map");
+                }
             }
         }
     }

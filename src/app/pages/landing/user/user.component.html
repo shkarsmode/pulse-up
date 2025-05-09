@@ -8,42 +8,37 @@
     *ngIf="user">
     <div class="user-header">
         <div class="user-header__top">
-            <button
-                flatButton
-                (click)="goBack()">
-                <svg-icon src="assets/svg/chevron-left.svg" />
-            </button>
-            <h1 class="user-header__name">{{ user.name }}</h1>
-            <app-menu [content]="menuContent">
-                <button flatButton>
-                    <svg-icon src="assets/svg/icon_share.svg" />
+            <div class="user-header__back-btn">
+                <button
+                    flatButton
+                    (click)="goBack()">
+                    <svg-icon src="assets/svg/chevron-left.svg" />
                 </button>
-            </app-menu>
-        </div>
-        <div class="user-header__username">&#64;{{ user.username }}</div>
-        <div class="user-header__stats user-header-stats">
-            <div class="user-header-stats__item">
-                <span class="user-header-stats__title">Topics</span>
-                <svg-icon src="assets/svg/fans.svg" />
-                <span class="user-header-stats__count">
-                    {{ topics.length | formatNumber }}
-                </span>
             </div>
-            <div class="user-header-stats__item">
-                <span class="user-header-stats__title">Lifetime</span>
-                <svg-icon src="assets/svg/chart-simple-solid.svg" />
-                <span class="user-header-stats__count">
-                    {{ totalReceivedVotes | formatNumber }}
-                </span>
+            <div class="user-header__info">
+                <app-user-avatar
+                    [url]="user.picture"
+                    [name]="user.name" />
+                <div class="user-header__text">
+                    <h1 class="user-header__name">{{ user.name }}</h1>
+                    <div class="user-header__username">&#64;{{ user.username }}</div>
+                </div>
+                <div class="user-header__bio" *ngIf="user.bio">
+                    {{ user.bio }}
+                </div>
             </div>
-            <div class="user-header-stats__item">
-                <span class="user-header-stats__title">24 hours</span>
-                <svg-icon src="assets/svg/pulse.svg" />
-                <span class="user-header-stats__count">
-                    {{ votesReceivedFor24Hours | formatNumber }}
-                </span>
+            <div class="user-header__share-btn">
+                <app-menu [content]="menuContent">
+                    <button flatButton>
+                        <svg-icon src="assets/svg/icon_share.svg" />
+                    </button>
+                </app-menu>
             </div>
         </div>
+    </div>
+    <div class="user-header__topics">
+        {{ topics.length | formatNumber }}
+        {{ topics.length === 1 ? "topiuc" : "topics" }} started
     </div>
     <div class="user-topics">
         @for (topic of topics; track topic.id) {
