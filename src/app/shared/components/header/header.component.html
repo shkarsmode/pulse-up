@@ -1,6 +1,4 @@
-
 <header class="desktop">
-
     <a
         class="logo"
         routerLink="/"
@@ -11,21 +9,21 @@
     <div class="right-side">
         <ul>
             <li>
-                <a 
+                <a
                     [routerLink]="'/' + AppRoutes.Landing.MAP"
                     routerLinkActive="active">
                     Map
                 </a>
             </li>
             <li>
-                <a 
+                <a
                     [routerLink]="'/' + AppRoutes.Landing.TOPICS"
                     routerLinkActive="active">
                     Topics
                 </a>
             </li>
             <li>
-                <a 
+                <a
                     [routerLink]="'/' + AppRoutes.Landing.ABOUT"
                     routerLinkActive="active">
                     About
@@ -42,79 +40,71 @@
         </ul>
 
         <div class="buttons">
-
             <!-- <app-secondary-button
                 [routerLink]="'/' + AppRoutes.User.Topic.HOW_IT_WORKS"
                 routerLinkActive="active">
                 Add a topic
             </app-secondary-button> -->
-    
-            <app-primary-button
-                openGetAppPopup>
-                Download App
-            </app-primary-button>
-    
-            <app-secondary-button
-                openGetAppPopup
-                [contrast]="true">
-                Download App
-            </app-secondary-button>
-    
+            <div class="buttons__download">
+                <app-secondary-button
+                    openGetAppPopup
+                    [fullWidth]="true">
+                    Download App
+                </app-secondary-button>
+            </div>
         </div>
-
     </div>
-
 </header>
 
 <!-- MOBILE DESIGN -->
 
-<header class="mobile" [class.active]="isMobileDropdown">
+<header
+    class="mobile"
+    [class.active]="isMobileDropdown">
     <div class="mobile__top-bar">
-        <a 
+        <a
             class="logo"
             (click)="closeDropdown()"
             routerLink="/">
-            <svg-icon src="assets/svg/logo-mobile.svg" ></svg-icon>
+            <svg-icon src="assets/svg/logo-mobile.svg"></svg-icon>
         </a>
 
         <app-burger-button (click)="toggleDropdown()" />
-    
     </div>
 
-    <div 
+    <div
         class="mobile__dropdown"
         (click)="deligateCloseDropdown($event)"
         [class.active]="isMobileDropdown">
-        <div 
+        <div
             class="mobile__dropdown-container"
             [class.active]="isMobileDropdown">
-            <div 
+            <div
                 class="right-side"
                 [class.active]="isMobileDropdown">
                 <div class="right-side__top">
-                    <app-burger-button 
-                        [isOpen]="isMobileDropdown" 
+                    <app-burger-button
+                        [isOpen]="isMobileDropdown"
                         (click)="toggleDropdown()" />
-                
                 </div>
 
                 <ul [class.scale]="!isMobileDropdown">
                     <li>
-                        <a 
+                        <a
                             [routerLink]="'/' + AppRoutes.Landing.MAP"
                             routerLinkActive="active">
                             Map
                         </a>
                     </li>
                     <li>
-                        <a 
+                        <a
                             [routerLink]="'/' + AppRoutes.Landing.TOPICS"
                             routerLinkActive="active">
                             Topics
                         </a>
                     </li>
                     <li>
-                        <a 
+                        <a
                             [routerLink]="'/' + AppRoutes.Landing.ABOUT"
                             routerLinkActive="active">
                             About
@@ -129,28 +119,28 @@
                         </a>
                     </li> -->
                     <li>
-                        <a 
+                        <a
                             [routerLink]="'/' + AppRoutes.Community.TERMS"
                             routerLinkActive="active">
                             Terms of Use
                         </a>
                     </li>
                     <li>
-                        <a 
-                            [routerLink]="'/'+AppRoutes.Community.PRIVACY"
+                        <a
+                            [routerLink]="'/' + AppRoutes.Community.PRIVACY"
                             routerLinkActive="active">
                             Privacy Policy
                         </a>
                     </li>
                     <li>
-                        <a 
-                            [routerLink]="'/'+AppRoutes.Community.SUPPORT"
+                        <a
+                            [routerLink]="'/' + AppRoutes.Community.SUPPORT"
                             routerLinkActive="active">
                             Support
                         </a>
                     </li>
                 </ul>
-        
+
                 <div>
                     <!-- <app-secondary-button
                         [class.scale]="!isMobileDropdown"
@@ -166,19 +156,11 @@
                         Download App
                     </app-primary-button>
                 </div>
-        
             </div>
 
             @if (isToShowVersionOfApp) {
-                <div class="version">
-                    {{ version.major }}.{{ version.minor }}.{{ version.patch }}
-                </div>
+            <div class="version">{{ version.major }}.{{ version.minor }}.{{ version.patch }}</div>
             }
         </div>
-
     </div>
-
 </header>
-
-
-
