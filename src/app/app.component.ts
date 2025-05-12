@@ -46,7 +46,7 @@ export class AppComponent {
     }
 
     private sendInitialQueries(): void {
-        this.isLoading = true;
+        // this.isLoading = true;
         // this.loadingService.isLoading = true;
 
         const anonymousUser$ = this.authenticationService.loginAsAnonymousThroughTheFirebase();
