@@ -5,6 +5,8 @@ import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { AngularSvgIconModule } from 'angular-svg-icon';
+import { NgxMapboxGLModule } from 'ngx-mapbox-gl';
+
 import { environment } from '../environments/environment';
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app.routing';
@@ -25,6 +27,9 @@ import { API_URL, FIREBASE_CONFIG, MAPBOX_ACCESS_TOKEN, MAPBOX_STYLE } from './s
         AngularSvgIconModule.forRoot(),
         HttpClientModule,
         LoadingPageComponent,
+        NgxMapboxGLModule.withConfig({
+            accessToken: environment.mapboxToken,
+          }),
     ],
     providers: [
         // provideHttpClient(

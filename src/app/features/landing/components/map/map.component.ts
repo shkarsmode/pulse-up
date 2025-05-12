@@ -8,27 +8,63 @@ import {
     OnInit,
     Output,
 } from "@angular/core";
+import { CommonModule } from "@angular/common";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
+import { FormsModule } from "@angular/forms";
 import * as h3 from "h3-js";
 import mapboxgl, { EventData, Fog, MapStyleDataEvent } from "mapbox-gl";
-import { debounceTime, filter, first, Subject, tap } from "rxjs";
+import { NgxMapboxGLModule } from "ngx-mapbox-gl";
+import { filter, first, Subject, tap } from "rxjs";
+import { NgxTooltip } from "@ngx-popovers/tooltip";
+import { SvgIconComponent } from "angular-svg-icon";
+
 import { PulseService } from "../../../../shared/services/api/pulse.service";
-import { HeatmapService } from "../../../../shared/services/core/heatmap.service";
 import { MapLocationService } from "../../../../shared/services/core/map-location.service";
 import { MAPBOX_STYLE } from "../../../../shared/tokens/tokens";
 import { IMapMarker } from "@/app/shared/interfaces/map-marker.interface";
-import { IPulse } from "@/app/shared/interfaces";
-
-interface IMapMarkerAnimated extends IMapMarker {
-    delay: number;
-}
+import { MapUtils } from "../../services/map-utils.service";
+import { MarkerIconComponent } from "./components/marker-icon.component";
+import { FormatNumberPipe } from "@/app/shared/pipes/format-number.pipe";
+import { InputComponent } from "@/app/shared/components/ui-kit/input/input.component";
+import { SecondaryButtonComponent } from "@/app/shared/components/ui-kit/buttons/secondary-button/secondary-button.component";
+import { TopPulseCardComponent } from "@/app/shared/components/pulses/top-pulse/top-pulse-card.component";
+import { SpinnerComponent } from "@/app/shared/components/ui-kit/spinner/spinner.component";
+import { H3LayerService } from "../../services/h3-layer.service";
+import { IH3Pulses } from "../../interfaces/h3Pulses.interface";
+import { MapMarkersService } from "../../services/map-markers.service";
+import { HeatmapLayerService } from "../../services/heatmap-layer.service";
+import { MediaUtilsService } from "../../services/media-utils.service";
 
 @Component({
     selector: "app-map",
     templateUrl: "./map.component.html",
     styleUrl: "./map.component.scss",
+    standalone: true,
+    imports: [
+        CommonModule,
+        NgxMapboxGLModule,
+        NgxTooltip,
+        FormsModule,
+        SvgIconComponent,
+
+        MarkerIconComponent,
+        InputComponent,
+        SecondaryButtonComponent,
+        TopPulseCardComponent,
+        SpinnerComponent,
+
+        FormatNumberPipe,
+    ],
 })
 export class MapComponent implements OnInit {
+    public readonly mapboxStylesUrl: string = inject(MAPBOX_STYLE);
+    public readonly pulseService: PulseService = inject(PulseService);
+    public readonly h3LayerService: H3LayerService = inject(H3LayerService);
+    public readonly mapMarkersService: MapMarkersService = inject(MapMarkersService);
+    private readonly destroyed: DestroyRef = inject(DestroyRef);
+    private readonly heatmapLayerService: HeatmapLayerService = inject(HeatmapLayerService);
+    private readonly mapLocationService: MapLocationService = inject(MapLocationService);
+
     @Input() public pulseId: number;
     @Input() public isPreview: boolean = false;
     @Input() public isToShowHeatmap: boolean = true;
@@ -78,71 +114,71 @@ export class MapComponent implements OnInit {
         return this.isPreview;
     }
 
-    public markers: IMapMarkerAnimated[] = [];
-    public weights: any = [];
-    public readonly mapboxStylesUrl: string = inject(MAPBOX_STYLE);
-    public heatmapIntensity: number = 0.1;
-
     public map: mapboxgl.Map | null = null;
     public isToShowH3: boolean = true;
     public heatmapDataPointsCount: number = 0;
-    public readonly pulseService: PulseService = inject(PulseService);
     public isToShoDebugger: string | null = localStorage.getItem("show-debugger");
-    public tooltipData: IPulse | null = null;
     public isTouchDevice = false;
 
-    private readonly h3Pulses$: Subject<any> = new Subject();
+    private readonly h3Pulses$: Subject<IH3Pulses> = new Subject();
     private readonly heatMapData$: Subject<{ [key: string]: number }> = new Subject();
-    private markerHover$ = new Subject<IMapMarker>();
-
-    private readonly destroyed: DestroyRef = inject(DestroyRef);
-    private readonly heatmapService: HeatmapService = inject(HeatmapService);
-    private zoomLevels = Object.keys(this.zoomResolutionMap)
-        .map(Number)
-        .sort((a, b) => a - b);
-
-    constructor(public mapLocationService: MapLocationService) {
-        this.markerHover$.pipe(debounceTime(300)).subscribe((marker) => {
-            this.tooltipData = null;
-            this.pulseService.getById(marker.topicId).subscribe((pulse) => {
-                this.tooltipData = pulse;
-            });
-        });
-    }
 
     public ngOnInit(): void {
-        // if (this.isPreview) {}
         this.subscribeOnDataH3Pulses();
         this.subscribeOnDataListHeatmap();
         this.checkIfTouchDevice();
     }
 
-    public onChangeHeatmapSettings(): void {
-        this.map?.setPaintProperty("vibes-heat", "heatmap-intensity", +this.heatmapIntensity);
+    get markers() {
+        return this.mapMarkersService.markers;
+    }
+    get weights() {
+        return this.heatmapLayerService.weights;
+    }
+    get tooltipData() {
+        return this.mapMarkersService.tooltipData;
+    }
+    get mapLocationFilter() {
+        return this.mapLocationService.mapLocationFilter;
+    }
+    get heatmapIntensity() {
+        return this.heatmapLayerService.intensity;
+    }
+    get isToShowMarkers() {
+        return !this.pulseId;
+    }
 
-        this.updateHeatmapForMap();
+    public onChangeHeatmapSettings(): void {
+        if (!this.map) return;
+        this.heatmapLayerService.paintHeatmapIntensity(this.map);
+        this.updateHeatmap();
     }
 
     public toggleH3CellsVisibility(): void {
+        if (!this.map) return;
         let lineWidth = 1.5;
         if (this.isToShowH3) lineWidth = 0;
 
-        this.map?.setPaintProperty("h3-polygons-layer", "line-width", lineWidth);
+        MapUtils.updatePaintProperty({
+            map: this.map,
+            layerId: "h3-polygons-layer",
+            property: "line-width",
+            value: lineWidth,
+        });
 
         this.isToShowH3 = !this.isToShowH3;
     }
 
     public toggleHeatmapVisibility(): void {
-        let opacity = this.heatmapService.heatmapStyles["heatmap-opacity"];
+        if (!this.map) return;
+        let opacity = this.heatmapLayerService.heatmapStyles["heatmap-opacity"];
         if (this.isToShowHeatmap) opacity = 0;
-
-        this.map?.setPaintProperty("vibes-heat", "heatmap-opacity", opacity);
-
+        this.heatmapLayerService.paintHeatmapOpacity(this.map, opacity);
         this.isToShowHeatmap = !this.isToShowHeatmap;
     }
-    
+
     private checkIfTouchDevice(): void {
-        this.isTouchDevice = window.matchMedia('(pointer: coarse)').matches;
+        this.isTouchDevice = MediaUtilsService.checkIfTouchDevice();
     }
 
     private subscribeOnDataH3Pulses(): void {
@@ -151,18 +187,15 @@ export class MapComponent implements OnInit {
             .subscribe(this.addMarkersAndUpdateH3Polygons.bind(this));
     }
 
-    public onMapLoad(map: mapboxgl.Map) {
+    public onMapLoad({ target: map }: mapboxgl.MapboxEvent<undefined> & mapboxgl.EventData) {
         this.map = map;
 
         this.map.dragRotate?.disable();
         this.map.touchZoomRotate.disableRotation();
 
-        this.heatmapService.addSourceToMap(this.map);
-        this.heatmapService.addHeatmapToMap();
-
         this.addInitialLayersAndSourcesToDisplayData();
         this.updateH3Pulses();
-        this.updateHeatmapForMap();
+        this.updateHeatmap();
 
         this.map.on("resize", () => {
             this.map?.triggerRepaint();
@@ -177,90 +210,92 @@ export class MapComponent implements OnInit {
 
     public handleZoomEnd = () => {
         this.zoomEnd.emit(this.map?.getZoom() || 0);
-        // this.updateH3Pulses();
-        // this.updateHeatmapForMap();
     };
 
     public handleMoveEnd = () => {
         if (this.isMapStatic) return;
         this.updateH3Pulses();
-        this.updateHeatmapForMap();
+        this.updateHeatmap();
     };
 
     private addInitialLayersAndSourcesToDisplayData(): void {
-        const sourceId = "h3-polygons";
-
-        this.map?.addSource("hexagons", {
-            type: "geojson",
+        if (!this.map) return;
+        const hexagonsSourceId = "hexagons";
+        const h3PoligonsSourceId = "h3-polygons";
+        MapUtils.addGeoJsonSource({
+            id: hexagonsSourceId,
+            map: this.map,
             data: {
                 type: "FeatureCollection",
                 features: [],
             },
         });
-
-        this.map?.addSource(sourceId, {
-            type: "geojson",
+        MapUtils.addGeoJsonSource({
+            id: h3PoligonsSourceId,
+            map: this.map,
             data: {
                 type: "FeatureCollection",
                 features: [],
             },
         });
-
-        this.map?.addLayer({
-            id: "hexagons",
-            type: "fill",
-            source: "hexagons",
-            layout: {},
-            paint: {
+        MapUtils.addFillLayer({
+            sourceId: hexagonsSourceId,
+            layerId: "hexagons",
+            map: this.map,
+            data: {
                 "fill-color": "#7700EE",
                 "fill-opacity": 0, // 0.15
             },
         });
-
-        this.map?.addLayer({
-            id: "h3-polygons-layer-line",
-            type: "line",
-            source: sourceId,
-            layout: {},
-            paint: {
+        MapUtils.addLineLayer({
+            sourceId: h3PoligonsSourceId,
+            layerId: "h3-polygons-layer-line",
+            map: this.map,
+            data: {
                 "line-color": "#FFFFFF",
                 "line-width": 2,
                 "line-opacity": 0.5,
             },
         });
-        this.map?.addLayer({
-            id: "h3-polygons-layer-fill",
-            type: "fill",
-            source: sourceId,
-            layout: {},
-            paint: {
+        MapUtils.addFillLayer({
+            sourceId: h3PoligonsSourceId,
+            layerId: "h3-polygons-layer-fill",
+            map: this.map,
+            data: {
                 "fill-color": "#FFFFFF",
                 "fill-opacity": 0.3,
             },
         });
+
+        this.heatmapLayerService.addHeatmapToMap(this.map);
     }
 
-    private addMarkersAndUpdateH3Polygons(h3PulsesData: any): void {
-        const geojsonData: any = this.convertH3ToGeoJSON(h3PulsesData);
-        (this.map?.getSource("hexagons") as any).setData(geojsonData);
-        // this.map?.setPaintProperty('hexagons', 'fill-opacity', 0.15);
-
-        this.addMarkersToMap(h3PulsesData);
-        this.addH3PolygonsToMap(Object.keys(h3PulsesData));
+    private addMarkersAndUpdateH3Polygons(h3PulsesData: IH3Pulses): void {
+        if (!this.map) return;
+        this.h3LayerService.updateH3PolygonSource({ map: this.map, data: h3PulsesData });
+        
+        this.mapMarkersService.updateMarkers(h3PulsesData);
+        this.h3LayerService.addH3PolygonsToMap({
+            map: this.map,
+            h3Indexes: Object.keys(h3PulsesData),
+        });
     }
 
     private updateH3Pulses(): void {
         if (!this.map) return;
-        this.map?.setPaintProperty("hexagons", "fill-opacity", 0);
+        MapUtils.updatePaintProperty({
+            map: this.map,
+            layerId: "hexagons",
+            property: "fill-opacity",
+            value: 0,
+        });
 
-        const { _ne, _sw } = this.map.getBounds();
-        const resolution = this.getResolutionBasedOnMapZoom();
-        const NELat = _ne.lat;
-        const NELng = Math.min(_ne.lng, 180);
-        const SWLat = _sw.lat;
-        const SWLng = Math.max(_sw.lng, -180);
-        this.pulseService
-            .getH3PulsesForMap(NELat, NELng, SWLat, SWLng, resolution)
+        const resolution = MapUtils.getResolutionLevel({
+            map: this.map,
+            resolutionLevelsByZoom: this.zoomResolutionMap,
+        });
+        this.h3LayerService
+            .getH3Pulses(this.map, resolution)
             .pipe(
                 first(),
                 filter(() => !this.pulseId),
@@ -268,16 +303,19 @@ export class MapComponent implements OnInit {
             .subscribe((h3PulsesData) => this.h3Pulses$.next(h3PulsesData));
     }
 
-    private updateHeatmapForMap(): void {
+    private updateHeatmap(): void {
         if (!this.map) return;
-        const { _ne, _sw } = this.map.getBounds();
-        const resolution = this.getResolutionBasedOnMapZoom();
-        const NELat = _ne.lat;
-        const NELng = Math.min(_ne.lng, 180);
-        const SWLat = _sw.lat;
-        const SWLng = Math.max(_sw.lng, -180);
-        this.pulseService
-            .getMapVotes(NELat, NELng, SWLat, SWLng, resolution > 9 ? 7 : resolution, this.pulseId)
+        const resolution = MapUtils.getResolutionLevel({
+            map: this.map,
+            resolutionLevelsByZoom: this.zoomResolutionMap,
+        });
+        
+        this.heatmapLayerService
+            .getHeatmapData({
+                map: this.map,
+                resolution: resolution > 9 ? 7 : resolution,
+                pulseId: this.pulseId,
+            })
             .pipe(
                 first(),
                 filter(() => this.isToShowHeatmap),
@@ -297,7 +335,11 @@ export class MapComponent implements OnInit {
         this.heatMapData$
             .pipe(takeUntilDestroyed(this.destroyed))
             .subscribe((heatmapData: { [key: string]: number }) => {
-                const resolution = this.getResolutionBasedOnMapZoom();
+                if (!this.map) return;
+                const resolution = MapUtils.getResolutionLevel({
+                    map: this.map,
+                    resolutionLevelsByZoom: this.zoomResolutionMap,
+                });
                 let heatmap: { [key: string]: number } = {};
                 if (resolution === 0) {
                     Object.entries(heatmapData).forEach(([h3Index, numberOfVotes]) => {
@@ -331,111 +373,19 @@ export class MapComponent implements OnInit {
                     type: "FeatureCollection",
                     features: heatmapFeatures,
                 };
+                
+                this.heatmapLayerService.paintHeatmapIntensity(this.map);
 
-                // const difIntensity = heatmap.resolution / heatmap.cellRadius;
-                // const difIntensity = this.getResolutionBasedOnMapZoom() / 0.5;
-                // let intensity = difIntensity < 0.5 ? 0.5 : difIntensity;
-                // let intensity = this.map.getZoom() > 12 ? 1 : 3;
-                // this.heatmapIntensity = intensity;
+                this.heatmapLayerService.paintHeatmapRadius(this.map);
 
-                this.map?.setPaintProperty(
-                    "vibes-heat",
-                    "heatmap-intensity",
-                    +this.heatmapIntensity,
-                );
-
-                const heatmapRadius = this.calculateHeatmapRadius(this.map?.getZoom() || 0);
-
-                this.map?.setPaintProperty("vibes-heat", "heatmap-radius", heatmapRadius);
-
-                this.heatmapService.heatmapData.setData(heatmapGeoJSON);
-
+                this.heatmapLayerService.updateHeatmap({
+                    map: this.map,
+                    data: heatmapGeoJSON,
+                });
                 if (this.pulseId) {
-                    this.addWeightsToMap(updatedHeatmapData);
+                    this.heatmapLayerService.addWeightsToMap(updatedHeatmapData);
                 }
             });
-    }
-
-    public getResolutionBasedOnMapZoom(): number {
-        const zoom = this.map?.getZoom();
-        if (zoom === undefined || zoom === null) return 7;
-
-        let resolution = 7;
-        for (const level of this.zoomLevels) {
-            if (zoom >= level) {
-                resolution = this.zoomResolutionMap[level];
-            } else {
-                break;
-            }
-        }
-
-        return resolution;
-    }
-
-    private convertH3ToGeoJSON(data: any) {
-        const features = Object.keys(data).map((h3Index) => {
-            const polygon = h3.h3ToGeoBoundary(h3Index, true);
-            return {
-                type: "Feature",
-                geometry: {
-                    type: "Polygon",
-                    coordinates: [polygon],
-                },
-                properties: {
-                    votes: data[h3Index].votes,
-                    users: data[h3Index].users,
-                    icon: data[h3Index].icon,
-                    h3Index,
-                },
-            };
-        });
-
-        return {
-            type: "FeatureCollection",
-            features,
-        };
-    }
-
-    private addMarkersToMap(data: any): void {
-        this.markers = [];
-        Object.keys(data).forEach((h3Index: any) => {
-            const [lat, lng] = h3.h3ToGeo(h3Index);
-            this.markers.push({
-                lng,
-                lat,
-                icon: data[h3Index].icon,
-                h3Index,
-                topicId: data[h3Index].topicId,
-                delay: this.randomInteger(100, 2000),
-            });
-        });
-    }
-
-    private addWeightsToMap(data: any): void {
-        this.weights = [];
-        data.forEach((item: any) => {
-            this.weights.push({
-                lat: item.coords[0],
-                lng: item.coords[1],
-                value: item.value,
-                h3Index: item.h3Index,
-            });
-        });
-    }
-
-    private addH3PolygonsToMap(h3Indexes: string[]): void {
-        const hexagons = h3Indexes.filter((h3Index) => !this.isHexagonCrossesAntimeridian(h3Index));
-
-        const hexagonFeatures = hexagons.map((hex) => this.h3ToPolygonFeature(hex));
-
-        const sourceId = "h3-polygons";
-
-        const source = this.map?.getSource(sourceId) as mapboxgl.GeoJSONSource;
-
-        source.setData({
-            type: "FeatureCollection",
-            features: hexagonFeatures,
-        });
     }
 
     public getStepBasedOnZoom(): number {
@@ -450,56 +400,12 @@ export class MapComponent implements OnInit {
         return 0.0001;
     }
 
-    private getHexagonsForBounds(
-        northWest: mapboxgl.LngLat,
-        southEast: mapboxgl.LngLat,
-        resolution: number,
-    ): string[] {
-        const hexagons = [];
-        const step = this.getStepBasedOnZoom();
-
-        for (let lat = southEast.lat; lat < northWest.lat; lat += step) {
-            for (let lng = northWest.lng; lng < southEast.lng; lng += step) {
-                const hex = h3.geoToH3(lat, lng, resolution);
-                hexagons.push(hex);
-            }
-        }
-        return [...new Set(hexagons)];
-    }
-
-    private h3ToPolygonFeature(hex: string): GeoJSON.Feature<GeoJSON.Polygon> {
-        const boundary = h3.h3ToGeoBoundary(hex, true);
-        return {
-            type: "Feature",
-            geometry: {
-                type: "Polygon",
-                coordinates: [boundary],
-            },
-            properties: {},
-        };
-    }
-
-    private setDefaultMapSize = () => this.map?.resize();
-
-    private calculateHeatmapRadius(zoom: number) {
-        const radiusMap = [
-            { zoom: 0, radius: 100 },
-            { zoom: 5, radius: 100 },
-            { zoom: 10, radius: 120 },
-            { zoom: 15, radius: 140 },
-            { zoom: 20, radius: 100 },
-        ];
-
-        let radius = 100;
-        for (const entry of radiusMap) {
-            if (zoom >= entry.zoom) {
-                radius = entry.radius;
-            } else {
-                break;
-            }
-        }
-
-        return radius;
+    public getResolutionBasedOnMapZoom(): number {
+        if (!this.map) return 0;
+        return MapUtils.getResolutionLevel({
+            map: this.map,
+            resolutionLevelsByZoom: this.zoomResolutionMap,
+        });
     }
 
     private updateCurrentLocationAreaName() {
@@ -524,39 +430,17 @@ export class MapComponent implements OnInit {
         return;
     }
 
-    private isHexagonCrossesAntimeridian(h3Index: string) {
-        const boundary = h3.h3ToGeoBoundary(h3Index, true);
-
-        let crosses = false;
-        for (let i = 0; i < boundary.length - 1; i++) {
-            const lon1 = boundary[i][0];
-            const lon2 = boundary[i + 1][0];
-
-            if (Math.abs(lon1 - lon2) > 180) {
-                crosses = true;
-                break;
-            }
-        }
-
-        return crosses;
-    }
-
-    private randomInteger(min: number, max: number) {
-        let rand = min + Math.random() * (max + 1 - min);
-        return Math.floor(rand);
-    }
-
     public onMarkerHover(marker: IMapMarker): void {
-        this.tooltipData = null;
-        this.markerHover$.next(marker);
+        this.mapMarkersService.tooltipData = null;
+        this.mapMarkersService.markerHover$.next(marker);
     }
 
     public onTooltipHide(): void {
-        this.tooltipData = null;
+        this.mapMarkersService.tooltipData = null;
     }
 
     public onMarkerClick(marker: IMapMarker): void {
-        this.tooltipData = null;
+        this.mapMarkersService.tooltipData = null;
         this.markerClick.emit(marker);
     }
 

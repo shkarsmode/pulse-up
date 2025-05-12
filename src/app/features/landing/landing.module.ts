@@ -2,9 +2,7 @@ import { CommonModule } from "@angular/common";
 import { CUSTOM_ELEMENTS_SCHEMA, NgModule } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { SvgIconComponent } from "angular-svg-icon";
-import { NgxMapboxGLModule } from "ngx-mapbox-gl";
 
-import { environment } from "../../../environments/environment";
 import { FadeInDirective } from "../../shared/animations/fade-in.directive";
 import { HeartBeatDirective } from "../../shared/animations/heart-beat.directive";
 import { FooterComponent } from "../../shared/components/footer/footer.component";
@@ -24,7 +22,6 @@ import { SpinnerComponent } from "../../shared/components/ui-kit/spinner/spinner
 import { LoadImgPathDirective } from "../../shared/directives/load-img-path/load-img-path.directive";
 import { FormatNumberPipe } from "../../shared/pipes/format-number.pipe";
 import { AdBannerComponent } from "@/app/shared/components/banners/ad-banner/ad-banner.component";
-import { MapComponent } from "./components/map/map.component";
 import { MenuComponent } from "../../shared/components/ui-kit/menu/menu.component";
 import { LandingComponent } from "./landing.component";
 import { LandingRoutingModule } from "./landing.routing";
@@ -33,7 +30,6 @@ import { CopyButtonComponent } from "../../shared/components/ui-kit/buttons/copy
 import { AboutComponent } from "./pages/about/about.component";
 import { NgxTooltip } from "@ngx-popovers/tooltip";
 import { AddTopicPopupDirective } from "@/app/shared/components/popups/add-topic-popup/add-topic-popup.directive";
-import { MarkerIconComponent } from "./components/map/components/marker-icon.component";
 import { MatCheckboxModule } from "@angular/material/checkbox";
 import { SwitchComponent } from "@/app/shared/components/ui-kit/switch/switch/switch.component";
 import { UserComponent } from "./pages/user/user.component";
@@ -52,12 +48,12 @@ import { AboutSectionComponent } from "./pages/main/components/about-section/abo
 import { MainHeroComponent } from "./pages/main/components/main-hero/main-hero.component";
 import { GlobeMapComponent } from "./pages/map-page/components/globe-map/globe-map.component";
 import { MercatorMapComponent } from "./pages/map-page/components/mercator-map/mercator-map.component";
+import { MapComponent } from "./components/map/map.component";
 
 @NgModule({
     declarations: [
         LandingComponent,
         MainComponent,
-        MapComponent,
         PulsesComponent,
         TopPulsesComponent,
         InputSearchComponent,
@@ -68,7 +64,6 @@ import { MercatorMapComponent } from "./pages/map-page/components/mercator-map/m
         AboutSectionComponent,
         AboutComponent,
         MainHeroComponent,
-        MarkerIconComponent,
         GlobeMapComponent,
         MercatorMapComponent,
         UserComponent,
@@ -100,16 +95,13 @@ import { MercatorMapComponent } from "./pages/map-page/components/mercator-map/m
         ComingSoonPopupDirective,
         FlatButtonDirective,
         FadeInDirective,
-        NgxTooltip,
-        NgxMapboxGLModule.withConfig({
-            accessToken: environment.mapboxToken,
-        }),
         AdBannerComponent,
         AddTopicPopupDirective,
         MatCheckboxModule,
         SwitchComponent,
         ContainerComponent,
         IconButtonComponent,
+        MapComponent
     ],
     schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })

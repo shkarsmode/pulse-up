@@ -13,7 +13,7 @@
     [touchPitch]="touchPitch"
     [touchZoomRotate]="touchZoomRotate"
     [projection]="projection"
-    (load)="onMapLoad($event)"
+    (mapLoad)="onMapLoad($event)"
     (zoomEnd)="handleZoomEnd()"
     (moveEnd)="handleMoveEnd()"
     (styleData)="onStyleData($event)">
@@ -32,8 +32,8 @@
         }">
     </mgl-layer> -->
 
-    @for (marker of markers; track marker.h3Index) { 
-    @let opacity = 0;
+    @if (isToShowMarkers) { 
+    @for (marker of markers; track marker.h3Index) { @let opacity = 0;
     <mgl-marker
         [lngLat]="[marker.lng, marker.lat]"
         [ngStyle]="{ opacity }">
@@ -65,13 +65,14 @@
         </button>
         }
     </mgl-marker>
-    } @for (weight of weights; track weight.h3Index) {
+    } } @else { 
+    @for (weight of weights; track weight.h3Index) {
     <mgl-marker
         [lngLat]="[weight.lng, weight.lat]"
         className="weight-marker">
         <span class="weight-marker__text">{{ weight.value | formatNumber }}</span>
     </mgl-marker>
-    }
+    } }
 </mgl-map>
 
 @if (isToShoDebugger) {
@@ -174,19 +175,21 @@
 
 <!-- FEATURES -->
 
-@if (isPreview) {
+<!-- @if (isPreview) {
 <div class="expand">
-    <!-- <svg-icon src="assets/svg/extend.svg" /> -->
+    <svg-icon src="assets/svg/extend.svg" />
 </div>
-} @if (isSearch) {
+} -->
+<!-- @if (isSearch) {
 <app-input-search
     id="search"
     [isAddIcon]="false"
     openComingSoonPopup />
-} @if (isLocationName) {
+}  -->
+@if (isLocationName) {
 <div id="map-area-name">
     <svg-icon [src]="'assets/svg/location.svg'" />
-    <h3>{{ mapLocationService.mapLocationFilter }}</h3>
+    <h3>{{ mapLocationFilter }}</h3>
 </div>
 } @if (isZoomButton) {
 <div class="zoom-button">
