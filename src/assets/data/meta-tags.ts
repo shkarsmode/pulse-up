@@ -1,6 +1,6 @@
 export const metaTagsData = {
     home: {
-        title: 'Pulse Up | Support What Matters – Track Real-Time Public Sentiment',
+        title: 'Pulse Up | Support What Matters – Real-Time Public Sentiment Map',
         description:
             'Pulse Up is a real-time public opinion app where users support causes anonymously. Discover trending topics, civic issues, and social sentiment mapped by location.',
     },
