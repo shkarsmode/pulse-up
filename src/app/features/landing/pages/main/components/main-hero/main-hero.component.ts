@@ -1,15 +1,20 @@
 import { Component, effect, inject } from "@angular/core";
-import { Router } from "@angular/router";
+import { Router, RouterModule } from "@angular/router";
 import { toSignal } from "@angular/core/rxjs-interop";
 import { PlatformService } from "@/app/shared/services/core/platform.service";
 import { AppRoutes } from "@/app/shared/enums/app-routes.enum";
 import { MediaQueryService } from "@/app/shared/services/core/media-query.service";
 import { SettingsService } from "@/app/shared/services/api/settings.service";
+import { PrimaryButtonComponent } from "@/app/shared/components/ui-kit/buttons/primary-button/primary-button.component";
+import { SecondaryButtonComponent } from "@/app/shared/components/ui-kit/buttons/secondary-button/secondary-button.component";
+import { MapComponent } from "@/app/features/landing/components/map/map.component";
 
 @Component({
     selector: "app-main-hero",
     templateUrl: "./main-hero.component.html",
     styleUrls: ["./main-hero.component.scss"],
+    standalone: true,
+    imports: [RouterModule, PrimaryButtonComponent, SecondaryButtonComponent, MapComponent],
 })
 export class MainHeroComponent {
     private map: mapboxgl.Map | null = null;
@@ -44,7 +49,7 @@ export class MainHeroComponent {
         8: 5,
         9: 6,
         10: 6,
-    }
+    };
 
     private readonly platformService: PlatformService = inject(PlatformService);
 
@@ -61,9 +66,9 @@ export class MainHeroComponent {
                 : 1.85;
 
             if (this.isTablet()) {
-                this.zoomResolutionMap = {...this.zoomResolutionMap, 1: 0}
+                this.zoomResolutionMap = { ...this.zoomResolutionMap, 1: 0 };
             } else {
-                this.zoomResolutionMap = {...this.zoomResolutionMap, 1: 1}
+                this.zoomResolutionMap = { ...this.zoomResolutionMap, 1: 1 };
             }
         });
     }

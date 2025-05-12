@@ -1,14 +1,38 @@
 import { Component, inject } from "@angular/core";
+import { CommonModule, Location } from "@angular/common";
 import { ActivatedRoute, ParamMap, Router } from "@angular/router";
 import { UserService } from "@/app/shared/services/api/user.service";
 import { IAuthor, IPulse } from "@/app/shared/interfaces";
-import { Location } from "@angular/common";
 import { SettingsService } from "@/app/shared/services/api/settings.service";
+import { SpinnerComponent } from "@/app/shared/components/ui-kit/spinner/spinner.component";
+import { ContainerComponent } from "@/app/shared/components/ui-kit/container/container.component";
+import { FadeInDirective } from "@/app/shared/animations/fade-in.directive";
+import { SvgIconComponent } from "angular-svg-icon";
+import { UserAvatarComponent } from "./components/user-avatar/user-avatar.component";
+import { MenuComponent } from "@/app/shared/components/ui-kit/menu/menu.component";
+import { FormatNumberPipe } from "@/app/shared/pipes/format-number.pipe";
+import { LargePulseComponent } from "@/app/shared/components/pulses/large-pulse/large-pulse.component";
+import { CopyButtonComponent } from "@/app/shared/components/ui-kit/buttons/copy-button/copy-button.component";
+import { SocialsButtonComponent } from "@/app/shared/components/ui-kit/buttons/socials-button/socials-button.component";
 
 @Component({
     selector: "app-author",
     templateUrl: "./user.component.html",
     styleUrl: "./user.component.scss",
+    standalone: true,
+    imports: [
+        CommonModule,
+        SvgIconComponent,
+        SpinnerComponent,
+        ContainerComponent,
+        UserAvatarComponent,
+        MenuComponent,
+        LargePulseComponent,
+        CopyButtonComponent,
+        SocialsButtonComponent,
+        FadeInDirective,
+        FormatNumberPipe,
+    ],
 })
 export class UserComponent {
     public user: IAuthor | null = null;

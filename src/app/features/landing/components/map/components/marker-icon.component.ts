@@ -7,7 +7,7 @@ import { LoadImgPathDirective } from "@/app/shared/directives/load-img-path/load
     templateUrl: "./marker-icon.component.html",
     styleUrls: ["./marker-icon.component.scss"],
     standalone: true,
-    imports: [CommonModule, LoadImgPathDirective],
+    imports: [CommonModule, LoadImgPathDirective, LoadImgPathDirective],
 })
 export class MarkerIconComponent {
     @Input() icon: string = "";

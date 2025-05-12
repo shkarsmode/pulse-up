@@ -1,16 +1,46 @@
 import { Component, ElementRef, inject, OnInit, ViewChild } from "@angular/core";
-import { ActivatedRoute, ParamMap, Router } from "@angular/router";
+import { ActivatedRoute, ParamMap, Router, RouterModule } from "@angular/router";
+import { CommonModule } from "@angular/common";
 import { catchError, first, Observable, of } from "rxjs";
+import { SvgIconComponent } from "angular-svg-icon";
 import { AppRoutes } from "@/app/shared/enums/app-routes.enum";
 import { IPulse } from "@/app/shared/interfaces";
 import { PulseService } from "@/app/shared/services/api/pulse.service";
 import { MetadataService } from "@/app/shared/services/core/metadata.service";
 import { SettingsService } from "@/app/shared/services/api/settings.service";
+import { FadeInDirective } from "@/app/shared/animations/fade-in.directive";
+import { FormatNumberPipe } from "@/app/shared/pipes/format-number.pipe";
+import { PrimaryButtonComponent } from "@/app/shared/components/ui-kit/buttons/primary-button/primary-button.component";
+import { MenuComponent } from "@/app/shared/components/ui-kit/menu/menu.component";
+import { CopyButtonComponent } from "@/app/shared/components/ui-kit/buttons/copy-button/copy-button.component";
+import { SocialsButtonComponent } from "@/app/shared/components/ui-kit/buttons/socials-button/socials-button.component";
+import { MapComponent } from "../../components/map/map.component";
+import { SliderComponent } from "@/app/shared/components/slider/slider.component";
+import { TopPulseCardComponent } from "@/app/shared/components/pulses/top-pulse/top-pulse-card.component";
+import { SpinnerComponent } from "@/app/shared/components/ui-kit/spinner/spinner.component";
+import { LoadImgPathDirective } from "@/app/shared/directives/load-img-path/load-img-path.directive";
 
 @Component({
     selector: "app-pulse-page",
     templateUrl: "./pulse-page.component.html",
     styleUrl: "./pulse-page.component.scss",
+    standalone: true,
+    imports: [
+        CommonModule,
+        RouterModule,
+        SvgIconComponent,
+        PrimaryButtonComponent,
+        MenuComponent,
+        CopyButtonComponent,
+        SocialsButtonComponent,
+        MapComponent,
+        SliderComponent,
+        TopPulseCardComponent,
+        SpinnerComponent,
+        FadeInDirective,
+        FormatNumberPipe,
+        LoadImgPathDirective,
+    ],
 })
 export class PulsePageComponent implements OnInit {
     public pulse: IPulse | null = null;

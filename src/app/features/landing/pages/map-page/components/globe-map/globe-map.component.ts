@@ -3,11 +3,14 @@ import { toSignal } from "@angular/core/rxjs-interop";
 import { Fog } from "mapbox-gl";
 import { IMapMarker } from "@/app/shared/interfaces/map-marker.interface";
 import { MediaQueryService } from "@/app/shared/services/core/media-query.service";
+import { MapComponent } from "@/app/features/landing/components/map/map.component";
 
 @Component({
     selector: "app-globe-map",
     templateUrl: "./globe-map.component.html",
     styleUrl: "./globe-map.component.scss",
+    standalone: true,
+    imports: [MapComponent],
 })
 export class GlobeMapComponent {
     private mediaService = inject(MediaQueryService);

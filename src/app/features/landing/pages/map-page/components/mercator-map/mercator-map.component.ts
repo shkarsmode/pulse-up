@@ -3,24 +3,24 @@ import { toSignal } from "@angular/core/rxjs-interop";
 import { IMapMarker } from "@/app/shared/interfaces/map-marker.interface";
 import { MediaQueryService } from "@/app/shared/services/core/media-query.service";
 import { ResponsiveMapConfig } from "@/app/shared/interfaces/responsive-map-config.interface";
+import { MapComponent } from "@/app/features/landing/components/map/map.component";
 
 @Component({
     selector: "app-mercator-map",
     templateUrl: "./mercator-map.component.html",
     styleUrl: "./mercator-map.component.scss",
+    standalone: true,
+    imports: [MapComponent],
 })
 export class MercatorMapComponent {
-  private mediaService = inject(MediaQueryService);
+    private mediaService = inject(MediaQueryService);
 
     @Output() zoomEnd: EventEmitter<number> = new EventEmitter<number>();
     @Output() markerClick: EventEmitter<IMapMarker> = new EventEmitter<IMapMarker>();
 
-    private isMobile = toSignal(this.mediaService.mediaQuery('max', 'SM'));
-    private isLaptop = toSignal(this.mediaService.mediaQuery('max', 'XL'));
-    private readonly configMap: Record<
-        'mobile' | 'laptop' | 'default',
-        ResponsiveMapConfig
-    > = {
+    private isMobile = toSignal(this.mediaService.mediaQuery("max", "SM"));
+    private isLaptop = toSignal(this.mediaService.mediaQuery("max", "XL"));
+    private readonly configMap: Record<"mobile" | "laptop" | "default", ResponsiveMapConfig> = {
         mobile: {
             zoom: [2],
             minZoom: 2,
@@ -49,8 +49,7 @@ export class MercatorMapComponent {
 
     public zoom: [number] = this.configMap.default.zoom;
     public minZoom: number = this.configMap.default.minZoom;
-    public maxBounds: mapboxgl.LngLatBoundsLike =
-        this.configMap.default.maxBounds;
+    public maxBounds: mapboxgl.LngLatBoundsLike = this.configMap.default.maxBounds;
     public center: [number, number] = [-100.661, 37.7749];
 
     constructor() {
