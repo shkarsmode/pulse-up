@@ -1,12 +1,12 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { MainComponent } from './components/main/main.component';
-import { PulsePageComponent } from './components/pulse-page/pulse-page.component';
-import { PulsesComponent } from './components/pulses/pulses.component';
+import { MainComponent } from './main/main.component';
+import { PulsePageComponent } from './pulse-page/pulse-page.component';
+import { PulsesComponent } from './pulses/pulses.component';
 import { LandingComponent } from './landing.component';
 import { AppRoutes } from '../../shared/enums/app-routes.enum';
-import { MapPageComponent } from './components/map-page/map-page.component';
-import { PulseHeatmapPageComponent } from './components/pulse-heatmap-page/pulse-heatmap-page.component';
+import { MapPageComponent } from './map-page/map-page.component';
+import { PulseHeatmapPageComponent } from './pulse-heatmap-page/pulse-heatmap-page.component';
 import { FooterGuard } from '../../shared/components/footer/footer.guard';
 import { FooterCleanupGuard } from '../../shared/components/footer/footerCleanup.guard';
 import { AboutComponent } from './about/about.component';

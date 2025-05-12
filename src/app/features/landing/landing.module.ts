@@ -23,35 +23,35 @@ import { SelectComponent } from "../../shared/components/ui-kit/select/select.co
 import { SpinnerComponent } from "../../shared/components/ui-kit/spinner/spinner.component";
 import { LoadImgPathDirective } from "../../shared/directives/load-img-path/load-img-path.directive";
 import { FormatNumberPipe } from "../../shared/pipes/format-number.pipe";
-import { AboutSectionComponent } from "./components/main/components/about-section/about-section.component";
 import { AdBannerComponent } from "@/app/shared/components/banners/ad-banner/ad-banner.component";
-import { TopPulsesComponent } from "./components/main/components/top-pulses/top-pulses.component";
-import { MainComponent } from "./components/main/main.component";
-import { MapPageComponent } from "./components/map-page/map-page.component";
 import { MapComponent } from "./components/map/map.component";
-import { PulseHeatmapPageComponent } from "./components/pulse-heatmap-page/pulse-heatmap-page.component";
-import { PulsePageComponent } from "./components/pulse-page/pulse-page.component";
-import { InputSearchComponent } from "./components/pulses/components/input-search/input-search.component";
-import { PromoteAdsComponent } from "./components/pulses/components/promote-ads/promote-ads.component";
-import { PulsesComponent } from "./components/pulses/pulses.component";
 import { MenuComponent } from "../../shared/components/ui-kit/menu/menu.component";
 import { LandingComponent } from "./landing.component";
 import { LandingRoutingModule } from "./landing.routing";
 import { SocialsButtonComponent } from "../../shared/components/ui-kit/buttons/socials-button/socials-button.component";
 import { CopyButtonComponent } from "../../shared/components/ui-kit/buttons/copy-button/copy-button.component";
 import { AboutComponent } from "./about/about.component";
-import { MainHeroComponent } from "./components/main/components/main-hero/main-hero.component";
 import { NgxTooltip } from "@ngx-popovers/tooltip";
 import { AddTopicPopupDirective } from "@/app/shared/components/popups/add-topic-popup/add-topic-popup.directive";
 import { MarkerIconComponent } from "./components/map/components/marker-icon.component";
 import { MatCheckboxModule } from "@angular/material/checkbox";
-import { GlobeMapComponent } from "./components/map-page/components/globe-map/globe-map.component";
-import { MercatorMapComponent } from "./components/map-page/components/mercator-map/mercator-map.component";
 import { SwitchComponent } from "@/app/shared/components/ui-kit/switch/switch/switch.component";
 import { UserComponent } from "./user/user.component";
 import { ContainerComponent } from "@/app/shared/components/ui-kit/container/container.component";
 import { IconButtonComponent } from "@/app/shared/components/ui-kit/buttons/icon-button/icon-button.component";
 import { UserAvatarComponent } from './user/components/user-avatar/user-avatar.component';
+import { MainComponent } from "./main/main.component";
+import { PulsesComponent } from "./pulses/pulses.component";
+import { TopPulsesComponent } from "./main/components/top-pulses/top-pulses.component";
+import { InputSearchComponent } from "./pulses/components/input-search/input-search.component";
+import { PromoteAdsComponent } from "./pulses/components/promote-ads/promote-ads.component";
+import { PulsePageComponent } from "./pulse-page/pulse-page.component";
+import { MapPageComponent } from "./map-page/map-page.component";
+import { PulseHeatmapPageComponent } from "./pulse-heatmap-page/pulse-heatmap-page.component";
+import { AboutSectionComponent } from "./main/components/about-section/about-section.component";
+import { MainHeroComponent } from "./main/components/main-hero/main-hero.component";
+import { GlobeMapComponent } from "./map-page/components/globe-map/globe-map.component";
+import { MercatorMapComponent } from "./map-page/components/mercator-map/mercator-map.component";
 
 @NgModule({
     declarations: [

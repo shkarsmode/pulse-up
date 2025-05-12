@@ -1,9 +1,9 @@
 import { Component, effect, inject } from '@angular/core';
-import { IPulse } from '../../../../shared/interfaces';
+import { IPulse } from '../../../shared/interfaces';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
-import { PulseService } from '../../../../shared/services/api/pulse.service';
+import { PulseService } from '../../../shared/services/api/pulse.service';
 import { catchError, first, of, take } from 'rxjs';
-import { AppRoutes } from '../../../../shared/enums/app-routes.enum';
+import { AppRoutes } from '../../../shared/enums/app-routes.enum';
 import { MediaQueryService } from '@/app/shared/services/core/media-query.service';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { ResponsiveMapConfig } from '@/app/shared/interfaces/responsive-map-config.interface';
