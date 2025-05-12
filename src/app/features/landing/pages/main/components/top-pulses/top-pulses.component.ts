@@ -1,7 +1,7 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { first } from 'rxjs';
-import { IPulse } from '../../../../../shared/interfaces';
-import { PulseService } from '../../../../../shared/services/api/pulse.service';
+import { IPulse } from '../../../../../../shared/interfaces';
+import { PulseService } from '../../../../../../shared/services/api/pulse.service';
 import { AppRoutes } from '@/app/shared/enums/app-routes.enum';
 import { Colors } from '@/app/shared/enums/colors.enum';
 
