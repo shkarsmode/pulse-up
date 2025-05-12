@@ -4,17 +4,17 @@ import { RouterModule, Routes } from '@angular/router';
 const routes: Routes = [
     {
         path: '',
-        loadChildren: () => import('./pages').then((m) => m.LandingModule),
+        loadChildren: () => import('./features').then((m) => m.LandingModule),
     },
 
     {
         path: 'user',
-        loadChildren: () => import('./pages').then((m) => m.UserModule)
+        loadChildren: () => import('./features').then((m) => m.UserModule)
     },
 
     {
         path: '',
-        loadChildren: () => import('./pages').then((m) => m.CommunityModule)
+        loadChildren: () => import('./features').then((m) => m.CommunityModule)
     },
 
 ];
