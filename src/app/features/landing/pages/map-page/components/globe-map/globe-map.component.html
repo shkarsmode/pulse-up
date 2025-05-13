@@ -1,4 +1,5 @@
 <app-map
+    [mapStylesUrl]="mapStylesUrl"
     [isHideDebugger]="true"
     [isSearch]="false"
     [isLocationName]="false"
@@ -8,6 +9,5 @@
     [isToShowTooltip]="true"
     projection="globe"
     [maxBounds]="undefined"
-    [fog]="fog"
     (markerClick)="onMarkerClick($event)" 
     (zoomEnd)="onZoomEnd($event)"/>

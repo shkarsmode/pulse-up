@@ -1,9 +1,9 @@
 import { Component, effect, EventEmitter, inject, Output } from "@angular/core";
 import { toSignal } from "@angular/core/rxjs-interop";
-import { Fog } from "mapbox-gl";
 import { IMapMarker } from "@/app/shared/interfaces/map-marker.interface";
 import { MediaQueryService } from "@/app/shared/services/core/media-query.service";
 import { MapComponent } from "@/app/features/landing/components/map/map.component";
+import { MAPBOX_WITH_BACKGROUND_STYLE } from "@/app/shared/tokens/tokens";
 
 @Component({
     selector: "app-globe-map",
@@ -13,58 +13,59 @@ import { MapComponent } from "@/app/features/landing/components/map/map.componen
     imports: [MapComponent],
 })
 export class GlobeMapComponent {
-    private mediaService = inject(MediaQueryService);
+    private readonly mediaService = inject(MediaQueryService);
+    public readonly mapStylesUrl: string = inject(MAPBOX_WITH_BACKGROUND_STYLE);
     private isMobile = toSignal(this.mediaService.mediaQuery("max", "SM"));
     private isMobileLandscape = toSignal(
         this.mediaService.mediaQuery({
-          type: "max",
-          breakPoint: "SM",
-          orientation: "landscape",
-          parameter: "height",
+            type: "max",
+            breakPoint: "SM",
+            orientation: "landscape",
+            parameter: "height",
         }),
     );
     private isXSMobile = toSignal(this.mediaService.mediaQuery("max", "XS"));
     private isXSMobileLandscape = toSignal(
         this.mediaService.mediaQuery({
-          type: "max",
-          breakPoint: "XS",
-          orientation: "landscape",
-          parameter: "height",
+            type: "max",
+            breakPoint: "XS",
+            orientation: "landscape",
+            parameter: "height",
         }),
     );
     private isXXSMobile = toSignal(this.mediaService.mediaQuery("max", "XXS"));
     private isXXSMobileLandscape = toSignal(
         this.mediaService.mediaQuery({
-          type: "max",
-          breakPoint: "XXS",
-          orientation: "landscape",
-          parameter: "height",
+            type: "max",
+            breakPoint: "XXS",
+            orientation: "landscape",
+            parameter: "height",
         }),
     );
     private isXXXSMobile = toSignal(this.mediaService.mediaQuery("max", "XXXS"));
     private isXXXSMobileLandscape = toSignal(
         this.mediaService.mediaQuery({
-          type: "max",
-          breakPoint: "XXXS",
-          orientation: "landscape",
-          parameter: "height",
+            type: "max",
+            breakPoint: "XXXS",
+            orientation: "landscape",
+            parameter: "height",
         }),
     );
     private isMDLandscape = toSignal(
         this.mediaService.mediaQuery({
-          type: "max",
-          breakPoint: "MD",
-          orientation: "landscape",
-          parameter: "height",
+            type: "max",
+            breakPoint: "MD",
+            orientation: "landscape",
+            parameter: "height",
         }),
     );
     private isLGDesctop = toSignal(this.mediaService.mediaQuery("max", "LG"));
     private isLGLandscape = toSignal(
         this.mediaService.mediaQuery({
-          type: "max",
-          breakPoint: "LG",
-          orientation: "landscape",
-          parameter: "height",
+            type: "max",
+            breakPoint: "LG",
+            orientation: "landscape",
+            parameter: "height",
         }),
     );
     private is1400Desctop = toSignal(this.mediaService.mediaQuery("max", "XXL"));
@@ -75,13 +76,6 @@ export class GlobeMapComponent {
     @Output() markerClick: EventEmitter<IMapMarker> = new EventEmitter<IMapMarker>();
 
     public zoom: number = 2.5;
-    public fog: Fog = {
-        range: [0, 10],
-        color: "rgba(255, 255, 255, 0.5)",
-        "high-color": "rgba(255, 255, 255, 0.5)",
-        "horizon-blend": 0.025,
-        "space-color": "rgba(4, 22, 42, 1)",
-    }
 
     constructor() {
         effect(() => {
