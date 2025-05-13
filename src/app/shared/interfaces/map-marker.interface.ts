@@ -5,3 +5,7 @@ export interface IMapMarker {
   lat: number;
   icon: string;
 }
+
+export interface IMapMarkerAnimated extends IMapMarker {
+  delay: number;
+}

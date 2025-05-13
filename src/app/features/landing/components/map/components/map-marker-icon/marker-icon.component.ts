@@ -1,4 +1,4 @@
-import { Component, Input } from "@angular/core";
+import { Component, EventEmitter, Input, OnInit, Output } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { LoadImgPathDirective } from "@/app/shared/directives/load-img-path/load-img-path.directive";
 
@@ -9,8 +9,22 @@ import { LoadImgPathDirective } from "@/app/shared/directives/load-img-path/load
     standalone: true,
     imports: [CommonModule, LoadImgPathDirective, LoadImgPathDirective],
 })
-export class MarkerIconComponent {
+export class MarkerIconComponent implements OnInit {
     @Input() icon: string = "";
     @Input() isAnimated: boolean = false;
     @Input() animationDelay: number = 0;
+    @Output() imageLoaded: EventEmitter<void> = new EventEmitter<void>();
+
+    public classes = {}
+
+    ngOnInit() {
+        this.classes = {
+            "marker-icon": true,
+            "marker-icon--animated": this.isAnimated,
+        };
+    }
+
+    public onImageLoaded(): void {
+        this.imageLoaded.emit();
+    }
 }

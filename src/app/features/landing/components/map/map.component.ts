@@ -15,7 +15,6 @@ import * as h3 from "h3-js";
 import mapboxgl, { EventData, Fog, MapStyleDataEvent } from "mapbox-gl";
 import { NgxMapboxGLModule } from "ngx-mapbox-gl";
 import { filter, first, Subject, tap } from "rxjs";
-import { NgxTooltip } from "@ngx-popovers/tooltip";
 import { SvgIconComponent } from "angular-svg-icon";
 
 import { PulseService } from "../../../../shared/services/api/pulse.service";
@@ -23,17 +22,15 @@ import { MapLocationService } from "../../../../shared/services/core/map-locatio
 import { MAPBOX_STYLE } from "../../../../shared/tokens/tokens";
 import { IMapMarker } from "@/app/shared/interfaces/map-marker.interface";
 import { MapUtils } from "../../services/map-utils.service";
-import { MarkerIconComponent } from "./components/marker-icon.component";
 import { FormatNumberPipe } from "@/app/shared/pipes/format-number.pipe";
 import { InputComponent } from "@/app/shared/components/ui-kit/input/input.component";
 import { SecondaryButtonComponent } from "@/app/shared/components/ui-kit/buttons/secondary-button/secondary-button.component";
-import { TopPulseCardComponent } from "@/app/shared/components/pulses/top-pulse/top-pulse-card.component";
-import { SpinnerComponent } from "@/app/shared/components/ui-kit/spinner/spinner.component";
 import { H3LayerService } from "../../services/h3-layer.service";
 import { IH3Pulses } from "../../interfaces/h3Pulses.interface";
 import { MapMarkersService } from "../../services/map-markers.service";
 import { HeatmapLayerService } from "../../services/heatmap-layer.service";
 import { MediaUtilsService } from "../../services/media-utils.service";
+import { MapMarkerComponent } from "./components/map-marker/map-marker/map-marker.component";
 
 @Component({
     selector: "app-map",
@@ -43,16 +40,11 @@ import { MediaUtilsService } from "../../services/media-utils.service";
     imports: [
         CommonModule,
         NgxMapboxGLModule,
-        NgxTooltip,
         FormsModule,
         SvgIconComponent,
-
-        MarkerIconComponent,
         InputComponent,
         SecondaryButtonComponent,
-        TopPulseCardComponent,
-        SpinnerComponent,
-
+        MapMarkerComponent,
         FormatNumberPipe,
     ],
 })

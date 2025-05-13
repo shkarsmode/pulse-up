@@ -17,62 +17,30 @@
     (zoomEnd)="handleZoomEnd()"
     (moveEnd)="handleMoveEnd()"
     (styleData)="onStyleData($event)">
-    <!-- <mgl-layer 
-        id="heatmap-layer" 
-        type="heatmap" 
-        [source]="{
-            type: 'geojson',
-            data: heatmapData
-        }" 
-        [paint]="{
-            'heatmap-weight': 0.5,
-            'heatmap-intensity': 1,
-            'heatmap-radius': 20,
-            'heatmap-opacity': 0.7
-        }">
-    </mgl-layer> -->
 
-    @if (isToShowMarkers) { 
-    @for (marker of markers; track marker.h3Index) { @let opacity = 0;
-    <mgl-marker
-        [lngLat]="[marker.lng, marker.lat]"
-        [ngStyle]="{ opacity }">
-        @if (!isTouchDevice && isToShowTooltip) {
-        <button
-            placement="bottom"
-            class="marker-button"
-            ngxTooltip
-            [template]="tooltip"
-            (hideEnd)="onTooltipHide()"
-            (mouseenter)="onMarkerHover(marker)"
-            (click)="onMarkerClick(marker)"
-            onload="(event) => opacity = 1"
-            aria-label="Show topic details">
-            <app-marker-icon
-                [icon]="marker.icon"
+    @if (isToShowMarkers) {
+        @for (marker of markers; track marker.h3Index) { 
+        
+            <app-map-marker
+                [marker]="marker"
+                [tooltipData]="tooltipData"
+                [isTooltipVisible]="!isTouchDevice && isToShowTooltip"
                 [isAnimated]="isMarkerAnimated"
-                [animationDelay]="marker.delay" />
-        </button>
-        } @else {
-        <button
-            class="marker-button"
-            (click)="onMarkerClick(marker)"
-            aria-label="Show topic details">
-            <app-marker-icon
-                [icon]="marker.icon"
-                [isAnimated]="isMarkerAnimated"
-                [animationDelay]="marker.delay" />
-        </button>
+                (markerClick)="onMarkerClick(marker)"
+                (markerHover)="onMarkerHover(marker)"
+                (tooltipHideEnd)="onTooltipHide()" />
+        
         }
-    </mgl-marker>
-    } } @else { 
-    @for (weight of weights; track weight.h3Index) {
-    <mgl-marker
-        [lngLat]="[weight.lng, weight.lat]"
-        className="weight-marker">
-        <span class="weight-marker__text">{{ weight.value | formatNumber }}</span>
-    </mgl-marker>
-    } }
+    } @else {
+        @for (weight of weights; track weight.h3Index) {
+            <mgl-marker
+                [lngLat]="[weight.lng, weight.lat]"
+                className="weight-marker">
+                <span class="weight-marker__text">{{ weight.value | formatNumber }}</span>
+            </mgl-marker>
+        }
+    }
+    
 </mgl-map>
 
 @if (isToShoDebugger) {
@@ -204,21 +172,6 @@
         aria-label="zoom out the map"></button>
 </div>
 }
-
-<!-- TOOLTIP -->
-<ng-template #tooltip>
-    <div
-        class="map-tooltip"
-        [class.map-tooltip--loading]="!tooltipData">
-        @if (tooltipData) {
-        <app-top-pulse-card
-            [pulse]="tooltipData"
-            [interactive]="false" />
-        } @else {
-        <app-spinner />
-        }
-    </div>
-</ng-template>
 
 <!-- <div
     class="extend"
