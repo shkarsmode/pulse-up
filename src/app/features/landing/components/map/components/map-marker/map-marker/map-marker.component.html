@@ -1,0 +1,45 @@
+<mgl-marker [lngLat]="[marker.lng, marker.lat]">
+    @if (isTooltipVisible) {
+    <button
+        placement="bottom"
+        class="marker-button"
+        ngxTooltip
+        [template]="tooltip"
+        [ngStyle]="{ opacity }"
+        (hideEnd)="onTooltipHideEnd()"
+        (mouseenter)="onMarkerHover()"
+        (click)="onMarkerClick()"
+        aria-label="Show topic details">
+        <app-marker-icon
+            [icon]="marker.icon"
+            [isAnimated]="isAnimated"
+            [animationDelay]="marker.delay"
+            (imageLoaded)="onImageLoaded()"/>
+    </button>
+    } @else {
+    <button
+        class="marker-button"
+        (click)="onMarkerClick()"
+        aria-label="Show topic details">
+        <app-marker-icon
+            [icon]="marker.icon"
+            [isAnimated]="isAnimated"
+            [animationDelay]="marker.delay" />
+    </button>
+    }
+</mgl-marker>
+
+<!-- TOOLTIP -->
+<ng-template #tooltip>
+    <div
+        class="map-tooltip"
+        [class.map-tooltip--loading]="!tooltipData">
+        @if (tooltipData) {
+        <app-top-pulse-card
+            [pulse]="tooltipData"
+            [interactive]="false" />
+        } @else {
+        <app-spinner />
+        }
+    </div>
+</ng-template>
