@@ -82,7 +82,7 @@ export class MapComponent implements OnInit {
     @Input() public projection: mapboxgl.Projection["name"] = "mercator";
     @Input() public isLabelsHidden: boolean = false;
     @Input() public isMapStatic: boolean = false;
-    @Input() public fog: Fog;
+    @Input() public fog: Fog | null = null;
     @Input() public zoomResolutionMap: { [key: number]: number } = {
         0: 0,
         1: 0,
@@ -97,6 +97,7 @@ export class MapComponent implements OnInit {
         9: 6,
         10: 6,
     };
+    @Input() public mapStylesUrl: string = this.mapboxStylesUrl;
     @Output() public mapLoaded: EventEmitter<mapboxgl.Map> = new EventEmitter<mapboxgl.Map>();
     @Output() public markerClick: EventEmitter<IMapMarker> = new EventEmitter<IMapMarker>();
     @Output() public zoomEnd: EventEmitter<number> = new EventEmitter<number>();
@@ -265,7 +266,7 @@ export class MapComponent implements OnInit {
     private addMarkersAndUpdateH3Polygons(h3PulsesData: IH3Pulses): void {
         if (!this.map) return;
         this.h3LayerService.updateH3PolygonSource({ map: this.map, data: h3PulsesData });
-        
+
         this.mapMarkersService.updateMarkers(h3PulsesData);
         this.h3LayerService.addH3PolygonsToMap({
             map: this.map,
@@ -301,7 +302,7 @@ export class MapComponent implements OnInit {
             map: this.map,
             resolutionLevelsByZoom: this.zoomResolutionMap,
         });
-        
+
         this.heatmapLayerService
             .getHeatmapData({
                 map: this.map,
@@ -365,7 +366,7 @@ export class MapComponent implements OnInit {
                     type: "FeatureCollection",
                     features: heatmapFeatures,
                 };
-                
+
                 this.heatmapLayerService.paintHeatmapIntensity(this.map);
 
                 this.heatmapLayerService.paintHeatmapRadius(this.map);
@@ -437,16 +438,13 @@ export class MapComponent implements OnInit {
     }
 
     public onStyleData(style: MapStyleDataEvent & EventData): void {
+        if (!this.isLabelsHidden) return;
         const map = style.target;
         const layers = map.getStyle().layers;
         if (!layers) return;
         for (const layer of layers) {
             if (layer.type === "symbol") {
-                if (this.isLabelsHidden) {
-                    map.setLayoutProperty(layer.id, "visibility", "none");
-                } else {
-                    map.setLayoutProperty(layer.id, "text-pitch-alignment", "map");
-                }
+                map.setLayoutProperty(layer.id, "visibility", "none");
             }
         }
     }

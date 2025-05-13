@@ -2,9 +2,11 @@ export const environment = {
     production: true,
     apiUrl: 'https://app-pulseapi-prod-bxdye7b9b2fdc0b5.eastus2-01.azurewebsites.net',
     mapboxToken:
-        'pk.eyJ1IjoidmliZXNwb3QiLCJhIjoiY2p4YnN5cHY3MDB3NDN4czVrOWtpanU4aCJ9.nexbisROPDgIPDPUPm5tvQ',
+        'pk.eyJ1IjoibmF2ZWVuZ29wdWxzZSIsImEiOiJjbTFxb2YyYzIwMjc3MmtvbXRob20yNGY2In0.7Eyobg6zrbOwPXMmW6BAMA',
     mapStyleUrl:
-        'mapbox://styles/vibespot/ckyk1veo2agjg14nuzvkjuveq?optimize=true',
+        'mapbox://styles/naveengopulse/cm8g9wn7000zl01qra3en7f7v?optimize=true',
+    mapWithBackgroundStyleUrl:
+        'mapbox://styles/naveengopulse/cmafp4osk00vy01r40rhx06yk?optimize=true',
     firebaseConfig: {
         apiKey: 'AIzaSyD2qwEcQb9H_R5rohjC78H5CQGdaIvtaOI',
         authDomain: 'pulseapp-d9cea.firebaseapp.com',

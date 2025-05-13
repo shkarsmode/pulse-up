@@ -7,6 +7,9 @@ export const MAPBOX_ACCESS_TOKEN: InjectionToken<string> = new InjectionToken(
 export const MAPBOX_STYLE: InjectionToken<string> = new InjectionToken(
     'mapboxStyle'
 );
+export const MAPBOX_WITH_BACKGROUND_STYLE: InjectionToken<string> = new InjectionToken(
+    'mapboxWithBackgroundStyle'
+);
 
 export const API_URL: InjectionToken<string> = new InjectionToken(
     'apiUrl'
