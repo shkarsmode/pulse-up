@@ -4,23 +4,28 @@ import { toSignal } from "@angular/core/rxjs-interop";
 import { PlatformService } from "@/app/shared/services/core/platform.service";
 import { AppRoutes } from "@/app/shared/enums/app-routes.enum";
 import { MediaQueryService } from "@/app/shared/services/core/media-query.service";
-import { SettingsService } from "@/app/shared/services/api/settings.service";
 import { PrimaryButtonComponent } from "@/app/shared/components/ui-kit/buttons/primary-button/primary-button.component";
 import { SecondaryButtonComponent } from "@/app/shared/components/ui-kit/buttons/secondary-button/secondary-button.component";
 import { MapComponent } from "@/app/features/landing/components/map/map.component";
+import { OpenGetAppPopupDirective } from "@/app/shared/components/popups/get-app-popup/open-get-app-popup.directive";
 
 @Component({
     selector: "app-main-hero",
     templateUrl: "./main-hero.component.html",
     styleUrls: ["./main-hero.component.scss"],
     standalone: true,
-    imports: [RouterModule, PrimaryButtonComponent, SecondaryButtonComponent, MapComponent],
+    imports: [
+        RouterModule,
+        PrimaryButtonComponent,
+        SecondaryButtonComponent,
+        MapComponent,
+        OpenGetAppPopupDirective,
+    ],
 })
 export class MainHeroComponent {
     private map: mapboxgl.Map | null = null;
     private router: Router = inject(Router);
     private mediaService: MediaQueryService = inject(MediaQueryService);
-    private settingsService: SettingsService = inject(SettingsService);
     private isTablet = toSignal(this.mediaService.mediaQuery("max", "MD"));
     private isXSMobile = toSignal(this.mediaService.mediaQuery("max", "XS"));
     private isXXSMobile = toSignal(this.mediaService.mediaQuery("max", "XXS"));
@@ -108,11 +113,6 @@ export class MainHeroComponent {
 
     public onMarkerClick() {
         this.navigateToMapPage();
-    }
-
-    public openStore(): void {
-        if (this.platformService.value == "iOS") window.open(this.settingsService.appStoreUrl);
-        else window.open(this.settingsService.googlePlayUrl);
     }
 
     private navigateToMapPage() {
