@@ -261,12 +261,34 @@
     }
 }
 
-/* ZOOM BUTTONS  */
-
-.zoom-button {
+.map-right {
     position: absolute;
     right: 30px;
     bottom: 30px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.spin-button {
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: white;
+    box-shadow: 0px 3px 10px 0px #00000026;
+    cursor: pointer;
+
+    .spin-button__icon {
+        width: 16px;
+        height: 16px;
+        pointer-events: none;
+    }
+}
+
+.zoom-button {
     display: flex;
     flex-direction: column;
     gap: 10px;
@@ -276,10 +298,10 @@
         position: relative;
         background: white;
         border-radius: 50%;
-        width: 26px;
-        height: 26px;
-        min-height: 26px;
-        min-width: 26px;
+        width: 32px;
+        height: 32px;
+        min-height: 32px;
+        min-width: 32px;
         box-shadow: 0px 3px 10px 0px #00000026;
 
 

@@ -4,6 +4,7 @@ import * as h3 from "h3-js";
 import { PulseService } from "@/app/shared/services/api/pulse.service";
 import { IH3Pulses } from "../interfaces/h3Pulses.interface";
 import { MapUtils } from "./map-utils.service";
+import { MapBounds } from "../interfaces/map-bounds.interface";
 
 @Injectable({
     providedIn: "root",
@@ -12,18 +13,17 @@ export class H3LayerService {
     private readonly pulseService: PulseService = inject(PulseService);
     private readonly sourceId = "h3-polygons";
 
-    public getH3Pulses(
-        map: mapboxgl.Map,
+    public getH3Pulses({
+        bounds,
+        resolution,
+        pulseId,
+    }: {
+        bounds: MapBounds,
         resolution: number,
         pulseId?: number,
-    ): Observable<IH3Pulses> {
-        const { _ne, _sw } = map.getBounds();
-        const NELat = _ne.lat;
-        const NELng = Math.min(_ne.lng, 180);
-        const SWLat = _sw.lat;
-        const SWLng = Math.max(_sw.lng, -180);
-
-        return this.pulseService.getH3PulsesForMap(NELat, NELng, SWLat, SWLng, resolution);
+    }): Observable<IH3Pulses> {
+        const {ne, sw} = bounds;
+        return this.pulseService.getH3PulsesForMap(ne.lat, ne.lng, sw.lat, sw.lng, resolution);
     }
 
     public updateH3PolygonSource({ map, data }: { map: mapboxgl.Map; data: IH3Pulses }) {

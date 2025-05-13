@@ -31,6 +31,9 @@ import { MapMarkersService } from "../../services/map-markers.service";
 import { HeatmapLayerService } from "../../services/heatmap-layer.service";
 import { MediaUtilsService } from "../../services/media-utils.service";
 import { MapMarkerComponent } from "./components/map-marker/map-marker/map-marker.component";
+import { GlobeSpinnerService } from "../../services/globe-spinner.service";
+import { throttle } from "@/app/shared/helpers/throttle";
+import { MapBounds } from "../../interfaces/map-bounds.interface";
 
 @Component({
     selector: "app-map",
@@ -49,13 +52,14 @@ import { MapMarkerComponent } from "./components/map-marker/map-marker/map-marke
     ],
 })
 export class MapComponent implements OnInit {
-    public readonly mapboxStylesUrl: string = inject(MAPBOX_STYLE);
-    public readonly pulseService: PulseService = inject(PulseService);
-    public readonly h3LayerService: H3LayerService = inject(H3LayerService);
-    public readonly mapMarkersService: MapMarkersService = inject(MapMarkersService);
+    private readonly mapboxStylesUrl: string = inject(MAPBOX_STYLE);
+    private readonly pulseService: PulseService = inject(PulseService);
+    private readonly h3LayerService: H3LayerService = inject(H3LayerService);
+    private readonly mapMarkersService: MapMarkersService = inject(MapMarkersService);
     private readonly destroyed: DestroyRef = inject(DestroyRef);
     private readonly heatmapLayerService: HeatmapLayerService = inject(HeatmapLayerService);
     private readonly mapLocationService: MapLocationService = inject(MapLocationService);
+    private readonly globeSpinner = new GlobeSpinnerService();
 
     @Input() public pulseId: number;
     @Input() public isPreview: boolean = false;
@@ -82,6 +86,7 @@ export class MapComponent implements OnInit {
     @Input() public projection: mapboxgl.Projection["name"] = "mercator";
     @Input() public isLabelsHidden: boolean = false;
     @Input() public isMapStatic: boolean = false;
+    @Input() public isSpinEnabled: boolean = false;
     @Input() public fog: Fog | null = null;
     @Input() public zoomResolutionMap: { [key: number]: number } = {
         0: 0,
@@ -112,6 +117,8 @@ export class MapComponent implements OnInit {
     public heatmapDataPointsCount: number = 0;
     public isToShoDebugger: string | null = localStorage.getItem("show-debugger");
     public isTouchDevice = false;
+    public isSpinButtonVisible = this.isSpinEnabled;
+    private globalMapDataUpdated: boolean = false;
 
     private readonly h3Pulses$: Subject<IH3Pulses> = new Subject();
     private readonly heatMapData$: Subject<{ [key: string]: number }> = new Subject();
@@ -139,6 +146,12 @@ export class MapComponent implements OnInit {
     }
     get isToShowMarkers() {
         return !this.pulseId;
+    }
+    get currentHeatmapDepth() {
+        return this.pulseService.currentHeatmapDepth;
+    }
+    get isSpinning() {
+        return this.globeSpinner.spinning;
     }
 
     public onChangeHeatmapSettings(): void {
@@ -182,6 +195,7 @@ export class MapComponent implements OnInit {
 
     public onMapLoad({ target: map }: mapboxgl.MapboxEvent<undefined> & mapboxgl.EventData) {
         this.map = map;
+        this.mapLoaded.next(this.map);
 
         this.map.dragRotate?.disable();
         this.map.touchZoomRotate.disableRotation();
@@ -189,27 +203,33 @@ export class MapComponent implements OnInit {
         this.addInitialLayersAndSourcesToDisplayData();
         this.updateH3Pulses();
         this.updateHeatmap();
+        this.triggerRepaintOnResize();
+        this.syncFog();
+        this.initGlobeSpinner();
 
-        this.map.on("resize", () => {
-            this.map?.triggerRepaint();
-        });
-
-        this.mapLoaded.next(this.map);
-
-        if (this.fog) {
-            this.map.setFog(this.fog);
-        }
+        this.globalMapDataUpdated = true;
     }
 
     public handleZoomEnd = () => {
+        this.globalMapDataUpdated = false;
+        this.updateSpinButtonVisibility();
         this.zoomEnd.emit(this.map?.getZoom() || 0);
     };
 
-    public handleMoveEnd = () => {
-        if (this.isMapStatic) return;
-        this.updateH3Pulses();
-        this.updateHeatmap();
-    };
+    public handleMoveEnd = throttle(() => {
+        if (this.shouldFetchGlobalMapData()) {
+            if (!this.globalMapDataUpdated) {
+                this.updateH3Pulses();
+                this.updateHeatmap();
+                this.globalMapDataUpdated = true;
+            }
+        } else {
+            this.updateH3Pulses();
+            this.updateHeatmap();
+            this.globalMapDataUpdated = false;
+        }
+        this.updateSpinButtonVisibility();
+    }, 1000);
 
     private addInitialLayersAndSourcesToDisplayData(): void {
         if (!this.map) return;
@@ -287,8 +307,13 @@ export class MapComponent implements OnInit {
             map: this.map,
             resolutionLevelsByZoom: this.zoomResolutionMap,
         });
+
+        const bounds = this.getMapBounds({
+            global: this.shouldFetchGlobalMapData(),
+        });
+
         this.h3LayerService
-            .getH3Pulses(this.map, resolution)
+            .getH3Pulses({ bounds, resolution })
             .pipe(
                 first(),
                 filter(() => !this.pulseId),
@@ -303,9 +328,13 @@ export class MapComponent implements OnInit {
             resolutionLevelsByZoom: this.zoomResolutionMap,
         });
 
+        const bounds = this.getMapBounds({
+            global: this.shouldFetchGlobalMapData(),
+        });
+
         this.heatmapLayerService
             .getHeatmapData({
-                map: this.map,
+                bounds,
                 resolution: resolution > 9 ? 7 : resolution,
                 pulseId: this.pulseId,
             })
@@ -381,6 +410,70 @@ export class MapComponent implements OnInit {
             });
     }
 
+    private triggerRepaintOnResize(): void {
+        if (!this.map) return;
+        this.map.on("resize", () => {
+            this.map?.triggerRepaint();
+        });
+    }
+
+    private syncFog() {
+        if (this.fog) {
+            this.map?.setFog(this.fog);
+        }
+    }
+
+    private initGlobeSpinner() {
+        if (!this.map || this.projection !== "globe") return;
+        this.globeSpinner.init(this.map);
+    }
+
+    private updateCurrentLocationAreaName() {
+        if (!this.map) return;
+        const coordinates = this.mapLocationService.getMapCoordinatesWebClient(this.map);
+        this.mapLocationService.getLocationFilter(coordinates, this.map.getBounds().toArray());
+    }
+
+    private getMapBounds(options?: { global?: boolean }): MapBounds {
+        const globalBounds = {
+            ne: { lat: 90, lng: 180 },
+            sw: { lat: -90, lng: -180 },
+        };
+        if (!this.map || options?.global) return globalBounds;
+        const bounds = this.map.getBounds();
+        return {
+            ne: {
+                lat: Math.min(bounds.getNorthEast().lat, 90),
+                lng: Math.min(bounds.getNorthEast().lng, 180),
+            },
+            sw: {
+                lat: Math.max(bounds.getSouthWest().lat, -90),
+                lng: Math.max(bounds.getSouthWest().lng, -180),
+            },
+        };
+    }
+
+    private shouldFetchGlobalMapData(): boolean {
+        if (this.map && this.map.getZoom() <= 3.3 && this.projection === "globe") {
+            return true;
+        }
+        return false;
+    }
+
+    private updateSpinButtonVisibility(): void {
+        if (!this.map) return;
+
+        if (!this.isSpinEnabled) {
+            this.isSpinButtonVisible = false;
+            return;
+        }
+        if (this.map.getZoom() <= this.globeSpinner.maxSpinZoom && this.projection === "globe") {
+            this.isSpinButtonVisible = true;
+        } else {
+            this.isSpinButtonVisible = false;
+        }
+    }
+
     public getStepBasedOnZoom(): number {
         if (!this.map) return 1;
         const zoom = this.map?.getZoom();
@@ -399,12 +492,6 @@ export class MapComponent implements OnInit {
             map: this.map,
             resolutionLevelsByZoom: this.zoomResolutionMap,
         });
-    }
-
-    private updateCurrentLocationAreaName() {
-        if (!this.map) return;
-        const coordinates = this.mapLocationService.getMapCoordinatesWebClient(this.map);
-        this.mapLocationService.getLocationFilter(coordinates, this.map.getBounds().toArray());
     }
 
     public zoomMapClick(sign: "+" | "-"): void {
@@ -435,6 +522,10 @@ export class MapComponent implements OnInit {
     public onMarkerClick(marker: IMapMarker): void {
         this.mapMarkersService.tooltipData = null;
         this.markerClick.emit(marker);
+    }
+
+    public onSpinClick(): void {
+        this.globeSpinner.toggle();
     }
 
     public onStyleData(style: MapStyleDataEvent & EventData): void {

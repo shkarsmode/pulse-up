@@ -43,6 +43,44 @@
     
 </mgl-map>
 
+@if (isLocationName) {
+    <div id="map-area-name">
+        <svg-icon [src]="'assets/svg/location.svg'" />
+        <h3>{{ mapLocationFilter }}</h3>
+    </div>
+} 
+
+<div class="map-right">
+
+    @if (isSpinButtonVisible) {
+        <button
+            class="spin-button"
+            aria-label="spin the map"
+            (click)="onSpinClick()">
+            @if (isSpinning) {
+                <svg-icon src="assets/svg/pause.svg" class="spin-button__icon" />
+            } @else {
+                <svg-icon src="assets/svg/play.svg" class="spin-button__icon" />
+            }
+        </button>
+    }
+
+    @if (isZoomButton) {
+        <div class="zoom-button">
+            <button
+                class="zoom-button__icon"
+                (click)="zoomMapClick('+')"
+                aria-label="zoom in the map"></button>
+        
+            <button
+                class="zoom-button__icon"
+                (click)="zoomMapClick('-')"
+                aria-label="zoom out the map"></button>
+        </div>
+    }
+
+</div>
+    
 @if (isToShoDebugger) {
 <div
     class="debugger"
@@ -103,7 +141,7 @@
         <span class="restricted">1-3</span>
         <span>
             <app-input
-                [(ngModel)]="pulseService.currentHeatmapDepth"
+                [(ngModel)]="currentHeatmapDepth"
                 (onInput)="onChangeHeatmapSettings()"
                 max="3"
                 min="1"
@@ -154,25 +192,6 @@
     [isAddIcon]="false"
     openComingSoonPopup />
 }  -->
-@if (isLocationName) {
-<div id="map-area-name">
-    <svg-icon [src]="'assets/svg/location.svg'" />
-    <h3>{{ mapLocationFilter }}</h3>
-</div>
-} @if (isZoomButton) {
-<div class="zoom-button">
-    <button
-        class="zoom-button__icon"
-        (click)="zoomMapClick('+')"
-        aria-label="zoom in the map"></button>
-
-    <button
-        class="zoom-button__icon"
-        (click)="zoomMapClick('-')"
-        aria-label="zoom out the map"></button>
-</div>
-}
-
 <!-- <div
     class="extend"
     routerLink="/map">

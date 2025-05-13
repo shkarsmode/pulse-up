@@ -3,6 +3,7 @@ import { PulseService } from "@/app/shared/services/api/pulse.service";
 import { MapUtils } from "./map-utils.service";
 import mapboxgl from "mapbox-gl";
 import { IHeatmapData } from "../interfaces/heatmapData.interface";
+import { MapBounds } from "../interfaces/map-bounds.interface";
 
 @Injectable({
     providedIn: "root",
@@ -246,25 +247,20 @@ export class HeatmapLayerService {
         "heatmap-opacity": ["interpolate", ["linear"], ["zoom"], 0, 0.45, 15, 0.45],
     };
     public getHeatmapData({
-        map,
+        bounds,
         resolution,
         pulseId,
     }: {
-        map: mapboxgl.Map;
+        bounds: MapBounds;
         resolution: number;
         pulseId?: number;
     }) {
-        const { _ne, _sw } = map.getBounds();
-        const NELat = _ne.lat;
-        const NELng = Math.min(_ne.lng, 180);
-        const SWLat = _sw.lat;
-        const SWLng = Math.max(_sw.lng, -180);
-
+        const { ne, sw } = bounds;
         return this.pulseService.getMapVotes(
-            NELat,
-            NELng,
-            SWLat,
-            SWLng,
+            ne.lat,
+            ne.lng,
+            sw.lat,
+            sw.lng,
             resolution > 9 ? 7 : resolution,
             pulseId,
         );
