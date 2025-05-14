@@ -6,7 +6,7 @@ export class GlobeSpinnerService {
     private userInteracting = false;
     public readonly maxSpinZoom = 4;
     private readonly slowSpinZoom = 3;
-    private readonly secondsPerRevolution = 120;
+    private readonly secondsPerRevolution = 240;
     public spinning = false;
 
     public init(map: mapboxgl.Map) {

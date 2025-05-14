@@ -14,7 +14,7 @@ import { HeaderComponent } from './shared/components/header/header.component';
 import { LoadingPageComponent } from './shared/components/loading/loading-page.component';
 import { ErrorInterceptor } from './shared/helpers/interceptors/error.interceptor';
 import { MaterialModule } from './shared/modules/material.module';
-import { API_URL, FIREBASE_CONFIG, MAPBOX_ACCESS_TOKEN, MAPBOX_STYLE, MAPBOX_WITH_BACKGROUND_STYLE } from './shared/tokens/tokens';
+import { API_URL, FIREBASE_CONFIG, MAPBOX_ACCESS_TOKEN, MAPBOX_STYLE } from './shared/tokens/tokens';
 
 @NgModule({
     declarations: [AppComponent],
@@ -46,10 +46,6 @@ import { API_URL, FIREBASE_CONFIG, MAPBOX_ACCESS_TOKEN, MAPBOX_STYLE, MAPBOX_WIT
         {
             provide: MAPBOX_STYLE,
             useValue: environment.mapStyleUrl,
-        },
-        {
-            provide: MAPBOX_WITH_BACKGROUND_STYLE,
-            useValue: environment.mapWithBackgroundStyleUrl,
         },
         {
             provide: FIREBASE_CONFIG,

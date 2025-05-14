@@ -4,9 +4,7 @@ export const environment = {
     mapboxToken:
         'pk.eyJ1IjoibmF2ZWVuZ29wdWxzZSIsImEiOiJjbTFxb2YyYzIwMjc3MmtvbXRob20yNGY2In0.7Eyobg6zrbOwPXMmW6BAMA',
     mapStyleUrl:
-        'mapbox://styles/naveengopulse/cm8g9wn7000zl01qra3en7f7v?optimize=true',
-    mapWithBackgroundStyleUrl:
-        'mapbox://styles/naveengopulse/cmafp4osk00vy01r40rhx06yk?optimize=true',
+        'mapbox://styles/naveengopulse/cmambqrrg01g201s4fyqne3q0?optimize=true',
     firebaseConfig: {
         apiKey: 'AIzaSyD2qwEcQb9H_R5rohjC78H5CQGdaIvtaOI',
         authDomain: 'pulseapp-d9cea.firebaseapp.com',

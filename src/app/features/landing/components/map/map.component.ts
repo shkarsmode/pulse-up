@@ -106,6 +106,7 @@ export class MapComponent implements OnInit {
     @Output() public mapLoaded: EventEmitter<mapboxgl.Map> = new EventEmitter<mapboxgl.Map>();
     @Output() public markerClick: EventEmitter<IMapMarker> = new EventEmitter<IMapMarker>();
     @Output() public zoomEnd: EventEmitter<number> = new EventEmitter<number>();
+    @Output() public mapStyleData: EventEmitter<MapStyleDataEvent & EventData> = new EventEmitter<MapStyleDataEvent & EventData>();
 
     @HostBinding("class.preview")
     public get isPreviewMap() {
@@ -529,7 +530,10 @@ export class MapComponent implements OnInit {
     }
 
     public onStyleData(style: MapStyleDataEvent & EventData): void {
+        this.mapStyleData.emit(style);
+
         if (!this.isLabelsHidden) return;
+        
         const map = style.target;
         const layers = map.getStyle().layers;
         if (!layers) return;
