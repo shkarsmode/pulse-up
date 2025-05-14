@@ -1,4 +1,4 @@
-@use '../../../../../styles/mixins'as *;
+@use "../../../../../styles/mixins" as *;
 
 :host {
     height: 100%;
@@ -10,7 +10,7 @@
     &:hover {
         &.preview {
             cursor: pointer !important;
-            
+
             .expand {
                 scale: 1.15;
                 transform: rotate(-90deg);
@@ -26,7 +26,7 @@
     width: 25px;
     height: auto;
 
-    transition: all .3s;
+    transition: all 0.3s;
 
     svg-icon {
         width: inherit;
@@ -74,11 +74,13 @@
         min-height: 28px;
         padding: 4px;
         border-radius: 14px;
+        background-color: #fff;
+        box-shadow: 0px 4px 20px 0px #0000004d;
 
         .weight-marker__text {
             font-size: 16px;
             line-height: 1;
-            font-weight: 600 ;
+            font-weight: 600;
         }
     }
 }
@@ -88,7 +90,7 @@
     right: 30px;
     bottom: 30px;
 
-    transition: all .2s;
+    transition: all 0.2s;
 
     svg-icon {
         display: flex;
@@ -126,7 +128,7 @@
 
     color: white;
 
-    transition: all .3s;
+    transition: all 0.3s;
 
     z-index: 1;
 
@@ -167,7 +169,6 @@
             font-weight: 600;
         }
     }
-
 }
 
 .hide {
@@ -185,12 +186,10 @@
     text-align: center;
     padding: 0 !important;
 
-
     cursor: pointer;
 }
 
-
-// FEATRURES: 
+// FEATRURES:
 
 /*   SEARCH INPUT   */
 
@@ -215,7 +214,6 @@
     left: 30px;
 }
 
-
 @media screen and (max-width: 500px) {
     #search {
         left: 50%;
@@ -226,7 +224,6 @@
         padding: 0 20px;
     }
 }
-
 
 /* LOCATION NAME / AREA NAME */
 
@@ -245,12 +242,9 @@
         color: var(--white-color);
         text-shadow: 0px 0px 6px rgba(0, 0, 0, 0.35);
     }
-
-
 }
 
 @media screen and (max-width: 500px) {
-
     #map-area-name {
         bottom: 20px;
         left: 20px;
@@ -294,7 +288,7 @@
     gap: 10px;
 
     &__icon {
-        transition: all .2s;
+        transition: all 0.2s;
         position: relative;
         background: white;
         border-radius: 50%;
@@ -303,7 +297,6 @@
         min-height: 32px;
         min-width: 32px;
         box-shadow: 0px 3px 10px 0px #00000026;
-
 
         &::after,
         &::before {
@@ -328,7 +321,6 @@
     }
 
     &__icon:active {
-        scale: .8;
+        scale: 0.8;
     }
-
 }
