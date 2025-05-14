@@ -14,6 +14,7 @@ import { FormatNumberPipe } from "@/app/shared/pipes/format-number.pipe";
 import { LargePulseComponent } from "@/app/shared/components/pulses/large-pulse/large-pulse.component";
 import { CopyButtonComponent } from "@/app/shared/components/ui-kit/buttons/copy-button/copy-button.component";
 import { SocialsButtonComponent } from "@/app/shared/components/ui-kit/buttons/socials-button/socials-button.component";
+import { FlatButtonDirective } from "@/app/shared/components/ui-kit/buttons/flat-button/flat-button.directive";
 
 @Component({
     selector: "app-author",
@@ -31,6 +32,7 @@ import { SocialsButtonComponent } from "@/app/shared/components/ui-kit/buttons/s
         CopyButtonComponent,
         SocialsButtonComponent,
         FadeInDirective,
+        FlatButtonDirective,
         FormatNumberPipe,
     ],
 })
