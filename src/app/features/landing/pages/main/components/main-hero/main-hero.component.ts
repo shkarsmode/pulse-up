@@ -1,6 +1,7 @@
 import { Component, effect, inject } from "@angular/core";
 import { Router, RouterModule } from "@angular/router";
 import { toSignal } from "@angular/core/rxjs-interop";
+import mapboxgl from "mapbox-gl";
 import { AppRoutes } from "@/app/shared/enums/app-routes.enum";
 import { MediaQueryService } from "@/app/shared/services/core/media-query.service";
 import { PrimaryButtonComponent } from "@/app/shared/components/ui-kit/buttons/primary-button/primary-button.component";
@@ -25,6 +26,8 @@ export class MainHeroComponent {
     private map: mapboxgl.Map | null = null;
     private router: Router = inject(Router);
     private mediaService: MediaQueryService = inject(MediaQueryService);
+    private is1400Desctop = toSignal(this.mediaService.mediaQuery("max", "XXL"));
+    private is1200Desctop = toSignal(this.mediaService.mediaQuery("max", "XL"));
     private isTablet = toSignal(this.mediaService.mediaQuery("max", "MD"));
     private isXSMobile = toSignal(this.mediaService.mediaQuery("max", "XS"));
     private isXXSMobile = toSignal(this.mediaService.mediaQuery("max", "XXS"));
@@ -46,18 +49,37 @@ export class MainHeroComponent {
         9: 6,
         10: 6,
     };
+    public fog: mapboxgl.Fog = {
+        "color": "rgb(228, 240, 255)",
+        "high-color": "rgb(117, 172, 255)",
+        "space-color": "rgb(2, 11, 27)",
+        "star-intensity": [
+            "interpolate",
+            ["linear"],
+            ["zoom"],
+            11,
+            0.35,
+            12,
+            0
+        ],
+        "horizon-blend": 0.015
+    }
 
     constructor() {
         effect(() => {
             this.zoom = this.isXXXSMobile()
                 ? 0.45
                 : this.isXXSMobile()
-                ? 0.55
-                : this.isXSMobile()
-                ? 0.8
-                : this.isTablet()
-                ? 1
-                : 1.85;
+                    ? 0.55
+                    : this.isXSMobile()
+                        ? 0.8
+                        : this.isTablet()
+                            ? 1
+                            : this.is1200Desctop()
+                                ? 0.8
+                                : this.is1400Desctop()
+                                    ? 1.5
+                                    : 1.85;
 
             if (this.isTablet()) {
                 this.zoomResolutionMap = { ...this.zoomResolutionMap, 1: 0 };
