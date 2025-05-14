@@ -26,7 +26,7 @@ import { FormatNumberPipe } from "@/app/shared/pipes/format-number.pipe";
 import { InputComponent } from "@/app/shared/components/ui-kit/input/input.component";
 import { SecondaryButtonComponent } from "@/app/shared/components/ui-kit/buttons/secondary-button/secondary-button.component";
 import { H3LayerService } from "../../services/h3-layer.service";
-import { IH3Pulses } from "../../interfaces/h3Pulses.interface";
+import { IH3Pulses } from "../../interfaces/h3-pulses.interface";
 import { MapMarkersService } from "../../services/map-markers.service";
 import { HeatmapLayerService } from "../../services/heatmap-layer.service";
 import { MediaUtilsService } from "../../services/media-utils.service";

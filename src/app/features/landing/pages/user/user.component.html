@@ -23,7 +23,9 @@
                     <h1 class="user-header__name">{{ user.name }}</h1>
                     <div class="user-header__username">&#64;{{ user.username }}</div>
                 </div>
-                <div class="user-header__bio" *ngIf="user.bio">
+                <div
+                    class="user-header__bio"
+                    *ngIf="user.bio">
                     {{ user.bio }}
                 </div>
             </div>
@@ -40,8 +42,14 @@
         {{ topics.length | formatNumber }}
         {{ topics.length === 1 ? "topiuc" : "topics" }} started
     </div>
-    <div class="user-topics">
-        @for (topic of topics; track topic.id) {
+    <div
+        class="user-topics"
+        *ngIf="paginator$ | async as paginator"
+        infiniteScroll
+        [infiniteScrollDistance]="2"
+        [infiniteScrollThrottle]="50"
+        (scrolled)="loadMoreProducts(paginator)">
+        @for (topic of paginator.items; track topic.id) {
         <app-large-pulse [pulse]="topic" />
         }
     </div>

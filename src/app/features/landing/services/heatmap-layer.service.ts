@@ -2,7 +2,7 @@ import { inject, Injectable } from "@angular/core";
 import { PulseService } from "@/app/shared/services/api/pulse.service";
 import { MapUtils } from "./map-utils.service";
 import mapboxgl from "mapbox-gl";
-import { IHeatmapData } from "../interfaces/heatmapData.interface";
+import { IHeatmapData } from "../interfaces/heatmap-data.interface";
 import { MapBounds } from "../interfaces/map-bounds.interface";
 
 @Injectable({

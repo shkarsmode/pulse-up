@@ -29,7 +29,7 @@ import { API_URL, FIREBASE_CONFIG, MAPBOX_ACCESS_TOKEN, MAPBOX_STYLE, MAPBOX_WIT
         LoadingPageComponent,
         NgxMapboxGLModule.withConfig({
             accessToken: environment.mapboxToken,
-          }),
+        }),
     ],
     providers: [
         // provideHttpClient(
@@ -62,4 +62,4 @@ import { API_URL, FIREBASE_CONFIG, MAPBOX_ACCESS_TOKEN, MAPBOX_STYLE, MAPBOX_WIT
     schemas: [CUSTOM_ELEMENTS_SCHEMA],
     bootstrap: [AppComponent],
 })
-export class AppModule {}
+export class AppModule { }

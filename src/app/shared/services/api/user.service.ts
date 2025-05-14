@@ -1,7 +1,7 @@
 import { inject, Injectable } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
-import { expand, last, map, Observable, of, reduce, Subject, takeWhile } from "rxjs";
-import { IAuthor, IPulse } from "../../interfaces";
+import { expand, last, map, Observable, of, Subject, takeWhile } from "rxjs";
+import { IAuthor, IPulse, IPulsesPaginator } from "../../interfaces";
 import { API_URL } from "../../tokens/tokens";
 
 @Injectable({
@@ -17,6 +17,32 @@ export class UserService {
 
     public getProfileByUsername(username: string): Observable<IAuthor> {
         return this.http.get<IAuthor>(`${this.apiUrl}/users/find`, { params: { username } });
+    }
+
+    public getTopics({
+        userId,
+        page,
+        itemsPerPage,
+        includeStats,
+    }: {
+        userId: string;
+        page: number;
+        itemsPerPage: number;
+        includeStats?: boolean;
+    }) {
+        return this.http.get<IPulse[]>(`${this.apiUrl}/users/${userId}/topics`, {
+            params: {
+                skip: itemsPerPage * (page - 1),
+                take: itemsPerPage,
+                includeStats: !!includeStats,
+            },
+        }).pipe(
+            map((response) => ({
+                items: response,
+                page: page,
+                hasMorePages: response.length !== 0 && response.length === itemsPerPage, 
+            } as IPulsesPaginator))
+        );
     }
 
     public getAllTopics(userId: string): Observable<IPulse[]> {

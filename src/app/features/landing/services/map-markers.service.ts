@@ -2,7 +2,7 @@ import { inject, Injectable } from "@angular/core";
 import * as h3 from "h3-js";
 import { debounceTime, Subject } from "rxjs";
 import { IMapMarker, IMapMarkerAnimated } from "@/app/shared/interfaces/map-marker.interface";
-import { IH3Pulses } from "../interfaces/h3Pulses.interface";
+import { IH3Pulses } from "../interfaces/h3-pulses.interface";
 import { IPulse } from "@/app/shared/interfaces";
 import { PulseService } from "@/app/shared/services/api/pulse.service";
 
