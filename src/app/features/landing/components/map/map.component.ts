@@ -103,6 +103,7 @@ export class MapComponent implements OnInit {
         10: 6,
     };
     @Input() public mapStylesUrl: string = this.mapboxStylesUrl;
+    @Input() public spinning: boolean = false;
     @Output() public mapLoaded: EventEmitter<mapboxgl.Map> = new EventEmitter<mapboxgl.Map>();
     @Output() public markerClick: EventEmitter<IMapMarker> = new EventEmitter<IMapMarker>();
     @Output() public zoomEnd: EventEmitter<number> = new EventEmitter<number>();
@@ -427,6 +428,10 @@ export class MapComponent implements OnInit {
     private initGlobeSpinner() {
         if (!this.map || this.projection !== "globe") return;
         this.globeSpinner.init(this.map);
+
+        if (this.spinning) {
+            this.globeSpinner.start();
+        }
     }
 
     private updateCurrentLocationAreaName() {
@@ -521,8 +526,12 @@ export class MapComponent implements OnInit {
     }
 
     public onMarkerClick(marker: IMapMarker): void {
-        this.mapMarkersService.tooltipData = null;
-        this.markerClick.emit(marker);
+        if (this.isTouchDevice) {
+            this.onMarkerHover(marker)
+        } else {
+            this.mapMarkersService.tooltipData = null;
+            this.markerClick.emit(marker);
+        }
     }
 
     public onSpinClick(): void {
