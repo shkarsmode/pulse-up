@@ -20,7 +20,7 @@ import { SvgIconComponent } from "angular-svg-icon";
 import { PulseService } from "../../../../shared/services/api/pulse.service";
 import { MapLocationService } from "../../../../shared/services/core/map-location.service";
 import { MAPBOX_STYLE } from "../../../../shared/tokens/tokens";
-import { IMapMarker } from "@/app/shared/interfaces/map-marker.interface";
+import { IMapMarker, IMapMarkerVisibilityEventData } from "@/app/shared/interfaces/map-marker.interface";
 import { MapUtils } from "../../services/map-utils.service";
 import { FormatNumberPipe } from "@/app/shared/pipes/format-number.pipe";
 import { InputComponent } from "@/app/shared/components/ui-kit/input/input.component";
@@ -103,6 +103,7 @@ export class MapComponent implements OnInit {
         10: 6,
     };
     @Input() public mapStylesUrl: string = this.mapboxStylesUrl;
+    @Input() public spinning: boolean = false;
     @Output() public mapLoaded: EventEmitter<mapboxgl.Map> = new EventEmitter<mapboxgl.Map>();
     @Output() public markerClick: EventEmitter<IMapMarker> = new EventEmitter<IMapMarker>();
     @Output() public zoomEnd: EventEmitter<number> = new EventEmitter<number>();
@@ -215,6 +216,7 @@ export class MapComponent implements OnInit {
         this.globalMapDataUpdated = false;
         this.updateSpinButtonVisibility();
         this.zoomEnd.emit(this.map?.getZoom() || 0);
+        this.mapMarkersService.hideTooltip()
     };
 
     public handleMoveEnd = throttle(() => {
@@ -231,6 +233,10 @@ export class MapComponent implements OnInit {
         }
         this.updateSpinButtonVisibility();
     }, 1000);
+
+    public handleTouchStart() {
+        this.mapMarkersService.hideTooltip()
+    }
 
     private addInitialLayersAndSourcesToDisplayData(): void {
         if (!this.map) return;
@@ -427,6 +433,10 @@ export class MapComponent implements OnInit {
     private initGlobeSpinner() {
         if (!this.map || this.projection !== "globe") return;
         this.globeSpinner.init(this.map);
+
+        if (this.spinning) {
+            this.globeSpinner.start();
+        }
     }
 
     private updateCurrentLocationAreaName() {
@@ -512,17 +522,34 @@ export class MapComponent implements OnInit {
     }
 
     public onMarkerHover(marker: IMapMarker): void {
-        this.mapMarkersService.tooltipData = null;
-        this.mapMarkersService.markerHover$.next(marker);
+        this.mapMarkersService.handleMarkerHover(marker);
+    }
+
+    public onMarkerClick(marker: IMapMarker): void {
+        const theSameMarker = this.mapMarkersService.tooltipData?.markerId === marker.id;
+        
+        if (!this.isTouchDevice) {
+            this.mapMarkersService.hideTooltip();
+            this.markerClick.emit(marker);
+            return;
+        }
+
+        if (theSameMarker) {
+            this.mapMarkersService.hideTooltip();
+            this.markerClick.emit(marker);
+        } else {
+            this.onMarkerHover(marker)
+        }
+    }
+
+    public onMarkerVisibilityChange(marker: IMapMarkerVisibilityEventData): void {
+        if (this.mapMarkersService.tooltipData?.markerId === marker.id && !marker.isVisible) {
+            this.mapMarkersService.hideTooltip();
+        }
     }
 
     public onTooltipHide(): void {
         this.mapMarkersService.tooltipData = null;
-    }
-
-    public onMarkerClick(marker: IMapMarker): void {
-        this.mapMarkersService.tooltipData = null;
-        this.markerClick.emit(marker);
     }
 
     public onSpinClick(): void {

@@ -2,16 +2,16 @@ import mapboxgl from "mapbox-gl";
 
 export class GlobeSpinnerService {
     private map: mapboxgl.Map | null = null;
-    private spinEnabled = true;
+    private spinEnabled = false;
     private userInteracting = false;
+    public spinning = false;
+    public initialized = false;
     public readonly maxSpinZoom = 4;
     private readonly slowSpinZoom = 3;
     private readonly secondsPerRevolution = 240;
-    public spinning = false;
 
     public init(map: mapboxgl.Map) {
         this.map = map;
-        this.spinGlobe();
 
         const onUserInteractionStart = () => {
             this.userInteracting = true;
@@ -31,12 +31,12 @@ export class GlobeSpinnerService {
         map.on("dragend", onUserInteractionEnd);
         map.on("pitchend", onUserInteractionEnd);
         map.on("rotateend", onUserInteractionEnd);
-
         map.on("moveend", () => this.spinGlobe());
     }
 
     public start() {
         this.spinEnabled = true;
+        this.spinning = true;
         this.spinGlobe();
     }
 
@@ -46,11 +46,9 @@ export class GlobeSpinnerService {
     }
 
     public toggle() {
-        console.log("toggle");
-        
         this.spinEnabled = !this.spinEnabled;
         if (this.spinEnabled) {
-            this.spinGlobe();
+            this.start();
         } else {
             this.stop();
         }
@@ -76,7 +74,6 @@ export class GlobeSpinnerService {
         const center = this.map.getCenter();
         center.lng -= distancePerSecond;
 
-        this.spinning = true;
         this.map.easeTo({
             center,
             duration: 500,
