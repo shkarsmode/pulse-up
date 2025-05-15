@@ -2,13 +2,14 @@ import { Component, EventEmitter, Input, OnInit, Output } from "@angular/core";
 import { asyncScheduler, Subject, ThrottleConfig, throttleTime } from "rxjs";
 import { SvgIconComponent } from "angular-svg-icon";
 import { InputComponent } from "@/app/shared/components/ui-kit/input/input.component";
+import { AddTopicPopupDirective } from "@/app/shared/components/popups/add-topic-popup/add-topic-popup.directive";
 
 @Component({
     selector: "app-input-search",
     templateUrl: "./input-search.component.html",
     styleUrl: "./input-search.component.scss",
     standalone: true,
-    imports: [InputComponent, SvgIconComponent],
+    imports: [InputComponent, SvgIconComponent, AddTopicPopupDirective],
 })
 export class InputSearchComponent implements OnInit {
     @Input()
