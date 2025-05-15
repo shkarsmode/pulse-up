@@ -48,10 +48,17 @@
         infiniteScroll
         [infiniteScrollDistance]="2"
         [infiniteScrollThrottle]="50"
-        (scrolled)="loadMoreProducts(paginator)">
-        @for (topic of paginator.items; track topic.id) {
-        <app-large-pulse [pulse]="topic" />
-        }
+        (scrolled)="loadMore(paginator)">
+        <ul class="user-topics__list">
+            @for (topic of paginator.items; track topic.id) {
+            <li>
+                <app-large-pulse [pulse]="topic" />
+            </li>
+            }
+        </ul>
+        <p class="user-topics__loading" *ngIf="loading$ | async">
+            <svg-icon src="assets/svg/loading-indicator.svg" />
+        </p>
     </div>
 </app-container>
 }

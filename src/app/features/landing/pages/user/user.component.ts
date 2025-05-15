@@ -56,14 +56,14 @@ export class UserComponent {
 
     constructor() {
         this.pulseId = this.router.getCurrentNavigation()?.extras?.state?.["pulseId"] || "";
-        this.paginator$ = this.loadProducts$();
+        this.paginator$ = this.loadTopics$();
     }
 
     ngOnInit(): void {
         this.initUserIdListener();
     }
 
-    private loadProducts$(): Observable<IPulsesPaginator> {
+    private loadTopics$(): Observable<IPulsesPaginator> {
         return this.page$.pipe(
             tap(() => this.loading$.next(true)),
             switchMap((page) => this.userService.getTopics({
@@ -103,7 +103,7 @@ export class UserComponent {
         return accumulator;
     }
 
-    public loadMoreProducts(paginator: IPulsesPaginator) {
+    public loadMore(paginator: IPulsesPaginator) {
         if (!paginator.hasMorePages) {
             return;
         }
@@ -111,25 +111,25 @@ export class UserComponent {
     }
 
     private initUserIdListener(): void {
-        // this.route.paramMap.subscribe(this.handlePulseUrlIdListener.bind(this));
+        this.route.paramMap.subscribe(this.handlePulseUrlIdListener.bind(this));
     }
 
-    // private handlePulseUrlIdListener(data: ParamMap): void {
-    //     const username = data.get("username")!;
-    //     this.user = null;
-    //     this.topics = [];
-    //     this.isLoading = true;
-    //     this.userService.getProfileByUsername(username).subscribe((user) => {
-    //         this.userService.getAllTopics(user.id).subscribe((topics) => {
-    //             this.topics = topics.map((topic) => ({
-    //                 ...topic,
-    //                 author: { ...topic.author, name: this.user?.name || "" },
-    //             }));
-    //             this.user = user;
-    //             this.isLoading = false;
-    //         })
-    //     });
-    // }
+    private handlePulseUrlIdListener(data: ParamMap): void {
+        const username = data.get("username")!;
+        this.user = null;
+        this.topics = [];
+        this.isLoading = true;
+        this.userService.getProfileByUsername(username).subscribe((user) => {
+            this.userService.getAllTopics(user.id).subscribe((topics) => {
+                this.topics = topics.map((topic) => ({
+                    ...topic,
+                    author: { ...topic.author, name: this.user?.name || "" },
+                }));
+                this.user = user;
+                this.isLoading = false;
+            })
+        });
+    }
 
     get shareProfileUrl(): string {
         return this.settingsService.shareUserBaseUrl + this.user?.username;

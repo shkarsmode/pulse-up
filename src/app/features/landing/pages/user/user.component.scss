@@ -34,7 +34,7 @@
 }
 
 .user-header__bio {
-    width: 100%; 
+    width: 100%;
     grid-column: 1 / 3;
     word-break: break-word;
     @include text-14px;
@@ -63,14 +63,38 @@
 }
 
 .user-topics {
+    margin-top: 20px;
+    margin-bottom: 40px;
+}
+
+.user-topics__list {
     display: flex;
     flex-direction: column;
     row-gap: 16px;
-    margin-top: 20px;
-    margin-bottom: 12px;
+}
+
+.user-topics__loading {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding-top: 48px;
+
+    svg-icon {
+        animation: rotate 2s linear infinite;
+        transform-origin: 50%;
+    }
 }
 
 .profile__socials {
     display: flex;
     column-gap: 12px;
+}
+
+@keyframes rotate {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
 }
