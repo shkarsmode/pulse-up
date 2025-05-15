@@ -1,10 +1,12 @@
 <mgl-marker [lngLat]="[marker.lng, marker.lat]">
-    @if (isTooltipVisible) {
+    @if (showTooltipOnHover) {
     <button
         placement="bottom"
         class="marker-button"
         ngxTooltip
+        [ngxValue]="isTooltipVisible"
         [template]="tooltip"
+        bindTo=".mapboxgl-map"
         [ngStyle]="{ opacity }"
         (hideEnd)="onTooltipHideEnd()"
         (mouseenter)="onMarkerHover()"
