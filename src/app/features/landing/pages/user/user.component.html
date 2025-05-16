@@ -47,7 +47,7 @@
         *ngIf="paginator$ | async as paginator"
         infiniteScroll
         [infiniteScrollDistance]="2"
-        [infiniteScrollThrottle]="50"
+        [infiniteScrollThrottle]="150"
         (scrolled)="loadMore(paginator)">
         <ul class="user-topics__list">
             @for (topic of paginator.items; track topic.id) {

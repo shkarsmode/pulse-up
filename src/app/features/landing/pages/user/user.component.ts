@@ -2,7 +2,7 @@ import { Component, inject } from "@angular/core";
 import { CommonModule, Location } from "@angular/common";
 import { ActivatedRoute, ParamMap, Router } from "@angular/router";
 import { BehaviorSubject, map, Observable, scan, switchMap, tap } from "rxjs";
-import { InfiniteScrollDirective } from 'ngx-infinite-scroll';
+import { InfiniteScrollDirective } from "ngx-infinite-scroll";
 import { UserService } from "@/app/shared/services/api/user.service";
 import { IAuthor, IPulse, IPulsesPaginator } from "@/app/shared/interfaces";
 import { SettingsService } from "@/app/shared/services/api/settings.service";
@@ -17,6 +17,8 @@ import { LargePulseComponent } from "@/app/shared/components/pulses/large-pulse/
 import { CopyButtonComponent } from "@/app/shared/components/ui-kit/buttons/copy-button/copy-button.component";
 import { SocialsButtonComponent } from "@/app/shared/components/ui-kit/buttons/socials-button/socials-button.component";
 import { AppConstants } from "@/app/shared/constants/app.constants";
+import { InfiniteLoaderService } from "../../services/infinite-loader.service";
+import { PaginatorResponse } from "../../interfaces/pagination-response.interface";
 
 @Component({
     selector: "app-author",
@@ -37,77 +39,31 @@ import { AppConstants } from "@/app/shared/constants/app.constants";
         FadeInDirective,
         FormatNumberPipe,
     ],
+    providers: [InfiniteLoaderService],
 })
 export class UserComponent {
-    public user: IAuthor | null = null;
-    public topics: IPulse[] = [];
-    public isLoading: boolean = true;
-    public pulseId: string = "";
-
-    public paginator$: Observable<IPulsesPaginator>;
-    public loading$ = new BehaviorSubject(true);
-    private page$ = new BehaviorSubject(1);
-
     private readonly router: Router = inject(Router);
     private readonly location: Location = inject(Location);
     private readonly route: ActivatedRoute = inject(ActivatedRoute);
     private readonly userService: UserService = inject(UserService);
     private readonly settingsService: SettingsService = inject(SettingsService);
+    private readonly infiniteLoaderService: InfiniteLoaderService<IPulse> =
+        inject(InfiniteLoaderService);
+
+    public user: IAuthor | null = null;
+    public topics: IPulse[] = [];
+    public isLoading: boolean = true;
+    public pulseId: string = "";
+    public paginator$: Observable<PaginatorResponse<IPulse>>;
+    public loading$ = new BehaviorSubject(true);
+    public loadMore = this.infiniteLoaderService.loadMore.bind(this.infiniteLoaderService);
 
     constructor() {
         this.pulseId = this.router.getCurrentNavigation()?.extras?.state?.["pulseId"] || "";
-        this.paginator$ = this.loadTopics$();
     }
 
     ngOnInit(): void {
         this.initUserIdListener();
-    }
-
-    private loadTopics$(): Observable<IPulsesPaginator> {
-        return this.page$.pipe(
-            tap(() => this.loading$.next(true)),
-            switchMap((page) => this.userService.getTopics({
-                userId: this.user?.id || "",
-                page,
-                itemsPerPage: AppConstants.PULSES_PER_PAGE,
-                includeStats: true,
-            }).pipe(
-                map((response) => ({
-                    ...response,
-                    items: response.items.map((topic) => ({
-                        ...topic,
-                        author: { ...topic.author, name: this.user?.name || "" },
-                        stats: {
-                            ...topic.stats,
-                            totalVotes: topic.stats?.totalVotes || 0,
-                            totalUniqueUsers: topic.stats?.totalUniqueUsers || 0,
-                            lastDayVotes: topic.stats?.lastDayVotes || 0,
-                        },
-                    }))
-                }))
-            )),
-            scan(this.updatePaginator, { items: [], page: 0, hasMorePages: true } as IPulsesPaginator),
-            tap(() => this.loading$.next(false)),
-        );
-    }
-
-    private updatePaginator(accumulator: IPulsesPaginator, value: IPulsesPaginator): IPulsesPaginator {
-        if (value.page === 1) {
-            return value;
-        }
-
-        accumulator.items.push(...value.items);
-        accumulator.page = value.page;
-        accumulator.hasMorePages = value.hasMorePages;
-
-        return accumulator;
-    }
-
-    public loadMore(paginator: IPulsesPaginator) {
-        if (!paginator.hasMorePages) {
-            return;
-        }
-        this.page$.next(paginator.page + 1);
     }
 
     private initUserIdListener(): void {
@@ -125,10 +81,38 @@ export class UserComponent {
                     ...topic,
                     author: { ...topic.author, name: this.user?.name || "" },
                 }));
+                this.loadTopics(user.id);
                 this.user = user;
                 this.isLoading = false;
-            })
+            });
         });
+    }
+
+    private loadTopics(userId: string) {
+        this.infiniteLoaderService.init({
+            load: (page) =>
+                this.userService.getTopics({
+                    userId,
+                    page,
+                    itemsPerPage: AppConstants.PULSES_PER_PAGE,
+                    includeStats: true,
+                }),
+            transform: (response) => ({
+                ...response,
+                items: response.items.map((topic) => ({
+                    ...topic,
+                    author: { ...topic.author, name: this.user?.name || "" },
+                    stats: {
+                        ...topic.stats,
+                        totalVotes: topic.stats?.totalVotes || 0,
+                        totalUniqueUsers: topic.stats?.totalUniqueUsers || 0,
+                        lastDayVotes: topic.stats?.lastDayVotes || 0,
+                    },
+                })),
+            }),
+        });
+        this.paginator$ = this.infiniteLoaderService.paginator$;
+        this.loading$ = this.infiniteLoaderService.loading$;
     }
 
     get shareProfileUrl(): string {
