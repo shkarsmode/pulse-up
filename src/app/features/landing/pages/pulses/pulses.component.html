@@ -1,17 +1,27 @@
 <div class="wrap">
-
     <h1>Trending Topics</h1>
 
     <div class="wrap__content">
         <div>
-            <app-input-search 
+            <app-input-search
                 [isLoading]="isLoading"
                 (handleValueChange)="onSearchValueChange($event)" />
-                
-            <div class="wrap__large-pulses">
-                @for (pulse of pulses; track pulse.id) {
-                    <app-large-pulse [pulse]="pulse" />
+
+            <div
+                class="wrap__large-pulses"
+                *ngIf="paginator$ | async as paginator"
+                infiniteScroll
+                [infiniteScrollDistance]="2"
+                [infiniteScrollThrottle]="150"
+                (scrolled)="loadMore(paginator)">
+                @for (topic of paginator.items; track topic.id) {
+                <app-large-pulse [pulse]="topic" />
                 }
+                <p
+                    class="wrap__loading"
+                    *ngIf="loading$ | async">
+                    <app-loading-indicator/>
+                </p>
             </div>
         </div>
 

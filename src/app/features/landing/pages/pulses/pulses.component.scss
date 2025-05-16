@@ -24,6 +24,13 @@
         gap: 20px;
     }
 
+    &__loading {
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
     &__content {
         display: flex;
         justify-content: space-between

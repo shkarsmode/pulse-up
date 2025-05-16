@@ -27,23 +27,12 @@ export class PulseService {
             state?: string;
             city?: string;
             topicState?: string;
+            skip?: number;
+            take?: number;
         } = {},
     ): Observable<IPulse[]> {
-        let paramUrl = "";
-
         params["topicState"] = "All";
-        const keys = (Object.keys(params) as Array<keyof typeof params>).filter(
-            (key) => !!params[key],
-        );
-
-        keys.forEach((param, index) => {
-            if (params[param]) {
-                const separator = index === 0 ? "?" : "&";
-                paramUrl += `${separator}${param}=${params[param]}`;
-            }
-        });
-
-        return this.http.get<IPulse[]>(`${this.apiUrl}/topics` + paramUrl).pipe(
+        return this.http.get<IPulse[]>(`${this.apiUrl}/topics`, { params }).pipe(
             tap((pulses) =>
                 pulses.forEach((pulse) => {
                     this.actualTopicsImageKeyMap[pulse.id] = pulse.icon;
@@ -142,7 +131,7 @@ export class PulseService {
         return this.http
             .get<Array<{ id: string; votes: number; children: any }>>(
                 this.apiUrl +
-                    `/map?NE.latitude=${NElatitude}&NE.longitude=${NElongitude}&SW.latitude=${SWlatitude}&SW.longitude=${SWlongitude}&resolution=${resolution}`,
+                `/map?NE.latitude=${NElatitude}&NE.longitude=${NElongitude}&SW.latitude=${SWlatitude}&SW.longitude=${SWlongitude}&resolution=${resolution}`,
             )
             .pipe(
                 map((response) => {

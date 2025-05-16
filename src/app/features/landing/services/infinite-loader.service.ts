@@ -1,21 +1,21 @@
 import { Injectable } from "@angular/core";
 import { BehaviorSubject, Observable, switchMap, scan, tap, map } from "rxjs";
-import { PaginatorResponse } from "../interfaces/pagination-response.interface";
+import { IPaginator } from "@/app/shared/interfaces";
 
 @Injectable()
 export class InfiniteLoaderService<T> {
-    public paginator$: Observable<PaginatorResponse<T>>;
+    public paginator$: Observable<IPaginator<T>>;
     public loading$ = new BehaviorSubject(true);
     private page$ = new BehaviorSubject(1);
-    private loadFn: (page: number) => Observable<PaginatorResponse<T>>;
-    private transformFn: (response: PaginatorResponse<T>) => PaginatorResponse<T> = (res) => res;
+    private loadFn: (page: number) => Observable<IPaginator<T>>;
+    private transformFn: (response: IPaginator<T>) => IPaginator<T> = (res) => res;
 
     public init({
         load,
         transform,
     }: {
-        load: (page: number) => Observable<PaginatorResponse<T>>;
-        transform?: (response: PaginatorResponse<T>) => PaginatorResponse<T>;
+        load: (page: number) => Observable<IPaginator<T>>;
+        transform?: (response: IPaginator<T>) => IPaginator<T>;
     }) {
         this.loadFn = load;
         this.transformFn = transform ?? ((res) => res);
@@ -28,12 +28,12 @@ export class InfiniteLoaderService<T> {
                 items: [],
                 page: 0,
                 hasMorePages: true,
-            } as PaginatorResponse<T>),
+            } as IPaginator<T>),
             tap(() => this.loading$.next(false)),
         );
     }
 
-    public loadMore(paginator: PaginatorResponse<T>) {
+    public loadMore(paginator: IPaginator<T>) {
         if (!paginator.hasMorePages) {
             return;
         }
@@ -41,9 +41,9 @@ export class InfiniteLoaderService<T> {
     }
 
     private updatePaginator(
-        accumulator: PaginatorResponse<T>,
-        value: PaginatorResponse<T>,
-    ): PaginatorResponse<T> {
+        accumulator: IPaginator<T>,
+        value: IPaginator<T>,
+    ): IPaginator<T> {
         if (value.page === 1) {
             return value;
         }
