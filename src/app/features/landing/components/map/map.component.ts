@@ -106,6 +106,8 @@ export class MapComponent implements OnInit {
     };
     @Input() public mapStylesUrl: string = this.mapboxStylesUrl;
     @Input() public spinning: boolean = false;
+    @Input() public showEmptyPolygons: boolean = false;
+
     @Output() public mapLoaded: EventEmitter<mapboxgl.Map> = new EventEmitter<mapboxgl.Map>();
     @Output() public markerClick: EventEmitter<IMapMarker> = new EventEmitter<IMapMarker>();
     @Output() public zoomEnd: EventEmitter<number> = new EventEmitter<number>();
@@ -157,6 +159,23 @@ export class MapComponent implements OnInit {
     get isSpinning() {
         return this.globeSpinner.spinning;
     }
+    
+    public onMapLoad({ target: map }: mapboxgl.MapboxEvent<undefined> & mapboxgl.EventData) {
+        this.map = map;
+        this.mapLoaded.next(this.map);
+
+        this.map.dragRotate?.disable();
+        this.map.touchZoomRotate.disableRotation();
+
+        this.addInitialLayersAndSourcesToDisplayData();
+        this.updateH3Pulses();
+        this.updateHeatmap();
+        this.triggerRepaintOnResize();
+        this.syncFog();
+        this.initGlobeSpinner();
+
+        this.globalMapDataUpdated = true;
+    }
 
     public onChangeHeatmapSettings(): void {
         if (!this.map) return;
@@ -197,23 +216,6 @@ export class MapComponent implements OnInit {
             .subscribe(this.addMarkersAndUpdateH3Polygons.bind(this));
     }
 
-    public onMapLoad({ target: map }: mapboxgl.MapboxEvent<undefined> & mapboxgl.EventData) {
-        this.map = map;
-        this.mapLoaded.next(this.map);
-
-        this.map.dragRotate?.disable();
-        this.map.touchZoomRotate.disableRotation();
-
-        this.addInitialLayersAndSourcesToDisplayData();
-        this.updateH3Pulses();
-        this.updateHeatmap();
-        this.triggerRepaintOnResize();
-        this.syncFog();
-        this.initGlobeSpinner();
-
-        this.globalMapDataUpdated = true;
-    }
-
     public handleZoomEnd = () => {
         this.globalMapDataUpdated = false;
         this.updateSpinButtonVisibility();
@@ -221,7 +223,7 @@ export class MapComponent implements OnInit {
         this.mapMarkersService.hideTooltip()
     };
 
-    public handleMoveEnd = throttle(() => {
+    public handleMove = throttle(() => {
         if (this.shouldFetchGlobalMapData()) {
             if (!this.globalMapDataUpdated) {
                 this.updateH3Pulses();
@@ -234,7 +236,7 @@ export class MapComponent implements OnInit {
             this.globalMapDataUpdated = false;
         }
         this.updateSpinButtonVisibility();
-    }, 1000);
+    }, 500);
 
     public handleMapClick = (event: mapboxgl.MapMouseEvent & mapboxgl.EventData) => {
         this.mapEventListenerService.onMapClick(event);
@@ -299,12 +301,26 @@ export class MapComponent implements OnInit {
     private addMarkersAndUpdateH3Polygons(h3PulsesData: IH3Pulses): void {
         if (!this.map) return;
         this.h3LayerService.updateH3PolygonSource({ map: this.map, data: h3PulsesData });
-
         this.mapMarkersService.updateMarkers(h3PulsesData);
-        this.h3LayerService.addH3PolygonsToMap({
-            map: this.map,
-            h3Indexes: Object.keys(h3PulsesData),
-        });
+        this.addPolygonsToMap(Object.keys(h3PulsesData));
+    }
+
+    private getHexagonsForBounds(
+        northWest: mapboxgl.LngLat,
+        southEast: mapboxgl.LngLat,
+        resolution: number
+    ): string[] {
+        const hexagons = [];
+        const step = this.getStepBasedOnZoom();
+
+        for (let lat = southEast.lat; lat < northWest.lat; lat += step) {
+            for (let lng = northWest.lng; lng < southEast.lng; lng += step) {
+                const hex = h3.geoToH3(lat, lng, resolution);
+                hexagons.push(hex);
+            }
+        }
+
+        return [...new Set(hexagons)];
     }
 
     private updateH3Pulses(): void {
@@ -420,7 +436,33 @@ export class MapComponent implements OnInit {
                 if (this.pulseId) {
                     this.heatmapLayerService.addWeightsToMap(updatedHeatmapData);
                 }
+
+                this.addPolygonsToMap(Object.keys(heatmap));
             });
+    }
+
+    private addPolygonsToMap(h3Indexes: string[]): void {
+        if (!this.map) return;
+
+        let polygonsIndexes = h3Indexes;
+
+        if (this.showEmptyPolygons) {
+            const bounds = this.map.getBounds();
+            const northWest = bounds.getNorthWest();
+            const southEast = bounds.getSouthEast();
+            const resolution = this.getResolutionBasedOnMapZoom();
+    
+            polygonsIndexes = this.getHexagonsForBounds(
+                northWest,
+                southEast,
+                resolution
+            );
+        }
+
+        this.h3LayerService.addH3PolygonsToMap({
+            map: this.map,
+            h3Indexes: polygonsIndexes,
+        })
     }
 
     private triggerRepaintOnResize(): void {

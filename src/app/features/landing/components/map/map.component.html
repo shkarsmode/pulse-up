@@ -15,7 +15,8 @@
     [projection]="projection"
     (mapLoad)="onMapLoad($event)"
     (zoomEnd)="handleZoomEnd()"
-    (moveEnd)="handleMoveEnd()"
+    (moveEnd)="handleMove()"
+    (move)="handleMove()"
     (click)="handleMapClick($event)"
     (touchStart)="handleTouchStart()"
     (styleData)="onStyleData($event)">
