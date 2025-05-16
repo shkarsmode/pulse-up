@@ -8,6 +8,8 @@ import { PrimaryButtonComponent } from "@/app/shared/components/ui-kit/buttons/p
 import { SecondaryButtonComponent } from "@/app/shared/components/ui-kit/buttons/secondary-button/secondary-button.component";
 import { MapComponent } from "@/app/features/landing/components/map/map.component";
 import { OpenGetAppPopupDirective } from "@/app/shared/components/popups/get-app-popup/open-get-app-popup.directive";
+import { MapEventListenerService } from "@/app/features/landing/services/map-event-listener.service";
+import { IMapClickEvent } from "@/app/features/landing/interfaces/map-click-event.interface";
 
 @Component({
     selector: "app-main-hero",
@@ -23,9 +25,10 @@ import { OpenGetAppPopupDirective } from "@/app/shared/components/popups/get-app
     ],
 })
 export class MainHeroComponent {
-    private map: mapboxgl.Map | null = null;
     private router: Router = inject(Router);
     private mediaService: MediaQueryService = inject(MediaQueryService);
+    private readonly mapEventListenerService: MapEventListenerService = inject(MapEventListenerService);
+
     private is1400Desctop = toSignal(this.mediaService.mediaQuery("max", "XXL"));
     private is1200Desctop = toSignal(this.mediaService.mediaQuery("max", "XL"));
     private isTablet = toSignal(this.mediaService.mediaQuery("max", "MD"));
@@ -62,16 +65,16 @@ export class MainHeroComponent {
             this.zoom = this.isXXXSMobile()
                 ? 0.45
                 : this.isXXSMobile()
-                ? 0.55
-                : this.isXSMobile()
-                ? 0.8
-                : this.isTablet()
-                ? 1
-                : this.is1200Desctop()
-                ? 0.8
-                : this.is1400Desctop()
-                ? 1.5
-                : 1.85;
+                    ? 0.55
+                    : this.isXSMobile()
+                        ? 0.8
+                        : this.isTablet()
+                            ? 1
+                            : this.is1200Desctop()
+                                ? 0.8
+                                : this.is1400Desctop()
+                                    ? 1.5
+                                    : 1.85;
 
             if (this.isTablet()) {
                 this.zoomResolutionMap = { ...this.zoomResolutionMap, 1: 0 };
@@ -81,15 +84,8 @@ export class MainHeroComponent {
         });
     }
 
-    public onMapLoaded(map: mapboxgl.Map) {
-        this.map = map;
-
-        this.map.on("click", () => {
-            this.navigateToMapPage();
-        });
-    }
-
-    public onMarkerClick() {
+    public onMapClick({coordinates}: IMapClickEvent) {
+        this.mapEventListenerService.onMapClick({ coordinates });
         this.navigateToMapPage();
     }
 

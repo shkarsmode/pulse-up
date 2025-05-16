@@ -38,7 +38,6 @@ export class H3LayerService {
     public addH3PolygonsToMap({map, h3Indexes}: {map: mapboxgl.Map, h3Indexes: string[]}): void {
         const hexagons = h3Indexes.filter((h3Index) => !MapUtils.isHexagonCrossesAntimeridian(h3Index));
         const hexagonFeatures = hexagons.map((hex) => this.h3ToPolygonFeature(hex));
-        
         MapUtils.setSourceData({
             map,
             sourceId: this.sourceId,
