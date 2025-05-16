@@ -15,18 +15,11 @@ import { MercatorMapComponent } from "./components/mercator-map/mercator-map.com
     imports: [CommonModule, SwitchComponent, GlobeMapComponent, MercatorMapComponent],
 })
 export class MapPageComponent {
-    private router: Router = inject(Router);
+    private readonly router: Router = inject(Router);
 
     public projection: Projection["name"] = "globe";
     public switchClasses = {};
     public isProjectionToogleVisible = true;
-
-    ngOnInit() {
-        this.switchClasses = {
-            "map-page__switch": true,
-            "map-page__switch--contrast": this.projection === "globe",
-        };
-    }
 
     get isGlobe() {
         return this.projection === "globe";
@@ -34,6 +27,13 @@ export class MapPageComponent {
 
     get switchColor() {
         return this.isGlobe ? "#FFFFFF" : "#000000";
+    }
+
+    ngOnInit() {
+        this.switchClasses = {
+            "map-page__switch": true,
+            "map-page__switch--contrast": this.projection === "globe",
+        };
     }
 
     public onMarkerClick(marker: IMapMarker) {

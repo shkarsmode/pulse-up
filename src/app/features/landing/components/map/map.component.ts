@@ -34,6 +34,7 @@ import { MapMarkerComponent } from "./components/map-marker/map-marker/map-marke
 import { GlobeSpinnerService } from "../../services/globe-spinner.service";
 import { throttle } from "@/app/shared/helpers/throttle";
 import { MapBounds } from "../../interfaces/map-bounds.interface";
+import { MapEventListenerService } from "../../services/map-event-listener.service";
 
 @Component({
     selector: "app-map",
@@ -60,6 +61,7 @@ export class MapComponent implements OnInit {
     private readonly heatmapLayerService: HeatmapLayerService = inject(HeatmapLayerService);
     private readonly mapLocationService: MapLocationService = inject(MapLocationService);
     private readonly globeSpinner = new GlobeSpinnerService();
+    private readonly mapEventListenerService: MapEventListenerService = inject(MapEventListenerService);
 
     @Input() public pulseId: number;
     @Input() public isPreview: boolean = false;
@@ -233,6 +235,10 @@ export class MapComponent implements OnInit {
         }
         this.updateSpinButtonVisibility();
     }, 1000);
+
+    public handleMapClick = (event: mapboxgl.MapMouseEvent & mapboxgl.EventData) => {
+        this.mapEventListenerService.onMapClick(event);
+    };
 
     public handleTouchStart() {
         this.mapMarkersService.hideTooltip()
