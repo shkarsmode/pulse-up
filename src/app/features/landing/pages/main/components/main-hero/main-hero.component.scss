@@ -1,6 +1,9 @@
 @use "../../../../../../../styles/mixins" as *;
 
 .hero {
+    --bottom-offset: 68px;
+    --content-height: 220px;
+
     position: relative;
     width: 100%;
     min-height: 100svh;
@@ -8,125 +11,77 @@
     align-items: center;
     justify-content: center;
     background-color: #231669;
-    background-image: url("/assets/img/hero-bg.png");
-    background-image: -webkit-image-set(
-        "/assets/img/hero-bg.webp" type("image/webp"),
-        "/assets/img/hero-bg.avif" type("image/avif"),
-        "/assets/img/hero-bg.png" type("image/png")
-    );
-    background-image: image-set(
-        "/assets/img/hero-bg.webp" type("image/webp"),
-        "/assets/img/hero-bg.avif" type("image/avif"),
-        "/assets/img/hero-bg.png" type("image/png")
-    );
-    background-repeat: no-repeat;
-    background-size: cover;
-    background-position: center center;
     overflow: hidden;
 
     @include media-lg {
         padding-top: var(--header-height);
     }
-    @include media-sm {
-        background-image: url("/assets/img/hero-bg-sm.png");
-        background-image: -webkit-image-set(
-            "/assets/img/hero-bg-sm.webp" type("image/webp"),
-            "/assets/img/hero-bg-sm.avif" type("image/avif"),
-            "/assets/img/hero-bg-sm.png" type("image/png")
-        );
-        background-image: image-set(
-            "/assets/img/hero-bg-sm.webp" type("image/webp"),
-            "/assets/img/hero-bg-sm.avif" type("image/avif"),
-            "/assets/img/hero-bg-sm.png" type("image/png")
-        );
+    @media screen and (max-height: 480px) and (orientation: landscape) {
+        min-height: 700px;
     }
 }
-.hero__container {
-    width: 100%;
-    max-width: 1210px;
-    margin: 0 auto;
-    padding: var(--header-height) 10px 0;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    flex-direction: row-reverse;
 
-    @include media-2xl {
-        min-height: calc(100svh - var(--header-height));
-        justify-content: center;
-        flex-direction: column-reverse;
-        row-gap: 24px;
-        padding-left: 0;
-        padding-right: 0;
-        padding-top: 0;
-        padding-bottom: 60px;
-    }
-    @include media-2xs {
-        row-gap: 16px;
-        padding-bottom: 24px;
-    }
-    @include media-3xs {
-        row-gap: 8px;
-        padding-bottom: 8px;
-    }
-}
 .hero__content {
+    position: absolute;
+    top: 50%;
+    right: calc((100% - 1170px) / 2);
+    transform: translateY(-50%);
     flex: 1;
     width: 100%;
     max-width: 450px;
     color: var(--white-color);
     text-align: center;
-    @include media-lg {
-        flex: 0;
+    z-index: 1;
+
+    @media screen and (max-width: 1210px) {
+        right: 20px;
+    }
+
+    @include media-xl {
+        right: 50%;
+        top: auto;
+        bottom: 68px;
+        transform: translate(50%, 0);
         padding: 0 20px;
-        max-width: 500px;
+    }
+
+    @media screen and (max-height: 800px) and (orientation: portrait) {
+        bottom: 40px;
+        --bottom-offset: 40px;
+    }
+    @media screen and (max-height: 600px) and (orientation: portrait) {
+        bottom: 20px;
+        --bottom-offset: 20px;
     }
 }
 .hero__map {
+    --space: 0;
+    --top-offset: 80px;
+    position: absolute;
+    left: -550px;
     display: flex;
     flex-direction: column;
     justify-content: center;
-    flex: 0 0 720px;
-    height: 720px;
-    max-width: 720px;
-
-    // @include media-4xl {
-    //     flex: 1 0 540px;
-    //     height: 540px;
-    //     max-width: 540px;
-    // }
-    @include media-2xl {
-        flex: 1;
+    height: 100dvh;
+    min-height: 600px;
+    width: calc(100% + 550px);
+    @include media-xl {
+        --space: calc(
+            100dvh - var(--header-height) - var(--bottom-offset) - var(--content-height) -
+                var(--top-offset)
+        );
+        left: 0;
+        top: calc((var(--space) / 2) * -1);
         width: 100%;
-        // max-width: 540px;
+        height: calc(100dvh + (var(--space) / 2));
     }
-    @include media-md {
-        flex: 1 0 400px;
-        height: 400px;
+    @include media-sm {
+        --top-offset: 40px;
     }
-    @include media-2xs {
-        flex: 1 0 300px;
-        height: 320px;
-    }
-    @include media-3xs {
-        height: 300px;
-    }
-
-    &::ng-deep .map-container {
-        height: 720px !important;
-
-        // @include media-4xl {
-        //     height: 540px !important;
-        // }
-        @include media-md {
-            height: 400px !important;
-        }
-        @include media-2xs {
-            height: 320px !important;
-        }
-        @include media-3xs {
-            height: 300px !important;
-        }
+    @media screen and (max-height: 480px) and (orientation: landscape) {
+        top: 0;
+        min-height: 700px;
+        --top-offset: 0px;
     }
 }
 .hero__title {
@@ -161,7 +116,7 @@
         @include text-14px;
         margin-bottom: 16px;
     }
-    @media screen and (max-height: 500px) {
+    @media screen and (max-height: 680px) {
         display: none;
     }
 }
@@ -180,7 +135,7 @@
 .hero__button {
     width: 100%;
     max-width: 180px;
-    
+
     @include media-xs {
         max-width: 100%;
     }

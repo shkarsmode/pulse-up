@@ -1,5 +1,4 @@
 <app-map
-    [mapStylesUrl]="mapStylesUrl"
     [isHideDebugger]="true"
     [isSearch]="false"
     [isLocationName]="false"
@@ -11,5 +10,6 @@
     [maxBounds]="undefined"
     [isMapStatic]="false"
     [isSpinEnabled]="true"
+    [fog]="fog"
     (markerClick)="onMarkerClick($event)" 
     (zoomEnd)="onZoomEnd($event)"/>
