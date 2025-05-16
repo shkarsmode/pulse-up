@@ -1,7 +1,7 @@
 import { inject, Injectable } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
 import { expand, last, map, Observable, of, Subject, takeWhile } from "rxjs";
-import { IAuthor, IPulse, IPulsesPaginator } from "../../interfaces";
+import { IAuthor, IPulse, IPaginator } from "../../interfaces";
 import { API_URL } from "../../tokens/tokens";
 
 @Injectable({
@@ -41,7 +41,7 @@ export class UserService {
                 items: response,
                 page: page,
                 hasMorePages: response.length !== 0 && response.length === itemsPerPage, 
-            } as IPulsesPaginator))
+            } as IPaginator<IPulse>)),
         );
     }
 

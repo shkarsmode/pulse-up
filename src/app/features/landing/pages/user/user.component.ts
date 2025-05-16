@@ -1,10 +1,10 @@
 import { Component, inject } from "@angular/core";
 import { CommonModule, Location } from "@angular/common";
 import { ActivatedRoute, ParamMap, Router } from "@angular/router";
-import { BehaviorSubject, map, Observable, scan, switchMap, tap } from "rxjs";
+import { BehaviorSubject, map, Observable } from "rxjs";
 import { InfiniteScrollDirective } from "ngx-infinite-scroll";
 import { UserService } from "@/app/shared/services/api/user.service";
-import { IAuthor, IPulse, IPulsesPaginator } from "@/app/shared/interfaces";
+import { IAuthor, IPaginator, IPulse } from "@/app/shared/interfaces";
 import { SettingsService } from "@/app/shared/services/api/settings.service";
 import { SpinnerComponent } from "@/app/shared/components/ui-kit/spinner/spinner.component";
 import { ContainerComponent } from "@/app/shared/components/ui-kit/container/container.component";
@@ -18,7 +18,7 @@ import { CopyButtonComponent } from "@/app/shared/components/ui-kit/buttons/copy
 import { SocialsButtonComponent } from "@/app/shared/components/ui-kit/buttons/socials-button/socials-button.component";
 import { AppConstants } from "@/app/shared/constants/app.constants";
 import { InfiniteLoaderService } from "../../services/infinite-loader.service";
-import { PaginatorResponse } from "../../interfaces/pagination-response.interface";
+import { LoadingIndicatorComponent } from "@/app/shared/components/loading-indicator/loading-indicator.component";
 
 @Component({
     selector: "app-author",
@@ -29,6 +29,7 @@ import { PaginatorResponse } from "../../interfaces/pagination-response.interfac
         CommonModule,
         InfiniteScrollDirective,
         SvgIconComponent,
+        LoadingIndicatorComponent,
         SpinnerComponent,
         ContainerComponent,
         UserAvatarComponent,
@@ -54,7 +55,7 @@ export class UserComponent {
     public topics: IPulse[] = [];
     public isLoading: boolean = true;
     public pulseId: string = "";
-    public paginator$: Observable<PaginatorResponse<IPulse>>;
+    public paginator$: Observable<IPaginator<IPulse>>;
     public loading$ = new BehaviorSubject(true);
     public loadMore = this.infiniteLoaderService.loadMore.bind(this.infiniteLoaderService);
 
@@ -96,20 +97,21 @@ export class UserComponent {
                     page,
                     itemsPerPage: AppConstants.PULSES_PER_PAGE,
                     includeStats: true,
-                }),
-            transform: (response) => ({
-                ...response,
-                items: response.items.map((topic) => ({
-                    ...topic,
-                    author: { ...topic.author, name: this.user?.name || "" },
-                    stats: {
-                        ...topic.stats,
-                        totalVotes: topic.stats?.totalVotes || 0,
-                        totalUniqueUsers: topic.stats?.totalUniqueUsers || 0,
-                        lastDayVotes: topic.stats?.lastDayVotes || 0,
-                    },
-                })),
-            }),
+                }).pipe(
+                    map((response) => ({
+                        ...response,
+                        items: response.items.map((topic) => ({
+                            ...topic,
+                            author: { ...topic.author, name: this.user?.name || "" },
+                            stats: {
+                                ...topic.stats,
+                                totalVotes: topic.stats?.totalVotes || 0,
+                                totalUniqueUsers: topic.stats?.totalUniqueUsers || 0,
+                                lastDayVotes: topic.stats?.lastDayVotes || 0,
+                            },
+                        })),
+                    }))
+                ),
         });
         this.paginator$ = this.infiniteLoaderService.paginator$;
         this.loading$ = this.infiniteLoaderService.loading$;
