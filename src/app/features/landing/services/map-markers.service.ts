@@ -13,23 +13,28 @@ export class MapMarkersService {
     private readonly pulseService: PulseService = inject(PulseService);
 
     public markers: IMapMarkerAnimated[] = [];
-    public tooltipData: IPulse | null = null;
+    public tooltipData: IPulse & { markerId: number } | null = null;
+    public isTooltipVisible: boolean = false;
     public readonly markerHover$ = new Subject<IMapMarker>();
 
     constructor() {
         this.markerHover$.pipe(debounceTime(300)).subscribe((marker) => {
             this.tooltipData = null;
             this.pulseService.getById(marker.topicId).subscribe((pulse) => {
-                this.tooltipData = pulse;
+                this.tooltipData = {
+                    ...pulse,
+                    markerId: marker.id,
+                };
             });
         });
     }
 
     public updateMarkers(data: IH3Pulses): void {
         this.markers = [];
-        Object.keys(data).forEach((h3Index: any) => {
+        Object.keys(data).forEach((h3Index: any, index: number) => {
             const [lat, lng] = h3.h3ToGeo(h3Index);
             this.markers.push({
+                id: index,
                 lng,
                 lat,
                 icon: data[h3Index].icon,
@@ -38,6 +43,16 @@ export class MapMarkersService {
                 delay: this.randomInteger(100, 2000),
             });
         });
+    }
+
+    public hideTooltip(): void {
+        this.isTooltipVisible = false;
+        this.tooltipData = null;
+    }
+
+    public handleMarkerHover(marker: IMapMarker): void {
+        this.isTooltipVisible = true;
+        this.markerHover$.next(marker);
     }
 
     private randomInteger(min: number, max: number) {

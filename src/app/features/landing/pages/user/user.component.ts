@@ -19,6 +19,7 @@ import { SocialsButtonComponent } from "@/app/shared/components/ui-kit/buttons/s
 import { AppConstants } from "@/app/shared/constants/app.constants";
 import { InfiniteLoaderService } from "../../services/infinite-loader.service";
 import { LoadingIndicatorComponent } from "@/app/shared/components/loading-indicator/loading-indicator.component";
+import { FlatButtonDirective } from "@/app/shared/components/ui-kit/buttons/flat-button/flat-button.directive";
 
 @Component({
     selector: "app-author",
@@ -38,6 +39,7 @@ import { LoadingIndicatorComponent } from "@/app/shared/components/loading-indic
         CopyButtonComponent,
         SocialsButtonComponent,
         FadeInDirective,
+        FlatButtonDirective,
         FormatNumberPipe,
     ],
     providers: [InfiniteLoaderService],

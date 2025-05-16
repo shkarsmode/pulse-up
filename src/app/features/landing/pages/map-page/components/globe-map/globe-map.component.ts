@@ -1,9 +1,9 @@
 import { Component, effect, EventEmitter, inject, Output } from "@angular/core";
 import { toSignal } from "@angular/core/rxjs-interop";
+import mapboxgl from "mapbox-gl";
 import { IMapMarker } from "@/app/shared/interfaces/map-marker.interface";
 import { MediaQueryService } from "@/app/shared/services/core/media-query.service";
 import { MapComponent } from "@/app/features/landing/components/map/map.component";
-import { MAPBOX_WITH_BACKGROUND_STYLE } from "@/app/shared/tokens/tokens";
 
 @Component({
     selector: "app-globe-map",
@@ -14,7 +14,6 @@ import { MAPBOX_WITH_BACKGROUND_STYLE } from "@/app/shared/tokens/tokens";
 })
 export class GlobeMapComponent {
     private readonly mediaService = inject(MediaQueryService);
-    public readonly mapStylesUrl: string = inject(MAPBOX_WITH_BACKGROUND_STYLE);
     private isMobile = toSignal(this.mediaService.mediaQuery("max", "SM"));
     private isMobileLandscape = toSignal(
         this.mediaService.mediaQuery({
@@ -76,6 +75,13 @@ export class GlobeMapComponent {
     @Output() markerClick: EventEmitter<IMapMarker> = new EventEmitter<IMapMarker>();
 
     public zoom: number = 2.5;
+    public fog: mapboxgl.Fog = {
+        color: "rgb(228, 240, 255)",
+        "high-color": "rgb(117, 172, 255)",
+        "space-color": "rgb(2, 11, 27)",
+        "star-intensity": ["interpolate", ["linear"], ["zoom"], 11, 0.35, 12, 0],
+        "horizon-blend": 0.015,
+    };
 
     constructor() {
         effect(() => {
