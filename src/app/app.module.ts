@@ -14,7 +14,7 @@ import { HeaderComponent } from './shared/components/header/header.component';
 import { LoadingPageComponent } from './shared/components/loading/loading-page.component';
 import { ErrorInterceptor } from './shared/helpers/interceptors/error.interceptor';
 import { MaterialModule } from './shared/modules/material.module';
-import { API_URL, FIREBASE_CONFIG, MAPBOX_ACCESS_TOKEN, MAPBOX_STYLE } from './shared/tokens/tokens';
+import { API_URL, FIREBASE_CONFIG, MAPBOX_ACCESS_TOKEN, MAPBOX_STYLE, MAPBOX_WITH_BACKGROUND_STYLE } from './shared/tokens/tokens';
 
 @NgModule({
     declarations: [AppComponent],
@@ -29,7 +29,7 @@ import { API_URL, FIREBASE_CONFIG, MAPBOX_ACCESS_TOKEN, MAPBOX_STYLE } from './s
         LoadingPageComponent,
         NgxMapboxGLModule.withConfig({
             accessToken: environment.mapboxToken,
-          }),
+        }),
     ],
     providers: [
         // provideHttpClient(
@@ -48,6 +48,10 @@ import { API_URL, FIREBASE_CONFIG, MAPBOX_ACCESS_TOKEN, MAPBOX_STYLE } from './s
             useValue: environment.mapStyleUrl,
         },
         {
+            provide: MAPBOX_WITH_BACKGROUND_STYLE,
+            useValue: environment.mapWithBackgroundStyleUrl,
+        },
+        {
             provide: FIREBASE_CONFIG,
             useValue: environment.firebaseConfig,
         },
@@ -58,4 +62,4 @@ import { API_URL, FIREBASE_CONFIG, MAPBOX_ACCESS_TOKEN, MAPBOX_STYLE } from './s
     schemas: [CUSTOM_ELEMENTS_SCHEMA],
     bootstrap: [AppComponent],
 })
-export class AppModule {}
+export class AppModule { }

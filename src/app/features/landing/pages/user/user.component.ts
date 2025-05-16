@@ -1,8 +1,10 @@
 import { Component, inject } from "@angular/core";
 import { CommonModule, Location } from "@angular/common";
 import { ActivatedRoute, ParamMap, Router } from "@angular/router";
+import { BehaviorSubject, map, Observable, scan, switchMap, tap } from "rxjs";
+import { InfiniteScrollDirective } from "ngx-infinite-scroll";
 import { UserService } from "@/app/shared/services/api/user.service";
-import { IAuthor, IPulse } from "@/app/shared/interfaces";
+import { IAuthor, IPulse, IPulsesPaginator } from "@/app/shared/interfaces";
 import { SettingsService } from "@/app/shared/services/api/settings.service";
 import { SpinnerComponent } from "@/app/shared/components/ui-kit/spinner/spinner.component";
 import { ContainerComponent } from "@/app/shared/components/ui-kit/container/container.component";
@@ -14,7 +16,9 @@ import { FormatNumberPipe } from "@/app/shared/pipes/format-number.pipe";
 import { LargePulseComponent } from "@/app/shared/components/pulses/large-pulse/large-pulse.component";
 import { CopyButtonComponent } from "@/app/shared/components/ui-kit/buttons/copy-button/copy-button.component";
 import { SocialsButtonComponent } from "@/app/shared/components/ui-kit/buttons/socials-button/socials-button.component";
-import { FlatButtonDirective } from "@/app/shared/components/ui-kit/buttons/flat-button/flat-button.directive";
+import { AppConstants } from "@/app/shared/constants/app.constants";
+import { InfiniteLoaderService } from "../../services/infinite-loader.service";
+import { PaginatorResponse } from "../../interfaces/pagination-response.interface";
 
 @Component({
     selector: "app-author",
@@ -23,6 +27,7 @@ import { FlatButtonDirective } from "@/app/shared/components/ui-kit/buttons/flat
     standalone: true,
     imports: [
         CommonModule,
+        InfiniteScrollDirective,
         SvgIconComponent,
         SpinnerComponent,
         ContainerComponent,
@@ -32,21 +37,26 @@ import { FlatButtonDirective } from "@/app/shared/components/ui-kit/buttons/flat
         CopyButtonComponent,
         SocialsButtonComponent,
         FadeInDirective,
-        FlatButtonDirective,
         FormatNumberPipe,
     ],
+    providers: [InfiniteLoaderService],
 })
 export class UserComponent {
-    public user: IAuthor | null = null;
-    public topics: IPulse[] = [];
-    public isLoading: boolean = true;
-    public pulseId: string = "";
-
     private readonly router: Router = inject(Router);
     private readonly location: Location = inject(Location);
     private readonly route: ActivatedRoute = inject(ActivatedRoute);
     private readonly userService: UserService = inject(UserService);
     private readonly settingsService: SettingsService = inject(SettingsService);
+    private readonly infiniteLoaderService: InfiniteLoaderService<IPulse> =
+        inject(InfiniteLoaderService);
+
+    public user: IAuthor | null = null;
+    public topics: IPulse[] = [];
+    public isLoading: boolean = true;
+    public pulseId: string = "";
+    public paginator$: Observable<PaginatorResponse<IPulse>>;
+    public loading$ = new BehaviorSubject(true);
+    public loadMore = this.infiniteLoaderService.loadMore.bind(this.infiniteLoaderService);
 
     constructor() {
         this.pulseId = this.router.getCurrentNavigation()?.extras?.state?.["pulseId"] || "";
@@ -71,10 +81,38 @@ export class UserComponent {
                     ...topic,
                     author: { ...topic.author, name: this.user?.name || "" },
                 }));
+                this.loadTopics(user.id);
                 this.user = user;
                 this.isLoading = false;
-            })
+            });
         });
+    }
+
+    private loadTopics(userId: string) {
+        this.infiniteLoaderService.init({
+            load: (page) =>
+                this.userService.getTopics({
+                    userId,
+                    page,
+                    itemsPerPage: AppConstants.PULSES_PER_PAGE,
+                    includeStats: true,
+                }),
+            transform: (response) => ({
+                ...response,
+                items: response.items.map((topic) => ({
+                    ...topic,
+                    author: { ...topic.author, name: this.user?.name || "" },
+                    stats: {
+                        ...topic.stats,
+                        totalVotes: topic.stats?.totalVotes || 0,
+                        totalUniqueUsers: topic.stats?.totalUniqueUsers || 0,
+                        lastDayVotes: topic.stats?.lastDayVotes || 0,
+                    },
+                })),
+            }),
+        });
+        this.paginator$ = this.infiniteLoaderService.paginator$;
+        this.loading$ = this.infiniteLoaderService.loading$;
     }
 
     get shareProfileUrl(): string {

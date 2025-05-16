@@ -16,22 +16,19 @@
     (mapLoad)="onMapLoad($event)"
     (zoomEnd)="handleZoomEnd()"
     (moveEnd)="handleMoveEnd()"
-    (touchStart)="handleTouchStart()"
     (styleData)="onStyleData($event)">
 
     @if (isToShowMarkers) {
         @for (marker of markers; track marker.h3Index) { 
         
             <app-map-marker
-                [map]="map"
                 [marker]="marker"
                 [tooltipData]="tooltipData"
-                [showTooltipOnHover]="isToShowTooltip"
+                [isTooltipVisible]="!isTouchDevice && isToShowTooltip"
                 [isAnimated]="isMarkerAnimated"
                 (markerClick)="onMarkerClick(marker)"
                 (markerHover)="onMarkerHover(marker)"
-                (tooltipHideEnd)="onTooltipHide()" 
-                (visibilityChange)="onMarkerVisibilityChange($event)"/>
+                (tooltipHideEnd)="onTooltipHide()" />
         
         }
     } @else {

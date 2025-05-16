@@ -18,6 +18,12 @@ export interface IPulse {
     category: string;
 }
 
+export interface IPulsesPaginator {
+  items: IPulse[];
+  page: number;
+  hasMorePages: boolean;
+}
+
 interface Location {
     country: string;
 }
