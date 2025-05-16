@@ -34,7 +34,6 @@ import { MapMarkerComponent } from "./components/map-marker/map-marker/map-marke
 import { GlobeSpinnerService } from "../../services/globe-spinner.service";
 import { throttle } from "@/app/shared/helpers/throttle";
 import { MapBounds } from "../../interfaces/map-bounds.interface";
-import { MapEventListenerService } from "../../services/map-event-listener.service";
 import { IMapClickEvent } from "../../interfaces/map-click-event.interface";
 
 @Component({
@@ -62,7 +61,6 @@ export class MapComponent implements OnInit {
     private readonly heatmapLayerService: HeatmapLayerService = inject(HeatmapLayerService);
     private readonly mapLocationService: MapLocationService = inject(MapLocationService);
     private readonly globeSpinner = new GlobeSpinnerService();
-    private readonly mapEventListenerService: MapEventListenerService = inject(MapEventListenerService);
 
     @Input() public pulseId: number;
     @Input() public isPreview: boolean = false;
@@ -108,6 +106,7 @@ export class MapComponent implements OnInit {
     @Input() public mapStylesUrl: string = this.mapboxStylesUrl;
     @Input() public spinning: boolean = false;
     @Input() public showEmptyPolygons: boolean = false;
+    @Input() public mode: "default" | "heatmap" = "default";
 
     @Output() public mapLoaded: EventEmitter<mapboxgl.Map> = new EventEmitter<mapboxgl.Map>();
     @Output() public markerClick: EventEmitter<IMapMarker> = new EventEmitter<IMapMarker>();
@@ -308,6 +307,8 @@ export class MapComponent implements OnInit {
     }
 
     private addMarkersAndUpdateH3Polygons(h3PulsesData: IH3Pulses): void {
+        console.log("addMarkersAndUpdateH3Polygons");
+        
         if (!this.map) return;
         this.h3LayerService.updateH3PolygonSource({ map: this.map, data: h3PulsesData });
         this.mapMarkersService.updateMarkers(h3PulsesData);
@@ -351,12 +352,14 @@ export class MapComponent implements OnInit {
         });
 
         this.h3LayerService
-            .getH3Pulses({ bounds, resolution })
+            .getH3Pulses({ bounds, resolution, pulseId: this.pulseId })
             .pipe(
                 first(),
                 filter(() => !this.pulseId),
             )
-            .subscribe((h3PulsesData) => this.h3Pulses$.next(h3PulsesData));
+            .subscribe((h3PulsesData) => {
+                this.h3Pulses$.next(h3PulsesData)
+            });
     }
 
     private updateHeatmap(): void {
@@ -446,7 +449,9 @@ export class MapComponent implements OnInit {
                     this.heatmapLayerService.addWeightsToMap(updatedHeatmapData);
                 }
 
-                // this.addPolygonsToMap(Object.keys(heatmap));
+                if (this.mode === "heatmap") {
+                    this.addPolygonsToMap(Object.keys(heatmap));
+                }
             });
     }
 
