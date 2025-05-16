@@ -1,4 +1,5 @@
 import { CommonModule } from "@angular/common";
+import { RouterModule } from "@angular/router";
 import { Component, EventEmitter, Input, Output } from "@angular/core";
 import { NgxMapboxGLModule } from "ngx-mapbox-gl";
 import { NgxTooltip } from "@ngx-popovers/tooltip";
@@ -15,6 +16,7 @@ import { SpinnerComponent } from "@/app/shared/components/ui-kit/spinner/spinner
     standalone: true,
     imports: [
         CommonModule,
+        RouterModule,
         NgxMapboxGLModule,
         NgxTooltip,
         MarkerIconComponent,
@@ -29,8 +31,10 @@ export class MapMarkerComponent {
     @Input() isAnimated: boolean = false;
 
     @Output() tooltipHideEnd: EventEmitter<void> = new EventEmitter<void>();
-    @Output() markerClick: EventEmitter<IMapMarkerAnimated> = new EventEmitter<IMapMarkerAnimated>();
-    @Output() markerHover: EventEmitter<IMapMarkerAnimated> = new EventEmitter<IMapMarkerAnimated>();
+    @Output() markerClick: EventEmitter<IMapMarkerAnimated> =
+        new EventEmitter<IMapMarkerAnimated>();
+    @Output() markerHover: EventEmitter<IMapMarkerAnimated> =
+        new EventEmitter<IMapMarkerAnimated>();
 
     public opacity: number = 0;
 

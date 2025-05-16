@@ -24,7 +24,7 @@
             <app-map-marker
                 [marker]="marker"
                 [tooltipData]="tooltipData"
-                [isTooltipVisible]="!isTouchDevice && isToShowTooltip"
+                [isTooltipVisible]="isToShowTooltip"
                 [isAnimated]="isMarkerAnimated"
                 (markerClick)="onMarkerClick(marker)"
                 (markerHover)="onMarkerHover(marker)"

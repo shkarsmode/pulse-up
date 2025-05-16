@@ -12,12 +12,7 @@ import { MercatorMapComponent } from "./components/mercator-map/mercator-map.com
     templateUrl: "./map-page.component.html",
     styleUrl: "./map-page.component.scss",
     standalone: true,
-    imports: [
-        CommonModule,
-        SwitchComponent,
-        GlobeMapComponent,
-        MercatorMapComponent,
-    ],
+    imports: [CommonModule, SwitchComponent, GlobeMapComponent, MercatorMapComponent],
 })
 export class MapPageComponent {
     private router: Router = inject(Router);
@@ -29,7 +24,7 @@ export class MapPageComponent {
     ngOnInit() {
         this.switchClasses = {
             "map-page__switch": true,
-            "map-page__switch--contrast": this.projection === 'globe'
+            "map-page__switch--contrast": this.projection === "globe",
         };
     }
 
@@ -42,9 +37,7 @@ export class MapPageComponent {
     }
 
     public onMarkerClick(marker: IMapMarker) {
-        let newRelativeUrl = this.router.createUrlTree([`topic/${marker.topicId}`]);
-        let baseUrl = window.location.href.replace(this.router.url, "");
-        window.open(baseUrl + newRelativeUrl, "_blank");
+        this.router.navigate([`topic/${marker.topicId}`]);
     }
 
     public onSwitchChange(checked: boolean) {
