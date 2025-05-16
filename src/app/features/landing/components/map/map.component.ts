@@ -35,6 +35,7 @@ import { GlobeSpinnerService } from "../../services/globe-spinner.service";
 import { throttle } from "@/app/shared/helpers/throttle";
 import { MapBounds } from "../../interfaces/map-bounds.interface";
 import { MapEventListenerService } from "../../services/map-event-listener.service";
+import { IMapClickEvent } from "../../interfaces/map-click-event.interface";
 
 @Component({
     selector: "app-map",
@@ -110,6 +111,7 @@ export class MapComponent implements OnInit {
 
     @Output() public mapLoaded: EventEmitter<mapboxgl.Map> = new EventEmitter<mapboxgl.Map>();
     @Output() public markerClick: EventEmitter<IMapMarker> = new EventEmitter<IMapMarker>();
+    @Output() public mapClick: EventEmitter<IMapClickEvent> = new EventEmitter<IMapClickEvent>();
     @Output() public zoomEnd: EventEmitter<number> = new EventEmitter<number>();
     @Output() public mapStyleData: EventEmitter<MapStyleDataEvent & EventData> = new EventEmitter<MapStyleDataEvent & EventData>();
 
@@ -159,10 +161,9 @@ export class MapComponent implements OnInit {
     get isSpinning() {
         return this.globeSpinner.spinning;
     }
-    
+
     public onMapLoad({ target: map }: mapboxgl.MapboxEvent<undefined> & mapboxgl.EventData) {
         this.map = map;
-        this.mapLoaded.next(this.map);
 
         this.map.dragRotate?.disable();
         this.map.touchZoomRotate.disableRotation();
@@ -175,6 +176,8 @@ export class MapComponent implements OnInit {
         this.initGlobeSpinner();
 
         this.globalMapDataUpdated = true;
+
+        this.mapLoaded.next(this.map);
     }
 
     public onChangeHeatmapSettings(): void {
@@ -219,6 +222,8 @@ export class MapComponent implements OnInit {
     public handleZoomEnd = () => {
         this.globalMapDataUpdated = false;
         this.updateSpinButtonVisibility();
+        this.updateH3Pulses();
+        this.updateHeatmap();
         this.zoomEnd.emit(this.map?.getZoom() || 0);
         this.mapMarkersService.hideTooltip()
     };
@@ -239,7 +244,11 @@ export class MapComponent implements OnInit {
     }, 500);
 
     public handleMapClick = (event: mapboxgl.MapMouseEvent & mapboxgl.EventData) => {
-        this.mapEventListenerService.onMapClick(event);
+        if (event.lngLat) {
+            this.mapClick.emit({
+                coordinates: { lat: event.lngLat.lat, lng: event.lngLat.lng },
+            })
+        }
     };
 
     public handleTouchStart() {
@@ -302,7 +311,7 @@ export class MapComponent implements OnInit {
         if (!this.map) return;
         this.h3LayerService.updateH3PolygonSource({ map: this.map, data: h3PulsesData });
         this.mapMarkersService.updateMarkers(h3PulsesData);
-        this.addPolygonsToMap(Object.keys(h3PulsesData));
+        // this.addPolygonsToMap(Object.keys(h3PulsesData));
     }
 
     private getHexagonsForBounds(
@@ -437,7 +446,7 @@ export class MapComponent implements OnInit {
                     this.heatmapLayerService.addWeightsToMap(updatedHeatmapData);
                 }
 
-                this.addPolygonsToMap(Object.keys(heatmap));
+                // this.addPolygonsToMap(Object.keys(heatmap));
             });
     }
 
@@ -451,7 +460,7 @@ export class MapComponent implements OnInit {
             const northWest = bounds.getNorthWest();
             const southEast = bounds.getSouthEast();
             const resolution = this.getResolutionBasedOnMapZoom();
-    
+
             polygonsIndexes = this.getHexagonsForBounds(
                 northWest,
                 southEast,
@@ -574,8 +583,9 @@ export class MapComponent implements OnInit {
     }
 
     public onMarkerClick(marker: IMapMarker): void {
+        this.mapClick.emit({ coordinates: { lat: marker.lat, lng: marker.lng } });
         const theSameMarker = this.mapMarkersService.tooltipData?.markerId === marker.id;
-        
+
         if (!this.isTouchDevice) {
             this.mapMarkersService.hideTooltip();
             this.markerClick.emit(marker);
@@ -608,7 +618,7 @@ export class MapComponent implements OnInit {
         this.mapStyleData.emit(style);
 
         if (!this.isLabelsHidden) return;
-        
+
         const map = style.target;
         const layers = map.getStyle().layers;
         if (!layers) return;

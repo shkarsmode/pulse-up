@@ -12,8 +12,7 @@ export class MapEventListenerService {
         return coords;
     }
 
-    onMapClick(event: mapboxgl.MapMouseEvent) {
-        const coordinates = event.lngLat;
+    onMapClick({ coordinates }: { coordinates: { lat: number, lng: number } }) {
         this._selectedCoordinates = {
             lat: coordinates.lat,
             lng: coordinates.lng,

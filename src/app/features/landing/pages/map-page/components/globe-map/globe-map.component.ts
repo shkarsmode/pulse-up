@@ -139,10 +139,8 @@ export class GlobeMapComponent {
         if (coordinates) {
             this.map?.flyTo({
                 center: [coordinates.lng, coordinates.lat],
-                zoom: 2.25,
-                speed: 0.25,
-                curve: 1,
-                essential: true
+                zoom: 2.5,
+                speed: 0.4,
             })
         }
     }
