@@ -1,0 +1,57 @@
+
+:host {
+    display: block;
+    padding: 0 20px;
+    height: calc(100%);
+}
+
+.map-page {
+    position: relative;
+    width: 100%; 
+    margin: 0 auto;
+    background-color: #020b1b;
+}
+
+
+
+:host {
+    padding: 0;
+}
+
+app-map {
+    height: 100%;
+}
+
+app-map::ng-deep .map-container {
+    padding: 0;
+    border-radius: 0px;
+    width: 100vw;
+    height: calc(100%);
+}
+
+.map-page {
+    height: calc(100%);
+}
+
+.map-page__switch {
+    position: absolute;
+    bottom: 26px;
+    left: 24px;
+    z-index: 1;
+}
+
+//this is because on the same screen size header becomes 80px height
+@media screen and (max-width: 650px) {
+
+    .map-page {
+        height: 100%;
+    }
+
+    app-map::ng-deep .map-container {
+        padding: 0;
+        border-radius: 0px;
+        width: 100dvw;
+        height: 100%;
+    }
+    
+}

@@ -46,8 +46,8 @@ export class AppComponent {
     }
 
     private sendInitialQueries(): void {
-        this.isLoading = true;
-        this.loadingService.isLoading = true;
+        // this.isLoading = true;
+        // this.loadingService.isLoading = true;
 
         const anonymousUser$ = this.authenticationService.loginAsAnonymousThroughTheFirebase();
         const settings$ = this.settingsService.getSettings();
@@ -55,7 +55,7 @@ export class AppComponent {
         combineLatest([anonymousUser$, settings$])
             .pipe(take(1))
             .subscribe((_) => {
-                this.isLoading = false;
+                // this.isLoading = false;
             });
     }
 }

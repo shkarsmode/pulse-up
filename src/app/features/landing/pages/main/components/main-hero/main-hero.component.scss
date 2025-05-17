@@ -1,0 +1,141 @@
+@use "../../../../../../../styles/mixins" as *;
+
+
+:host-context(body) {
+    --map-marker-size: 38px;
+}
+
+.hero {
+    --bottom-offset: 40px;
+    --content-height: 220px;
+
+    position: relative;
+    width: 100%;
+    min-height: 100svh;
+    background-color: #020b1b;
+    overflow: hidden;
+
+    @include media-lg {
+        padding-top: var(--header-height);
+    }
+    @media screen and (max-height: 480px) and (orientation: landscape) {
+        min-height: 700px;
+    }
+
+    @media screen and (max-height: 600px) and (orientation: portrait) {
+        --bottom-offset: 20px;
+    }
+}
+
+.hero__content {
+    position: absolute;
+    top: 50%;
+    right: calc((100% - 1170px) / 2);
+    transform: translateY(-50%);
+    flex: 1;
+    width: 100%;
+    max-width: 450px;
+    color: var(--white-color);
+    text-align: center;
+    z-index: 1;
+
+    @media screen and (max-width: 1210px) {
+        right: 20px;
+    }
+
+    @include media-xl {
+        right: 50%;
+        top: auto;
+        bottom: var(--bottom-offset);
+        max-width: 100%;
+        transform: translate(50%, 0);
+        padding: 0 20px;
+    }
+}
+.hero__map {
+    --space: 0;
+    --top-offset: 80px;
+    position: absolute;
+    left: -550px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    height: 100dvh;
+    min-height: 600px;
+    width: calc(100% + 550px);
+    @include media-xl {
+        --space: calc(
+            100dvh - var(--header-height) - var(--bottom-offset) - var(--content-height) -
+                var(--top-offset)
+        );
+        left: 0;
+        top: calc((var(--space) / 2) * -1);
+        width: 100%;
+        min-height: 600px;
+        height: calc(100dvh + (var(--space) / 2));
+    }
+    @include media-sm {
+        --top-offset: 40px;
+    }
+    @media screen and (max-height: 480px) and (orientation: landscape) {
+        top: -100px;
+        min-height: 800px;
+        --top-offset: 0px;
+    }
+}
+.hero__title {
+    @include title-32px;
+    margin-bottom: 16px;
+
+    @include media-sm {
+        @include title-24px;
+    }
+    @include media-xs {
+        @include title-20px;
+        max-width: 300px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+}
+.hero__description {
+    @include text-16px;
+    margin-bottom: 40px;
+
+    @include media-lg {
+        text-align: center;
+    }
+    @include media-sm {
+        max-width: 300px;
+        margin: 0 auto 40px;
+    }
+    @include media-xs {
+        margin-bottom: 24px;
+    }
+    @include media-2xs {
+        @include text-14px;
+        margin-bottom: 16px;
+    }
+    @media screen and (max-height: 680px) {
+        display: none;
+    }
+}
+.hero__actions {
+    display: flex;
+    justify-content: center;
+    column-gap: 16px;
+    @include media-lg {
+        margin: 0 auto;
+    }
+    @include media-3xs {
+        flex-direction: column;
+        row-gap: 8px;
+    }
+}
+.hero__button {
+    width: 100%;
+    max-width: 180px;
+
+    @include media-xs {
+        max-width: 100%;
+    }
+}

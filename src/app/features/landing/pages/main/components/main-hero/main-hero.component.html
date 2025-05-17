@@ -1,0 +1,49 @@
+<section class="hero">
+    <div class="hero__container">
+        <div class="hero__content">
+            <h1 class="hero__title">People Should Decide What Matters – Not Algorithms</h1>
+            <p class="hero__description">
+                Tap to support what matters, discover trending topics, and raise awareness — anonymously.
+            </p>
+            <div class="hero__actions">
+                <div class="hero__button">
+                    <app-primary-button
+                        [fullWidth]="true"
+                        [contrast]="true"
+                        size="large"
+                        openGetAppPopup>
+                        Get Pulse Up
+                    </app-primary-button>
+                </div>
+                <div class="hero__button">
+                    <app-secondary-button
+                        [routerLink]="'/' + AppRoutes.Landing.MAP"
+                        routerLinkActive="active"
+                        [fullWidth]="true"
+                        [contrast]="true"
+                        size="large">
+                        Explore Map
+                    </app-secondary-button>
+                </div>
+            </div>
+        </div>
+        <div class="hero__map">
+            <app-map
+                [isHideDebugger]="true"
+                [zoom]="[zoom]"
+                [minZoom]="0.45"
+                projection="globe"
+                [maxBounds]="undefined"
+                [isToShowTooltip]="true"
+                [isScrollZoomEnabled]="false"
+                [isDoubleClickZoomEnabled]="false"
+                [isMarkerAnimated]="true"
+                [isLabelsHidden]="true"
+                [isMapStatic]="true"
+                [zoomResolutionMap]="zoomResolutionMap"
+                [fog]="fog"
+                [spinning]="true"
+                (mapClick)="onMapClick($event)"/>
+        </div>
+    </div>
+</section>

@@ -1,18 +1,25 @@
-import { CUSTOM_ELEMENTS_SCHEMA, NgModule } from '@angular/core';
-import { BrowserModule } from '@angular/platform-browser';
+import { CUSTOM_ELEMENTS_SCHEMA, NgModule } from "@angular/core";
+import { BrowserModule } from "@angular/platform-browser";
 
-import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
-import { AngularSvgIconModule } from 'angular-svg-icon';
-import { environment } from '../environments/environment';
-import { AppComponent } from './app.component';
-import { AppRoutingModule } from './app.routing';
-import { HeaderComponent } from './shared/components/header/header.component';
-import { LoadingPageComponent } from './shared/components/loading/loading-page.component';
-import { ErrorInterceptor } from './shared/helpers/interceptors/error.interceptor';
-import { MaterialModule } from './shared/modules/material.module';
-import { API_URL, FIREBASE_CONFIG, MAPBOX_ACCESS_TOKEN, MAPBOX_STYLE } from './shared/tokens/tokens';
+import { HTTP_INTERCEPTORS, HttpClientModule } from "@angular/common/http";
+import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
+import { provideAnimationsAsync } from "@angular/platform-browser/animations/async";
+import { AngularSvgIconModule } from "angular-svg-icon";
+import { NgxMapboxGLModule } from "ngx-mapbox-gl";
+
+import { environment } from "../environments/environment";
+import { AppComponent } from "./app.component";
+import { AppRoutingModule } from "./app.routing";
+import { HeaderComponent } from "./shared/components/header/header.component";
+import { LoadingPageComponent } from "./shared/components/loading/loading-page.component";
+import { ErrorInterceptor } from "./shared/helpers/interceptors/error.interceptor";
+import { MaterialModule } from "./shared/modules/material.module";
+import {
+    API_URL,
+    FIREBASE_CONFIG,
+    MAPBOX_ACCESS_TOKEN,
+    MAPBOX_STYLE,
+} from "./shared/tokens/tokens";
 
 @NgModule({
     declarations: [AppComponent],
@@ -25,6 +32,9 @@ import { API_URL, FIREBASE_CONFIG, MAPBOX_ACCESS_TOKEN, MAPBOX_STYLE } from './s
         AngularSvgIconModule.forRoot(),
         HttpClientModule,
         LoadingPageComponent,
+        NgxMapboxGLModule.withConfig({
+            accessToken: environment.mapboxToken,
+        }),
     ],
     providers: [
         // provideHttpClient(

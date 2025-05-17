@@ -1,0 +1,326 @@
+@use "../../../../../styles/mixins" as *;
+
+:host {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+
+    &:hover {
+        &.preview {
+            cursor: pointer !important;
+
+            .expand {
+                scale: 1.15;
+                transform: rotate(-90deg);
+            }
+        }
+    }
+}
+
+.expand {
+    position: absolute;
+    right: 15px;
+    bottom: 15px;
+    width: 25px;
+    height: auto;
+
+    transition: all 0.3s;
+
+    svg-icon {
+        width: inherit;
+
+        ::ng-deep svg {
+            width: inherit;
+        }
+    }
+    width: 25px;
+}
+
+.map-container {
+    height: 100%;
+    width: 100%;
+    overflow: hidden;
+    cursor: grab;
+}
+.map-container_rounded {
+    border-radius: 20px;
+}
+
+::ng-deep .mapboxgl-control-container {
+    display: none;
+}
+
+::ng-deep .mapboxgl-marker {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    width: var(--map-marker-size);
+    height: var(--map-marker-size);
+    border-radius: 50%;
+
+    cursor: pointer;
+
+    &:hover {
+        box-shadow: 0px 4px 20px 0px #00000072;
+    }
+
+    &.weight-marker {
+        width: auto;
+        height: auto;
+        min-width: 28px;
+        min-height: 28px;
+        padding: 4px;
+        border-radius: 14px;
+        background-color: #fff;
+        box-shadow: 0px 4px 20px 0px #0000004d;
+
+        .weight-marker__text {
+            font-size: 16px;
+            line-height: 1;
+            font-weight: 600;
+        }
+    }
+}
+
+.extend {
+    position: absolute;
+    right: 30px;
+    bottom: 30px;
+
+    transition: all 0.2s;
+
+    svg-icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    cursor: pointer;
+
+    &:hover {
+        transform: scale(1.5);
+    }
+}
+
+:host.full-map {
+    .extend {
+        display: none;
+    }
+}
+
+.debugger {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    // pointer-events: none;
+    transform: translate(-10px, -10px);
+
+    padding: 15px;
+
+    background-color: #13142098;
+    border-radius: 10px;
+
+    color: white;
+
+    transition: all 0.3s;
+
+    z-index: 1;
+
+    .restricted {
+        opacity: 0.5;
+        position: absolute;
+        right: 85px;
+    }
+
+    ::ng-deep {
+        .primary-button {
+            padding: 5px 22px;
+        }
+
+        input {
+            padding: 3px 10px;
+            width: 64px;
+            text-align: center;
+        }
+    }
+
+    &.hidden {
+        width: 0;
+        height: 0;
+        background-color: transparent;
+        padding: 0;
+    }
+
+    div {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 50px;
+        border-bottom: 1px solid #13142098;
+        padding-bottom: 5px;
+
+        span:last-child {
+            font-weight: 600;
+        }
+    }
+}
+
+.hide {
+    display: flex;
+    justify-content: center !important;
+    align-items: center;
+
+    position: absolute;
+    top: -50px;
+    right: 0px;
+    background-color: #13142098;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    text-align: center;
+    padding: 0 !important;
+
+    cursor: pointer;
+}
+
+// FEATRURES:
+
+/*   SEARCH INPUT   */
+
+#search::ng-deep input {
+    box-shadow: 0px 3px 10px 0px rgba(0, 0, 0, 0.15);
+    margin: 0;
+    height: 48px;
+}
+
+#search::ng-deep app-input {
+    margin: 0;
+}
+
+#search {
+    margin-bottom: 0px;
+    width: 300px;
+    max-width: 300px;
+    width: 100%;
+    position: absolute;
+    z-index: 1;
+    top: 30px;
+    left: 30px;
+}
+
+@media screen and (max-width: 500px) {
+    #search {
+        left: 50%;
+        top: 20px;
+        transform: translateX(-50%);
+        width: 100%;
+        max-width: 100%;
+        padding: 0 20px;
+    }
+}
+
+/* LOCATION NAME / AREA NAME */
+
+#map-area-name {
+    position: absolute;
+    bottom: 30px;
+    left: 30px;
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    justify-content: center;
+
+    h3 {
+        @include title-20px;
+        font-weight: 400;
+        color: var(--white-color);
+        text-shadow: 0px 0px 6px rgba(0, 0, 0, 0.35);
+    }
+}
+
+@media screen and (max-width: 500px) {
+    #map-area-name {
+        bottom: 20px;
+        left: 20px;
+    }
+
+    h3 {
+        @include text-16px;
+    }
+}
+
+.map-right {
+    position: absolute;
+    right: 30px;
+    bottom: 30px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.spin-button {
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: white;
+    box-shadow: 0px 3px 10px 0px #00000026;
+    cursor: pointer;
+
+    .spin-button__icon {
+        width: 16px;
+        height: 16px;
+        pointer-events: none;
+    }
+}
+
+.zoom-button {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+
+    &__icon {
+        transition: all 0.2s;
+        position: relative;
+        background: white;
+        border-radius: 50%;
+        width: 32px;
+        height: 32px;
+        min-height: 32px;
+        min-width: 32px;
+        box-shadow: 0px 3px 10px 0px #00000026;
+
+        &::after,
+        &::before {
+            content: "";
+            position: absolute;
+            z-index: 1;
+            width: 14px;
+            height: 2px;
+            border-radius: 1px;
+            background: var(--dark-grey-color);
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        cursor: pointer;
+    }
+
+    &__icon:first-child::after {
+        height: 14px;
+        width: 2px;
+    }
+
+    &__icon:active {
+        scale: 0.8;
+    }
+}

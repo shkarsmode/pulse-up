@@ -1,0 +1,75 @@
+@if (!user) {
+<app-spinner />
+} @else {
+<app-container
+    size="md"
+    fadeIn
+    [childrenFadeIn]="true"
+    *ngIf="user">
+    <div class="user-header">
+        <div class="user-header__top">
+            <div class="user-header__back-btn">
+                <button
+                    flatButton
+                    (click)="goBack()">
+                    <svg-icon src="assets/svg/chevron-left.svg" />
+                </button>
+            </div>
+            <div class="user-header__info">
+                <app-user-avatar
+                    [url]="user.picture"
+                    [name]="user.name" />
+                <div class="user-header__text">
+                    <h1 class="user-header__name">{{ user.name }}</h1>
+                    <div class="user-header__username">&#64;{{ user.username }}</div>
+                </div>
+                <div
+                    class="user-header__bio"
+                    *ngIf="user.bio">
+                    {{ user.bio }}
+                </div>
+            </div>
+            <div class="user-header__share-btn">
+                <app-menu [content]="menuContent">
+                    <button flatButton>
+                        <svg-icon src="assets/svg/icon_share.svg" />
+                    </button>
+                </app-menu>
+            </div>
+        </div>
+    </div>
+    <div class="user-header__topics">
+        {{ topics.length | formatNumber }}
+        {{ topics.length === 1 ? "topiuc" : "topics" }} started
+    </div>
+    <div
+        class="user-topics"
+        *ngIf="paginator$ | async as paginator"
+        infiniteScroll
+        [infiniteScrollDistance]="2"
+        [infiniteScrollThrottle]="150"
+        (scrolled)="loadMore(paginator)">
+        <ul class="user-topics__list">
+            @for (topic of paginator.items; track topic.id) {
+            <li>
+                <app-large-pulse [pulse]="topic" />
+            </li>
+            }
+        </ul>
+        <p class="user-topics__loading" *ngIf="loading$ | async">
+            <app-loading-indicator/>
+        </p>
+    </div>
+</app-container>
+}
+
+<ng-template #menuContent>
+    <div class="profile__socials">
+        <app-copy-button
+            link="{{ shareProfileUrl }}"
+            (handleClick)="onCopyLink($event)" />
+        <app-socials-button [variant]="'facebook'" />
+        <app-socials-button [variant]="'x'" />
+        <app-socials-button [variant]="'email'" />
+    </div>
+</ng-template>

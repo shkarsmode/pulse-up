@@ -1,0 +1,16 @@
+<app-map
+    [isHideDebugger]="true"
+    [isSearch]="false"
+    [isLocationName]="false"
+    [isZoomButton]="true"
+    [zoom]="[zoom]"
+    [minZoom]="0.35"
+    [isToShowTooltip]="true"
+    projection="globe"
+    [maxBounds]="undefined"
+    [isMapStatic]="false"
+    [isSpinEnabled]="true"
+    [fog]="fog"
+    (markerClick)="onMarkerClick($event)" 
+    (zoomEnd)="onZoomEnd($event)"
+    (mapLoaded)="onMapLoaded($event)"/>
