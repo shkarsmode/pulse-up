@@ -307,8 +307,6 @@ export class MapComponent implements OnInit {
     }
 
     private addMarkersAndUpdateH3Polygons(h3PulsesData: IH3Pulses): void {
-        console.log("addMarkersAndUpdateH3Polygons");
-        
         if (!this.map) return;
         this.h3LayerService.updateH3PolygonSource({ map: this.map, data: h3PulsesData });
         this.mapMarkersService.updateMarkers(h3PulsesData);

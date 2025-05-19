@@ -11,7 +11,9 @@
         </section>
 
         <section class="section">
-            <app-ad-banner />
+            <app-ad-banner #appAdBanner/>
         </section>
     </div>
 </div>
+
+<app-mobile-app-banner [visible]="!mobileAppBannerVisible"/>

@@ -22,7 +22,7 @@ export class GetAppButtonComponent implements OnInit {
 
     public platform = this.platformService.value == "iOS" ? "ios" : "android";
     public classes = {
-        ["get-app-button--" + this.platform]: true,
+        ["get-app-button--" + this.platform]: false,
     };
 
     get appStoreUrl(): string {
