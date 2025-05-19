@@ -7,7 +7,7 @@
     transition: all .3s ease-in-out;
 
     @include media-sm {
-        flex-direction: column;
+        column-gap: 8px;
 
         &.get-app-button--android {
             .btn:first-child {
@@ -34,7 +34,13 @@
         transition: all .2s ease-in-out;
 
         @include media-sm {
-            min-width: 220px;
+            min-width: 180px;
+        }
+        @include media-xs {
+            min-width: 160px;
+        }
+        @include media-3xs {
+            min-width: 150px;
         }
 
         p {

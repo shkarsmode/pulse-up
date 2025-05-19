@@ -1,0 +1,89 @@
+@use "../../../../../styles/mixins" as *;
+
+.mobile-app-banner {
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    background-color: #f5effe;
+    z-index: 1;
+    box-shadow: 0px 3px 20px 0px #0000001F;
+    opacity: 0;
+    z-index: -1;
+    transition: opacity  150ms ease-in-out, z-index  1ms ease-in-out 150ms;
+
+    &.mobile-app-banner--visible {
+        opacity: 1;
+        z-index: 1;
+        transition: opacity  150ms ease-in-out;
+    }
+}
+
+.mobile-app-banner__container {
+    position: relative;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    column-gap: 16px;
+    padding: 16px 0;
+
+    @include media-md {
+        justify-content: center;
+    }
+}
+
+.mobile-app-banner__content {
+    max-width: 500px;
+    display: flex;
+    flex-direction: column;
+    row-gap: 16px;
+
+    @include media-md {
+        max-width: 100%;
+        justify-content: center;
+    }
+}
+
+.mobile-app-banner__title {
+    @include title-24px;
+
+    @include media-md {
+        @include title-20px;
+        text-align: center;
+    }
+}
+
+.mobile-app-banner__buttons {
+    @include media-md {
+        display: flex;
+        justify-content: center;
+    }
+}
+
+.mobile-app-banner__image {
+    position: absolute;
+    top: -28px;
+    right: -90px;
+    bottom: 0;
+    width: 400px;
+    height: 160px;
+    background-image: url("/assets/img/ad-banner-bg.png");
+    background-image: -webkit-image-set(
+        "/assets/img/ad-banner-bg.avif" type("image/avif"),
+        "/assets/img/ad-banner-bg.webp" type("image/webp"),
+        "/assets/img/ad-banner-bg.png" type("image/png")
+    );
+    background-image: image-set(
+        "/assets/img/ad-banner-bg.avif" type("image/avif"),
+        "/assets/img/ad-banner-bg.webp" type("image/webp"),
+        "/assets/img/ad-banner-bg.png" type("image/png")
+    );
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
+
+    @include media-md {
+        display: none;
+    }
+}
