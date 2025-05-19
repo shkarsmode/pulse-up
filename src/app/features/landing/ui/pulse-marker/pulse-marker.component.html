@@ -1,0 +1,12 @@
+<mgl-marker [lngLat]="[marker.lng, marker.lat]">
+    <button
+        class="marker-button"
+        [ngStyle]="{ opacity }"
+        aria-label="Show topic details">
+        <app-pulse-marker-icon
+            [icon]="marker.icon"
+            [isAnimated]="true"
+            [animationDelay]="delay"
+            (imageLoaded)="onImageLoaded()" />
+    </button>
+</mgl-marker>

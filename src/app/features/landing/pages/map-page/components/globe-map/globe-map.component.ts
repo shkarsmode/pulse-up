@@ -3,7 +3,7 @@ import { toSignal } from "@angular/core/rxjs-interop";
 import mapboxgl from "mapbox-gl";
 import { IMapMarker } from "@/app/shared/interfaces/map-marker.interface";
 import { MediaQueryService } from "@/app/shared/services/core/media-query.service";
-import { MapComponent } from "@/app/features/landing/components/map/map.component";
+import { MapComponent } from "@/app/features/landing/ui/map/map.component";
 import { MapEventListenerService } from "@/app/features/landing/services/map-event-listener.service";
 
 @Component({

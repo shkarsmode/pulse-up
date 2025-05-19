@@ -1,0 +1,9 @@
+<img
+    [src]="icon"
+    width="44"
+    height="44"
+    alt="icon"
+    appLoadImgPath
+    [ngClass]="classes"
+    [ngStyle]="isAnimated ? { animationDelay: animationDelay + 'ms' } : {}"
+    (load)="onImageLoaded()"/>

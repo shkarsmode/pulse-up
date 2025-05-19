@@ -14,7 +14,7 @@ import { PrimaryButtonComponent } from "@/app/shared/components/ui-kit/buttons/p
 import { MenuComponent } from "@/app/shared/components/ui-kit/menu/menu.component";
 import { CopyButtonComponent } from "@/app/shared/components/ui-kit/buttons/copy-button/copy-button.component";
 import { SocialsButtonComponent } from "@/app/shared/components/ui-kit/buttons/socials-button/socials-button.component";
-import { MapComponent } from "../../components/map/map.component";
+import { MapComponent } from "../../ui/map/map.component";
 import { SliderComponent } from "@/app/shared/components/slider/slider.component";
 import { TopPulseCardComponent } from "@/app/shared/components/pulses/top-pulse/top-pulse-card.component";
 import { SpinnerComponent } from "@/app/shared/components/ui-kit/spinner/spinner.component";
