@@ -20,6 +20,7 @@ import { TopPulseCardComponent } from "@/app/shared/components/pulses/top-pulse/
 import { SpinnerComponent } from "@/app/shared/components/ui-kit/spinner/spinner.component";
 import { LoadImgPathDirective } from "@/app/shared/directives/load-img-path/load-img-path.directive";
 import { FlatButtonDirective } from "@/app/shared/components/ui-kit/buttons/flat-button/flat-button.directive";
+import { OpenGetAppPopupDirective } from "@/app/shared/components/popups/get-app-popup/open-get-app-popup.directive";
 
 @Component({
     selector: "app-pulse-page",
@@ -42,6 +43,7 @@ import { FlatButtonDirective } from "@/app/shared/components/ui-kit/buttons/flat
         FormatNumberPipe,
         LoadImgPathDirective,
         FlatButtonDirective,
+        OpenGetAppPopupDirective,
     ],
 })
 export class PulsePageComponent implements OnInit {
