@@ -108,7 +108,8 @@ input {
 
 a {
     text-decoration: none;
-    color: inherit
+    color: inherit;
+    cursor: pointer;
 }
 
 button {
@@ -116,4 +117,5 @@ button {
     font: inherit;
     color: inherit;
     background-color: transparent;
+    cursor: pointer;
 }

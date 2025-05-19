@@ -1,0 +1,76 @@
+@use "../../../../../styles/mixins" as *;
+
+.auth {
+    min-height: 100svh;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    padding: 20px;
+}
+.auth__aside {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 20px;
+    background-color: var(--white-color);
+    background-image: url("/assets/img/signin-bg.png");
+    background-image: -webkit-image-set(
+        "/assets/img/signin-bg.avif" type("image/avif"),
+        "/assets/img/signin-bg.webp" type("image/webp"),
+        "/assets/img/signin-bg.png" type("image/png")
+    );
+    background-image: image-set(
+        "/assets/img/signin-bg.avif" type("image/avif"),
+        "/assets/img/signin-bg.webp" type("image/webp"),
+        "/assets/img/signin-bg.png" type("image/png")
+    );
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;
+
+    svg {
+        width: 310px;
+        height: 100px;
+    }
+}
+
+.auth__main {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    padding: 40px 0;
+
+    svg {
+        width: 168px;
+        height: 54px;
+    }
+}
+
+.auth__content {
+  width: 100%;
+  max-width: 400px;
+  display: flex;
+  flex-direction: column;
+  row-gap: 32px;
+  padding: 0 20px;
+}
+
+.auth__title {
+  @include title-32px;
+  text-align: center;
+}
+
+.auth__guest {
+  @include text-16px;
+  font-weight: 600;
+  color: var(--accent-color);
+}
+
+.auth-form {
+  width: 100%;
+}
+
+.auth__small {
+  @include text-14px;
+  color: var(--dark-grey-color);
+}
