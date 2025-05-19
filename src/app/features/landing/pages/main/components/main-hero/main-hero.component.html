@@ -27,7 +27,7 @@
                 </div>
             </div>
         </div>
-        <div class="hero__map">
+        <div class="hero__map" #mapWrapper>
             <app-map
                 [isHideDebugger]="true"
                 [zoom]="[zoom]"
@@ -43,7 +43,8 @@
                 [zoomResolutionMap]="zoomResolutionMap"
                 [fog]="fog"
                 [spinning]="true"
-                (mapClick)="onMapClick($event)"/>
+                (mapClick)="onMapClick($event)"
+                (mapLoaded)="onMapLoaded($event)"/>
         </div>
     </div>
 </section>

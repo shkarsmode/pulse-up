@@ -1,4 +1,4 @@
-import { Component, effect, inject } from "@angular/core";
+import { Component, effect, ElementRef, inject, ViewChild } from "@angular/core";
 import { Router, RouterModule } from "@angular/router";
 import { toSignal } from "@angular/core/rxjs-interop";
 import mapboxgl from "mapbox-gl";
@@ -29,6 +29,8 @@ export class MainHeroComponent {
     private mediaService: MediaQueryService = inject(MediaQueryService);
     private readonly mapEventListenerService: MapEventListenerService = inject(MapEventListenerService);
 
+    @ViewChild("mapWrapper", { static: true }) mapWrapperRef!: ElementRef;
+
     private is1400Desctop = toSignal(this.mediaService.mediaQuery("max", "XXL"));
     private is1200Desctop = toSignal(this.mediaService.mediaQuery("max", "XL"));
     private isTablet = toSignal(this.mediaService.mediaQuery("max", "MD"));
@@ -36,6 +38,9 @@ export class MainHeroComponent {
     private isXXSMobile = toSignal(this.mediaService.mediaQuery("max", "XXS"));
     private isXXXSMobile = toSignal(this.mediaService.mediaQuery("max", "XXXS"));
 
+    private map: mapboxgl.Map | null = null;
+    private startX = 0;
+    private startY = 0;
     public AppRoutes = AppRoutes;
     public zoom = 1.5;
     public zoomResolutionMap = {
@@ -82,6 +87,39 @@ export class MainHeroComponent {
                 this.zoomResolutionMap = { ...this.zoomResolutionMap, 1: 1 };
             }
         });
+    }
+
+    ngAfterViewInit() {
+        // Disable map rotation vertically
+        const el = this.mapWrapperRef.nativeElement;
+
+        el.addEventListener(
+            "touchstart",
+            (e: any) => {
+                this.startX = e.touches[0].clientX;
+                this.startY = e.touches[0].clientY;
+            },
+            { passive: true },
+        );
+
+        el.addEventListener(
+            "touchmove",
+            (e: any) => {
+                const dx = Math.abs(e.touches[0].clientX - this.startX);
+                const dy = Math.abs(e.touches[0].clientY - this.startY);
+                
+                if (dx > dy) {
+                    this.map?.dragPan.enable();
+                } else {
+                    this.map?.dragPan.disable();
+                }
+            },
+            { passive: false },
+        );
+    }
+
+    public onMapLoaded(map: mapboxgl.Map) {
+        this.map = map;
     }
 
     public onMapClick({coordinates}: IMapClickEvent) {
