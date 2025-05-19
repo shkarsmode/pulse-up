@@ -39,6 +39,9 @@
         @include media-xs {
             min-width: 160px;
         }
+        @include media-2xs {
+            min-width: 154px;
+        }
         @include media-3xs {
             min-width: 150px;
         }
