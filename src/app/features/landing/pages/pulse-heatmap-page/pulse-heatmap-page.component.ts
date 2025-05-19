@@ -8,7 +8,7 @@ import { PulseService } from "../../../../shared/services/api/pulse.service";
 import { AppRoutes } from "../../../../shared/enums/app-routes.enum";
 import { MediaQueryService } from "@/app/shared/services/core/media-query.service";
 import { ResponsiveMapConfig } from "@/app/shared/interfaces/responsive-map-config.interface";
-import { MapComponent } from "../../components/map/map.component";
+import { MapComponent } from "../../ui/map/map.component";
 import { FadeInDirective } from "@/app/shared/animations/fade-in.directive";
 import { SecondaryButtonComponent } from "@/app/shared/components/ui-kit/buttons/secondary-button/secondary-button.component";
 import { FormatNumberPipe } from "@/app/shared/pipes/format-number.pipe";

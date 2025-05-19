@@ -1,0 +1,21 @@
+<mgl-map
+    [ngClass]="classes"
+    [style]="mapStylesUrl"
+    [interactive]="!options.preview"
+    [zoom]="options.zoom"
+    [minZoom]="options.minZoom"
+    [maxZoom]="10"
+    [maxBounds]="options.maxBounds"
+    [center]="options.center"
+    [scrollZoom]="options.scrollZoom"
+    [doubleClickZoom]="options.doubleClickZoom"
+    [projection]="options.projection"
+    (mapLoad)="onMapLoad($event)"
+    (styleData)="onStyleData($event)"
+    (move)="onMove()"
+    (moveEnd)="onMoveEnd()"
+    (zoomEnd)="onZoomEnd()"
+    (click)="onClick($event)"
+    (touchStart)="onTouchStart($event)">
+    <ng-container></ng-container>
+</mgl-map>

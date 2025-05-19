@@ -1,0 +1,24 @@
+:host {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
+::ng-deep .mapboxgl-control-container {
+    display: none;
+}
+
+.maps {
+    height: 100%;
+    width: 100%;
+    overflow: hidden;
+    cursor: grab;
+}
+.maps__rounded {
+    border-radius: 20px;
+}
+.maps__preview {
+    cursor: pointer;
+}

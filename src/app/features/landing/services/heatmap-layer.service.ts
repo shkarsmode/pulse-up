@@ -318,6 +318,7 @@ export class HeatmapLayerService {
         });
     }
 
+    // TODO: use PuslseWeight entity
     public addWeightsToMap(data: IHeatmapData): void {
         this.weights = [];
         data.forEach((item: any) => {

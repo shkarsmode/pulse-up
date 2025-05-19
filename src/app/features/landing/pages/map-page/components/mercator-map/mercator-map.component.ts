@@ -3,7 +3,7 @@ import { toSignal } from "@angular/core/rxjs-interop";
 import { IMapMarker } from "@/app/shared/interfaces/map-marker.interface";
 import { MediaQueryService } from "@/app/shared/services/core/media-query.service";
 import { ResponsiveMapConfig } from "@/app/shared/interfaces/responsive-map-config.interface";
-import { MapComponent } from "@/app/features/landing/components/map/map.component";
+import { MapComponent } from "@/app/features/landing/ui/map/map.component";
 
 @Component({
     selector: "app-mercator-map",
