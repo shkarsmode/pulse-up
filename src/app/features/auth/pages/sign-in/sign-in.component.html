@@ -5,8 +5,26 @@
             aria-label="pulseup" />
         <div class="auth__content">
             <h1 class="auth__title">Welcome Back!</h1>
-            <form class="auth-form">
-                <app-primary-button [fullWidth]="true"> Continue </app-primary-button>
+            <form
+                class="auth-form"
+                [formGroup]="signInForm"
+                (ngSubmit)="onSubmit()">
+                <label for="phone" class="auth-form__label">Phone</label>
+                <mat-form-field appearance="outline" class="auth-form__field">
+                    <input
+                        matInput
+                        #telInput
+                        type="tel"
+                        id="phone"
+                        formControlName="phone"
+                        [errorStateMatcher]="errorStateMatcher" />
+                    <mat-error>Invalid phone number</mat-error>
+                </mat-form-field>
+                <app-primary-button
+                    [fullWidth]="true"
+                    type="submit">
+                    Continue
+                </app-primary-button>
             </form>
             <small class="auth__small">
                 By creating an account, you agree to our

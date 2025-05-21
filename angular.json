@@ -63,7 +63,7 @@
                             "@angular/material/prebuilt-themes/azure-blue.css",
                             "src/styles/styles.scss",
                             "node_modules/@splidejs/splide/dist/css/splide.min.css",
-                            "node_modules/intl-tel-input/build/css/intlTelInput.css"
+                            "node_modules/intl-tel-input/build/css/intlTelInput.min.css"
                         ],
                         "scripts": []
                     },
