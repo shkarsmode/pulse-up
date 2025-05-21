@@ -5,6 +5,10 @@
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
     padding: 20px;
+
+    @include media-md {
+        grid-template-columns: repeat(1, minmax(0, 1fr));
+    }
 }
 .auth__aside {
     display: flex;
@@ -27,9 +31,17 @@
     background-position: center;
     background-size: cover;
 
+    @include media-md {
+        display: none;
+    }
+
     svg {
         width: 310px;
         height: 100px;
+
+        @include media-lg {
+            height: 64px;
+        }
     }
 }
 
@@ -53,6 +65,10 @@
     flex-direction: column;
     row-gap: 32px;
     padding: 0 20px;
+
+    @include media-md {
+        padding: 0;
+    }
 }
 
 .auth__title {
