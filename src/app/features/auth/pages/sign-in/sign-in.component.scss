@@ -32,9 +32,7 @@
 }
 
 .signin__guest {
-    @include text-16px;
-    font-weight: 600;
-    color: var(--accent-color);
+    @include link-16px;
 }
 
 .auth-form {

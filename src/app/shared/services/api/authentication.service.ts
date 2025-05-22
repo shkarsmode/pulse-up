@@ -113,7 +113,8 @@ export class AuthenticationService {
             map((response: UserCredential | any) => {
                 const accessToken = response.user.accessToken;
 
-                localStorage.setItem('anonymous', accessToken);
+                LocalStorageService.set('anonymous', accessToken);
+                LocalStorageService.set('isAnonymous', true);
                 this.anonymousUser$.next(accessToken);
 
                 return response;

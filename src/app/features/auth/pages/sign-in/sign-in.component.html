@@ -41,6 +41,6 @@
                 <a [routerLink]="privacyRoute">Privacy Policy</a>
             </small>
         </div>
-        <button class="signin__guest">Continue as Guest</button>
+        <app-link-button class="signin__guest" (click)="onClickGuest()">Continue as Guest</app-link-button>
     </main>
 </app-auth-layout>
