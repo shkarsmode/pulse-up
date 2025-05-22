@@ -1,0 +1,36 @@
+@use "../../../../../styles/mixins" as *;
+
+.confirm {
+    width: 100%;
+    max-width: 340px;
+    margin: 0 auto;
+    padding: 0 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    row-gap: 24px;
+
+    @include media-md {
+        padding: 0;
+    }
+}
+
+.confirm__title {
+    @include title-32px;
+}
+
+.confirm__text {
+    @include text-16px;
+    text-align: center;
+    color: var(--dark-grey-color);
+}
+
+.confirm__error {
+    @include text-14px;
+    color: var(--error-color);
+    min-height: 32px;
+    text-align: center;
+}
+
+

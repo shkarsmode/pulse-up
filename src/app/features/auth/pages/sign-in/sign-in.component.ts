@@ -15,6 +15,7 @@ import { SvgIconComponent } from "angular-svg-icon";
 import { AppRoutes } from "@/app/shared/enums/app-routes.enum";
 import { PrimaryButtonComponent } from "../../../../shared/components/ui-kit/buttons/primary-button/primary-button.component";
 import { SignInFormService } from "../../services/sign-in-form.service";
+import { AuthLayoutComponent } from "../../ui/auth-layout/auth-layout.component";
 
 @Component({
     selector: "app-sign-in",
@@ -27,6 +28,7 @@ import { SignInFormService } from "../../services/sign-in-form.service";
         ReactiveFormsModule,
         SvgIconComponent,
         PrimaryButtonComponent,
+        AuthLayoutComponent,
     ],
     providers: [SignInFormService],
     templateUrl: "./sign-in.component.html",

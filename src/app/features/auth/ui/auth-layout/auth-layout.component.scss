@@ -1,0 +1,46 @@
+@use "../../../../../styles/mixins" as *;
+
+.auth {
+    min-height: 100svh;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    padding: 20px;
+
+    @include media-md {
+        grid-template-columns: repeat(1, minmax(0, 1fr));
+    }
+}
+.auth__aside {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 20px;
+    background-color: var(--white-color);
+    background-image: url("/assets/img/signin-bg.png");
+    background-image: -webkit-image-set(
+        "/assets/img/signin-bg.avif" type("image/avif"),
+        "/assets/img/signin-bg.webp" type("image/webp"),
+        "/assets/img/signin-bg.png" type("image/png")
+    );
+    background-image: image-set(
+        "/assets/img/signin-bg.avif" type("image/avif"),
+        "/assets/img/signin-bg.webp" type("image/webp"),
+        "/assets/img/signin-bg.png" type("image/png")
+    );
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;
+
+    @include media-md {
+        display: none;
+    }
+
+    svg {
+        width: 310px;
+        height: 100px;
+
+        @include media-lg {
+            height: 64px;
+        }
+    }
+}

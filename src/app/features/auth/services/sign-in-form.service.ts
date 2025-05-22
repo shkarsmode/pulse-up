@@ -173,7 +173,7 @@ export class SignInFormService {
     };
 
     private navigateToConfirmPage() {
-        this.router.navigateByUrl(`/${this.AppRoutes.Auth.CONFIRM}`);
+        this.router.navigateByUrl(`/${this.AppRoutes.Auth.CONFIRM_PHONE_NUMBER}`);
     }
 }
 

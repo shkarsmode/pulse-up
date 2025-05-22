@@ -33,7 +33,7 @@ enum ProfileRoutes {
 
 enum AuthRoutes {
     SIGN_IN = 'sign-in',
-    CONFIRM = 'confirm',
+    CONFIRM_PHONE_NUMBER = 'confirm-phone-number',
 }
 
 export const AppRoutes = {

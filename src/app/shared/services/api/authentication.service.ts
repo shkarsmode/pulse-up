@@ -11,6 +11,7 @@ import { IdentityService } from './identity.service';
 import { UserService } from './user.service';
 import { AppConstants } from '../../constants';
 import { WindowService } from '../core/window.service';
+import { LocalStorageService } from '../core/local-storage.service';
 
 
 @Injectable({
@@ -85,7 +86,10 @@ export class AuthenticationService {
             switchMap((userCredential) => {
                 return from(userCredential.user.getIdToken()).pipe(
                     tap((idToken) => {
-                        localStorage.setItem('isAuthenticated', idToken);
+                        LocalStorageService.set('isAuthenticated', idToken);
+                        LocalStorageService.set('isAnonymous', false);
+                        LocalStorageService.remove('phoneNumber');
+                        LocalStorageService.remove('anonymous');
                         this.isAuthenticatedUser$.next(idToken);
                     }),
                     map(() => userCredential)
@@ -264,6 +268,9 @@ export class AuthenticationService {
             .pipe(
                 map((confirmationResult) => {
                     this.windowRef.confirmationResult = confirmationResult;
+                }),
+                tap(() => {
+                    LocalStorageService.set('phoneNumber', phoneNumber);
                 }),
                 catchError((error) => {
                     console.log('Error sending confirmation code', error);

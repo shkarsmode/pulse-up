@@ -1,6 +1,7 @@
 @import url("./_reset.scss");
 @import url("./_fonts.scss");
 @import url("./_variables.scss");
+@import url("./_mixins.scss");
 @import url("./_materials.scss");
 @import url("./animations/index.scss");
 @import url("./_uikit.scss");
@@ -102,4 +103,22 @@ h3 {
     --iti-path-flags-2x: url("/assets/img/flags@2x.png");
     --iti-path-globe-1x: url("/assets/img/globe.png");
     --iti-path-globe-2x: url("/assets/img/globe@2x.png");
+}
+
+div.otp-custom-container {
+    input.otp-custom-input {
+        width: 44px;
+        height: 44px;
+        font-size: 24px;
+        &:focus-visible {
+            outline-color: var(--accent-color);
+        }
+
+        @media screen and (max-width: 480px) {
+            width: 36px;
+            height: 36px;
+            font-size: 20px;
+            margin: 0 6px !important;
+        }
+    }
 }
