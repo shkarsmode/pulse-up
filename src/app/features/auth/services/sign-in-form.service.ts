@@ -1,14 +1,16 @@
 // phone-form.service.ts
+import { AppRoutes } from "@/app/shared/enums/app-routes.enum";
 import { AuthenticationService } from "@/app/shared/services/api/authentication.service";
 import { inject } from "@angular/core";
 import { FormBuilder, FormControl, FormGroup, FormGroupDirective, NgForm } from "@angular/forms";
 import { ErrorStateMatcher } from "@angular/material/core";
+import { Router } from "@angular/router";
 import intlTelInput, { Iti } from "intl-tel-input";
-import { fr } from "intl-tel-input/i18n";
 import { CountryCode, isValidPhoneNumber, validatePhoneNumberLength } from "libphonenumber-js";
-import { debounceTime, fromEvent, map } from "rxjs";
+import { delay, fromEvent, map } from "rxjs";
 
 export class SignInFormService {
+    private router: Router = inject(Router);
     private readonly formBuilder: FormBuilder = inject(FormBuilder);
     private readonly authenticationService: AuthenticationService = inject(AuthenticationService);
     private iti: Iti;
@@ -17,16 +19,24 @@ export class SignInFormService {
     public countryCode: string = "US";
     public form: FormGroup;
     public errorStateMatcher: ErrorStateMatcher;
+    public AppRoutes: typeof AppRoutes;
 
     constructor() {
         this.form = this.createForm();
         this.errorStateMatcher = new CustomErrorStateMatcher(() => this.isValid);
+        this.AppRoutes = AppRoutes;
     }
 
     private createForm(): FormGroup {
         return this.formBuilder.group({
             phone: "",
         });
+    }
+
+    private resetInput() {
+        const code = this.iti.getSelectedCountryData().dialCode;
+        this.form.get("phone")?.setValue("+" + code);
+        this.validateNumber();
     }
 
     private validateMaxValueLength(event: KeyboardEvent) {
@@ -91,16 +101,11 @@ export class SignInFormService {
     public onFocus = () => {
         const value = this.form.get("phone")?.value;
         if (!value) {
-            const getCode = this.iti.getSelectedCountryData().dialCode;
-            this.form.get("phone")?.setValue("+" + getCode);
+            this.resetInput();
         }
     };
 
     public onBlur = () => {
-        if (this.countryCodeChanged) {
-            this.countryCodeChanged = false;
-            return;
-        };
         this.validateNumber();
     };
 
@@ -113,7 +118,7 @@ export class SignInFormService {
     };
 
     public onCountryCodeChange = () => {
-        this.countryCodeChanged = true;
+        this.resetInput();
     };
 
     public onViewInit = (inputElement: HTMLInputElement) => {
@@ -123,8 +128,8 @@ export class SignInFormService {
             initialCountry: "US",
             showFlags: true,
         });
-        fromEvent(inputElement, "blur").pipe(debounceTime(100), map(this.onBlur)).subscribe();
-        fromEvent(inputElement, "focus").pipe(debounceTime(100), map(this.onFocus)).subscribe();
+        fromEvent(inputElement, "blur").pipe(delay(100), map(this.onBlur)).subscribe();
+        fromEvent(inputElement, "focus").pipe(map(this.onFocus)).subscribe();
         fromEvent(inputElement, "countrychange").pipe(map(this.onCountryCodeChange)).subscribe();
         fromEvent(inputElement, "keydown")
             .pipe(map((event) => this.onInputKeyDown(event as KeyboardEvent)))
@@ -138,20 +143,38 @@ export class SignInFormService {
     public validateNumber() {
         if (!this.iti) return;
         const value = this.form.get("phone")?.value;
-        const countryCode = this.iti.getSelectedCountryData().iso2?.toUpperCase();
-        if (!countryCode) return;
-
-        const valid = isValidPhoneNumber(value, countryCode as CountryCode);
+        const iso2Code = this.iti.getSelectedCountryData().iso2?.toUpperCase();
+        const dialCode = this.iti.getSelectedCountryData().dialCode;
+        if (!iso2Code) return;
+        
+        const isEmpty = value === "+" + dialCode;
+        if (isEmpty) {
+            this.isValid = true;
+            return;
+        }
+        
+        const valid = isValidPhoneNumber(value, iso2Code as CountryCode);
         this.isValid = valid;
     }
 
     public submit = () => {
         this.validateNumber();
-        if(!this.isValid) return;
+        if (!this.isValid) return;
         const phone = this.form.value.phone;
-        console.log("Phone number submitted:", phone);
-        this.authenticationService.loginWithPhoneNumber(phone)
+        this.authenticationService.loginWithPhoneNumber(phone).subscribe({
+            next: () => {
+                console.log("Verification code sent successfully");
+                this.navigateToConfirmPage();
+            },
+            error: (err) => {
+                console.log("Error sending verification code:", err);
+            },
+        });
     };
+
+    private navigateToConfirmPage() {
+        this.router.navigateByUrl(`/${this.AppRoutes.Auth.CONFIRM}`);
+    }
 }
 
 class CustomErrorStateMatcher implements ErrorStateMatcher {

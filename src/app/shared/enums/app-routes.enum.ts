@@ -31,7 +31,13 @@ enum ProfileRoutes {
 
 }
 
+enum AuthRoutes {
+    SIGN_IN = 'sign-in',
+    CONFIRM = 'confirm',
+}
+
 export const AppRoutes = {
+    'Auth': AuthRoutes,
     'Landing': LandingRoutes,
     'Community': CommunityRoutes,
     'User': {

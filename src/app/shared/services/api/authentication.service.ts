@@ -1,22 +1,28 @@
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
-import { inject, Inject, Injectable, Optional } from '@angular/core';
+import { inject, Inject, Injectable } from '@angular/core';
 import { initializeApp } from 'firebase/app';
-import { getAuth, signInAnonymously, signInWithPhoneNumber, UserCredential } from 'firebase/auth';
+import { getAuth, signInAnonymously, signInWithPhoneNumber, UserCredential, RecaptchaVerifier, Auth } from 'firebase/auth';
 import { jwtDecode, JwtPayload } from 'jwt-decode';
-import { BehaviorSubject, from, Observable, of } from 'rxjs';
-import { catchError, map, switchMap } from 'rxjs/operators';
+import { BehaviorSubject, from, Observable, of, throwError } from 'rxjs';
+import { catchError, map, switchMap, tap } from 'rxjs/operators';
 import { IFirebaseConfig } from '../../interfaces';
 import { API_URL, FIREBASE_CONFIG } from '../../tokens/tokens';
 import { IdentityService } from './identity.service';
 import { UserService } from './user.service';
 import { AppConstants } from '../../constants';
+import { WindowService } from '../core/window.service';
+
 
 @Injectable({
     providedIn: 'root',
+
 })
 export class AuthenticationService {
-    private readonly identityService: IdentityService = inject(IdentityService);
+    private readonly apiUrl: string = inject(API_URL);
+    private readonly http: HttpClient = inject(HttpClient);
+    private readonly windowService: WindowService = inject(WindowService);
     private readonly userService: UserService = inject(UserService);
+    private readonly identityService: IdentityService = inject(IdentityService);
 
     public anonymousUser: Observable<string | null>;
     public isAuthenticatedUser: Observable<string | null>;
@@ -24,13 +30,13 @@ export class AuthenticationService {
 
     private anonymousUser$: BehaviorSubject<string | null>;
     private isAuthenticatedUser$: BehaviorSubject<string | null>;
+    private windowRef: Window;
+    private firebaseAuth: Auth;
 
     constructor(
-        private readonly http: HttpClient,
-        @Optional() @Inject(API_URL) private readonly apiUrl: string,
         @Inject(FIREBASE_CONFIG) private readonly firebaseConfig: IFirebaseConfig,
     ) {
-        this.initFirebaseAppWithConfig();
+        this.firebaseAuth = this.initFirebaseAppWithConfig();
 
         this.anonymousUser$ = new BehaviorSubject(
             localStorage.getItem('anonymous')
@@ -42,10 +48,13 @@ export class AuthenticationService {
         );
         this.isAuthenticatedUser =
             this.isAuthenticatedUser$.asObservable();
+
+        this.windowRef = this.windowService.windowRef;
     }
 
-    private initFirebaseAppWithConfig(): void {
+    private initFirebaseAppWithConfig(): Auth {
         const app = initializeApp(this.firebaseConfig);
+        return getAuth(app);
     }
 
     public get anonymousUserValue(): string | null {
@@ -57,40 +66,36 @@ export class AuthenticationService {
     }
 
     public loginWithPhoneNumber(phoneNumber: string) {
-        this.identityService.checkIdentity({ phoneNumber })
+        return this.identityService.checkIdentity({ phoneNumber })
             .pipe(
-                switchMap((isValid) => {
-                    if (!isValid) return of(false);
-                    return this.validatePhoneNumberOnVoip(phoneNumber)
-                }),
-                map((isValid) => {
+                switchMap(this.handleIdentityCheck),
+                switchMap(() => this.validatePhoneNumberOnVoip(phoneNumber)),
+                switchMap(this.solveRecaptcha),
+                switchMap(() => this.sendVerificationCode(phoneNumber))
+            );
+    }
 
-                })
-            )
-            .subscribe((response) => {
-                console.log('Phone number validation response:', response);
-
-            });
-
-        // const auth = getAuth();
-        // const appVerifier = new firebase.auth.RecaptchaVerifier('recaptcha-container');
-        // const phoneNumber = '+1234567890'; // Replace with the user's phone number
-        // const app = initializeApp(this.firebaseConfig);
-        // const auth = getAuth(app);
-
-        // signInWithPhoneNumber(auth, phoneNumber, appVerifier)
-        //     .then((confirmationResult) => {
-        //         // SMS sent. Prompt user to enter the code from the message
-        //         const code = window.prompt('Enter the verification code you received:');
-        //         return confirmationResult.confirm(code);
-        //     })
-        //     .then((result) => {
-        //         // User signed in successfully.
-        //         console.log('User signed in:', result.user);
-        //     })
-        //     .catch((error) => {
-        //         console.error('Error during sign-in:', error);
-        //     });
+    public confirmVerificationCode(verificationCode: string): Observable<UserCredential> {
+        const confirmationResult = this.windowRef.confirmationResult;
+        if (!confirmationResult) {
+            return throwError(() => new Error('Confirmation result is not available'));
+        }
+    
+        return from(confirmationResult.confirm(verificationCode)).pipe(
+            switchMap((userCredential) => {
+                return from(userCredential.user.getIdToken()).pipe(
+                    tap((idToken) => {
+                        localStorage.setItem('isAuthenticated', idToken);
+                        this.isAuthenticatedUser$.next(idToken);
+                    }),
+                    map(() => userCredential)
+                );
+            }),
+            catchError((error: any) => {
+                console.log('Verification error:', error);
+                return throwError(() => new Error(error.message));
+            })
+        );
     }
 
     public loginAsAnonymousThroughTheFirebase(): Observable<UserCredential> {
@@ -221,7 +226,7 @@ export class AuthenticationService {
         }
     }
 
-    private validatePhoneNumberOnVoip(phoneNumber: string): Observable<boolean> {
+    private validatePhoneNumberOnVoip = (phoneNumber: string): Observable<boolean> => {
         return this.userService.validatePhoneNumber(phoneNumber)
             .pipe(
                 map((response) => {
@@ -233,5 +238,37 @@ export class AuthenticationService {
 
     private validatePhoneLineType(lineType: string): boolean {
         return Object.values(AppConstants.PHONE_LINE_TYPES).includes(lineType);
+    }
+
+    private handleIdentityCheck = (identityCheckResult: boolean): Observable<boolean> => {
+        if (!identityCheckResult) return throwError(() => new Error('identity check failed'));
+        return of(true);
+    }
+
+    private solveRecaptcha = () => {
+        this.firebaseAuth.useDeviceLanguage();
+        const recaptchaVerifier = new RecaptchaVerifier(this.firebaseAuth, "recaptcha-container", {
+            size: "invisible"
+        })
+        this.windowRef.recaptchaVerifier = recaptchaVerifier;
+        return from(recaptchaVerifier.verify())
+    }
+
+    private sendVerificationCode = (phoneNumber: string) => {
+        const auth = getAuth();
+        const appVerifier = this.windowRef.recaptchaVerifier;
+        if(!appVerifier) {
+            return throwError(() => new Error('RecaptchaVerifier is not initialized'));
+        }
+        return from(signInWithPhoneNumber(auth, phoneNumber, appVerifier))
+            .pipe(
+                map((confirmationResult) => {
+                    this.windowRef.confirmationResult = confirmationResult;
+                }),
+                catchError((error) => {
+                    console.log('Error sending confirmation code', error);
+                    throw error;
+                })
+            );
     }
 }
