@@ -1,8 +1,9 @@
 import { inject, Injectable } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
-import { expand, last, map, Observable, of, Subject, takeWhile } from "rxjs";
+import { catchError, expand, last, map, Observable, of, Subject, takeWhile } from "rxjs";
 import { IAuthor, IPulse, IPaginator } from "../../interfaces";
 import { API_URL } from "../../tokens/tokens";
+import { IPhoneValidationResult } from "../../interfaces/phone-validatuion-result.interface";
 
 @Injectable({
     providedIn: "root",
@@ -40,7 +41,7 @@ export class UserService {
             map((response) => ({
                 items: response,
                 page: page,
-                hasMorePages: response.length !== 0 && response.length === itemsPerPage, 
+                hasMorePages: response.length !== 0 && response.length === itemsPerPage,
             } as IPaginator<IPulse>)),
         );
     }
@@ -82,5 +83,17 @@ export class UserService {
             });
 
         return topics;
+    }
+
+    public validatePhoneNumber(phoneNumber: string): Observable<IPhoneValidationResult> {
+        return this.http.post<IPhoneValidationResult>(`${this.apiUrl}/users/validate:phone`, { phoneNumber }).pipe(
+            map((response) => {
+                if (response) {
+                    return response;
+                } else {
+                    throw new Error("Phone number validation failed", response);
+                }
+            }),
+        );
     }
 }

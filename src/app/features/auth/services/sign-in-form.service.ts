@@ -1,4 +1,5 @@
 // phone-form.service.ts
+import { AuthenticationService } from "@/app/shared/services/api/authentication.service";
 import { inject } from "@angular/core";
 import { FormBuilder, FormControl, FormGroup, FormGroupDirective, NgForm } from "@angular/forms";
 import { ErrorStateMatcher } from "@angular/material/core";
@@ -9,6 +10,7 @@ import { debounceTime, fromEvent, map } from "rxjs";
 
 export class SignInFormService {
     private readonly formBuilder: FormBuilder = inject(FormBuilder);
+    private readonly authenticationService: AuthenticationService = inject(AuthenticationService);
     private iti: Iti;
     public isValid = true;
     public countryCodeChanged = false;
@@ -144,8 +146,11 @@ export class SignInFormService {
     }
 
     public submit = () => {
+        this.validateNumber();
+        if(!this.isValid) return;
         const phone = this.form.value.phone;
         console.log("Phone number submitted:", phone);
+        this.authenticationService.loginWithPhoneNumber(phone)
     };
 }
 

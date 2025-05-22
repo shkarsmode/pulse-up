@@ -148,6 +148,10 @@
 .auth__small {
     @include text-14px;
     color: var(--dark-grey-color);
+
+    a {
+        font-weight: 600
+    }
 }
 
 .auth-form__label {

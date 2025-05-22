@@ -1,17 +1,23 @@
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
-import { Inject, Injectable, Optional } from '@angular/core';
+import { inject, Inject, Injectable, Optional } from '@angular/core';
 import { initializeApp } from 'firebase/app';
-import { getAuth, signInAnonymously, UserCredential } from 'firebase/auth';
+import { getAuth, signInAnonymously, signInWithPhoneNumber, UserCredential } from 'firebase/auth';
 import { jwtDecode, JwtPayload } from 'jwt-decode';
 import { BehaviorSubject, from, Observable, of } from 'rxjs';
-import { catchError, map } from 'rxjs/operators';
+import { catchError, map, switchMap } from 'rxjs/operators';
 import { IFirebaseConfig } from '../../interfaces';
 import { API_URL, FIREBASE_CONFIG } from '../../tokens/tokens';
+import { IdentityService } from './identity.service';
+import { UserService } from './user.service';
+import { AppConstants } from '../../constants';
 
 @Injectable({
     providedIn: 'root',
 })
 export class AuthenticationService {
+    private readonly identityService: IdentityService = inject(IdentityService);
+    private readonly userService: UserService = inject(UserService);
+
     public anonymousUser: Observable<string | null>;
     public isAuthenticatedUser: Observable<string | null>;
     public defaultHeaders = new HttpHeaders();
@@ -19,7 +25,7 @@ export class AuthenticationService {
     private anonymousUser$: BehaviorSubject<string | null>;
     private isAuthenticatedUser$: BehaviorSubject<string | null>;
 
-    constructor (
+    constructor(
         private readonly http: HttpClient,
         @Optional() @Inject(API_URL) private readonly apiUrl: string,
         @Inject(FIREBASE_CONFIG) private readonly firebaseConfig: IFirebaseConfig,
@@ -40,7 +46,7 @@ export class AuthenticationService {
 
     private initFirebaseAppWithConfig(): void {
         const app = initializeApp(this.firebaseConfig);
-    } 
+    }
 
     public get anonymousUserValue(): string | null {
         return this.anonymousUser$.value;
@@ -50,9 +56,46 @@ export class AuthenticationService {
         return this.isAuthenticatedUser$.value;
     }
 
+    public loginWithPhoneNumber(phoneNumber: string) {
+        this.identityService.checkIdentity({ phoneNumber })
+            .pipe(
+                switchMap((isValid) => {
+                    if (!isValid) return of(false);
+                    return this.validatePhoneNumberOnVoip(phoneNumber)
+                }),
+                map((isValid) => {
+
+                })
+            )
+            .subscribe((response) => {
+                console.log('Phone number validation response:', response);
+
+            });
+
+        // const auth = getAuth();
+        // const appVerifier = new firebase.auth.RecaptchaVerifier('recaptcha-container');
+        // const phoneNumber = '+1234567890'; // Replace with the user's phone number
+        // const app = initializeApp(this.firebaseConfig);
+        // const auth = getAuth(app);
+
+        // signInWithPhoneNumber(auth, phoneNumber, appVerifier)
+        //     .then((confirmationResult) => {
+        //         // SMS sent. Prompt user to enter the code from the message
+        //         const code = window.prompt('Enter the verification code you received:');
+        //         return confirmationResult.confirm(code);
+        //     })
+        //     .then((result) => {
+        //         // User signed in successfully.
+        //         console.log('User signed in:', result.user);
+        //     })
+        //     .catch((error) => {
+        //         console.error('Error during sign-in:', error);
+        //     });
+    }
+
     public loginAsAnonymousThroughTheFirebase(): Observable<UserCredential> {
         const auth = getAuth();
-        
+
         return from(signInAnonymously(auth)).pipe(
             catchError((error: any) => {
                 console.log(error);
@@ -105,7 +148,7 @@ export class AuthenticationService {
                         response.idToken
                     );
                     this.anonymousUser$.next(response.idToken);
-                    
+
                     return response;
                 })
             );
@@ -159,7 +202,7 @@ export class AuthenticationService {
         if (!token) {
             return true;
         }
-        
+
         const decodedToken = this.decodeToken(token);
         if (!decodedToken || !decodedToken.exp) {
             return true;
@@ -176,5 +219,19 @@ export class AuthenticationService {
             console.error('Invalid token or unable to decode:', error);
             return null;
         }
+    }
+
+    private validatePhoneNumberOnVoip(phoneNumber: string): Observable<boolean> {
+        return this.userService.validatePhoneNumber(phoneNumber)
+            .pipe(
+                map((response) => {
+                    const lineType = response.lineType;
+                    return this.validatePhoneLineType(lineType);
+                }),
+            );
+    }
+
+    private validatePhoneLineType(lineType: string): boolean {
+        return Object.values(AppConstants.PHONE_LINE_TYPES).includes(lineType);
     }
 }
