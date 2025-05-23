@@ -37,7 +37,7 @@ export class ConfirmPhoneNumberComponent implements OnInit {
         containerClass: "otp-custom-container",
     };
     public errorMessage$: BehaviorSubject<string> = new BehaviorSubject<string>("");
-    private savedPhoneNumber: string = LocalStorageService.get("phoneNumber") || "";
+    private savedPhoneNumber: string = LocalStorageService.get("phoneNumberForSignin") || "";
     private appRoutes = AppRoutes;
 
     public get phoneNumber(): string {

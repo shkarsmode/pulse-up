@@ -22,7 +22,26 @@ export class SettingsService {
     public shareTopicBaseUrl: string;
     public shareUserBaseUrl: string;
 
+    private loaded: boolean = false;
+
     public getSettings(): Observable<ISettings> {
+        if (this.loaded) {
+            return new Observable<ISettings>((observer) => {
+                observer.next({
+                    apiVersion: this.apiVersion,
+                    appStoreUrl: this.appStoreUrl,
+                    blobUrlPrefix: this.blobUrlPrefix,
+                    defaultAutoPulse: this.defaultAutoPulse,
+                    deletedCredentialsBlockInterval: this.deletedCredentialsBlockInterval,
+                    googlePlayUrl: this.googlePlayUrl,
+                    latestAppVersionNumber: this.latestAppVersionNumber,
+                    minVoteInterval: this.minVoteInterval,
+                    shareTopicBaseUrl: this.shareTopicBaseUrl,
+                    shareUserBaseUrl: this.shareUserBaseUrl,
+                });
+                observer.complete();
+            });
+        }
         return this.http.get<ISettings>(`${this.apiUrl}/settings`).pipe(
             tap((settings) => {
                 this.apiVersion = settings.apiVersion;
@@ -35,6 +54,7 @@ export class SettingsService {
                 this.minVoteInterval = settings.minVoteInterval;
                 this.shareTopicBaseUrl = settings.shareTopicBaseUrl;
                 this.shareUserBaseUrl = settings.shareUserBaseUrl;
+                this.loaded = true;
             }),
         );
     }

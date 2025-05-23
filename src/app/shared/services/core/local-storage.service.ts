@@ -20,8 +20,6 @@ export class LocalStorageService {
     static get<T>(key: string): T | null {
         try {
             const item = localStorage.getItem(key);
-            console.log({ item });
-            
             return item ? (JSON.parse(item) as T) : null;
         } catch (error) {
             console.error(`Error reading from localStorage key "${key}":`, error);

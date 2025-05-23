@@ -1,22 +1,28 @@
-import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
-import { inject, Inject, Injectable } from '@angular/core';
-import { initializeApp } from 'firebase/app';
-import { getAuth, signInAnonymously, signInWithPhoneNumber, UserCredential, RecaptchaVerifier, Auth } from 'firebase/auth';
-import { jwtDecode, JwtPayload } from 'jwt-decode';
-import { BehaviorSubject, from, Observable, of, throwError } from 'rxjs';
-import { catchError, map, switchMap, tap } from 'rxjs/operators';
-import { IFirebaseConfig } from '../../interfaces';
-import { API_URL, FIREBASE_CONFIG } from '../../tokens/tokens';
-import { IdentityService } from './identity.service';
-import { UserService } from './user.service';
-import { AppConstants } from '../../constants';
-import { WindowService } from '../core/window.service';
-import { LocalStorageService } from '../core/local-storage.service';
-
+import { HttpClient, HttpHeaders, HttpParams } from "@angular/common/http";
+import { inject, Inject, Injectable } from "@angular/core";
+import { initializeApp } from "firebase/app";
+import {
+    getAuth,
+    signInAnonymously,
+    signInWithPhoneNumber,
+    UserCredential,
+    RecaptchaVerifier,
+    Auth,
+    signOut,
+} from "firebase/auth";
+import { jwtDecode, JwtPayload } from "jwt-decode";
+import { BehaviorSubject, from, Observable, of, throwError } from "rxjs";
+import { catchError, map, switchMap, tap } from "rxjs/operators";
+import { IFirebaseConfig } from "../../interfaces";
+import { API_URL, FIREBASE_CONFIG } from "../../tokens/tokens";
+import { IdentityService } from "./identity.service";
+import { UserService } from "./user.service";
+import { AppConstants } from "../../constants";
+import { WindowService } from "../core/window.service";
+import { LocalStorageService } from "../core/local-storage.service";
 
 @Injectable({
-    providedIn: 'root',
-
+    providedIn: "root",
 })
 export class AuthenticationService {
     private readonly apiUrl: string = inject(API_URL);
@@ -26,30 +32,19 @@ export class AuthenticationService {
     private readonly identityService: IdentityService = inject(IdentityService);
 
     public anonymousUser: Observable<string | null>;
-    public isAuthenticatedUser: Observable<string | null>;
+    public userToken: Observable<boolean | null>;
     public defaultHeaders = new HttpHeaders();
 
     private anonymousUser$: BehaviorSubject<string | null>;
-    private isAuthenticatedUser$: BehaviorSubject<string | null>;
+    private userToken$: BehaviorSubject<string | null>;
     private windowRef: Window;
     private firebaseAuth: Auth;
 
-    constructor(
-        @Inject(FIREBASE_CONFIG) private readonly firebaseConfig: IFirebaseConfig,
-    ) {
+    constructor(@Inject(FIREBASE_CONFIG) private readonly firebaseConfig: IFirebaseConfig) {
         this.firebaseAuth = this.initFirebaseAppWithConfig();
-
-        this.anonymousUser$ = new BehaviorSubject(
-            localStorage.getItem('anonymous')
-        );
+        this.anonymousUser$ = new BehaviorSubject(LocalStorageService.get("anonymous"));
         this.anonymousUser = this.anonymousUser$.asObservable();
-
-        this.isAuthenticatedUser$ = new BehaviorSubject(
-            localStorage.getItem('isAuthenticated')
-        );
-        this.isAuthenticatedUser =
-            this.isAuthenticatedUser$.asObservable();
-
+        this.userToken$ = new BehaviorSubject(LocalStorageService.get<string>("userToken"));
         this.windowRef = this.windowService.windowRef;
     }
 
@@ -62,63 +57,58 @@ export class AuthenticationService {
         return this.anonymousUser$.value;
     }
 
-    public get isAuthenticatedUserValue(): string | null {
-        return this.isAuthenticatedUser$.value;
+    public get userTokenValue(): string | null {
+        return this.userToken$.value;
     }
 
     public loginWithPhoneNumber(phoneNumber: string) {
-        return this.identityService.checkIdentity({ phoneNumber })
-            .pipe(
-                switchMap(this.handleIdentityCheck),
-                switchMap(() => this.validatePhoneNumberOnVoip(phoneNumber)),
-                switchMap(this.solveRecaptcha),
-                switchMap(() => this.sendVerificationCode(phoneNumber))
-            );
+        return this.identityService.checkIdentity({ phoneNumber }).pipe(
+            switchMap(this.handleIdentityCheck),
+            switchMap(() => this.validatePhoneNumberOnVoip(phoneNumber)),
+            switchMap(this.solveRecaptcha),
+            switchMap(() => this.sendVerificationCode(phoneNumber)),
+        );
     }
 
     public confirmVerificationCode(verificationCode: string): Observable<UserCredential> {
         const confirmationResult = this.windowRef.confirmationResult;
         if (!confirmationResult) {
-            return throwError(() => new Error('Confirmation result is not available'));
+            return throwError(() => new Error("Confirmation result is not available"));
         }
-    
+
         return from(confirmationResult.confirm(verificationCode)).pipe(
             switchMap((userCredential) => {
                 return from(userCredential.user.getIdToken()).pipe(
                     tap((idToken) => {
-                        LocalStorageService.set('isAuthenticated', idToken);
-                        LocalStorageService.set('isAnonymous', false);
-                        LocalStorageService.remove('phoneNumber');
-                        LocalStorageService.remove('anonymous');
-                        this.isAuthenticatedUser$.next(idToken);
+                        LocalStorageService.set("userToken", idToken);
+                        LocalStorageService.set("isAnonymous", false);
+                        LocalStorageService.remove("phoneNumberForSignin");
+                        LocalStorageService.remove("anonymous");
                     }),
-                    map(() => userCredential)
+                    map(() => userCredential),
                 );
             }),
             catchError((error: any) => {
-                console.log('Verification error:', error);
+                console.log("Verification error:", error);
                 return throwError(() => new Error(error.message));
-            })
+            }),
         );
     }
 
     public loginAsAnonymousThroughTheFirebase(): Observable<UserCredential> {
-        const auth = getAuth();
-
-        return from(signInAnonymously(auth)).pipe(
+        return from(signInAnonymously(this.firebaseAuth)).pipe(
             catchError((error: any) => {
                 console.log(error);
                 throw new Error(error.message);
             }),
             map((response: UserCredential | any) => {
                 const accessToken = response.user.accessToken;
-
-                LocalStorageService.set('anonymous', accessToken);
-                LocalStorageService.set('isAnonymous', true);
+                LocalStorageService.set("anonymous", accessToken);
+                LocalStorageService.set("isAnonymous", true);
                 this.anonymousUser$.next(accessToken);
 
                 return response;
-            })
+            }),
         );
     }
 
@@ -129,15 +119,14 @@ export class AuthenticationService {
         const generateId = () => {
             let code = Math.random().toString(36).substr(2, 9).toUpperCase();
             for (let x = 0; x < 5; x++) {
-                code +=
-                    '-' + Math.random().toString(36).substr(2, 9).toUpperCase();
+                code += "-" + Math.random().toString(36).substr(2, 9).toUpperCase();
             }
             return code;
         };
 
         let params = new HttpParams();
-        params = params.append('grant_type', 'device_id');
-        params = params.append('device_id', generateId());
+        params = params.append("grant_type", "device_id");
+        params = params.append("device_id", generateId());
 
         if (this.anonymousUserValue && !this.isTokenExpired) {
             return of(this.anonymousUserValue);
@@ -145,7 +134,7 @@ export class AuthenticationService {
 
         return this.http
             .post<any>(`${this.apiUrl}/identity/login:anonymous`, {
-                body: params
+                body: params,
             })
             .pipe(
                 catchError((error: any) => {
@@ -153,14 +142,11 @@ export class AuthenticationService {
                     throw new Error(error.message);
                 }),
                 map((response: any) => {
-                    localStorage.setItem(
-                        'anonymous',
-                        response.idToken
-                    );
+                    localStorage.setItem("anonymous", response.idToken);
                     this.anonymousUser$.next(response.idToken);
 
                     return response;
-                })
+                }),
             );
     }
 
@@ -198,12 +184,21 @@ export class AuthenticationService {
     //         );
     // }
 
-    public logout(): void {
-        localStorage.removeItem('isAuthenticated');
-        this.isAuthenticatedUser$.next(null);
-
-        localStorage.removeItem('anonymous');
-        this.anonymousUser$.next(null);
+    public logout() {
+        return from(signOut(this.firebaseAuth)).pipe(
+            tap(() => {
+                LocalStorageService.remove("userToken");
+                this.userToken$.next(null);
+        
+                LocalStorageService.remove("anonymous");
+                this.anonymousUser$.next(null);
+        
+                LocalStorageService.remove("isAnonymous");
+            }),
+            catchError((error: any) => {
+                throw new Error(error.message);
+            }),
+        )
     }
 
     private get isTokenExpired(): boolean {
@@ -226,57 +221,54 @@ export class AuthenticationService {
         try {
             return jwtDecode<JwtPayload>(token);
         } catch (error) {
-            console.error('Invalid token or unable to decode:', error);
+            console.error("Invalid token or unable to decode:", error);
             return null;
         }
     }
 
     private validatePhoneNumberOnVoip = (phoneNumber: string): Observable<boolean> => {
-        return this.userService.validatePhoneNumber(phoneNumber)
-            .pipe(
-                map((response) => {
-                    const lineType = response.lineType;
-                    return this.validatePhoneLineType(lineType);
-                }),
-            );
-    }
+        return this.userService.validatePhoneNumber(phoneNumber).pipe(
+            map((response) => {
+                const lineType = response.lineType;
+                return this.validatePhoneLineType(lineType);
+            }),
+        );
+    };
 
     private validatePhoneLineType(lineType: string): boolean {
         return Object.values(AppConstants.PHONE_LINE_TYPES).includes(lineType);
     }
 
     private handleIdentityCheck = (identityCheckResult: boolean): Observable<boolean> => {
-        if (!identityCheckResult) return throwError(() => new Error('identity check failed'));
+        if (!identityCheckResult) return throwError(() => new Error("identity check failed"));
         return of(true);
-    }
+    };
 
     private solveRecaptcha = () => {
         this.firebaseAuth.useDeviceLanguage();
         const recaptchaVerifier = new RecaptchaVerifier(this.firebaseAuth, "recaptcha-container", {
-            size: "invisible"
-        })
+            size: "invisible",
+        });
         this.windowRef.recaptchaVerifier = recaptchaVerifier;
-        return from(recaptchaVerifier.verify())
-    }
+        return from(recaptchaVerifier.verify());
+    };
 
     private sendVerificationCode = (phoneNumber: string) => {
-        const auth = getAuth();
         const appVerifier = this.windowRef.recaptchaVerifier;
-        if(!appVerifier) {
-            return throwError(() => new Error('RecaptchaVerifier is not initialized'));
+        if (!appVerifier) {
+            return throwError(() => new Error("RecaptchaVerifier is not initialized"));
         }
-        return from(signInWithPhoneNumber(auth, phoneNumber, appVerifier))
-            .pipe(
-                map((confirmationResult) => {
-                    this.windowRef.confirmationResult = confirmationResult;
-                }),
-                tap(() => {
-                    LocalStorageService.set('phoneNumber', phoneNumber);
-                }),
-                catchError((error) => {
-                    console.log('Error sending confirmation code', error);
-                    throw error;
-                })
-            );
-    }
+        return from(signInWithPhoneNumber(this.firebaseAuth, phoneNumber, appVerifier)).pipe(
+            map((confirmationResult) => {
+                this.windowRef.confirmationResult = confirmationResult;
+            }),
+            tap(() => {
+                LocalStorageService.set("phoneNumberForSignin", phoneNumber);
+            }),
+            catchError((error) => {
+                console.log("Error sending confirmation code", error);
+                throw error;
+            }),
+        );
+    };
 }

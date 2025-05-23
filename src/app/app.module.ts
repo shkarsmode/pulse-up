@@ -21,6 +21,7 @@ import {
     MAPBOX_STYLE,
 } from "./shared/tokens/tokens";
 import { WindowService } from "./shared/services/core/window.service";
+import { JwtInterceptor } from "./shared/helpers/interceptors/jwt.interceptor";
 
 @NgModule({
     declarations: [AppComponent],
@@ -57,7 +58,7 @@ import { WindowService } from "./shared/services/core/window.service";
             provide: FIREBASE_CONFIG,
             useValue: environment.firebaseConfig,
         },
-        // { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },
+        { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },
         { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true },
         provideAnimationsAsync(),
         WindowService,

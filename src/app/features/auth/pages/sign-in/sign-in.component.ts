@@ -65,12 +65,10 @@ export class SignInComponent implements AfterViewInit, OnDestroy {
     }
 
     public onClickGuest() {
-        this.authenticationService.loginAsAnonymousThroughTheFirebase().subscribe({
-            next: this.navigateToHomePage,
-        });
+        this.navigateToHomePage();
     }
 
-    private navigateToHomePage = () => {
+    private navigateToHomePage(){
         this.router.navigate([this.appRotes.Landing.HOME]);
     }
 }
