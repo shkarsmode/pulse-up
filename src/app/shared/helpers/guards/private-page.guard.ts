@@ -7,7 +7,7 @@ import {
     UrlTree,
 } from "@angular/router";
 import { JwtPayload, jwtDecode } from "jwt-decode";
-import { catchError, map, Observable, of, tap } from "rxjs";
+import { map, Observable } from "rxjs";
 import { AuthenticationService } from "../../services/api/authentication.service";
 import { SettingsService } from "../../services/api/settings.service";
 import { AppRoutes } from "../../enums/app-routes.enum";
@@ -29,19 +29,10 @@ export class PrivatePageGuard implements CanActivate {
         const userToken = this.authenticationService.userTokenValue;
 
         if (userToken && !this._isTokenExpired(userToken)) {
-            return true;
+            return this.getInitialData().pipe(map(() => true));
         }
 
-        this.authenticationService.logout().pipe(
-            tap(() => {
-                this.router.navigateByUrl(this.appRoutes.Auth.SIGN_IN);
-            }),
-            catchError((error) => {
-                console.error("Error during logout:", error);
-                return of(false);
-            }),
-            map(() => true),
-        );
+        this.router.navigateByUrl(this.appRoutes.Auth.SIGN_IN);
         return false;
     }
 
@@ -67,4 +58,8 @@ export class PrivatePageGuard implements CanActivate {
         const currentTime = Math.floor(Date.now() / 1000);
         return decodedToken.exp < currentTime;
     }
+
+    private getInitialData = () => {
+        return this.settingsService.getSettings();
+    };
 }

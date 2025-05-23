@@ -5,6 +5,7 @@ import { HowItWorksComponent } from './how-it-works/how-it-works.component';
 import { SubmittedComponent } from './submitted/submitted.component';
 import { SuggestComponent } from './suggest/suggest.component';
 import { TopicComponent } from './topic.component';
+import { PrivatePageGuard } from '@/app/shared/helpers/guards/private-page.guard';
 
 const routes: Routes = [
     {
@@ -14,18 +15,22 @@ const routes: Routes = [
             {
                 path: 'how-it-works',
                 component: HowItWorksComponent,
+                canActivate: [PrivatePageGuard]
             },
             {
                 path: 'suggest',
                 component: SuggestComponent,
+                canActivate: [PrivatePageGuard]
             },
             {
                 path: 'contact-info',
                 component: ContactInfoComponent,
+                canActivate: [PrivatePageGuard]
             },
             {
                 path: 'submitted',
                 component: SubmittedComponent,
+                canActivate: [PrivatePageGuard]
             },
         ],
     },
