@@ -1,0 +1,23 @@
+<app-auth-layout>
+    <div class="confirm">
+        <h1 class="confirm__title">Verify phone</h1>
+        <p class="confirm__text">
+            Enter the code that was sent on your phone number {{ phoneNumber }}
+        </p>
+        <app-link-button>Resend code</app-link-button>
+        <ng-otp-input
+            [formControl]="code"
+            [config]="config" />
+        <div class="confirm__error">
+            <span *ngIf="errorMessage$ | async">{{ errorMessage$ | async }}</span>
+        </div>
+    </div>
+    @if (isLoading()) {
+    <div class="consirm__loading-overlay">
+        <mat-spinner
+            color="white"
+            diameter="40"
+            class="consirm__spinner" />
+    </div>
+    }
+</app-auth-layout>

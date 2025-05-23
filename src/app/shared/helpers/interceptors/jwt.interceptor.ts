@@ -18,21 +18,21 @@ export class JwtInterceptor implements HttpInterceptor {
         request: HttpRequest<any>,
         next: HttpHandler
     ): Observable<HttpEvent<any>> {
-        const anonymousUser = this.authenticationService.anonymousUserValue;
-        const isAuthenticatedUser =
-            this.authenticationService.isAuthenticatedUserValue;
+        const anonymousToken = this.authenticationService.anonymousUserValue;
+        const userTokenValue =
+            this.authenticationService.userTokenValue;
 
-        if (isAuthenticatedUser) {
+        if (userTokenValue) {
             request = request.clone({
                 setHeaders: {
-                    Authorization: `Bearer ${isAuthenticatedUser}`,
+                    Authorization: `Bearer ${userTokenValue}`,
                 },
                 withCredentials: true,
             });
-        } else if (anonymousUser) {
+        } else if (anonymousToken) {
             request = request.clone({
                 setHeaders: {
-                    Authorization: `Bearer ${anonymousUser}`,
+                    Authorization: `Bearer ${anonymousToken}`,
                 },
                 withCredentials: false,
             });

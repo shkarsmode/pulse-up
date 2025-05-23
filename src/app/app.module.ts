@@ -20,6 +20,8 @@ import {
     MAPBOX_ACCESS_TOKEN,
     MAPBOX_STYLE,
 } from "./shared/tokens/tokens";
+import { WindowService } from "./shared/services/core/window.service";
+import { JwtInterceptor } from "./shared/helpers/interceptors/jwt.interceptor";
 
 @NgModule({
     declarations: [AppComponent],
@@ -56,9 +58,10 @@ import {
             provide: FIREBASE_CONFIG,
             useValue: environment.firebaseConfig,
         },
-        // { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },
+        { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },
         { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true },
         provideAnimationsAsync(),
+        WindowService,
     ],
     schemas: [CUSTOM_ELEMENTS_SCHEMA],
     bootstrap: [AppComponent],

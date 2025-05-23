@@ -1,0 +1,12 @@
+@use "../../../../../../styles/mixins" as *;
+
+.link-button {
+    @include link-16px;
+
+    &::ng-deep {
+        --mdc-text-button-label-text-color: var(--accent-color);
+        --mat-text-button-state-layer-color: var(--accent-color);
+        --mat-text-button-pressed-state-layer-color: var(--accent-color);
+        --mat-text-button-ripple-color: rgba(94, 0, 204, 0.12);
+    }
+}

@@ -1,20 +1,17 @@
-import {
-    AfterViewInit,
-    Component,
-    inject,
-    OnDestroy,
-    ViewChild,
-} from "@angular/core";
-import { RouterLink } from "@angular/router";
+import { AfterViewInit, Component, inject, OnDestroy, ViewChild } from "@angular/core";
+import { Router, RouterLink } from "@angular/router";
 import { CommonModule } from "@angular/common";
+import { toSignal } from "@angular/core/rxjs-interop";
 import { MatInputModule } from "@angular/material/input";
 import { ErrorStateMatcher } from "@angular/material/core";
-import { MatFormFieldModule } from "@angular/material/form-field";
 import { FormGroup, ReactiveFormsModule } from "@angular/forms";
+import { MatFormFieldModule } from "@angular/material/form-field";
 import { SvgIconComponent } from "angular-svg-icon";
 import { AppRoutes } from "@/app/shared/enums/app-routes.enum";
 import { PrimaryButtonComponent } from "../../../../shared/components/ui-kit/buttons/primary-button/primary-button.component";
 import { SignInFormService } from "../../services/sign-in-form.service";
+import { AuthLayoutComponent } from "../../ui/auth-layout/auth-layout.component";
+import { LinkButtonComponent } from "@/app/shared/components/ui-kit/buttons/link-button/link-button.component";
 
 @Component({
     selector: "app-sign-in",
@@ -27,14 +24,19 @@ import { SignInFormService } from "../../services/sign-in-form.service";
         ReactiveFormsModule,
         SvgIconComponent,
         PrimaryButtonComponent,
+        AuthLayoutComponent,
+        LinkButtonComponent,
     ],
     providers: [SignInFormService],
     templateUrl: "./sign-in.component.html",
     styleUrl: "./sign-in.component.scss",
 })
 export class SignInComponent implements AfterViewInit, OnDestroy {
+    private router: Router = inject(Router);
     private signInFormService: SignInFormService = inject(SignInFormService);
     private readonly appRotes = AppRoutes;
+
+    public readonly isLoading = toSignal(this.signInFormService.isLoading$);
 
     @ViewChild("telInput") telInput: { nativeElement: HTMLInputElement };
 
@@ -45,10 +47,10 @@ export class SignInComponent implements AfterViewInit, OnDestroy {
         return this.signInFormService.errorStateMatcher;
     }
     public get termsRoute(): string {
-        return this.appRotes.Community.TERMS;
+        return `/${this.appRotes.Community.TERMS}`;
     }
     public get privacyRoute(): string {
-        return this.appRotes.Community.PRIVACY;
+        return `/${this.appRotes.Community.PRIVACY}`;
     }
 
     ngAfterViewInit(): void {
@@ -58,8 +60,16 @@ export class SignInComponent implements AfterViewInit, OnDestroy {
     ngOnDestroy(): void {
         this.signInFormService.onDestroy();
     }
-    
+
     public onSubmit() {
         return this.signInFormService.submit();
+    }
+
+    public onClickGuest() {
+        this.navigateToHomePage();
+    }
+
+    private navigateToHomePage(){
+        this.router.navigate([this.appRotes.Landing.HOME]);
     }
 }

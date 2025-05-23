@@ -105,21 +105,21 @@ export class ErrorInterceptor implements HttpInterceptor {
     }
 
     private addTokenHeader(request: HttpRequest<any>) {
-        const anonymousUser = this.authenticationService.anonymousUserValue;
-        const isAuthenticatedUser =
-            this.authenticationService.isAuthenticatedUserValue;
+        const anonymousToken = this.authenticationService.anonymousUserValue;
+        const userTokenValue =
+            this.authenticationService.userTokenValue;
 
-        if (isAuthenticatedUser) {
+        if (userTokenValue) {
             request = request.clone({
                 setHeaders: {
-                    Authorization: `Bearer ${isAuthenticatedUser}`,
+                    Authorization: `Bearer ${userTokenValue}`,
                 },
                 withCredentials: true,
             });
-        } else if (anonymousUser) {
+        } else if (anonymousToken) {
             request = request.clone({
                 setHeaders: {
-                    Authorization: `Bearer ${anonymousUser}`,
+                    Authorization: `Bearer ${anonymousToken}`,
                 },
                 withCredentials: false,
             });

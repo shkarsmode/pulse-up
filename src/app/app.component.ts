@@ -1,5 +1,5 @@
 import { Component, inject } from "@angular/core";
-import { combineLatest, take } from "rxjs";
+import { combineLatest, filter, merge, of, switchMap, take } from "rxjs";
 import { AuthenticationService } from "./shared/services/api/authentication.service";
 import { LoadingService } from "./shared/services/core/loading.service";
 import { MetadataService } from "./shared/services/core/metadata.service";
@@ -41,7 +41,7 @@ export class AppComponent {
     private readonly settingsService: SettingsService = inject(SettingsService);
 
     public ngOnInit() {
-        this.sendInitialQueries();
+        // this.sendInitialQueries();
         this.metadataService.listenToRouteChanges(this.router, this.activatedRoute);
     }
 
@@ -49,10 +49,10 @@ export class AppComponent {
         // this.isLoading = true;
         // this.loadingService.isLoading = true;
 
-        const anonymousUser$ = this.authenticationService.loginAsAnonymousThroughTheFirebase();
+        // const anonymousUser$ = this.authenticationService.loginAsAnonymousThroughTheFirebase();
         const settings$ = this.settingsService.getSettings();
 
-        combineLatest([anonymousUser$, settings$])
+        combineLatest([settings$])
             .pipe(take(1))
             .subscribe((_) => {
                 // this.isLoading = false;

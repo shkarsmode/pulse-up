@@ -6,7 +6,7 @@
 </app-input>
 
 @if (isAddIcon) {
-    <button openAddTopicPopup>
+    <a [routerLink]="addTopicRoute" class="add-topic-button">
         <svg-icon src="assets/svg/add.svg" style="height: 22px;" />
-    </button>
+    </a>
 }

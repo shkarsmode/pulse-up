@@ -1,15 +1,16 @@
 import { Component, EventEmitter, Input, OnInit, Output } from "@angular/core";
-import { asyncScheduler, Subject, ThrottleConfig, throttleTime } from "rxjs";
+import { RouterLink } from "@angular/router";
 import { SvgIconComponent } from "angular-svg-icon";
+import { asyncScheduler, Subject, ThrottleConfig, throttleTime } from "rxjs";
 import { InputComponent } from "@/app/shared/components/ui-kit/input/input.component";
-import { AddTopicPopupDirective } from "@/app/shared/components/popups/add-topic-popup/add-topic-popup.directive";
+import { AppRoutes } from "@/app/shared/enums/app-routes.enum";
 
 @Component({
     selector: "app-input-search",
     templateUrl: "./input-search.component.html",
     styleUrl: "./input-search.component.scss",
     standalone: true,
-    imports: [InputComponent, SvgIconComponent, AddTopicPopupDirective],
+    imports: [InputComponent, SvgIconComponent, RouterLink],
 })
 export class InputSearchComponent implements OnInit {
     @Input()
@@ -19,12 +20,17 @@ export class InputSearchComponent implements OnInit {
 
     @Output()
     public handleValueChange: EventEmitter<string> = new EventEmitter();
+    public appRoutes = AppRoutes
 
     private readonly inputValueChanged$: Subject<string> = new Subject();
     private readonly throttleConfig: ThrottleConfig = {
         leading: true,
         trailing: true,
     };
+
+    public get addTopicRoute(): string {
+        return `/${this.appRoutes.User.Topic.SUGGEST}`;
+    }
 
     public ngOnInit(): void {
         this.initThrottleInputValueChange();
