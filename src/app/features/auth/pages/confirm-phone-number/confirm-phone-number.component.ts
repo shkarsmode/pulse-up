@@ -1,9 +1,11 @@
 import { Component, inject, OnInit, ViewChild } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { Router } from "@angular/router";
+import { toSignal } from "@angular/core/rxjs-interop";
 import { FormControl, ReactiveFormsModule } from "@angular/forms";
 import { BehaviorSubject } from "rxjs";
 import { NgOtpInputComponent, NgOtpInputConfig, NgOtpInputModule } from "ng-otp-input";
+import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
 import { AuthLayoutComponent } from "../../ui/auth-layout/auth-layout.component";
 import { LinkButtonComponent } from "@/app/shared/components/ui-kit/buttons/link-button/link-button.component";
 import { AuthenticationService } from "@/app/shared/services/api/authentication.service";
@@ -16,6 +18,7 @@ import { AppRoutes } from "@/app/shared/enums/app-routes.enum";
     imports: [
         NgOtpInputModule,
         CommonModule,
+        MatProgressSpinnerModule,
         ReactiveFormsModule,
         AuthLayoutComponent,
         LinkButtonComponent,
@@ -39,6 +42,7 @@ export class ConfirmPhoneNumberComponent implements OnInit {
     public errorMessage$: BehaviorSubject<string> = new BehaviorSubject<string>("");
     private savedPhoneNumber: string = LocalStorageService.get("phoneNumberForSignin") || "";
     private appRoutes = AppRoutes;
+    public readonly isLoading = toSignal(this.authenticationService.isConfirmInProgress$);
 
     public get phoneNumber(): string {
         const value = this.savedPhoneNumber.toString();

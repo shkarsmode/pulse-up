@@ -30,7 +30,9 @@
                 <app-primary-button
                     [fullWidth]="true"
                     size="large"
-                    type="submit">
+                    type="submit"
+                    [loading]="isLoading() || false"
+                    [disabled]="isLoading() || false">
                     Continue
                 </app-primary-button>
             </form>

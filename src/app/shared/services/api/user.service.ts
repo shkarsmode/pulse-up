@@ -1,7 +1,7 @@
 import { inject, Injectable } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
 import { catchError, expand, last, map, Observable, of, Subject, takeWhile } from "rxjs";
-import { IAuthor, IPulse, IPaginator } from "../../interfaces";
+import { IProfile, IPulse, IPaginator } from "../../interfaces";
 import { API_URL } from "../../tokens/tokens";
 import { IPhoneValidationResult } from "../../interfaces/phone-validatuion-result.interface";
 
@@ -12,12 +12,12 @@ export class UserService {
     private readonly apiUrl: string = inject(API_URL);
     private readonly http: HttpClient = inject(HttpClient);
 
-    public getProfileById(id: string): Observable<IAuthor> {
-        return this.http.get<IAuthor>(`${this.apiUrl}/users/${id}`);
+    public getProfileById(id: string): Observable<IProfile> {
+        return this.http.get<IProfile>(`${this.apiUrl}/users/${id}`);
     }
 
-    public getProfileByUsername(username: string): Observable<IAuthor> {
-        return this.http.get<IAuthor>(`${this.apiUrl}/users/find`, { params: { username } });
+    public getProfileByUsername(username: string): Observable<IProfile> {
+        return this.http.get<IProfile>(`${this.apiUrl}/users/find`, { params: { username } });
     }
 
     public getTopics({

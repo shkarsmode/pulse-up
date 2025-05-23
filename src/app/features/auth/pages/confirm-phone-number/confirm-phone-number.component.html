@@ -12,4 +12,12 @@
             <span *ngIf="errorMessage$ | async">{{ errorMessage$ | async }}</span>
         </div>
     </div>
+    @if (isLoading()) {
+    <div class="consirm__loading-overlay">
+        <mat-spinner
+            color="white"
+            diameter="40"
+            class="consirm__spinner" />
+    </div>
+    }
 </app-auth-layout>

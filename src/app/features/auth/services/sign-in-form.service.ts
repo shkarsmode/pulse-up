@@ -19,12 +19,12 @@ export class SignInFormService {
     public countryCode: string = "US";
     public form: FormGroup;
     public errorStateMatcher: ErrorStateMatcher;
-    public AppRoutes: typeof AppRoutes;
+    public AppRoutes = AppRoutes;
+    public isLoading$ = this.authenticationService.isSigninInProgress$;
 
     constructor() {
         this.form = this.createForm();
         this.errorStateMatcher = new CustomErrorStateMatcher(() => this.isValid);
-        this.AppRoutes = AppRoutes;
     }
 
     private createForm(): FormGroup {

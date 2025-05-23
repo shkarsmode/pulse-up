@@ -1,17 +1,17 @@
 import { AfterViewInit, Component, inject, OnDestroy, ViewChild } from "@angular/core";
 import { Router, RouterLink } from "@angular/router";
 import { CommonModule } from "@angular/common";
+import { toSignal } from "@angular/core/rxjs-interop";
 import { MatInputModule } from "@angular/material/input";
 import { ErrorStateMatcher } from "@angular/material/core";
-import { MatFormFieldModule } from "@angular/material/form-field";
 import { FormGroup, ReactiveFormsModule } from "@angular/forms";
+import { MatFormFieldModule } from "@angular/material/form-field";
 import { SvgIconComponent } from "angular-svg-icon";
 import { AppRoutes } from "@/app/shared/enums/app-routes.enum";
 import { PrimaryButtonComponent } from "../../../../shared/components/ui-kit/buttons/primary-button/primary-button.component";
 import { SignInFormService } from "../../services/sign-in-form.service";
 import { AuthLayoutComponent } from "../../ui/auth-layout/auth-layout.component";
 import { LinkButtonComponent } from "@/app/shared/components/ui-kit/buttons/link-button/link-button.component";
-import { AuthenticationService } from "@/app/shared/services/api/authentication.service";
 
 @Component({
     selector: "app-sign-in",
@@ -34,8 +34,9 @@ import { AuthenticationService } from "@/app/shared/services/api/authentication.
 export class SignInComponent implements AfterViewInit, OnDestroy {
     private router: Router = inject(Router);
     private signInFormService: SignInFormService = inject(SignInFormService);
-    private readonly authenticationService: AuthenticationService = inject(AuthenticationService);
     private readonly appRotes = AppRoutes;
+
+    public readonly isLoading = toSignal(this.signInFormService.isLoading$);
 
     @ViewChild("telInput") telInput: { nativeElement: HTMLInputElement };
 

@@ -63,3 +63,6 @@
         }
     }
 }
+.primary-button__spinner::ng-deep svg {
+    --mdc-circular-progress-active-indicator-color: var(--white-color);
+}

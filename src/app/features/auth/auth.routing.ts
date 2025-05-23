@@ -14,7 +14,6 @@ const routes: Routes = [
         path: AppRoutes.Auth.CONFIRM_PHONE_NUMBER,
         loadComponent: () =>
             import("./pages/confirm-phone-number/confirm-phone-number.component").then((m) => m.ConfirmPhoneNumberComponent),
-        canActivate: [SignInPageGuard],
     },
 ];
 

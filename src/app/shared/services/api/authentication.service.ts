@@ -13,7 +13,7 @@ import {
 import { jwtDecode, JwtPayload } from "jwt-decode";
 import { BehaviorSubject, from, Observable, of, throwError } from "rxjs";
 import { catchError, map, switchMap, tap } from "rxjs/operators";
-import { IFirebaseConfig } from "../../interfaces";
+import { IFirebaseConfig, IProfile } from "../../interfaces";
 import { API_URL, FIREBASE_CONFIG } from "../../tokens/tokens";
 import { IdentityService } from "./identity.service";
 import { UserService } from "./user.service";
@@ -32,8 +32,10 @@ export class AuthenticationService {
     private readonly identityService: IdentityService = inject(IdentityService);
 
     public anonymousUser: Observable<string | null>;
-    public userToken: Observable<boolean | null>;
+    public userToken: Observable<string | null>;
     public defaultHeaders = new HttpHeaders();
+    public isSigninInProgress$: BehaviorSubject<boolean>;
+    public isConfirmInProgress$: BehaviorSubject<boolean>;
 
     private anonymousUser$: BehaviorSubject<string | null>;
     private userToken$: BehaviorSubject<string | null>;
@@ -45,6 +47,9 @@ export class AuthenticationService {
         this.anonymousUser$ = new BehaviorSubject(LocalStorageService.get("anonymous"));
         this.anonymousUser = this.anonymousUser$.asObservable();
         this.userToken$ = new BehaviorSubject(LocalStorageService.get<string>("userToken"));
+        this.userToken = this.userToken$.asObservable();
+        this.isSigninInProgress$ = new BehaviorSubject<boolean>(false);
+        this.isConfirmInProgress$ = new BehaviorSubject<boolean>(false);
         this.windowRef = this.windowService.windowRef;
     }
 
@@ -62,40 +67,44 @@ export class AuthenticationService {
     }
 
     public loginWithPhoneNumber(phoneNumber: string) {
-        return this.identityService.checkIdentity({ phoneNumber }).pipe(
-            switchMap(this.handleIdentityCheck),
+        return of(null).pipe(
+            tap(() => this.isSigninInProgress$.next(true)),
+            switchMap(this.loginAsAnonymousThroughTheFirebase),
+            switchMap(() => this.identityService.checkByPhoneNumber(phoneNumber)),
+            switchMap(this.handleIdentityCheckByPhoneNumber),
             switchMap(() => this.validatePhoneNumberOnVoip(phoneNumber)),
+            switchMap(this.logout),
             switchMap(this.solveRecaptcha),
             switchMap(() => this.sendVerificationCode(phoneNumber)),
+            tap(() => this.isSigninInProgress$.next(false)),
+            catchError((error) => {
+                this.isSigninInProgress$.next(false);
+                return this.handleLoginWithPhoneNumberError(error);
+            }),
         );
     }
 
-    public confirmVerificationCode(verificationCode: string): Observable<UserCredential> {
+    public confirmVerificationCode(verificationCode: string): Observable<IProfile> {
         const confirmationResult = this.windowRef.confirmationResult;
         if (!confirmationResult) {
             return throwError(() => new Error("Confirmation result is not available"));
         }
 
-        return from(confirmationResult.confirm(verificationCode)).pipe(
-            switchMap((userCredential) => {
-                return from(userCredential.user.getIdToken()).pipe(
-                    tap((idToken) => {
-                        LocalStorageService.set("userToken", idToken);
-                        LocalStorageService.set("isAnonymous", false);
-                        LocalStorageService.remove("phoneNumberForSignin");
-                        LocalStorageService.remove("anonymous");
-                    }),
-                    map(() => userCredential),
-                );
-            }),
-            catchError((error: any) => {
-                console.log("Verification error:", error);
-                return throwError(() => new Error(error.message));
+        return of(null).pipe(
+            tap(() => this.isConfirmInProgress$.next(true)),
+            switchMap(() => from(confirmationResult.confirm(verificationCode))),
+            switchMap(this.getIdToken),
+            switchMap(this.createUserWithToken),
+            switchMap(this.updateAuthenticatedUserdData),
+            tap(() => this.isConfirmInProgress$.next(false)),
+            catchError((error) => {
+                this.isConfirmInProgress$.next(false);
+                return this.handleConfirmCodeVerificationError(error);
             }),
         );
     }
 
-    public loginAsAnonymousThroughTheFirebase(): Observable<UserCredential> {
+    public loginAsAnonymousThroughTheFirebase = (): Observable<UserCredential> => {
         return from(signInAnonymously(this.firebaseAuth)).pipe(
             catchError((error: any) => {
                 console.log(error);
@@ -184,22 +193,23 @@ export class AuthenticationService {
     //         );
     // }
 
-    public logout() {
+    public logout = () => {
         return from(signOut(this.firebaseAuth)).pipe(
             tap(() => {
                 LocalStorageService.remove("userToken");
                 this.userToken$.next(null);
-        
+
                 LocalStorageService.remove("anonymous");
                 this.anonymousUser$.next(null);
-        
+
                 LocalStorageService.remove("isAnonymous");
+                LocalStorageService.remove("token");
             }),
             catchError((error: any) => {
                 throw new Error(error.message);
             }),
-        )
-    }
+        );
+    };
 
     private get isTokenExpired(): boolean {
         const token = this.anonymousUserValue;
@@ -239,7 +249,9 @@ export class AuthenticationService {
         return Object.values(AppConstants.PHONE_LINE_TYPES).includes(lineType);
     }
 
-    private handleIdentityCheck = (identityCheckResult: boolean): Observable<boolean> => {
+    private handleIdentityCheckByPhoneNumber = (
+        identityCheckResult: boolean,
+    ): Observable<boolean> => {
         if (!identityCheckResult) return throwError(() => new Error("identity check failed"));
         return of(true);
     };
@@ -270,5 +282,69 @@ export class AuthenticationService {
                 throw error;
             }),
         );
+    };
+
+    private getIdToken = (userCredential: UserCredential): Observable<string> => {
+        return from(userCredential.user.getIdToken()).pipe(
+            catchError((error: any) => {
+                console.log("Error getting ID token", error);
+                return throwError(() => new Error(error.message));
+            }),
+            map((idToken) => idToken),
+        );
+    };
+
+    private createUserWithToken = (token: string): Observable<IProfile & { token: string }> => {
+        return from(this.identityService.getByToken(token)).pipe(
+            switchMap((profile) => {
+                if (profile) {
+                    return of({ ...profile, token });
+                }
+                return this.identityService.createWithToken(token).pipe(
+                    catchError(() => {
+                        console.log("Error creating profile with token");
+                        return throwError(() => new Error("Error creating profile with token"));
+                    }),
+                    map((newProfile) => {
+                        if (!newProfile) {
+                            throw new Error("Error creating profile with token");
+                        }
+                        return { ...newProfile, token };
+                    }),
+                );
+            }),
+        );
+    };
+
+    private updateAuthenticatedUserdData = (userData: IProfile & { token: string }): Observable<IProfile> => {
+        return of(userData).pipe(
+            tap(({ token }) => {
+                LocalStorageService.set("userToken", token);
+                LocalStorageService.set("isAnonymous", false);
+                LocalStorageService.remove("phoneNumberForSignin");
+                LocalStorageService.remove("anonymous");
+                this.userToken$.next(token);
+                this.anonymousUser$.next(null);
+                this.isConfirmInProgress$.next(false);
+                delete this.windowRef.recaptchaVerifier;
+                delete this.windowRef.confirmationResult;
+            }),
+            map(({ token, ...profile }) => profile),
+        );
+    };
+
+    private handleLoginWithPhoneNumberError = (error: any) => {
+        console.log("Error sending verification code", error);
+        LocalStorageService.remove("phoneNumberForSignin");
+        delete this.windowRef.recaptchaVerifier;
+        return throwError(() => new Error(error.message));
+    };
+
+    private handleConfirmCodeVerificationError = (error: any): Observable<never> => {
+        console.error("Error verifying confirmation code", error);
+        this.isConfirmInProgress$.next(false);
+        LocalStorageService.remove("phoneNumberForSignin");
+        delete this.windowRef.confirmationResult;
+        return throwError(() => new Error(error.message));
     };
 }

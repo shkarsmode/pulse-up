@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
+import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
 import { RippleEffectDirective } from '../../../../directives/ripple-effect';
 
 @Component({
@@ -8,6 +9,7 @@ import { RippleEffectDirective } from '../../../../directives/ripple-effect';
     imports: [
         CommonModule,
         RippleEffectDirective,
+        MatProgressSpinnerModule,
     ],
     templateUrl: './primary-button.component.html',
     styleUrl: './primary-button.component.scss',
@@ -21,6 +23,7 @@ export class PrimaryButtonComponent {
     @Input() public fullWidth: boolean = false;
     @Input() public contrast: boolean = false;
     @Input() public size: "small" | "medium" | "large" = "medium";
+    @Input() public loading: boolean = false;
 
     @Output() public handleClick: EventEmitter<void> = new EventEmitter<void>();
 
