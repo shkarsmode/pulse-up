@@ -76,7 +76,7 @@ export class AuthenticationService {
             switchMap(this.handleIdentityCheckByPhoneNumber),
             switchMap(() => this.validatePhoneNumberOnVoip(phoneNumber)),
             switchMap(this.logout),
-            switchMap(this.solveRecaptcha),
+            switchMap(this.prepareRecaptcha),
             switchMap(() => this.sendVerificationCode(phoneNumber)),
             tap(() => this.isSigninInProgress$.next(false)),
             catchError((error) => {
@@ -116,7 +116,7 @@ export class AuthenticationService {
         return of(null).pipe(
             tap(() => this.isResendInProgress$.next(true)),
             switchMap(this.logout),
-            switchMap(this.solveRecaptcha),
+            switchMap(this.prepareRecaptcha),
             switchMap(() => this.sendVerificationCode(phoneNumber)),
             tap(() => this.isResendInProgress$.next(false)),
             catchError((error) => {
@@ -240,7 +240,7 @@ export class AuthenticationService {
         return of(true);
     };
 
-    private solveRecaptcha = () => {
+    private prepareRecaptcha = () => {
         const recaptchaId = `recaptcha-container-${Math.random().toString(36).substring(2, 15)}`;
         const recaptchaContainer = document.getElementById("recaptcha-container");
         if (recaptchaContainer) {
@@ -253,20 +253,22 @@ export class AuthenticationService {
             size: "invisible",
         });
         this.windowRef.recaptchaVerifier = recaptchaVerifier;
-        return from(recaptchaVerifier.render());
+        return of(recaptchaVerifier)
     };
 
     private sendVerificationCode = (phoneNumber: string) => {
-        const appVerifier = this.windowRef.recaptchaVerifier;
-        if (!appVerifier) {
+        const recaptchaVerifier = this.windowRef.recaptchaVerifier;
+        if (!recaptchaVerifier) {
             return throwError(() => new Error("Recaptcha verification failed. Please try again."));
         }
-        return from(signInWithPhoneNumber(this.firebaseAuth, phoneNumber, appVerifier)).pipe(
+        return from(signInWithPhoneNumber(this.firebaseAuth, phoneNumber, recaptchaVerifier)).pipe(
             map((confirmationResult) => {
                 this.windowRef.confirmationResult = confirmationResult;
             }),
             tap(() => {
                 LocalStorageService.set("phoneNumberForSignin", phoneNumber);
+                this.windowRef.recaptchaVerifier?.clear();
+                delete this.windowRef.recaptchaVerifier;
             }),
         );
     };
