@@ -4,7 +4,20 @@
         <p class="confirm__text">
             Enter the code that was sent on your phone number {{ phoneNumber }}
         </p>
-        <app-link-button>Resend code</app-link-button>
+        <div class="confirm__resend">
+            <app-link-button
+                [disabled]="!isResendAvailable"
+                label="Resend Code"
+                [loading]="isResendingCode() || false"
+                (click)="resendCode()">
+                Resend Code
+            </app-link-button>
+            @if (isResendCodeHintVisible) {
+                <div class="confirm__resend-text">
+                    {{ resendCodeHint }}
+                </div>
+            }
+        </div>
         <ng-otp-input
             [formControl]="code"
             [config]="config" />
@@ -12,7 +25,7 @@
             <span *ngIf="errorMessage$ | async">{{ errorMessage$ | async }}</span>
         </div>
     </div>
-    @if (isLoading()) {
+    @if (isVerifyingCode()) {
     <div class="consirm__loading-overlay">
         <mat-spinner
             color="white"

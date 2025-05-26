@@ -1,9 +1,9 @@
 import { inject } from "@angular/core";
-import { BehaviorSubject } from "rxjs";
+import { BehaviorSubject, interval, Subscription, takeWhile } from "rxjs";
 import { Router } from "@angular/router";
 import { FormControl } from "@angular/forms";
 import { toSignal } from "@angular/core/rxjs-interop";
-import { NgOtpInputComponent } from "ng-otp-input";
+import { NgOtpInputComponent, NgOtpInputConfig } from "ng-otp-input";
 import { FirebaseError } from "firebase/app";
 import { AuthenticationService } from "@/app/shared/services/api/authentication.service";
 import { AppRoutes } from "@/app/shared/enums/app-routes.enum";
@@ -15,9 +15,23 @@ export class ConfirmPhoneNumberService {
 
   private appRoutes = AppRoutes;
   private ngOtpInput: NgOtpInputComponent;
+  private countdown$ = new BehaviorSubject<number>(0);
+  public resendCodeAttemptsLeft = 2;
+  private timerSub: Subscription;
   public errorMessage$: BehaviorSubject<string> = new BehaviorSubject<string>("");
   public value = new FormControl("");
-  public readonly isLoading = toSignal(this.authenticationService.isConfirmInProgress$);
+  public readonly isVerifyingCode = toSignal(this.authenticationService.isConfirmInProgress$);
+  public readonly isResendingCode = toSignal(this.authenticationService.isResendInProgress$);
+  public readonly otpInputConfig: NgOtpInputConfig = {
+    length: 6,
+    allowNumbersOnly: true,
+    inputClass: "otp-custom-input",
+    containerClass: "otp-custom-container",
+  }
+
+  get cooldown$() {
+    return this.countdown$.asObservable();
+  }
 
   public onAfterViewInit(ngOtpInput: NgOtpInputComponent) {
     this.ngOtpInput = ngOtpInput;
@@ -46,6 +60,50 @@ export class ConfirmPhoneNumberService {
         },
       });
     }
+  }
+
+  public resendCode = () => {
+    if (this.resendCodeAttemptsLeft <= 0 || this.isCooldownActive()) return;
+    this.resendCodeAttemptsLeft--;
+    this.resetInput();
+    this.setErrorMessage("");
+    this.authenticationService.resendVerificationCode().subscribe({
+      next: () => {
+        console.log("Verification code resent successfully");
+        this.startCooldown(60);
+      },
+      error: (error) => {
+        let errorMessage = "Failed to resend verification code. Please try again later.";
+        if (error instanceof FirebaseError) {
+          errorMessage = formatFirebaseError(error) || errorMessage;
+        }
+        this.setErrorMessage(errorMessage);
+      }
+    })
+  }
+
+  public startCooldown(seconds: number) {
+    this.countdown$.next(seconds);
+    this.timerSub?.unsubscribe();
+
+    this.timerSub = interval(1000).pipe(
+      takeWhile(() => this.countdown$.value > 0)
+    ).subscribe(() => {
+      this.countdown$.next(this.countdown$.value - 1);
+    });
+  }
+
+  isCooldownActive(): boolean {
+    return this.countdown$.value > 0;
+  }
+
+  getCurrentCountdown(): number {
+    return this.countdown$.value;
+  }
+
+  stopCooldown() {
+    this.timerSub?.unsubscribe();
+    this.countdown$.next(0);
   }
 
   private setErrorMessage(message: string) {

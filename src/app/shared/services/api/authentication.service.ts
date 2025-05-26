@@ -36,6 +36,7 @@ export class AuthenticationService {
     public defaultHeaders = new HttpHeaders();
     public isSigninInProgress$: BehaviorSubject<boolean>;
     public isConfirmInProgress$: BehaviorSubject<boolean>;
+    public isResendInProgress$: BehaviorSubject<boolean>;
 
     private anonymousUser$: BehaviorSubject<string | null>;
     private userToken$: BehaviorSubject<string | null>;
@@ -50,6 +51,7 @@ export class AuthenticationService {
         this.userToken = this.userToken$.asObservable();
         this.isSigninInProgress$ = new BehaviorSubject<boolean>(false);
         this.isConfirmInProgress$ = new BehaviorSubject<boolean>(false);
+        this.isResendInProgress$ = new BehaviorSubject<boolean>(false);
         this.windowRef = this.windowService.windowRef;
     }
 
@@ -102,6 +104,26 @@ export class AuthenticationService {
                 return this.handleConfirmCodeVerificationError(error);
             }),
         );
+    }
+
+    public resendVerificationCode() {
+        delete this.windowRef.recaptchaVerifier;
+        delete this.windowRef.confirmationResult;
+        const phoneNumber = LocalStorageService.get<string>("phoneNumberForSignin");
+        if(!phoneNumber) {
+            return throwError(() => new Error("Failed to resend verification code. Please try again to login."));
+        }
+        return of(null).pipe(
+            tap(() => this.isResendInProgress$.next(true)),
+            switchMap(this.logout),
+            switchMap(this.solveRecaptcha),
+            switchMap(() => this.sendVerificationCode(phoneNumber)),
+            tap(() => this.isResendInProgress$.next(false)),
+            catchError((error) => {
+                this.isResendInProgress$.next(false)
+                return this.handleLoginWithPhoneNumberError(error);
+            }),
+        )
     }
 
     public loginAsAnonymousThroughTheFirebase = (): Observable<UserCredential> => {

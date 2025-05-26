@@ -1,3 +1,8 @@
-<button mat-button class="link-button" (click)="onClick($event)">
+<button
+    mat-button
+    [disabled]="disabled"
+    class="link-button"
+    (click)="onClick($event)"
+    [attr.aria-label]="label"> 
     <ng-content></ng-content>
 </button>
