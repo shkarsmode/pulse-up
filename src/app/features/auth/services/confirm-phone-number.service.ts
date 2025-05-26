@@ -16,8 +16,8 @@ export class ConfirmPhoneNumberService {
   private appRoutes = AppRoutes;
   private ngOtpInput: NgOtpInputComponent;
   private countdown$ = new BehaviorSubject<number>(0);
-  public resendCodeAttemptsLeft = 2;
   private timerSub: Subscription;
+  public resendCodeAttemptsLeft = 2;
   public errorMessage$: BehaviorSubject<string> = new BehaviorSubject<string>("");
   public value = new FormControl("");
   public readonly isVerifyingCode = toSignal(this.authenticationService.isConfirmInProgress$);
@@ -63,7 +63,7 @@ export class ConfirmPhoneNumberService {
   }
 
   public resendCode = () => {
-    if (this.resendCodeAttemptsLeft <= 0 || this.isCooldownActive()) return;
+    if (this.resendCodeAttemptsLeft <= 0 || this.isCooldownActive() || this.isResendingCode()) return;
     this.resendCodeAttemptsLeft--;
     this.resetInput();
     this.setErrorMessage("");
@@ -78,7 +78,7 @@ export class ConfirmPhoneNumberService {
           errorMessage = formatFirebaseError(error) || errorMessage;
         }
         this.setErrorMessage(errorMessage);
-      }
+      },
     })
   }
 
