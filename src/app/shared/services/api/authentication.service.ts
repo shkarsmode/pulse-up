@@ -107,7 +107,7 @@ export class AuthenticationService {
     }
 
     public resendVerificationCode() {
-        // delete this.windowRef.recaptchaVerifier;
+        delete this.windowRef.recaptchaVerifier;
         delete this.windowRef.confirmationResult;
         const phoneNumber = LocalStorageService.get<string>("phoneNumberForSignin");
         if(!phoneNumber) {
@@ -116,6 +116,7 @@ export class AuthenticationService {
         return of(null).pipe(
             tap(() => this.isResendInProgress$.next(true)),
             switchMap(this.logout),
+            switchMap(this.solveRecaptcha),
             switchMap(() => this.sendVerificationCode(phoneNumber)),
             tap(() => this.isResendInProgress$.next(false)),
             catchError((error) => {
@@ -240,12 +241,19 @@ export class AuthenticationService {
     };
 
     private solveRecaptcha = () => {
+        const recaptchaId = `recaptcha-container-${Math.random().toString(36).substring(2, 15)}`;
+        const recaptchaContainer = document.getElementById("recaptcha-container");
+        if (recaptchaContainer) {
+            console.log(`Recaptcha container found: ${recaptchaContainer.id}`);
+            
+            recaptchaContainer.innerHTML = `<div id="${recaptchaId}"></div>`;
+        }
         this.firebaseAuth.useDeviceLanguage();
-        const recaptchaVerifier = new RecaptchaVerifier(this.firebaseAuth, "recaptcha-container", {
+        const recaptchaVerifier = new RecaptchaVerifier(this.firebaseAuth, recaptchaId, {
             size: "invisible",
         });
         this.windowRef.recaptchaVerifier = recaptchaVerifier;
-        return from(recaptchaVerifier.verify());
+        return from(recaptchaVerifier.render());
     };
 
     private sendVerificationCode = (phoneNumber: string) => {
