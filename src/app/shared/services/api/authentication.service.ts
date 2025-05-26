@@ -107,7 +107,7 @@ export class AuthenticationService {
     }
 
     public resendVerificationCode() {
-        delete this.windowRef.recaptchaVerifier;
+        // delete this.windowRef.recaptchaVerifier;
         delete this.windowRef.confirmationResult;
         const phoneNumber = LocalStorageService.get<string>("phoneNumberForSignin");
         if(!phoneNumber) {
@@ -116,7 +116,6 @@ export class AuthenticationService {
         return of(null).pipe(
             tap(() => this.isResendInProgress$.next(true)),
             switchMap(this.logout),
-            switchMap(this.solveRecaptcha),
             switchMap(() => this.sendVerificationCode(phoneNumber)),
             tap(() => this.isResendInProgress$.next(false)),
             catchError((error) => {
@@ -312,14 +311,12 @@ export class AuthenticationService {
     private handleLoginWithPhoneNumberError = (error: any) => {
         console.log("Error sending verification code", error);
         LocalStorageService.remove("phoneNumberForSignin");
-        delete this.windowRef.recaptchaVerifier;
         return throwError(() => new Error(error?.message || "Error sending verification code"));
     };
 
     private handleConfirmCodeVerificationError = (error: any): Observable<never> => {
         console.error("Error verifying confirmation code", error);
         LocalStorageService.remove("phoneNumberForSignin");
-        delete this.windowRef.confirmationResult;
         return throwError(() => new Error(error?.message || "Error verifying confirmation code"));
     };
 }
