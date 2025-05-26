@@ -1,6 +1,6 @@
 import { HttpClient, HttpHeaders, HttpParams } from "@angular/common/http";
 import { inject, Inject, Injectable } from "@angular/core";
-import { initializeApp } from "firebase/app";
+import { FirebaseError, initializeApp } from "firebase/app";
 import {
     getAuth,
     signInAnonymously,
@@ -106,10 +106,6 @@ export class AuthenticationService {
 
     public loginAsAnonymousThroughTheFirebase = (): Observable<UserCredential> => {
         return from(signInAnonymously(this.firebaseAuth)).pipe(
-            catchError((error: any) => {
-                console.log(error);
-                throw new Error(error.message);
-            }),
             map((response: UserCredential | any) => {
                 const accessToken = response.user.accessToken;
                 LocalStorageService.set("anonymous", accessToken);
@@ -158,40 +154,6 @@ export class AuthenticationService {
                 }),
             );
     }
-
-    // login(formData): Observable<any> {
-    //     let headers = this.defaultHeaders;
-    //     headers = headers.append(
-    //         'content-type',
-    //         'application/x-www-form-urlencoded'
-    //     );
-
-    //     let params = new HttpParams();
-    //     params = params.append('client_id', 'vibespot-spa-client');
-    //     params = params.append('client_secret', 'vibespotsecret');
-    //     params = params.append('grant_type', 'password');
-    //     params = params.append('username', formData.username);
-    //     params = params.append('password', formData.password);
-    //     params = params.append('scopes', 'offline_access');
-
-    //     return this.http
-    //         .request<any>('post', `${this.basePathIdentity}/connect/token`, {
-    //             body: params,
-    //             headers,
-    //             responseType: 'json',
-    //             observe: 'response',
-    //         })
-    //         .pipe(
-    //             map((response: any) => {
-    //                 localStorage.setItem(
-    //                     'isAuthenticated',
-    //                     JSON.stringify(response.body)
-    //                 );
-    //                 this.isAuthenticatedUser$.next(response.body);
-    //                 return response;
-    //             })
-    //         );
-    // }
 
     public logout = () => {
         return from(signOut(this.firebaseAuth)).pipe(
@@ -252,7 +214,7 @@ export class AuthenticationService {
     private handleIdentityCheckByPhoneNumber = (
         identityCheckResult: boolean,
     ): Observable<boolean> => {
-        if (!identityCheckResult) return throwError(() => new Error("identity check failed"));
+        if (!identityCheckResult) return throwError(() => new Error("Provided phoner number cannot be used for registration"));
         return of(true);
     };
 
@@ -268,7 +230,7 @@ export class AuthenticationService {
     private sendVerificationCode = (phoneNumber: string) => {
         const appVerifier = this.windowRef.recaptchaVerifier;
         if (!appVerifier) {
-            return throwError(() => new Error("RecaptchaVerifier is not initialized"));
+            return throwError(() => new Error("Recaptcha verification failed. Please try again."));
         }
         return from(signInWithPhoneNumber(this.firebaseAuth, phoneNumber, appVerifier)).pipe(
             map((confirmationResult) => {
@@ -277,19 +239,11 @@ export class AuthenticationService {
             tap(() => {
                 LocalStorageService.set("phoneNumberForSignin", phoneNumber);
             }),
-            catchError((error) => {
-                console.log("Error sending confirmation code", error);
-                throw error;
-            }),
         );
     };
 
     private getIdToken = (userCredential: UserCredential): Observable<string> => {
         return from(userCredential.user.getIdToken()).pipe(
-            catchError((error: any) => {
-                console.log("Error getting ID token", error);
-                return throwError(() => new Error(error.message));
-            }),
             map((idToken) => idToken),
         );
     };
@@ -303,11 +257,11 @@ export class AuthenticationService {
                 return this.identityService.createWithToken(token).pipe(
                     catchError(() => {
                         console.log("Error creating profile with token");
-                        return throwError(() => new Error("Error creating profile with token"));
+                        return throwError(() => new Error("Failed to create profile with token"));
                     }),
                     map((newProfile) => {
                         if (!newProfile) {
-                            throw new Error("Error creating profile with token");
+                            throw new Error("Failed to create profile with token");
                         }
                         return { ...newProfile, token };
                     }),
@@ -337,14 +291,13 @@ export class AuthenticationService {
         console.log("Error sending verification code", error);
         LocalStorageService.remove("phoneNumberForSignin");
         delete this.windowRef.recaptchaVerifier;
-        return throwError(() => new Error(error.message));
+        return throwError(() => new Error(error?.message || "Error sending verification code"));
     };
 
     private handleConfirmCodeVerificationError = (error: any): Observable<never> => {
         console.error("Error verifying confirmation code", error);
-        this.isConfirmInProgress$.next(false);
         LocalStorageService.remove("phoneNumberForSignin");
         delete this.windowRef.confirmationResult;
-        return throwError(() => new Error(error.message));
+        return throwError(() => new Error(error?.message || "Error verifying confirmation code"));
     };
 }

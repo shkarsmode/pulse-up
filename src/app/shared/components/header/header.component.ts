@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { SvgIconComponent } from 'angular-svg-icon';
@@ -11,6 +11,7 @@ import { SecondaryButtonComponent } from "../ui-kit/buttons/secondary-button/sec
 
 import { version } from '../../../../assets/data/version';
 import { OpenGetAppPopupDirective } from '../popups/get-app-popup/open-get-app-popup.directive';
+import { AuthenticationService } from '../../services/api/authentication.service';
 
 @Component({
     selector: 'app-header',
@@ -22,7 +23,6 @@ import { OpenGetAppPopupDirective } from '../popups/get-app-popup/open-get-app-p
         SvgIconComponent,
         BurgerButtonComponent,
         FormsModule,
-        ComingSoonPopupDirective,
         SecondaryButtonComponent,
         OpenGetAppPopupDirective,
     ],
@@ -30,6 +30,8 @@ import { OpenGetAppPopupDirective } from '../popups/get-app-popup/open-get-app-p
     styleUrl: './header.component.scss',
 })
 export class HeaderComponent {
+    private readonly authService: AuthenticationService = inject(AuthenticationService);
+
     public isMobileDropdown: boolean = false;
     public AppRoutes = AppRoutes;
     public version: { major: number; minor: number; patch: number };
@@ -39,6 +41,10 @@ export class HeaderComponent {
         //Called after the constructor, initializing input properties, and the first call to ngOnChanges.
         //Add 'implements OnInit' to the class.
         this.getCurrentVersionOfApplication();
+    }
+
+    public get isAuthenticated() {
+        return this.authService.userToken 
     }
 
     public toggleDropdown(): void {
