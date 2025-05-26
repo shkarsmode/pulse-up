@@ -7,13 +7,14 @@ import { ErrorStateMatcher } from "@angular/material/core";
 import { Router } from "@angular/router";
 import intlTelInput, { Iti } from "intl-tel-input";
 import { CountryCode, isValidPhoneNumber, validatePhoneNumberLength } from "libphonenumber-js";
-import { delay, fromEvent, map } from "rxjs";
+import { BehaviorSubject, delay, fromEvent, map } from "rxjs";
 
 export class SignInFormService {
-    private router: Router = inject(Router);
+    private readonly router: Router = inject(Router);
     private readonly formBuilder: FormBuilder = inject(FormBuilder);
     private readonly authenticationService: AuthenticationService = inject(AuthenticationService);
     private iti: Iti;
+    private readonly signInError = new BehaviorSubject<string>("");
     public isValid = true;
     public countryCodeChanged = false;
     public countryCode: string = "US";
@@ -21,6 +22,7 @@ export class SignInFormService {
     public errorStateMatcher: ErrorStateMatcher;
     public AppRoutes = AppRoutes;
     public isLoading$ = this.authenticationService.isSigninInProgress$;
+    public signInError$ = this.signInError.asObservable();
 
     constructor() {
         this.form = this.createForm();
@@ -166,8 +168,9 @@ export class SignInFormService {
                 console.log("Verification code sent successfully");
                 this.navigateToConfirmPage();
             },
-            error: (err) => {
-                console.log("Error sending verification code:", err);
+            error: (error) => {
+                console.log("Error sending verification code:", error);
+                this.signInError.next(error.message)
             },
         });
     };

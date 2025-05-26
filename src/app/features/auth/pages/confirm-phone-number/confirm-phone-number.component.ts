@@ -1,19 +1,18 @@
-import { Component, inject, OnInit, ViewChild } from "@angular/core";
+import { AfterViewInit, Component, inject, OnDestroy, OnInit, ViewChild } from "@angular/core";
 import { CommonModule } from "@angular/common";
-import { Router } from "@angular/router";
-import { toSignal } from "@angular/core/rxjs-interop";
-import { FormControl, ReactiveFormsModule } from "@angular/forms";
-import { BehaviorSubject } from "rxjs";
-import { NgOtpInputComponent, NgOtpInputConfig, NgOtpInputModule } from "ng-otp-input";
-import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
+import { ReactiveFormsModule } from "@angular/forms";
+import { Subscription } from "rxjs";
+import { NgOtpInputComponent, NgOtpInputModule } from "ng-otp-input";
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { AuthLayoutComponent } from "../../ui/auth-layout/auth-layout.component";
 import { LinkButtonComponent } from "@/app/shared/components/ui-kit/buttons/link-button/link-button.component";
-import { AuthenticationService } from "@/app/shared/services/api/authentication.service";
 import { LocalStorageService } from "@/app/shared/services/core/local-storage.service";
-import { AppRoutes } from "@/app/shared/enums/app-routes.enum";
+import { ConfirmPhoneNumberService } from "../../services/confirm-phone-number.service";
 
 @Component({
     selector: "app-confirm-phone-number",
+    templateUrl: "./confirm-phone-number.component.html",
+    styleUrl: "./confirm-phone-number.component.scss",
     standalone: true,
     imports: [
         NgOtpInputModule,
@@ -23,65 +22,62 @@ import { AppRoutes } from "@/app/shared/enums/app-routes.enum";
         AuthLayoutComponent,
         LinkButtonComponent,
     ],
-    templateUrl: "./confirm-phone-number.component.html",
-    styleUrl: "./confirm-phone-number.component.scss",
+    providers: [ConfirmPhoneNumberService],
 })
-export class ConfirmPhoneNumberComponent implements OnInit {
-    private readonly router: Router = inject(Router);
-    private readonly authenticationService: AuthenticationService = inject(AuthenticationService);
+export class ConfirmPhoneNumberComponent implements OnInit, AfterViewInit, OnDestroy {
+    private readonly confirmPhoneNumberService: ConfirmPhoneNumberService = inject(ConfirmPhoneNumberService);
 
     @ViewChild(NgOtpInputComponent, { static: false }) ngOtpInput: NgOtpInputComponent;
-
-    public code = new FormControl("");
-    public config: NgOtpInputConfig = {
-        length: 6,
-        allowNumbersOnly: true,
-        inputClass: "otp-custom-input",
-        containerClass: "otp-custom-container",
-    };
-    public errorMessage$: BehaviorSubject<string> = new BehaviorSubject<string>("");
+    public cooldown = 0;
+    public code = this.confirmPhoneNumberService.value;
+    public config = this.confirmPhoneNumberService.otpInputConfig;
+    public isVerifyingCode = this.confirmPhoneNumberService.isVerifyingCode;
+    public isResendingCode = this.confirmPhoneNumberService.isResendingCode;
+    public errorMessage$ = this.confirmPhoneNumberService.errorMessage$;
     private savedPhoneNumber: string = LocalStorageService.get("phoneNumberForSignin") || "";
-    private appRoutes = AppRoutes;
-    public readonly isLoading = toSignal(this.authenticationService.isConfirmInProgress$);
+    private cooldownSub?: Subscription;
 
     public get phoneNumber(): string {
         const value = this.savedPhoneNumber.toString();
         return value ? value.slice(0, -4).replace(/./g, "*") + value.slice(-4) : "";
     }
 
+    public get isResendAvailable(): boolean {
+        return this.cooldown <= 0 && this.confirmPhoneNumberService.resendCodeAttemptsLeft > 0;
+    }
+
+    public get isResendCodeHintVisible(): boolean {
+        return this.confirmPhoneNumberService.resendCodeAttemptsLeft < 2;
+    }
+
+    public get resendCodeHint(): string {
+        if (this.cooldown > 0) {
+            return `Resend code in ${this.cooldown} seconds`;
+        } else if (this.confirmPhoneNumberService.resendCodeAttemptsLeft === 1) {
+            return "1 attempt remaining";
+        } else {
+            return "No more attempts available";
+        }
+    }
+
     ngOnInit() {
         this.code.valueChanges.subscribe((value) => {
-            if (value && value.length > 0) {
-                this.setErrorMessage("");
-            }
-            if (value?.length === 6) {
-                this.authenticationService.confirmVerificationCode(value).subscribe({
-                    next: (response) => {
-                        console.log("Verification code confirmed successfully", response);
-                        this.navigateToHomePage();
-                        this.resetInput();
-                    },
-                    error: (error) => {
-                        console.error("Error confirming verification code", error);
-                        this.setErrorMessage("Invalid verification code. Please try again.");
-                        this.resetInput();
-                    },
-                });
-            }
+            this.confirmPhoneNumberService.onConfirmationCodeChange(value || "");
+        });
+        this.cooldownSub = this.confirmPhoneNumberService.cooldown$.subscribe(seconds => {
+            this.cooldown = seconds;
         });
     }
 
-    private setErrorMessage(message: string) {
-        this.errorMessage$.next(message);
+    ngAfterViewInit(): void {
+        this.confirmPhoneNumberService.onAfterViewInit(this.ngOtpInput);
     }
 
-    private resetInput() {
-        this.code.setValue("");
-        const eleId = this.ngOtpInput.getBoxId(0);
-        this.ngOtpInput.focusTo(eleId);
+    ngOnDestroy() {
+        this.cooldownSub?.unsubscribe();
     }
 
-    private navigateToHomePage() {
-        this.router.navigateByUrl(this.appRoutes.Landing.HOME);
+    public resendCode(): void {
+        this.confirmPhoneNumberService.resendCode();
     }
 }
