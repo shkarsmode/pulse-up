@@ -245,7 +245,7 @@ export class AuthenticationService {
             size: "invisible",
         });
         this.windowRef.recaptchaVerifier = recaptchaVerifier;
-        return from(recaptchaVerifier.verify());
+        return from(recaptchaVerifier.render());
     };
 
     private sendVerificationCode = (phoneNumber: string) => {
