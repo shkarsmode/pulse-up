@@ -253,7 +253,7 @@ ul {
                             color: var(--black-color);
                             font-weight: 400;
 
-                            &:not(:nth-child(3) ~ li) {
+                            &:not(:nth-child(4) ~ li) {
                                 color: var(--accent-color);
                                 font-weight: 600;
                             }

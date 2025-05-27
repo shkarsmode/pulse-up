@@ -13,6 +13,7 @@ export class LinkButtonComponent {
     @Input() public disabled: boolean = false;
     @Input() public loading: boolean = false;
     @Input() public label: string = "";
+    @Input() public type: HTMLButtonElement["type"] = "button";
     @Output() public click: EventEmitter<MouseEvent> = new EventEmitter<MouseEvent>();
     public onClick(e: MouseEvent): void {
         this.click.emit(e);

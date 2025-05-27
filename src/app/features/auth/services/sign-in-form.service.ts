@@ -38,7 +38,7 @@ export class SignInFormService {
     private resetInput() {
         const code = this.iti.getSelectedCountryData().dialCode;
         this.form.get("phone")?.setValue("+" + code);
-        this.validateNumber();
+        this.validateNumber({ isEmptyValid: true });
     }
 
     private validateMaxValueLength(event: KeyboardEvent) {
@@ -108,11 +108,14 @@ export class SignInFormService {
     };
 
     public onBlur = () => {
-        this.validateNumber();
+        this.validateNumber({ isEmptyValid: true });
     };
 
     public onInputKeyDown = (event: KeyboardEvent) => {
-        if (!this.validateChar(event)) {
+        if (event.key === "Enter") {
+            event.preventDefault();
+            this.submit();
+        } else if (!this.validateChar(event)) {
             event.preventDefault();
         } else if (!this.validateMinValueLength(event) || !this.validateMaxValueLength(event)) {
             event.preventDefault();
@@ -142,19 +145,19 @@ export class SignInFormService {
         this.iti?.destroy();
     };
 
-    public validateNumber() {
+    public validateNumber({ isEmptyValid = false }: { isEmptyValid?: boolean } = {}) {
         if (!this.iti) return;
         const value = this.form.get("phone")?.value;
         const iso2Code = this.iti.getSelectedCountryData().iso2?.toUpperCase();
         const dialCode = this.iti.getSelectedCountryData().dialCode;
         if (!iso2Code) return;
-        
+
         const isEmpty = value === "+" + dialCode;
-        if (isEmpty) {
+        if (isEmpty && isEmptyValid) {
             this.isValid = true;
             return;
         }
-        
+
         const valid = isValidPhoneNumber(value, iso2Code as CountryCode);
         this.isValid = valid;
     }
@@ -170,7 +173,7 @@ export class SignInFormService {
             },
             error: (error) => {
                 console.log("Error sending verification code:", error);
-                this.signInError.next(error.message)
+                this.signInError.next(error.message);
             },
         });
     };
