@@ -306,6 +306,7 @@ export class AuthenticationService {
                 this.userToken$.next(token);
                 this.anonymousUser$.next(null);
                 this.isConfirmInProgress$.next(false);
+                this.windowRef.recaptchaVerifier?.clear();
                 delete this.windowRef.recaptchaVerifier;
                 delete this.windowRef.confirmationResult;
             }),

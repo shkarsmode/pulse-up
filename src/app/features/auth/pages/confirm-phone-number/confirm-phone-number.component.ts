@@ -32,7 +32,7 @@ export class ConfirmPhoneNumberComponent implements OnInit, AfterViewInit, OnDes
     public code = this.confirmPhoneNumberService.value;
     public config = this.confirmPhoneNumberService.otpInputConfig;
     public isVerifyingCode = this.confirmPhoneNumberService.isVerifyingCode;
-    public isResendingCode = this.confirmPhoneNumberService.isResendingCode;
+    public isResendingCode = this.confirmPhoneNumberService.isResendingCode$.asObservable();
     public errorMessage$ = this.confirmPhoneNumberService.errorMessage$;
     private savedPhoneNumber: string = LocalStorageService.get("phoneNumberForSignin") || "";
     private cooldownSub?: Subscription;
@@ -51,7 +51,7 @@ export class ConfirmPhoneNumberComponent implements OnInit, AfterViewInit, OnDes
     }
 
     public get resendCodeHint(): string {
-        if (this.cooldown > 0) {
+        if (this.cooldown > 0 && this.confirmPhoneNumberService.resendCodeAttemptsLeft > 0) {
             return `Resend code in ${this.cooldown} seconds`;
         } else if (this.confirmPhoneNumberService.resendCodeAttemptsLeft === 1) {
             return "1 attempt remaining";

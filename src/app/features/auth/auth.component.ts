@@ -8,4 +8,4 @@ import { Component } from "@angular/core";
         </div>
     `,
 })
-export class AuthComponent {}
+export class AuthComponent { }

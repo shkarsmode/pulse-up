@@ -55,6 +55,10 @@
     align-items: center;
     flex-direction: column;
     row-gap: 4px;
+
+    app-link-button::ng-deep button {
+        min-width: 130px;
+    }
 }
 
 .confirm__resend-text {

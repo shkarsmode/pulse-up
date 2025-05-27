@@ -8,7 +8,7 @@
             <app-link-button
                 [disabled]="!isResendAvailable"
                 label="Resend Code"
-                [loading]="isResendingCode() || false"
+                [loading]="(isResendingCode | async) || false"
                 (click)="resendCode()">
                 Resend Code
             </app-link-button>
