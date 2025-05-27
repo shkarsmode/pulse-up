@@ -41,7 +41,7 @@ export class AuthenticationService {
     private anonymousUser$: BehaviorSubject<string | null>;
     private userToken$: BehaviorSubject<string | null>;
     private windowRef: Window;
-    private firebaseAuth: Auth;
+    public firebaseAuth: Auth;
 
     constructor(@Inject(FIREBASE_CONFIG) private readonly firebaseConfig: IFirebaseConfig) {
         this.firebaseAuth = this.initFirebaseAppWithConfig();
