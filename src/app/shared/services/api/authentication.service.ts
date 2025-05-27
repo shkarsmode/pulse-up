@@ -107,10 +107,8 @@ export class AuthenticationService {
     }
 
     public resendVerificationCode() {
-        delete this.windowRef.recaptchaVerifier;
-        delete this.windowRef.confirmationResult;
         const phoneNumber = LocalStorageService.get<string>("phoneNumberForSignin");
-        if(!phoneNumber) {
+        if (!phoneNumber) {
             return throwError(() => new Error("Failed to resend verification code. Please try again to login."));
         }
         return of(null).pipe(
@@ -241,11 +239,10 @@ export class AuthenticationService {
     };
 
     private prepareRecaptcha = () => {
+        this.windowRef.recaptchaVerifier?.clear();
         const recaptchaId = `recaptcha-container-${Math.random().toString(36).substring(2, 15)}`;
         const recaptchaContainer = document.getElementById("recaptcha-container");
         if (recaptchaContainer) {
-            console.log(`Recaptcha container found: ${recaptchaContainer.id}`);
-            
             recaptchaContainer.innerHTML = `<div id="${recaptchaId}"></div>`;
         }
         this.firebaseAuth.useDeviceLanguage();
@@ -267,8 +264,6 @@ export class AuthenticationService {
             }),
             tap(() => {
                 LocalStorageService.set("phoneNumberForSignin", phoneNumber);
-                this.windowRef.recaptchaVerifier?.clear();
-                delete this.windowRef.recaptchaVerifier;
             }),
         );
     };
@@ -321,12 +316,12 @@ export class AuthenticationService {
     private handleLoginWithPhoneNumberError = (error: any) => {
         console.log("Error sending verification code", error);
         LocalStorageService.remove("phoneNumberForSignin");
-        return throwError(() => new Error(error?.message || "Error sending verification code"));
+        return throwError(() => error);
     };
 
     private handleConfirmCodeVerificationError = (error: any): Observable<never> => {
         console.error("Error verifying confirmation code", error);
         LocalStorageService.remove("phoneNumberForSignin");
-        return throwError(() => new Error(error?.message || "Error verifying confirmation code"));
+        return throwError(() => error);
     };
 }
