@@ -5,7 +5,7 @@ import {
     HttpRequest,
 } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { from, map, Observable, tap } from 'rxjs';
+import { from, Observable, tap } from 'rxjs';
 import { AuthenticationService } from '../../services/api/authentication.service';
 
 @Injectable()
@@ -30,7 +30,7 @@ export class JwtInterceptor implements HttpInterceptor {
                     withCredentials: !currentUser.isAnonymous,
                 });
             })
-        )
+        ).subscribe();
         // const anonymousToken = this.authenticationService.anonymousUserValue;
         // const userTokenValue =
         //     this.authenticationService.userTokenValue;
