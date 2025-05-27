@@ -1,0 +1,81 @@
+<div class="user-info-popup">
+    <app-close-button
+        class="user-info-popup__close"
+        (handleClick)="onCloseDialog()" />
+
+    <h2>Complete Your Profile</h2>
+    <p>Welcome! Please enter your name and choose a username to continue.</p>
+
+    <form
+        [formGroup]="form"
+        class="user-info-form"
+        (ngSubmit)="submit()">
+        <div class="user-info-form__field">
+            <app-input
+                autocomplete="off"
+                type="text"
+                id="name"
+                name="name"
+                formControlName="name"
+                label="Name"
+                [hasErrorClass]="!!(form.get('name')?.touched && form.get('name')?.invalid)"
+                (emitBlur)="onBlur('name')" />
+            <div *ngIf="form.get('name')?.touched && form.get('name')?.invalid">
+                <span *ngIf="form.get('name')?.hasError('required')"> Name is required</span>
+                <span *ngIf="form.get('name')?.hasError('maxlength')">
+                    Name must be 50 characters or less</span
+                >
+                <span *ngIf="form.get('name')?.hasError('pattern')">
+                    Name must contain only letters
+                </span>
+            </div>
+        </div>
+
+        <div class="user-info-form__field">
+            <app-input
+                autocomplete="off"
+                type="text"
+                id="username"
+                name="username"
+                formControlName="username"
+                label="Username"
+                [hasErrorClass]="!!(form.get('username')?.touched && form.get('username')?.invalid)"
+                (emitBlur)="onBlur('username')" />
+            <div *ngIf="form.get('username')?.touched && form.get('username')?.invalid">
+                <span *ngIf="form.get('username')?.hasError('required')">
+                    Username is required
+                </span>
+                <span *ngIf="form.get('username')?.hasError('minlength')">
+                    Username must be at least 6 characters long
+                </span>
+                <span *ngIf="form.get('username')?.hasError('maxlength')">
+                    Username must be 50 characters or less
+                </span>
+                <span *ngIf="form.get('username')?.hasError('pattern')">
+                    Username must be alphanumeric and can include one underscore
+                </span>
+                <span *ngIf="form.get('username')?.hasError('noLetter')">
+                    Must contain at least one letter.
+                </span>
+                <span *ngIf="form.get('username')?.hasError('notUnique')">
+                    Username already taken.
+                </span>
+            </div>
+        </div>
+        <div
+            *ngIf="errorMessage"
+            class="user-info-form__error">
+            {{ errorMessage }}
+        </div>
+        <div class="user-info-form__submit">
+            <app-primary-button
+                type="submit"
+                [fullWidth]="true"
+                [disabled]="form.invalid || loading"
+                [loading]="loading"
+                (handleClick)="submit()">
+                Save
+            </app-primary-button>
+        </div>
+    </form>
+</div>

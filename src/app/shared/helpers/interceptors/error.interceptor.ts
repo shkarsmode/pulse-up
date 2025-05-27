@@ -9,15 +9,19 @@ import { BehaviorSubject, Observable, throwError } from 'rxjs';
 import { catchError, filter, switchMap, take } from 'rxjs/operators';
 // import {MatSnackBar} from '@angular/material/snack-bar';
 import { AuthenticationService } from '../../services/api/authentication.service';
+import { Router } from '@angular/router';
+import { AppRoutes } from '../../enums/app-routes.enum';
 
 @Injectable()
 export class ErrorInterceptor implements HttpInterceptor {
     private isRefreshing = false;
     private refreshTokenSubject: BehaviorSubject<any> =
         new BehaviorSubject<any>(null);
+    private appRoutes = AppRoutes
 
     constructor (
-        private authenticationService: AuthenticationService
+        private readonly router: Router,
+        private readonly authenticationService: AuthenticationService,
     ) {}
 
     intercept(
@@ -92,7 +96,7 @@ export class ErrorInterceptor implements HttpInterceptor {
                         this.isRefreshing = false;
                         console.log('log out');
                         this.authenticationService.logout();
-                        location.reload();
+                        this.router.navigateByUrl(this.appRoutes.Auth.SIGN_IN);
                         return throwError(() => err);
                     })
                 );

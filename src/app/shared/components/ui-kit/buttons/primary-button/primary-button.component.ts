@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
-import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { RippleEffectDirective } from '../../../../directives/ripple-effect';
 
 @Component({
@@ -27,18 +27,17 @@ export class PrimaryButtonComponent {
 
     @Output() public handleClick: EventEmitter<void> = new EventEmitter<void>();
 
-    public classes = {}
 
-    ngOnInit(): void {
-        this.classes = {
+    public get classes(): Record<string, boolean> {
+        return {
             'primary-button': true,
-            "secondary-button--small": this.size === "small",
-            "secondary-button--medium": this.size === "medium",
-            "secondary-button--large": this.size === "large",
+            'secondary-button--small': this.size === 'small',
+            'secondary-button--medium': this.size === 'medium',
+            'secondary-button--large': this.size === 'large',
             'primary-button--full-width': this.fullWidth,
             'primary-button--contrast': this.contrast,
             'primary-button--disabled': this.disabled,
-        }
+        };
     }
 
     public onClick(): void {
