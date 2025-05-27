@@ -71,6 +71,7 @@ export class ConfirmPhoneNumberService {
       next: () => {
         console.log("Verification code resent successfully");
         this.resendCodeAttemptsLeft--;
+        this.isResendingCode$.next(false);
         this.startCooldown(60);
       },
       error: (error) => {
@@ -79,8 +80,6 @@ export class ConfirmPhoneNumberService {
           errorMessage = formatFirebaseError(error) || errorMessage;
         }
         this.setErrorMessage(errorMessage);
-      },
-      complete: () => {
         this.isResendingCode$.next(false);
       },
     })
