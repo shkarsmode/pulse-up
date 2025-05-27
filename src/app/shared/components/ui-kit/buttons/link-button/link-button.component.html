@@ -3,6 +3,12 @@
     [disabled]="disabled"
     class="link-button"
     (click)="onClick($event)"
-    [attr.aria-label]="label"> 
+    [attr.aria-label]="label">
+    @if (loading) {
+    <mat-spinner
+        color="#5e00cc"
+        diameter="20" />
+    } @else {
     <ng-content></ng-content>
+    }
 </button>

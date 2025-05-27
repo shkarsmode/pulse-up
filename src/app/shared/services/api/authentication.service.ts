@@ -76,7 +76,7 @@ export class AuthenticationService {
             switchMap(this.handleIdentityCheckByPhoneNumber),
             switchMap(() => this.validatePhoneNumberOnVoip(phoneNumber)),
             switchMap(this.logout),
-            switchMap(this.solveRecaptcha),
+            switchMap(this.prepareRecaptcha),
             switchMap(() => this.sendVerificationCode(phoneNumber)),
             tap(() => this.isSigninInProgress$.next(false)),
             catchError((error) => {
@@ -107,16 +107,14 @@ export class AuthenticationService {
     }
 
     public resendVerificationCode() {
-        delete this.windowRef.recaptchaVerifier;
-        delete this.windowRef.confirmationResult;
         const phoneNumber = LocalStorageService.get<string>("phoneNumberForSignin");
-        if(!phoneNumber) {
+        if (!phoneNumber) {
             return throwError(() => new Error("Failed to resend verification code. Please try again to login."));
         }
         return of(null).pipe(
             tap(() => this.isResendInProgress$.next(true)),
             switchMap(this.logout),
-            switchMap(this.solveRecaptcha),
+            switchMap(this.prepareRecaptcha),
             switchMap(() => this.sendVerificationCode(phoneNumber)),
             tap(() => this.isResendInProgress$.next(false)),
             catchError((error) => {
@@ -240,12 +238,11 @@ export class AuthenticationService {
         return of(true);
     };
 
-    private solveRecaptcha = () => {
+    private prepareRecaptcha = () => {
+        this.windowRef.recaptchaVerifier?.clear();
         const recaptchaId = `recaptcha-container-${Math.random().toString(36).substring(2, 15)}`;
         const recaptchaContainer = document.getElementById("recaptcha-container");
         if (recaptchaContainer) {
-            console.log(`Recaptcha container found: ${recaptchaContainer.id}`);
-            
             recaptchaContainer.innerHTML = `<div id="${recaptchaId}"></div>`;
         }
         this.firebaseAuth.useDeviceLanguage();
@@ -253,15 +250,15 @@ export class AuthenticationService {
             size: "invisible",
         });
         this.windowRef.recaptchaVerifier = recaptchaVerifier;
-        return from(recaptchaVerifier.render());
+        return of(recaptchaVerifier)
     };
 
     private sendVerificationCode = (phoneNumber: string) => {
-        const appVerifier = this.windowRef.recaptchaVerifier;
-        if (!appVerifier) {
+        const recaptchaVerifier = this.windowRef.recaptchaVerifier;
+        if (!recaptchaVerifier) {
             return throwError(() => new Error("Recaptcha verification failed. Please try again."));
         }
-        return from(signInWithPhoneNumber(this.firebaseAuth, phoneNumber, appVerifier)).pipe(
+        return from(signInWithPhoneNumber(this.firebaseAuth, phoneNumber, recaptchaVerifier)).pipe(
             map((confirmationResult) => {
                 this.windowRef.confirmationResult = confirmationResult;
             }),
@@ -309,6 +306,7 @@ export class AuthenticationService {
                 this.userToken$.next(token);
                 this.anonymousUser$.next(null);
                 this.isConfirmInProgress$.next(false);
+                this.windowRef.recaptchaVerifier?.clear();
                 delete this.windowRef.recaptchaVerifier;
                 delete this.windowRef.confirmationResult;
             }),
@@ -319,12 +317,12 @@ export class AuthenticationService {
     private handleLoginWithPhoneNumberError = (error: any) => {
         console.log("Error sending verification code", error);
         LocalStorageService.remove("phoneNumberForSignin");
-        return throwError(() => new Error(error?.message || "Error sending verification code"));
+        return throwError(() => error);
     };
 
     private handleConfirmCodeVerificationError = (error: any): Observable<never> => {
         console.error("Error verifying confirmation code", error);
         LocalStorageService.remove("phoneNumberForSignin");
-        return throwError(() => new Error(error?.message || "Error verifying confirmation code"));
+        return throwError(() => error);
     };
 }

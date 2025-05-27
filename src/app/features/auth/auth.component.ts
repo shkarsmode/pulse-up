@@ -5,7 +5,8 @@ import { Component } from "@angular/core";
     template: `
         <div class="page">
             <router-outlet></router-outlet>
+            <div id="recaptcha-container"></div>
         </div>
     `,
 })
-export class AuthComponent {}
+export class AuthComponent { }

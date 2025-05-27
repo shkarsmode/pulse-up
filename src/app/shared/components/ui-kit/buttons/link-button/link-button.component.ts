@@ -1,10 +1,11 @@
 import { Component, EventEmitter, Input, Output } from "@angular/core";
 import { MatButtonModule } from "@angular/material/button";
+import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
 
 @Component({
     selector: "app-link-button",
     standalone: true,
-    imports: [MatButtonModule],
+    imports: [MatButtonModule, MatProgressSpinnerModule],
     templateUrl: "./link-button.component.html",
     styleUrl: "./link-button.component.scss",
 })
