@@ -1,15 +1,18 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+import { CollectPersonalInfoGuard } from './shared/helpers/guards/collect-personal-info.guard';
 
 const routes: Routes = [
     {
         path: '',
         loadChildren: () => import('./features').then((m) => m.LandingModule),
+        canActivateChild: [CollectPersonalInfoGuard]
     },
 
     {
         path: 'user',
-        loadChildren: () => import('./features').then((m) => m.UserModule)
+        loadChildren: () => import('./features').then((m) => m.UserModule),
+        canActivateChild: [CollectPersonalInfoGuard]
     },
 
     {
@@ -19,7 +22,8 @@ const routes: Routes = [
 
     {
         path: '',
-        loadChildren: () => import('./features').then((m) => m.CommunityModule)
+        loadChildren: () => import('./features').then((m) => m.CommunityModule),
+        canActivateChild: [CollectPersonalInfoGuard]
     },
 
 ];

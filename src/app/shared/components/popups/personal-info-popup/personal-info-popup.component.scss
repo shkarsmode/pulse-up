@@ -1,0 +1,73 @@
+@use "../../../../../styles/mixins" as *;
+
+.user-info-popup {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    max-height: 100%;
+    max-width: 100%;
+    padding: 72px 38px;
+    background-color: var(--white-popup);
+
+    h2 {
+        @include title-24px;
+        margin-bottom: 16px;
+        text-align: center;
+    }
+
+    p {
+        @include text-16px;
+        margin-bottom: 32px;
+        text-align: center;
+    }
+}
+
+.user-info-popup__close {
+    display: none;
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    width: 24px;
+    height: 24px;
+    cursor: pointer;
+}
+
+.user-info-form {
+    width: 100%;
+    max-width: 400px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    row-gap: 24px;
+}
+
+.user-info-form__field {
+    display: flex;
+    flex-direction: column;
+    row-gap: 8px;
+
+    span {
+        @include text-12px;
+        color: var(--error-color);
+    }
+}
+
+.user-info-form__submit {
+    display: flex;
+    justify-content: flex-end;
+
+    app-primary-button {
+        min-width: 120px;
+        @include media-sm {
+            width: 100%;
+        }
+    }
+}
+
+.user-info-form__error {
+    @include text-12px;
+    color: var(--error-color);
+    text-align: center;
+}

@@ -12,6 +12,21 @@ export class UserService {
     private readonly apiUrl: string = inject(API_URL);
     private readonly http: HttpClient = inject(HttpClient);
 
+    public getOwnProfile(): Observable<IProfile> {
+        return this.http.get<IProfile>(`${this.apiUrl}/users/self`);
+    }
+
+    public updateOwnProfile(data: IProfile): Observable<IProfile> {
+        const formData = new FormData();
+        for (const key in data) {
+            const prop = key as keyof typeof data;
+            if (data[prop] !== undefined && data[prop] !== null) {
+                formData.append(key, data[prop]);
+            }
+        }
+        return this.http.post<IProfile>(`${this.apiUrl}/users/self`, formData);
+    }
+
     public getProfileById(id: string): Observable<IProfile> {
         return this.http.get<IProfile>(`${this.apiUrl}/users/${id}`);
     }
@@ -94,6 +109,16 @@ export class UserService {
                     throw new Error("Phone number validation failed", response);
                 }
             }),
+        );
+    }
+
+    public validateUsername(username: string): Observable<boolean> {
+        return this.http.post<{ username: string }>(`${this.apiUrl}/users/validate`, { username }).pipe(
+            catchError((error) => {
+                console.error("Username validation error:", error);
+                return of(false); // Return false if there's an error
+            }),
+            map(() => true),
         );
     }
 }
