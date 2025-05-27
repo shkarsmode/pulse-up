@@ -3,7 +3,8 @@
     [disabled]="disabled"
     class="link-button"
     (click)="onClick($event)"
-    [attr.aria-label]="label">
+    [attr.aria-label]="label"
+    [type]="type">
     @if (loading) {
     <mat-spinner
         color="#5e00cc"

@@ -22,6 +22,8 @@
                         #telInput
                         type="tel"
                         id="phone"
+                        name="phone"
+                        inputmode="tel"
                         autocomplete="tel"
                         formControlName="phone"
                         [errorStateMatcher]="errorStateMatcher" />
@@ -43,6 +45,10 @@
                 <a [routerLink]="privacyRoute">Privacy Policy</a>
             </small>
         </div>
-        <app-link-button class="signin__guest" (click)="onClickGuest()">Continue as Guest</app-link-button>
+        <app-link-button
+            class="signin__guest"
+            (click)="onClickGuest()">
+            Continue as Guest
+        </app-link-button>
     </main>
 </app-auth-layout>
