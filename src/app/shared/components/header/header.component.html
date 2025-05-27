@@ -33,7 +33,7 @@
                 <a
                     [routerLink]="'/' + AppRoutes.Auth.SIGN_IN"
                     routerLinkActive="active">
-                    {{ (isAuthenticated | async) ? 'Sign Out' : 'Sign In' }}
+                    {{ (isAuthenticated | async) ? "Sign Out" : "Sign In" }}
                 </a>
             </li>
             <!-- <li>
@@ -117,14 +117,13 @@
                             About
                         </a>
                     </li>
-                    <!-- <li>
-                        <a 
-                            routerLink="/login"
-                            routerLinkActive="active"
-                            openComingSoonPopup>
-                            Sign In
+                    <li>
+                        <a
+                            [routerLink]="'/' + AppRoutes.Auth.SIGN_IN"
+                            routerLinkActive="active">
+                            {{ (isAuthenticated | async) ? "Sign Out" : "Sign In" }}
                         </a>
-                    </li> -->
+                    </li>
                     <li>
                         <a
                             [routerLink]="'/' + AppRoutes.Community.TERMS"
