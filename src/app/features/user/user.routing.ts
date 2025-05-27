@@ -10,7 +10,7 @@ const routes: Routes = [
         {
           path: 'topic',
           loadChildren: () => import('./topic').then((m) => m.TopicModule)
-        }
+        },
       ],
     }
 ];
