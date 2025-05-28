@@ -31,6 +31,13 @@
             </li>
             <li>
                 <a
+                    [routerLink]="'/' + AppRoutes.Profile.EDIT"
+                    routerLinkActive="active">
+                    Profile
+                </a>
+            </li>
+            <li>
+                <a
                     [routerLink]="'/' + AppRoutes.Auth.SIGN_IN"
                     routerLinkActive="active">
                     {{ (isAuthenticated | async) ? "Sign Out" : "Sign In" }}
@@ -122,6 +129,13 @@
                             [routerLink]="'/' + AppRoutes.Auth.SIGN_IN"
                             routerLinkActive="active">
                             {{ (isAuthenticated | async) ? "Sign Out" : "Sign In" }}
+                        </a>
+                    </li>
+                    <li>
+                        <a
+                            [routerLink]="'/' + AppRoutes.Profile.EDIT"
+                            routerLinkActive="active">
+                            Profile
                         </a>
                     </li>
                     <li>
