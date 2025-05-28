@@ -12,10 +12,10 @@
         (ngSubmit)="submit()">
         <div class="user-info-form__field">
             <app-input
-                autocomplete="off"
                 type="text"
                 id="name"
                 name="name"
+                autocomplete="name"
                 formControlName="name"
                 label="Name"
                 [hasErrorClass]="!!(form.get('name')?.touched && form.get('name')?.invalid)"
