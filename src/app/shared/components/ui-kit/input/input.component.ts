@@ -47,7 +47,7 @@ export class InputComponent
     @Input() public required: boolean = false;
     @Input() public isLoading: boolean = false;
     @Input() public inputType: string = 'text';
-    @Input() public autocomplete: string | boolean;
+    @Input() public autocomplete: HTMLInputElement['autocomplete'];
     @Input() public preventBrowserAutofill: boolean;
 
     @Output() public emitBlur: EventEmitter<any> = new EventEmitter();

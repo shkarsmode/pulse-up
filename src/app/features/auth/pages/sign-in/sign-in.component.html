@@ -11,20 +11,21 @@
                 (ngSubmit)="onSubmit()">
                 <label
                     for="phone"
-                    class="auth-form__label"
-                    >Phone</label
-                >
+                    class="auth-form__label">
+                    Phone
+                </label>
                 <mat-form-field
                     appearance="outline"
                     class="auth-form__field">
                     <input
                         matInput
                         #telInput
+                        required
                         type="tel"
                         id="phone"
                         name="phone"
                         inputmode="tel"
-                        autocomplete="tel"
+                        autocomplete="tel-national"
                         formControlName="phone"
                         [errorStateMatcher]="errorStateMatcher" />
                     <mat-error>Invalid phone number</mat-error>
