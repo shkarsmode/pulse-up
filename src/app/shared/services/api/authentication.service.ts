@@ -1,6 +1,6 @@
 import { HttpClient, HttpHeaders, HttpParams } from "@angular/common/http";
 import { inject, Inject, Injectable } from "@angular/core";
-import { FirebaseError, initializeApp } from "firebase/app";
+import { FirebaseApp, FirebaseError, initializeApp } from "firebase/app";
 import {
     getAuth,
     signInAnonymously,
@@ -41,10 +41,10 @@ export class AuthenticationService {
     private anonymousUser$: BehaviorSubject<string | null>;
     private userToken$: BehaviorSubject<string | null>;
     private windowRef: Window;
-    public firebaseAuth: Auth;
+    private firebaseApp: FirebaseApp;
 
     constructor(@Inject(FIREBASE_CONFIG) private readonly firebaseConfig: IFirebaseConfig) {
-        this.firebaseAuth = this.initFirebaseAppWithConfig();
+        this.firebaseApp = this.initFirebaseAppWithConfig();
         this.anonymousUser$ = new BehaviorSubject(LocalStorageService.get("anonymous"));
         this.anonymousUser = this.anonymousUser$.asObservable();
         this.userToken$ = new BehaviorSubject(LocalStorageService.get<string>("userToken"));
@@ -55,9 +55,12 @@ export class AuthenticationService {
         this.windowRef = this.windowService.windowRef;
     }
 
-    private initFirebaseAppWithConfig(): Auth {
-        const app = initializeApp(this.firebaseConfig);
-        return getAuth(app);
+    public get firebaseAuth(): Auth {
+        return getAuth(this.firebaseApp);
+    }
+
+    private initFirebaseAppWithConfig() {
+        return initializeApp(this.firebaseConfig);
     }
 
     public get anonymousUserValue(): string | null {
