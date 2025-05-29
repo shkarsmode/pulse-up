@@ -1,13 +1,13 @@
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatDialogRef } from '@angular/material/dialog';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { AbstractControl, AsyncValidatorFn, ReactiveFormsModule, ValidationErrors } from '@angular/forms';
-import { debounceTime, first, map, Observable, of, switchMap } from 'rxjs';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { InputComponent } from '../../ui-kit/input/input.component';
 import { CloseButtonComponent } from '../../ui-kit/buttons/close-button/close-button.component';
 import { PrimaryButtonComponent } from "../../ui-kit/buttons/primary-button/primary-button.component";
 import { UserService } from '@/app/shared/services/api/user.service';
+import { atLeastOneLetterValidator } from '@/app/shared/helpers/validators/at-least-one-letter.validator';
+import { usernameUniqueValidator } from '@/app/shared/helpers/validators/username-unique.validator';
 
 @Component({
   selector: 'app-personal-info-popup',
@@ -19,7 +19,6 @@ import { UserService } from '@/app/shared/services/api/user.service';
     CloseButtonComponent,
     ReactiveFormsModule,
     InputComponent,
-    PrimaryButtonComponent,
     PrimaryButtonComponent,
   ],
 })
@@ -49,9 +48,9 @@ export class PersonalInfoPopupComponent {
           Validators.minLength(6),
           Validators.maxLength(50),
           Validators.pattern(/^(?!.*__)(?:[A-Za-z0-9]*_?[A-Za-z0-9]*)$/),
-          this.atLeastOneLetterValidator(),
+          atLeastOneLetterValidator(),
         ],
-        [this.usernameUniqueValidator()],
+        [usernameUniqueValidator(this.userService.validateUsername.bind(this.userService))],
       ],
     });
 
@@ -87,27 +86,5 @@ export class PersonalInfoPopupComponent {
 
   onCloseDialog() {
     this.dialogRef.close();
-  }
-
-  private atLeastOneLetterValidator() {
-    return (control: AbstractControl): ValidationErrors | null => {
-      return /^[^a-zA-Z]*$/.test(control.value)
-        ? { noLetter: 'Username must contain at least one letter.' }
-        : null;
-    };
-  }
-
-  private usernameUniqueValidator(): AsyncValidatorFn {
-    return (control: AbstractControl): Observable<ValidationErrors | null> => {
-      if (!control.value) return of(null);
-      return of(control.value).pipe(
-        debounceTime(300),
-        switchMap((value) => this.userService.validateUsername(value)),
-        map((res) =>
-          res ? null : { notUnique: 'Username is already taken.' }
-        ),
-        first()
-      );
-    };
   }
 }

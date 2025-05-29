@@ -1,0 +1,20 @@
+@if (label) {
+<label [for]="id">
+    {{ label }}
+</label>
+}
+
+<textarea
+    [attr.id]="id"
+    [attr.name]="name"
+    class="app-ui-textarea"
+    [class.app-ui-textarea--error]="hasErrorClass"
+    [class.app-ui-textarea--focus]="isOnFocus"
+    [(ngModel)]="value"
+    [disabled]="disabled"
+    [placeholder]="placeholder"
+    [required]="required"
+    (focus)="emitFocus.emit(); isOnFocus = true"
+    (blur)="emitBlur.emit(); isOnFocus = false"
+    (input)="onInput.emit($event)"
+    #textareaRef></textarea>

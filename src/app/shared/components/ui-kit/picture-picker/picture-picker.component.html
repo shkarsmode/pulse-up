@@ -1,0 +1,34 @@
+<label for="picture">Profile picture</label>
+<div class="placeholder">
+    <input
+        #customIcon
+        id="picture"
+        name="picture"
+        type="file"
+        accept=".jpg, .png, .jpeg"
+        (change)="onFileSelected($event)" />
+
+    <div class="custom-icon">
+        <img
+            *ngIf="selectedPicture"
+            [src]="selectedPicture"
+            width="98"
+            height="98"
+            alt="Selected Image" />
+        <img
+            *ngIf="!selectedPicture"
+            src="assets/svg/plus.svg"
+            width="98"
+            height="98"
+            alt="plus" />
+    </div>
+    <button
+        type="button"
+        class="delete-picture"
+        *ngIf="selectedPicture"
+        (click)="deleteChosenPicture()">
+        <svg-icon
+            class="delete-picture__icon"
+            src="assets/svg/close.svg" />
+    </button>
+</div>

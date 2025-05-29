@@ -1,0 +1,66 @@
+<form
+    [formGroup]="form"
+    class="profile-form"
+    (ngSubmit)="submit()">
+    <div class="profile-form__field">
+        <app-picture-picker [control]="form.get('picture')"/>
+        <div *ngIf="getPictureErrorMessage() as error">
+            <span>{{ error }}</span>
+        </div>
+    </div>
+    <div class="profile-form__field">
+        <app-input
+            type="text"
+            id="name"
+            name="name"
+            label="Name"
+            autocomplete="name"
+            placeholder="Enter your name or organization"
+            formControlName="name"
+            [hasErrorClass]="!!(form.get('name')?.touched && form.get('name')?.invalid)"
+            (emitBlur)="onBlur('name')" />
+        <div *ngIf="getNameErrorMessage() as error">
+            <span>{{ error }}</span>
+        </div>
+    </div>
+    <div class="profile-form__field">
+        <app-input
+            type="text"
+            id="username"
+            name="username"
+            label="Username"
+            placeholder="Enter a unique username"
+            formControlName="username"
+            autocomplete="off"
+            [hasErrorClass]="!!(form.get('username')?.touched && form.get('username')?.invalid)"
+            (emitBlur)="onBlur('username')" />
+        <div *ngIf="getUsernameErrorMessage() as error">
+            <span>{{ error }}</span>
+        </div>
+    </div>
+    <div class="profile-form__field profile-form__field--textarea">
+        <app-textarea
+            id="bio"
+            name="bio"
+            label="Bio"
+            formControlName="bio"
+            [hasErrorClass]="!!(form.get('bio')?.touched && form.get('bio')?.invalid)"
+            (emitBlur)="onBlur('bio')" />
+        <div *ngIf="getBioErrorMessage() as error">
+            <span>{{ error }}</span>
+        </div>
+    </div>
+    <div
+        *ngIf="errorMessage"
+        class="profile-form__error">
+        {{ errorMessage }}
+    </div>
+    <app-primary-button
+        type="submit"
+        [fullWidth]="true"
+        [disabled]="isDisabled()"
+        [loading]="loading"
+        (handleClick)="submit()">
+        Save
+    </app-primary-button>
+</form>

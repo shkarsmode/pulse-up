@@ -1,8 +1,7 @@
-import { Component, inject, OnInit } from "@angular/core";
-import { ActivatedRoute } from "@angular/router";
+import { Component } from "@angular/core";
 
 @Component({
-    selector: "app-user",
+    selector: "app-profile",
     template: `
         <app-header />
 
@@ -19,9 +18,7 @@ import { ActivatedRoute } from "@angular/router";
             height: 100%; 
             width: 100%;
         }
-        .profile-page { flex: 1 1 auto; padding: 0 20px 30px 20px;}
-
-        @media screen and (max-width: 650px) {.user-page { padding: 24px 20px }}
+        .profile-page { flex: 1 1 auto; }
     `,
 })
 export class ProfileComponent {}

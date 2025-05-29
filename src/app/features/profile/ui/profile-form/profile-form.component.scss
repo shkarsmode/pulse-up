@@ -1,0 +1,22 @@
+@use "../../../../../styles/mixins" as *;
+
+.profile-form {
+  display: flex;
+  flex-direction: column;
+  row-gap: 24px;
+}
+
+.profile-form__field {
+    display: flex;
+    flex-direction: column;
+    row-gap: 8px;
+
+    span {
+        @include text-12px;
+        color: var(--error-color);
+    }
+}
+
+.profile-form__field--textarea {
+  height: 120px;
+}

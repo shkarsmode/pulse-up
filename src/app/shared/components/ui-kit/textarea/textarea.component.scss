@@ -1,0 +1,35 @@
+:host {
+    display: flex;
+    flex-direction: column;
+    max-width: 400px;
+    height: 100%;
+    position: relative;
+}
+
+label {
+    color: var(--dark-grey-color);
+    margin-bottom: 8px;
+}
+
+textarea {
+    height: 100%;
+    padding: 12px 20px;
+    
+    outline: none;
+    border: none;
+    
+    font-size: 16px;
+    
+    border: 1px solid var(--light-grey-color);
+    border-radius: 10px;
+    resize: none;
+
+    &::placeholder {
+        color: var(--dark-grey-color);
+        font-size: 16px;
+    }
+}
+
+.app-ui-textarea--error {
+    border-color: var(--error-color) !important;
+}
