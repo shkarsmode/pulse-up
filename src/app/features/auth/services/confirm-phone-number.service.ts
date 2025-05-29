@@ -8,11 +8,11 @@ import { FirebaseError } from "firebase/app";
 import { AuthenticationService } from "@/app/shared/services/api/authentication.service";
 import { AppRoutes } from "@/app/shared/enums/app-routes.enum";
 import { formatFirebaseError } from "../utils/formatFirebaseError";
-import { UserService } from "@/app/shared/services/api/user.service";
+import { UserStore } from "@/app/shared/stores/user.store";
 
 export class ConfirmPhoneNumberService {
   private readonly router: Router = inject(Router);
-  private readonly userService: UserService = inject(UserService);
+  private readonly userStore: UserStore = inject(UserStore);
   private readonly authenticationService: AuthenticationService = inject(AuthenticationService);
 
   private appRoutes = AppRoutes;
@@ -47,7 +47,7 @@ export class ConfirmPhoneNumberService {
       this.authenticationService.confirmVerificationCode(value).subscribe({
         next: (response) => {
           console.log("Verification code confirmed successfully", response);
-          this.userService.refreshProfile();
+          this.userStore.refreshProfile();
           this.navigateToHomePage();
           this.resetInput();
         },

@@ -1,5 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
+import { CommonModule } from '@angular/common';
+import { Router } from '@angular/router';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { UserService } from '@/app/shared/services/api/user.service';
 import { CloseButtonComponent } from '../../ui-kit/buttons/close-button/close-button.component';
@@ -7,7 +9,8 @@ import { atLeastOneLetterValidator } from '@/app/shared/helpers/validators/at-le
 import { usernameUniqueValidator } from '@/app/shared/helpers/validators/username-unique.validator';
 import { PrimaryButtonComponent } from '../../ui-kit/buttons/primary-button/primary-button.component';
 import { InputComponent } from '../../ui-kit/input/input.component';
-import { CommonModule } from '@angular/common';
+import { UserStore } from '@/app/shared/stores/user.store';
+import { AppRoutes } from '@/app/shared/enums/app-routes.enum';
 
 @Component({
   selector: 'app-complete-profile-popup',
@@ -23,7 +26,9 @@ import { CommonModule } from '@angular/common';
   styleUrl: './complete-profile-popup.component.scss'
 })
 export class CompleteProfilePopupComponent {
+  private router: Router = inject(Router);
   private fb: FormBuilder = inject(FormBuilder);
+  private userStore: UserStore = inject(UserStore);
   private userService: UserService = inject(UserService);
   private readonly dialogRef: MatDialogRef<any> = inject(MatDialogRef);
 
@@ -50,7 +55,7 @@ export class CompleteProfilePopupComponent {
           Validators.pattern(/^(?!.*__)(?:[A-Za-z0-9]*_?[A-Za-z0-9]*)$/),
           atLeastOneLetterValidator(),
         ],
-        [usernameUniqueValidator(this.userService.validateUsername.bind(this.userService), "")],
+        [usernameUniqueValidator(this.userService.validateUsername, "")],
       ],
     });
 
@@ -73,6 +78,8 @@ export class CompleteProfilePopupComponent {
         next: (res) => {
           this.loading = false;
           this.dialogRef.close(res);
+          this.userStore.refreshProfile();
+          this.router.navigate([AppRoutes.User.Topic.SUGGEST]);
         },
         error: (err) => {
           this.loading = false;
