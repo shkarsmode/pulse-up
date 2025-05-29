@@ -1,0 +1,25 @@
+import { NgModule } from "@angular/core";
+import { RouterModule, Routes } from "@angular/router";
+import { AppRoutes } from "@/app/shared/enums/app-routes.enum";
+import { PrivatePageGuard } from "@/app/shared/helpers/guards/private-page.guard";
+import { ProfileComponent } from "./profile.component";
+
+const routes: Routes = [
+    {
+        path: "",
+        component: ProfileComponent,
+        children: [
+            {
+                path: AppRoutes.Profile.EDIT,
+                loadComponent: () =>
+                    import("./pages/edit-profile/edit-profile.component").then((m) => m.EditProfileComponent),
+                canActivate: [PrivatePageGuard],
+            },
+        ],
+    },
+];
+@NgModule({
+    imports: [RouterModule.forChild(routes)],
+    exports: [RouterModule],
+})
+export class ProfileRoutingModule {}

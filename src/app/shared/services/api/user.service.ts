@@ -1,6 +1,6 @@
 import { inject, Injectable } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
-import { catchError, expand, last, map, Observable, of, Subject, takeWhile } from "rxjs";
+import { catchError, expand, first, last, map, Observable, of, Subject, takeWhile } from "rxjs";
 import { IProfile, IPulse, IPaginator } from "../../interfaces";
 import { API_URL } from "../../tokens/tokens";
 import { IPhoneValidationResult } from "../../interfaces/phone-validatuion-result.interface";
@@ -12,9 +12,13 @@ export class UserService {
     private readonly apiUrl: string = inject(API_URL);
     private readonly http: HttpClient = inject(HttpClient);
 
-    public getOwnProfile(): Observable<IProfile> {
-        return this.http.get<IProfile>(`${this.apiUrl}/users/self`);
-    }
+    public profile$ = this.http.get<IProfile>(`${this.apiUrl}/users/self`).pipe(
+        first(),
+        catchError((error) => {
+            console.error("Failed to fetch own profile:", error);
+            return of(null);
+        }),
+    )
 
     public updateOwnProfile(data: IProfile): Observable<IProfile> {
         const formData = new FormData();
@@ -112,7 +116,7 @@ export class UserService {
         );
     }
 
-    public validateUsername(username: string): Observable<boolean> {
+    public validateUsername = (username: string): Observable<boolean> => {
         return this.http.post<{ username: string }>(`${this.apiUrl}/users/validate`, { username }).pipe(
             catchError((error) => {
                 console.error("Username validation error:", error);

@@ -1,26 +1,28 @@
 <div class="wrap">
     <h1>Trending Topics</h1>
 
-    <div class="wrap__content">
-        <app-input-search
-            [isLoading]="isLoading"
-            (handleValueChange)="onSearchValueChange($event)" />
+    <div class="row">
+        <div class="col">
+            <app-input-search
+                [isLoading]="(loading$ | async) || false"
+                (handleValueChange)="onSearchValueChange($event)" />
 
-        <div
-            class="wrap__large-pulses"
-            *ngIf="paginator$ | async as paginator"
-            infiniteScroll
-            [infiniteScrollDistance]="2"
-            [infiniteScrollThrottle]="150"
-            (scrolled)="loadMore(paginator)">
-            @for (topic of paginator.items; track topic.id) {
-            <app-large-pulse [pulse]="topic" />
-            }
-            <p
-                class="wrap__loading"
-                *ngIf="loading$ | async">
-                <app-loading-indicator />
-            </p>
+            <div
+                class="wrap__large-pulses"
+                *ngIf="paginator$ | async as paginator"
+                infiniteScroll
+                [infiniteScrollDistance]="2"
+                [infiniteScrollThrottle]="150"
+                (scrolled)="loadMore(paginator)">
+                @for (topic of paginator.items; track topic.id) {
+                <app-large-pulse [pulse]="topic" />
+                }
+                <p
+                    class="wrap__loading"
+                    *ngIf="loading$ | async">
+                    <app-loading-indicator />
+                </p>
+            </div>
         </div>
         <app-promote-ads />
     </div>

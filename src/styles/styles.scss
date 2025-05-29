@@ -103,6 +103,12 @@ h3 {
     --iti-path-flags-2x: url("/assets/img/flags@2x.png");
     --iti-path-globe-1x: url("/assets/img/globe.png");
     --iti-path-globe-2x: url("/assets/img/globe@2x.png");
+
+    .iti__search-input {
+        padding: 12px;
+        font-size: 14px;
+        outline-color: var(--accent-color);
+    }
 }
 
 div.otp-custom-container {

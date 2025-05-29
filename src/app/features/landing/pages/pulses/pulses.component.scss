@@ -31,8 +31,16 @@
         align-items: center;
     }
 
-    &__content {
+    .row {
+        display: flex;
+        flex-direction: row;
+        column-gap: 24px;
         width: 100%;
+    }
+
+    .col {
+        width: 100%;
+        max-width: 606px;
         display: flex;
         flex-direction: column;
     }

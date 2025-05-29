@@ -28,7 +28,7 @@ export enum TopicRoutes {
 }
 
 enum ProfileRoutes {
-
+    EDIT = 'profile/edit',
 }
 
 enum AuthRoutes {
@@ -42,8 +42,8 @@ export const AppRoutes = {
     'Community': CommunityRoutes,
     'User': {
         'Topic': TopicRoutes,
-        'Profile': ProfileRoutes,
-    }
+    },
+    'Profile': ProfileRoutes,
 }
 
 

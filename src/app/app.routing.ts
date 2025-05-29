@@ -22,6 +22,12 @@ const routes: Routes = [
 
     {
         path: '',
+        loadChildren: () => import('./features').then((m) => m.ProfileModule),
+        canActivateChild: [CollectPersonalInfoGuard]
+    },
+
+    {
+        path: '',
         loadChildren: () => import('./features').then((m) => m.CommunityModule),
         canActivateChild: [CollectPersonalInfoGuard]
     },

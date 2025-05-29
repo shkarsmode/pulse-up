@@ -25,7 +25,7 @@ export class PrimaryButtonComponent {
     @Input() public size: "small" | "medium" | "large" = "medium";
     @Input() public loading: boolean = false;
 
-    @Output() public handleClick: EventEmitter<void> = new EventEmitter<void>();
+    @Output() public handleClick: EventEmitter<MouseEvent> = new EventEmitter<MouseEvent>();
 
 
     public get classes(): Record<string, boolean> {
@@ -40,9 +40,9 @@ export class PrimaryButtonComponent {
         };
     }
 
-    public onClick(): void {
+    public onClick(event: MouseEvent): void {
         if (this.disabled) return;
 
-        this.handleClick.emit();
+        this.handleClick.emit(event);
     }
 }
