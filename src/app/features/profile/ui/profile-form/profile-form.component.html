@@ -1,9 +1,15 @@
+
+
 <form
     [formGroup]="form"
-    class="profile-form"
-    (ngSubmit)="submit()">
+    class="profile-form">
     <div class="profile-form__field">
-        <app-picture-picker [control]="form.get('picture')"/>
+        <app-picture-picker 
+            id="profilePicture"
+            name="profilePicture"
+            [control]="form.get('profilePicture')"
+            [previewUrl]="previewUrl"
+            />
         <div *ngIf="getPictureErrorMessage() as error">
             <span>{{ error }}</span>
         </div>
@@ -59,8 +65,8 @@
         type="submit"
         [fullWidth]="true"
         [disabled]="isDisabled()"
-        [loading]="loading"
-        (handleClick)="submit()">
+        [loading]="submitting"
+        (handleClick)="submit($event)">
         Save
     </app-primary-button>
 </form>

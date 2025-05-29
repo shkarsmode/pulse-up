@@ -3,7 +3,7 @@
         [ngClass]="classes"
         [href]="disabled ? null : href"
         [attr.aria-disabled]="disabled"
-        (click)="onClick()"
+        (click)="onClick($event)"
         appRippleEffect
         [target]="target"
         [ngStyle]="color ? { 'background-color': color } : {}">
@@ -16,7 +16,7 @@
         [ngClass]="classes"
         [type]="type"
         [disabled]="disabled"
-        (click)="onClick()"
+        (click)="onClick($event)"
         appRippleEffect
         [ngStyle]="color ? { 'background-color': color } : {}">
         @if (loading) {

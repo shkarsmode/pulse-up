@@ -11,15 +11,20 @@ import { SvgIconComponent } from 'angular-svg-icon';
   styleUrl: './picture-picker.component.scss'
 })
 export class PicturePickerComponent {
-  @Input() id: string = '';
-  @Input() control: AbstractControl<File | null, any> | null = null;
+  @Input() public id: string = '';
+  @Input() public name: string = '';
+  @Input() public previewUrl: string = '';
+  @Input() public control: AbstractControl<File | null, any> | null = null;
 
   public selectedPicture: string | ArrayBuffer | null;
   public selectedTypeOfPicture: 'img' | 'gif' | 'smile' | '';
 
+  ngOnInit(): void {
+    this.selectedPicture = this.previewUrl;
+  }
 
   public deleteChosenPicture(): void {
-    this.control?.setValue('');
+    this.control?.setValue(null);
     this.selectedTypeOfPicture = '';
     this.selectedPicture = '';
   }

@@ -13,7 +13,6 @@ export class CollectUserInfoService {
   private isOpened = false;
 
   public collectPersonalInfo(): void {
-    this.userStore.fetchOwnProfile();
     this.userStore.profile$.subscribe((profile) => {
       if (!this.isOpened && profile && (!profile.name || !profile.username)) {
         this.openDialog();
@@ -27,7 +26,6 @@ export class CollectUserInfoService {
       width: '500px',
       panelClass: 'custom-dialog-container',
       backdropClass: 'custom-dialog-backdrop',
-      disableClose: true,
     });
   }
 }

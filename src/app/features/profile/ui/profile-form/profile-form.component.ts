@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { InputComponent } from '@/app/shared/components/ui-kit/input/input.component';
@@ -10,6 +10,8 @@ import { TextareaComponent } from '@/app/shared/components/ui-kit/textarea/texta
 import { PicturePickerComponent } from '@/app/shared/components/ui-kit/picture-picker/picture-picker.component';
 import { pictureValidator } from '@/app/shared/helpers/validators/picture.validator';
 import { optionalLengthValidator } from '@/app/shared/helpers/validators/optional-length.validator';
+import { LoadingPageComponent } from "../../../../shared/components/loading/loading-page.component";
+import { SettingsService } from '@/app/shared/services/api/settings.service';
 
 @Component({
   selector: 'app-profile-form',
@@ -19,17 +21,35 @@ import { optionalLengthValidator } from '@/app/shared/helpers/validators/optiona
   styleUrl: './profile-form.component.scss'
 })
 export class ProfileFormComponent {
+  @Input() public initialValues: {
+    name: string;
+    username: string;
+    bio: string;
+    picture: string | null;
+  }
+
   private fb: FormBuilder = inject(FormBuilder);
   private userService: UserService = inject(UserService);
+  private settingsService: SettingsService = inject(SettingsService);
 
+  private isPicturePristine: boolean = true;
   public form: FormGroup;
-  public loading: boolean = false;
+  public submitting: boolean = false;
   public errorMessage: string | null = null;
 
   constructor() {
     this.form = this.fb.group({
+      name: "",
+      username: "",
+      bio: "",
+      profilePicture: null,
+    })
+  }
+
+  ngOnInit() {
+    this.form = this.fb.group({
       name: [
-        '',
+        this.initialValues.name,
         [
           Validators.required,
           Validators.maxLength(50),
@@ -37,7 +57,7 @@ export class ProfileFormComponent {
         ],
       ],
       username: [
-        '',
+        this.initialValues.username,
         [
           Validators.required,
           Validators.minLength(6),
@@ -45,28 +65,47 @@ export class ProfileFormComponent {
           Validators.pattern(/^(?!.*__)(?:[A-Za-z0-9]*_?[A-Za-z0-9]*)$/),
           atLeastOneLetterValidator(),
         ],
-        [usernameUniqueValidator(this.userService.validateUsername.bind(this.userService))],
+        [usernameUniqueValidator(this.userService.validateUsername, this.initialValues.username)],
       ],
       bio: [
-        '',
+        this.initialValues.bio,
         [
           optionalLengthValidator(3, 150),
         ]
       ],
-      picture: [null, [pictureValidator()]]
+      profilePicture: [null, [pictureValidator()]]
     });
 
-    this.form.valueChanges.subscribe(() => {
+    this.form.valueChanges.subscribe((values) => {
       this.errorMessage = null;
-    })
+    });
+    this.form.get('profilePicture')?.valueChanges.subscribe((value) => {
+      this.isPicturePristine = false;
+    });
   }
 
+  public get previewUrl(): string {
+    if (this.initialValues.picture) {
+      return `${this.settingsService.blobUrlPrefix}${this.initialValues.picture}`;
+    }
+    return "assets/svg/plus-placeholder.svg";
+  }
+
+  private disabled: boolean = false;
+
   public isDisabled(): boolean {
-    if (this.loading) return true;
-    if (this.form.invalid) return true;
-    if (!this.form.invalid && this.form.status === "PENDING") return true;
-    if (!this.form.get("name")?.dirty || !this.form.get("username")?.dirty) return true;
-    return false;
+    let disabled = false
+    if (this.submitting) {
+      disabled = true;
+    } else if (this.isPristine()) {
+      disabled = true;
+    } else if (this.submitting || this.form.invalid) {
+      disabled = true;
+    } else if (this.form.status === "PENDING") {
+      disabled = this.disabled;
+    }
+    this.disabled = disabled;
+    return disabled;
   }
 
   public onBlur(name: string) {
@@ -76,16 +115,20 @@ export class ProfileFormComponent {
     }
   }
 
-  public submit() {
+  public submit(event: MouseEvent) {
+    event.preventDefault();
     if (this.form.valid) {
       this.trimBioValue();
-      this.loading = true;
+      this.submitting = true;
       this.userService.updateOwnProfile(this.form.value).subscribe({
         next: () => {
-          this.loading = false;
+          this.submitting = false;
+          this.form.markAsPristine();
+          this.form.markAsUntouched();
+          this.isPicturePristine = true;
         },
         error: () => {
-          this.loading = false;
+          this.submitting = false;
           this.errorMessage = 'Failed to update profile. Please try again.';
         }
       });
@@ -161,7 +204,7 @@ export class ProfileFormComponent {
   }
 
   public getPictureErrorMessage(): string | null {
-    const control = this.form.get('picture');
+    const control = this.form.get('profilePicture');
     if (!control || !control?.value) {
       return null;
     }
@@ -193,5 +236,12 @@ export class ProfileFormComponent {
       .trim();
 
     this.form.patchValue({ bio: trimmed });
+  }
+
+  private isPristine(): boolean {
+    return (this.form.get('name')?.pristine &&
+      this.form.get('username')?.pristine &&
+      this.form.get('bio')?.pristine &&
+      this.isPicturePristine) || false;
   }
 }

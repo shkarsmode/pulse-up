@@ -2,8 +2,8 @@
 <div class="placeholder">
     <input
         #customIcon
-        id="picture"
-        name="picture"
+        [id]="id"
+        [name]="name"
         type="file"
         accept=".jpg, .png, .jpeg"
         (change)="onFileSelected($event)" />
@@ -22,7 +22,7 @@
             height="98"
             alt="plus" />
     </div>
-    <button
+    <!-- <button
         type="button"
         class="delete-picture"
         *ngIf="selectedPicture"
@@ -30,5 +30,5 @@
         <svg-icon
             class="delete-picture__icon"
             src="assets/svg/close.svg" />
-    </button>
+    </button> -->
 </div>

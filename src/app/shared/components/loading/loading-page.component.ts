@@ -9,7 +9,7 @@ import { trigger, state, style, transition, animate } from "@angular/animations"
         `
             :host {
                 width: 100dvw;
-                height: 100dvh;
+                height: 100%;
 
                 position: fixed;
                 display: flex;

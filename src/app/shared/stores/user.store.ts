@@ -9,30 +9,5 @@ import { UserService } from "../services/api/user.service";
 export class UserStore {
   private readonly userService: UserService = inject(UserService);
 
-  private profile: BehaviorSubject<IProfile | null> = new BehaviorSubject<IProfile | null>(null);
-
-  public profile$ = this.profile.asObservable();
-
-  public fetchOwnProfile() {
-    this.userService
-      .getOwnProfile()
-      .pipe(
-        first(),
-        switchMap((profile) => {
-          if(!profile) {
-            throwError(() => new Error('Profile not found'));
-          }
-          return this.userService.getProfileById(profile.id);
-        })
-      )
-      .subscribe({
-      next: (profile) => {
-        this.profile.next(profile);
-      },
-      error: (error) => {
-        console.error('Failed to fetch own profile:', error);
-        this.profile.next(null);
-      }
-    });
-  }
+  public profile$ = this.userService.profile$;
 }

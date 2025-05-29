@@ -50,7 +50,7 @@ export class PersonalInfoPopupComponent {
           Validators.pattern(/^(?!.*__)(?:[A-Za-z0-9]*_?[A-Za-z0-9]*)$/),
           atLeastOneLetterValidator(),
         ],
-        [usernameUniqueValidator(this.userService.validateUsername.bind(this.userService))],
+        [usernameUniqueValidator(this.userService.validateUsername.bind(this.userService), "")],
       ],
     });
 
