@@ -29,13 +29,15 @@
                     About
                 </a>
             </li>
-            <li>
-                <a
-                    [routerLink]="'/' + AppRoutes.Profile.EDIT"
-                    routerLinkActive="active">
-                    Profile
-                </a>
-            </li>
+            @if (isAuthenticated | async) {
+                <li>
+                    <a
+                        [routerLink]="'/' + AppRoutes.Profile.EDIT"
+                        routerLinkActive="active">
+                        Profile
+                    </a>
+                </li>
+            }
             <li>
                 <a
                     [routerLink]="'/' + AppRoutes.Auth.SIGN_IN"
@@ -131,13 +133,15 @@
                             {{ (isAuthenticated | async) ? "Sign Out" : "Sign In" }}
                         </a>
                     </li>
-                    <li>
-                        <a
-                            [routerLink]="'/' + AppRoutes.Profile.EDIT"
-                            routerLinkActive="active">
-                            Profile
-                        </a>
-                    </li>
+                    @if (isAuthenticated | async) {
+                        <li>
+                            <a
+                                [routerLink]="'/' + AppRoutes.Profile.EDIT"
+                                routerLinkActive="active">
+                                Profile
+                            </a>
+                        </li>
+                    }
                     <li>
                         <a
                             [routerLink]="'/' + AppRoutes.Community.TERMS"
