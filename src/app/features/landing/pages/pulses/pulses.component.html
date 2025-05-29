@@ -3,9 +3,36 @@
 
     <div class="row">
         <div class="col">
-            <app-input-search
-                [isLoading]="(loading$ | async) || false"
-                (handleValueChange)="onSearchValueChange($event)" />
+            <div class="top-row">
+                <app-input-search
+                    [isLoading]="(loading$ | async) || false"
+                    (handleValueChange)="onSearchValueChange($event)" />
+
+                <button
+                    *ngIf="!(isAuthenticated$ | async)"
+                    openAddTopicPopup
+                    class="add-topic-button">
+                    <svg-icon
+                        src="assets/svg/add.svg"
+                        style="height: 22px" />
+                </button>
+                <button
+                    *ngIf="(isAuthenticated$ | async) && !(isProfileComplete$ | async)"
+                    openCompleteProfilePopup
+                    class="add-topic-button">
+                    <svg-icon
+                        src="assets/svg/add.svg"
+                        style="height: 22px" />
+                </button>
+                <a
+                    *ngIf="(isAuthenticated$ | async) && (isProfileComplete$ | async)"
+                    [routerLink]="addTopicRoute"
+                    class="add-topic-button">
+                    <svg-icon
+                        src="assets/svg/add.svg"
+                        style="height: 22px" />
+                </a>
+            </div>
 
             <div
                 class="wrap__large-pulses"

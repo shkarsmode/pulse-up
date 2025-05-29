@@ -1,6 +1,20 @@
 <h2>Today's Pulse is Tomorrow's Movement</h2>
 
-<app-primary-button openAddTopicPopup> Start A Topic </app-primary-button>
+<app-primary-button
+    *ngIf="!(isAuthenticated$ | async)"
+    openAddTopicPopup>
+    Start A Topic 1
+</app-primary-button>
+<app-primary-button
+    *ngIf="(isAuthenticated$ | async) && !(isProfileComplete$ | async)"
+    openCompleteProfilePopup>
+    Start A Topic 2
+</app-primary-button>
+<app-primary-button
+    *ngIf="(isAuthenticated$ | async) && (isProfileComplete$ | async)"
+    (handleClick)="onAddTopicClick()">
+    Start A Topic 3
+</app-primary-button>
 
 <img
     src="assets/img/ads-bg.png"

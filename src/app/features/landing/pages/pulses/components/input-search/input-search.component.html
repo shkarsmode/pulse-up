@@ -1,12 +1,6 @@
-<app-input 
+<app-input
     placeholder="Search topics"
     svg="search"
     [isLoading]="isLoading"
     (onInput)="handleInputChange($event)">
 </app-input>
-
-@if (isAddIcon) {
-    <a [routerLink]="addTopicRoute" class="add-topic-button">
-        <svg-icon src="assets/svg/add.svg" style="height: 22px;" />
-    </a>
-}

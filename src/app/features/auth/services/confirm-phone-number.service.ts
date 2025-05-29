@@ -8,9 +8,11 @@ import { FirebaseError } from "firebase/app";
 import { AuthenticationService } from "@/app/shared/services/api/authentication.service";
 import { AppRoutes } from "@/app/shared/enums/app-routes.enum";
 import { formatFirebaseError } from "../utils/formatFirebaseError";
+import { UserService } from "@/app/shared/services/api/user.service";
 
 export class ConfirmPhoneNumberService {
   private readonly router: Router = inject(Router);
+  private readonly userService: UserService = inject(UserService);
   private readonly authenticationService: AuthenticationService = inject(AuthenticationService);
 
   private appRoutes = AppRoutes;
@@ -45,6 +47,7 @@ export class ConfirmPhoneNumberService {
       this.authenticationService.confirmVerificationCode(value).subscribe({
         next: (response) => {
           console.log("Verification code confirmed successfully", response);
+          this.userService.refreshProfile();
           this.navigateToHomePage();
           this.resetInput();
         },
@@ -120,6 +123,13 @@ export class ConfirmPhoneNumberService {
   }
 
   private navigateToHomePage() {
-    this.router.navigateByUrl(this.appRoutes.Landing.HOME);
+    const redirectUrl = this.getRedirectUrl();
+    const navigationUrl = redirectUrl || this.appRoutes.Landing.HOME;
+    this.router.navigateByUrl(navigationUrl);
+  }
+
+  private getRedirectUrl(): string | null {
+    const tree = this.router.parseUrl(this.router.url);
+    return tree.queryParams['redirect'] || null;
   }
 }

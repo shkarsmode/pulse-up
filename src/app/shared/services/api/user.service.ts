@@ -1,6 +1,6 @@
 import { inject, Injectable } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
-import { catchError, expand, first, last, map, Observable, of, Subject, takeWhile } from "rxjs";
+import { BehaviorSubject, catchError, expand, first, last, map, Observable, of, shareReplay, Subject, switchMap, takeWhile } from "rxjs";
 import { IProfile, IPulse, IPaginator } from "../../interfaces";
 import { API_URL } from "../../tokens/tokens";
 import { IPhoneValidationResult } from "../../interfaces/phone-validatuion-result.interface";
@@ -11,14 +11,24 @@ import { IPhoneValidationResult } from "../../interfaces/phone-validatuion-resul
 export class UserService {
     private readonly apiUrl: string = inject(API_URL);
     private readonly http: HttpClient = inject(HttpClient);
+    private readonly refreshTrigger$ = new BehaviorSubject<void>(undefined);
 
-    public profile$ = this.http.get<IProfile>(`${this.apiUrl}/users/self`).pipe(
-        first(),
-        catchError((error) => {
-            console.error("Failed to fetch own profile:", error);
-            return of(null);
-        }),
-    )
+    public readonly profile$ = this.refreshTrigger$.pipe(
+        switchMap(() =>
+            this.http.get<IProfile>(`${this.apiUrl}/users/self`).pipe(
+                catchError((error) => {
+                    console.error("Failed to fetch own profile:", error);
+                    return of(null);
+                })
+            )
+        ),
+        shareReplay(1)
+    );
+
+    /** Call this after login/logout to refresh profile */
+    public refreshProfile() {
+        this.refreshTrigger$.next();
+    }
 
     public updateOwnProfile(data: IProfile): Observable<IProfile> {
         const formData = new FormData();

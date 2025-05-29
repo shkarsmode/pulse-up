@@ -11,8 +11,11 @@
 
     <h2>You're Almost There!</h2>
 
-    <p>To create your topic, you'll need to download the Pulse Up app.</p>
-    <p>This is just temporary — we’re working on bringing this feature to the web soon! 🚀</p>
+    <p>To create your topic, you'll need to signin</p>
 
-    <app-get-app-button [design]="'new'" [isOnePlatform]="true"/>
+    <app-primary-button
+        [fullWidth]="true"
+        (handleClick)="onSignIn()">
+        Sign In
+    </app-primary-button>
 </div>

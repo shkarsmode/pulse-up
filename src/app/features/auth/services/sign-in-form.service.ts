@@ -179,12 +179,19 @@ export class SignInFormService {
     };
 
     private navigateToConfirmPage() {
-        this.router.navigateByUrl(`/${this.AppRoutes.Auth.CONFIRM_PHONE_NUMBER}`);
+        const redirectUrl = this.getRedirectUrl();
+        const navigationUrl = this.AppRoutes.Auth.CONFIRM_PHONE_NUMBER + (redirectUrl ? `?redirect=${redirectUrl}` : '');
+        this.router.navigateByUrl(navigationUrl);
+    }
+
+    private getRedirectUrl(): string | null {
+        const tree = this.router.parseUrl(this.router.url);
+        return tree.queryParams['redirect'] || null;
     }
 }
 
 class CustomErrorStateMatcher implements ErrorStateMatcher {
-    constructor(private isValidRef: () => boolean) {}
+    constructor(private isValidRef: () => boolean) { }
 
     isErrorState(control: FormControl | null, form: FormGroupDirective | NgForm | null): boolean {
         return !this.isValidRef();
