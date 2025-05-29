@@ -11,28 +11,51 @@ import { PromoteAdsComponent } from "./components/promote-ads/promote-ads.compon
 import { InfiniteLoaderService } from "../../services/infinite-loader.service";
 import { AppConstants } from "@/app/shared/constants/app.constants";
 import { LoadingIndicatorComponent } from "@/app/shared/components/loading-indicator/loading-indicator.component";
+import { AddTopicPopupDirective } from "@/app/shared/components/popups/add-topic-popup/add-topic-popup.directive";
+import { CompleteProfilePopupDirective } from "@/app/shared/components/popups/complete-profile-popup/complete-profile-popup.directive";
+import { AuthenticationService } from "@/app/shared/services/api/authentication.service";
+import { UserStore } from "@/app/shared/stores/user.store";
+import { RouterModule } from "@angular/router";
+import { AppRoutes } from "@/app/shared/enums/app-routes.enum";
 
 @Component({
     selector: "app-pulses",
     templateUrl: "./pulses.component.html",
     styleUrl: "./pulses.component.scss",
     standalone: true,
-    imports: [CommonModule, InfiniteScrollDirective, LoadingIndicatorComponent, InputSearchComponent, LargePulseComponent, PromoteAdsComponent],
+    imports: [
+        CommonModule,
+        RouterModule,
+        SvgIconComponent,
+        InfiniteScrollDirective,
+        LoadingIndicatorComponent,
+        InputSearchComponent,
+        LargePulseComponent,
+        PromoteAdsComponent,
+        AddTopicPopupDirective,
+        CompleteProfilePopupDirective
+    ],
     providers: [InfiniteLoaderService],
 })
 export class PulsesComponent implements OnInit {
     private readonly pulseService: PulseService = inject(PulseService);
+    private readonly userStore: UserStore = inject(UserStore);
+    private readonly authenticationService: AuthenticationService = inject(AuthenticationService);
     private readonly infiniteLoaderService: InfiniteLoaderService<IPulse> =
         inject(InfiniteLoaderService);
 
     public pulses: IPulse[] = [];
     public isLoading: boolean = true;
+    public addTopicRoute = "/" + AppRoutes.User.Topic.SUGGEST;
     public loading$ = new BehaviorSubject(true);
     public paginator$: Observable<IPaginator<IPulse>>;
+    public readonly isAuthenticated$ = this.authenticationService.userToken;
+    public readonly isProfileComplete$ = this.userStore.profile$.pipe(
+        map(profile => !!profile?.name && !!profile?.username)
+    );
 
     public ngOnInit(): void {
         this.getTrendingPulses();
-
     }
 
     public loadMore = this.infiniteLoaderService.loadMore.bind(this.infiniteLoaderService);
