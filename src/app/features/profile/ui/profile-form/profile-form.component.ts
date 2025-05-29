@@ -10,8 +10,8 @@ import { TextareaComponent } from '@/app/shared/components/ui-kit/textarea/texta
 import { PicturePickerComponent } from '@/app/shared/components/ui-kit/picture-picker/picture-picker.component';
 import { pictureValidator } from '@/app/shared/helpers/validators/picture.validator';
 import { optionalLengthValidator } from '@/app/shared/helpers/validators/optional-length.validator';
-import { LoadingPageComponent } from "../../../../shared/components/loading/loading-page.component";
 import { SettingsService } from '@/app/shared/services/api/settings.service';
+import { UserStore } from '@/app/shared/stores/user.store';
 
 @Component({
   selector: 'app-profile-form',
@@ -29,6 +29,7 @@ export class ProfileFormComponent {
   }
 
   private fb: FormBuilder = inject(FormBuilder);
+  private userStore: UserStore = inject(UserStore);
   private userService: UserService = inject(UserService);
   private settingsService: SettingsService = inject(SettingsService);
 
@@ -126,6 +127,7 @@ export class ProfileFormComponent {
           this.form.markAsPristine();
           this.form.markAsUntouched();
           this.isPicturePristine = true;
+          this.userStore.refreshProfile();
         },
         error: () => {
           this.submitting = false;
@@ -226,7 +228,7 @@ export class ProfileFormComponent {
   }
 
   private trimBioValue() {
-    const control = this.form.get('name');
+    const control = this.form.get('bio');
     if (typeof control?.value !== 'string') return;
 
     const original = control.value;

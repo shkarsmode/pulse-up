@@ -1,6 +1,6 @@
 import { inject, Injectable } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
-import { BehaviorSubject, catchError, expand, first, last, map, Observable, of, shareReplay, Subject, switchMap, takeWhile } from "rxjs";
+import { BehaviorSubject, catchError, expand, last, map, Observable, of, shareReplay, Subject, switchMap, takeWhile } from "rxjs";
 import { IProfile, IPulse, IPaginator } from "../../interfaces";
 import { API_URL } from "../../tokens/tokens";
 import { IPhoneValidationResult } from "../../interfaces/phone-validatuion-result.interface";
@@ -25,7 +25,6 @@ export class UserService {
         shareReplay(1)
     );
 
-    /** Call this after login/logout to refresh profile */
     public refreshProfile() {
         this.refreshTrigger$.next();
     }
@@ -34,9 +33,7 @@ export class UserService {
         const formData = new FormData();
         for (const key in data) {
             const prop = key as keyof typeof data;
-            if (data[prop] !== undefined && data[prop] !== null) {
-                formData.append(key, data[prop]);
-            }
+            formData.append(key, data[prop] || "");
         }
         return this.http.post<IProfile>(`${this.apiUrl}/users/self`, formData);
     }
@@ -130,9 +127,9 @@ export class UserService {
         return this.http.post<{ username: string }>(`${this.apiUrl}/users/validate`, { username }).pipe(
             catchError((error) => {
                 console.error("Username validation error:", error);
-                return of(false); // Return false if there's an error
+                return of(false);
             }),
-            map(() => true),
+            map((result) => !!result),
         );
     }
 }
