@@ -1,0 +1,17 @@
+.change-email-form {
+  display: flex;
+  flex-direction: column;
+  row-gap: 28px;
+  margin-top: 40px;
+}
+
+.change-email-form__field {
+  display: flex;
+  flex-direction: column;
+  row-gap: 4px;
+}
+
+.change-email-form__error {
+  color: var(--error-color);
+  font-size: 14px;
+}

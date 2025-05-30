@@ -5,10 +5,16 @@ import {
     getAuth,
     signInAnonymously,
     signInWithPhoneNumber,
+    sendSignInLinkToEmail,
     UserCredential,
     RecaptchaVerifier,
     Auth,
     signOut,
+    isSignInWithEmailLink,
+    EmailAuthProvider,
+    linkWithCredential,
+    User,
+    verifyBeforeUpdateEmail,
 } from "firebase/auth";
 import { jwtDecode, JwtPayload } from "jwt-decode";
 import { BehaviorSubject, from, Observable, of, throwError } from "rxjs";
@@ -19,7 +25,8 @@ import { IdentityService } from "./identity.service";
 import { UserService } from "./user.service";
 import { AppConstants } from "../../constants";
 import { WindowService } from "../core/window.service";
-import { LocalStorageService } from "../core/local-storage.service";
+import { LOCAL_STORAGE_KEYS, LocalStorageService } from "../core/local-storage.service";
+import { formatFirebaseError } from "@/app/features/auth/utils/formatFirebaseError";
 
 @Injectable({
     providedIn: "root",
@@ -140,42 +147,65 @@ export class AuthenticationService {
         );
     }
 
-    /**
-     * @deprecated
-     */
-    public loginAsAnonymous(): Observable<any> {
-        const generateId = () => {
-            let code = Math.random().toString(36).substr(2, 9).toUpperCase();
-            for (let x = 0; x < 5; x++) {
-                code += "-" + Math.random().toString(36).substr(2, 9).toUpperCase();
-            }
-            return code;
-        };
+    public verifyEmail = ({ email, continueUrl }: { email: string, continueUrl: string }) => {
+        return from(sendSignInLinkToEmail(this.firebaseAuth, email, {
+            url: continueUrl,
+            handleCodeInApp: true,
+        })).pipe(
+            tap(() => {
+                LocalStorageService.set(LOCAL_STORAGE_KEYS.verifyEmail, email);
+            }),
+            catchError(this.handleEmailVerificationError),
+        )
+    }
 
-        let params = new HttpParams();
-        params = params.append("grant_type", "device_id");
-        params = params.append("device_id", generateId());
-
-        if (this.anonymousUserValue && !this.isTokenExpired) {
-            return of(this.anonymousUserValue);
+    public linkVerifiedEmail = ({ continueUrl }: { continueUrl: string }): Observable<User | null> => {
+        // Not a valid email sign-in link
+        if (!isSignInWithEmailLink(this.firebaseAuth, this.windowRef.location.href)) {
+            return of(null);
         }
 
-        return this.http
-            .post<any>(`${this.apiUrl}/identity/login:anonymous`, {
-                body: params,
-            })
-            .pipe(
-                catchError((error: any) => {
-                    console.log(error);
-                    throw new Error(error.message);
-                }),
-                map((response: any) => {
-                    localStorage.setItem("anonymous", response.idToken);
-                    this.anonymousUser$.next(response.idToken);
+        const email = LocalStorageService.get<string>(LOCAL_STORAGE_KEYS.verifyEmail);
+        if (!email) {
+            return throwError(() => new Error('Email not found.'));
+        }
 
-                    return response;
-                }),
-            );
+        const user = this.firebaseAuth.currentUser;
+        if (!user) {
+            return throwError(() => new Error('No authenticated user found.'));
+        }
+
+        const credential = EmailAuthProvider.credentialWithLink(email, continueUrl);
+
+        return from(linkWithCredential(user, credential)).pipe(
+            switchMap(() => from(user.reload())),
+            switchMap(() => {
+                const updatedUser = this.firebaseAuth.currentUser;
+                if (!updatedUser) {
+                    return throwError(() => new Error('Failed to update user after linking email.'));
+                }
+                return of(updatedUser);
+            }),
+            tap(() => {
+                LocalStorageService.remove(LOCAL_STORAGE_KEYS.verifyEmail);
+            })
+        );
+    };
+
+    public changeEmail = ({ email, continueUrl }: { email: string, continueUrl: string }) => {
+        const user = this.firebaseAuth.currentUser;
+        if (!user) {
+            return throwError(() => new Error('No authenticated user found.'));
+        }
+        return from(verifyBeforeUpdateEmail(user, email, {
+            url: continueUrl,
+            handleCodeInApp: true,
+        })).pipe(
+            tap(() => {
+                LocalStorageService.set(LOCAL_STORAGE_KEYS.changeEmail, email);
+            }),
+            catchError(this.handleEmailChangingError),
+        )
     }
 
     public logout = () => {
@@ -189,6 +219,8 @@ export class AuthenticationService {
 
                 LocalStorageService.remove("isAnonymous");
                 LocalStorageService.remove("token");
+
+                LocalStorageService.remove(LOCAL_STORAGE_KEYS.personalInfoPopupShown)
             }),
             catchError((error: any) => {
                 throw new Error(error.message);
@@ -327,5 +359,27 @@ export class AuthenticationService {
         console.error("Error verifying confirmation code", error);
         LocalStorageService.remove("phoneNumberForSignin");
         return throwError(() => error);
+    };
+
+    private handleEmailVerificationError = (error: any) => {
+        console.error("Error verifying email", error);
+        LocalStorageService.remove(LOCAL_STORAGE_KEYS.verifyEmail);
+
+        let errorMessage = "Failed to verify email. Please try again.";
+        if (error instanceof FirebaseError) {
+            errorMessage = formatFirebaseError(error) || errorMessage;
+        }
+        return throwError(() => new Error(errorMessage));
+    };
+
+    private handleEmailChangingError = (error: any) => {
+        console.error("Error changing email", error);
+        LocalStorageService.remove(LOCAL_STORAGE_KEYS.changeEmail);
+
+        let errorMessage = "Failed to change email. Please try again.";
+        if (error instanceof FirebaseError) {
+            errorMessage = formatFirebaseError(error) || errorMessage;
+        }
+        return throwError(() => new Error(errorMessage));
     };
 }

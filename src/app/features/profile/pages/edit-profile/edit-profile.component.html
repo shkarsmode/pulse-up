@@ -1,14 +1,5 @@
-@if (isLoading) {
-<div class="profile-loading">
-    <app-logo></app-logo>
-</div>
-} @else {
-<app-container>
-    <div class="profile">
-        <h1 class="profile__title">Profile</h1>
-        <div class="profile__form">
-            <app-profile-form [initialValues]="profileFormvalues" />
-        </div>
-    </div>
-</app-container>
-}
+<app-profile-layout
+    title="Profile"
+    [isLoading]="isLoading">
+    <app-profile-form [initialValues]="profileFormvalues" />
+</app-profile-layout>

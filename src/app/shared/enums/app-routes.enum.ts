@@ -29,6 +29,9 @@ export enum TopicRoutes {
 
 enum ProfileRoutes {
     EDIT = 'profile/edit',
+    CHANGE_EMAIL = 'profile/change-email',
+    VERIFY_EMAIL = 'profile/verify-email',
+    CHANGE_PHONE_NUMBER = 'profile/change-phone-number',
 }
 
 enum AuthRoutes {

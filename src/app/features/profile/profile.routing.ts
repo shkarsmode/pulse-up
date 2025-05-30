@@ -15,6 +15,18 @@ const routes: Routes = [
                     import("./pages/edit-profile/edit-profile.component").then((m) => m.EditProfileComponent),
                 canActivate: [PrivatePageGuard],
             },
+            {
+                path: AppRoutes.Profile.CHANGE_EMAIL,
+                loadComponent: () =>
+                    import("./pages/change-email/change-email.component").then((m) => m.ChangeEmailComponent),
+                canActivate: [PrivatePageGuard],
+            },
+            {
+                path: AppRoutes.Profile.VERIFY_EMAIL,
+                loadComponent: () =>
+                    import("./pages/verify-email/verify-email.component").then((m) => m.VerifyEmailComponent),
+                canActivate: [PrivatePageGuard],
+            },
         ],
     },
 ];

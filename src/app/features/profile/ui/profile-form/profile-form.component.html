@@ -11,7 +11,7 @@
             [previewUrl]="previewUrl"
             />
         <div *ngIf="getPictureErrorMessage() as error">
-            <span>{{ error }}</span>
+            <span class="profile-form__error">{{ error }}</span>
         </div>
     </div>
     <div class="profile-form__field">
@@ -26,7 +26,7 @@
             [hasErrorClass]="!!(form.get('name')?.touched && form.get('name')?.invalid)"
             (emitBlur)="onBlur('name')" />
         <div *ngIf="getNameErrorMessage() as error">
-            <span>{{ error }}</span>
+            <span class="profile-form__error">{{ error }}</span>
         </div>
     </div>
     <div class="profile-form__field">
@@ -41,8 +41,16 @@
             [hasErrorClass]="!!(form.get('username')?.touched && form.get('username')?.invalid)"
             (emitBlur)="onBlur('username')" />
         <div *ngIf="getUsernameErrorMessage() as error">
-            <span>{{ error }}</span>
+            <span class="profile-form__error">{{ error }}</span>
         </div>
+    </div>
+    <div class="profile-form__field">
+        <span class="profile-form__label">Email</span>
+        <a [routerLink]="chngeEmailRoute" class="profile-form__link">{{ email }}</a>
+    </div>
+    <div class="profile-form__field">
+        <span class="profile-form__label">Phone number</span>
+        <a class="profile-form__link">{{ phoneNumber }}</a>
     </div>
     <div class="profile-form__field profile-form__field--textarea">
         <app-textarea
@@ -53,7 +61,7 @@
             [hasErrorClass]="!!(form.get('bio')?.touched && form.get('bio')?.invalid)"
             (emitBlur)="onBlur('bio')" />
         <div *ngIf="getBioErrorMessage() as error">
-            <span>{{ error }}</span>
+            <span class="profile-form__error">{{ error }}</span>
         </div>
     </div>
     <div

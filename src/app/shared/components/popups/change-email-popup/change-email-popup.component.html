@@ -1,0 +1,12 @@
+<div class="popup">
+    <app-close-button
+        class="popup__close"
+        (handleClick)="onCloseDialog()" />
+    <h2>Confirm Email Change</h2>
+    <p>Please log in again to complete the email change process.</p>
+    <app-primary-button
+        [fullWidth]="true"
+        (handleClick)="logout()">
+        Log out
+    </app-primary-button>
+</div>
