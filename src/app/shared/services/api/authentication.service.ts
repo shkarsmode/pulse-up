@@ -27,6 +27,7 @@ import { AppConstants } from "../../constants";
 import { WindowService } from "../core/window.service";
 import { LOCAL_STORAGE_KEYS, LocalStorageService } from "../core/local-storage.service";
 import { formatFirebaseError } from "@/app/features/auth/utils/formatFirebaseError";
+import { RecentLoginRequiredError } from "@/app/features/profile/helpers/change-email-error";
 
 @Injectable({
     providedIn: "root",
@@ -119,7 +120,9 @@ export class AuthenticationService {
     public resendVerificationCode() {
         const phoneNumber = LocalStorageService.get<string>("phoneNumberForSignin");
         if (!phoneNumber) {
-            return throwError(() => new Error("Failed to resend verification code. Please try again to login."));
+            return throwError(
+                () => new Error("Failed to resend verification code. Please try again to login."),
+            );
         }
         return of(null).pipe(
             tap(() => this.isResendInProgress$.next(true)),
@@ -128,10 +131,10 @@ export class AuthenticationService {
             switchMap(() => this.sendVerificationCode(phoneNumber)),
             tap(() => this.isResendInProgress$.next(false)),
             catchError((error) => {
-                this.isResendInProgress$.next(false)
+                this.isResendInProgress$.next(false);
                 return this.handleLoginWithPhoneNumberError(error);
             }),
-        )
+        );
     }
 
     public loginAsAnonymousThroughTheFirebase = (): Observable<UserCredential> => {
@@ -145,21 +148,27 @@ export class AuthenticationService {
                 return response;
             }),
         );
-    }
+    };
 
-    public verifyEmail = ({ email, continueUrl }: { email: string, continueUrl: string }) => {
-        return from(sendSignInLinkToEmail(this.firebaseAuth, email, {
-            url: continueUrl,
-            handleCodeInApp: true,
-        })).pipe(
+    public verifyEmail = ({ email, continueUrl }: { email: string; continueUrl: string }) => {
+        return from(
+            sendSignInLinkToEmail(this.firebaseAuth, email, {
+                url: continueUrl,
+                handleCodeInApp: true,
+            }),
+        ).pipe(
             tap(() => {
                 LocalStorageService.set(LOCAL_STORAGE_KEYS.verifyEmail, email);
             }),
             catchError(this.handleEmailVerificationError),
-        )
-    }
+        );
+    };
 
-    public linkVerifiedEmail = ({ continueUrl }: { continueUrl: string }): Observable<User | null> => {
+    public linkVerifiedEmail = ({
+        continueUrl,
+    }: {
+        continueUrl: string;
+    }): Observable<User | null> => {
         // Not a valid email sign-in link
         if (!isSignInWithEmailLink(this.firebaseAuth, this.windowRef.location.href)) {
             return of(null);
@@ -167,12 +176,12 @@ export class AuthenticationService {
 
         const email = LocalStorageService.get<string>(LOCAL_STORAGE_KEYS.verifyEmail);
         if (!email) {
-            return throwError(() => new Error('Email not found.'));
+            return throwError(() => new Error("Email not found."));
         }
 
         const user = this.firebaseAuth.currentUser;
         if (!user) {
-            return throwError(() => new Error('No authenticated user found.'));
+            return throwError(() => new Error("No authenticated user found."));
         }
 
         const credential = EmailAuthProvider.credentialWithLink(email, continueUrl);
@@ -182,31 +191,35 @@ export class AuthenticationService {
             switchMap(() => {
                 const updatedUser = this.firebaseAuth.currentUser;
                 if (!updatedUser) {
-                    return throwError(() => new Error('Failed to update user after linking email.'));
+                    return throwError(
+                        () => new Error("Failed to update user after linking email."),
+                    );
                 }
                 return of(updatedUser);
             }),
             tap(() => {
                 LocalStorageService.remove(LOCAL_STORAGE_KEYS.verifyEmail);
-            })
+            }),
         );
     };
 
-    public changeEmail = ({ email, continueUrl }: { email: string, continueUrl: string }) => {
+    public changeEmail = ({ email, continueUrl }: { email: string; continueUrl: string }) => {
         const user = this.firebaseAuth.currentUser;
         if (!user) {
-            return throwError(() => new Error('No authenticated user found.'));
+            return throwError(() => new Error("No authenticated user found."));
         }
-        return from(verifyBeforeUpdateEmail(user, email, {
-            url: continueUrl,
-            handleCodeInApp: true,
-        })).pipe(
+        return from(
+            verifyBeforeUpdateEmail(user, email, {
+                url: continueUrl,
+                handleCodeInApp: true,
+            }),
+        ).pipe(
             tap(() => {
                 LocalStorageService.set(LOCAL_STORAGE_KEYS.changeEmail, email);
             }),
             catchError(this.handleEmailChangingError),
-        )
-    }
+        );
+    };
 
     public logout = () => {
         return from(signOut(this.firebaseAuth)).pipe(
@@ -220,7 +233,7 @@ export class AuthenticationService {
                 LocalStorageService.remove("isAnonymous");
                 LocalStorageService.remove("token");
 
-                LocalStorageService.remove(LOCAL_STORAGE_KEYS.personalInfoPopupShown)
+                LocalStorageService.remove(LOCAL_STORAGE_KEYS.personalInfoPopupShown);
             }),
             catchError((error: any) => {
                 throw new Error(error.message);
@@ -269,7 +282,10 @@ export class AuthenticationService {
     private handleIdentityCheckByPhoneNumber = (
         identityCheckResult: boolean,
     ): Observable<boolean> => {
-        if (!identityCheckResult) return throwError(() => new Error("Provided phoner number cannot be used for registration"));
+        if (!identityCheckResult)
+            return throwError(
+                () => new Error("Provided phoner number cannot be used for registration"),
+            );
         return of(true);
     };
 
@@ -285,7 +301,7 @@ export class AuthenticationService {
             size: "invisible",
         });
         this.windowRef.recaptchaVerifier = recaptchaVerifier;
-        return of(recaptchaVerifier)
+        return of(recaptchaVerifier);
     };
 
     private sendVerificationCode = (phoneNumber: string) => {
@@ -304,9 +320,7 @@ export class AuthenticationService {
     };
 
     private getIdToken = (userCredential: UserCredential): Observable<string> => {
-        return from(userCredential.user.getIdToken()).pipe(
-            map((idToken) => idToken),
-        );
+        return from(userCredential.user.getIdToken()).pipe(map((idToken) => idToken));
     };
 
     private createUserWithToken = (token: string): Observable<IProfile & { token: string }> => {
@@ -331,7 +345,9 @@ export class AuthenticationService {
         );
     };
 
-    private updateAuthenticatedUserdData = (userData: IProfile & { token: string }): Observable<IProfile> => {
+    private updateAuthenticatedUserdData = (
+        userData: IProfile & { token: string },
+    ): Observable<IProfile> => {
         return of(userData).pipe(
             tap(({ token }) => {
                 LocalStorageService.set("userToken", token);
@@ -378,6 +394,12 @@ export class AuthenticationService {
 
         let errorMessage = "Failed to change email. Please try again.";
         if (error instanceof FirebaseError) {
+            if (
+                error?.code === "auth/requires-recent-login" ||
+                error?.code === "auth/user-token-expired"
+            ) {
+                return throwError(() => new RecentLoginRequiredError())
+            }
             errorMessage = formatFirebaseError(error) || errorMessage;
         }
         return throwError(() => new Error(errorMessage));

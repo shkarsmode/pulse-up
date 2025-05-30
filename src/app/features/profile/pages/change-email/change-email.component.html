@@ -20,6 +20,11 @@
                 <span class="change-email-form__error">{{ error }}</span>
             </div>
         </div>
+        <div
+            *ngIf="errorMessage"
+            class="change-email-form__error change-email-form__error--center">
+            {{ errorMessage }}
+        </div>
         <app-primary-button
             [fullWidth]="true"
             [disabled]="disabled"

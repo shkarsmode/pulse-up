@@ -1,19 +1,18 @@
 import { Component, inject } from '@angular/core';
+import { Router } from '@angular/router';
 import { MatDialogRef } from '@angular/material/dialog';
+import { AppRoutes } from '@/app/shared/enums/app-routes.enum';
 import { CloseButtonComponent } from "../../ui-kit/buttons/close-button/close-button.component";
 import { PrimaryButtonComponent } from "../../ui-kit/buttons/primary-button/primary-button.component";
-import { Router } from '@angular/router';
-import { AppRoutes } from '@/app/shared/enums/app-routes.enum';
 
 @Component({
-  selector: 'app-change-email-popup',
+  selector: 'app-signin-required-popup',
   standalone: true,
   imports: [CloseButtonComponent, PrimaryButtonComponent],
-  templateUrl: './change-email-popup.component.html',
-  styleUrl: './change-email-popup.component.scss'
+  templateUrl: './signin-required-popup.component.html',
+  styleUrl: './signin-required-popup.component.scss'
 })
-export class ChangeEmailPopupComponent {
-
+export class SigninRequiredPopupComponent {
   private readonly router: Router = inject(Router);
   private readonly dialogRef: MatDialogRef<any> = inject(MatDialogRef);
 
@@ -23,6 +22,6 @@ export class ChangeEmailPopupComponent {
 
   public logout(): void {
     this.dialogRef.close();
-    this.router.navigateByUrl(`/${AppRoutes.Auth.SIGN_IN}?redirect=${AppRoutes.Profile.EDIT}`)
+    this.router.navigateByUrl(`/${AppRoutes.Auth.SIGN_IN}?redirect=${AppRoutes.Profile.CHANGE_EMAIL}`)
   }
 }
