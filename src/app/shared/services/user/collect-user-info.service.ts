@@ -2,7 +2,7 @@ import { inject, Injectable } from "@angular/core";
 import { MatDialog } from "@angular/material/dialog";
 import { UserStore } from "../../stores/user.store";
 import { PersonalInfoPopupComponent } from "../../components/popups/personal-info-popup/personal-info-popup.component";
-import { LocalStorageService } from "../core/local-storage.service";
+import { LOCAL_STORAGE_KEYS, LocalStorageService } from "../core/local-storage.service";
 
 @Injectable({
   providedIn: "root",
@@ -14,11 +14,11 @@ export class CollectUserInfoService {
   private isOpened = false;
 
   public collectPersonalInfo(): void {
-    const alreadyShown = LocalStorageService.get<boolean>("personalInfoPopupShown");
+    const alreadyShown = LocalStorageService.get<boolean>(LOCAL_STORAGE_KEYS.personalInfoPopupShown);
     this.userStore.profile$.subscribe((profile) => {
       if (!this.isOpened && !alreadyShown && profile && (!profile.name || !profile.username)) {
         this.openDialog();
-        LocalStorageService.set("personalInfoPopupShown", true);
+        LocalStorageService.set(LOCAL_STORAGE_KEYS.personalInfoPopupShown, true);
       }
     })
   }

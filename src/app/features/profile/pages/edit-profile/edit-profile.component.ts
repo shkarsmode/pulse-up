@@ -1,15 +1,12 @@
 import { Component, inject } from '@angular/core';
-import { ContainerComponent } from "../../../../shared/components/ui-kit/container/container.component";
-import { ProfileFormComponent } from '../../ui/profile-form/profile-form.component';
-import { LoadingIndicatorComponent } from "../../../../shared/components/loading-indicator/loading-indicator.component";
-import { LoadingPageComponent } from "../../../../shared/components/loading/loading-page.component";
-import { LogoComponent } from '@/app/shared/components/loading/logo/logo.component';
 import { UserService } from '@/app/shared/services/api/user.service';
+import { ProfileFormComponent } from '../../ui/profile-form/profile-form.component';
+import { ProfileLayoutComponent } from "../../ui/profile-layout/profile-layout.component";
 
 @Component({
   selector: 'app-edit-profile',
   standalone: true,
-  imports: [ContainerComponent, ProfileFormComponent, LogoComponent],
+  imports: [ProfileFormComponent, ProfileLayoutComponent],
   templateUrl: './edit-profile.component.html',
   styleUrl: './edit-profile.component.scss'
 })

@@ -12,11 +12,14 @@ import { pictureValidator } from '@/app/shared/helpers/validators/picture.valida
 import { optionalLengthValidator } from '@/app/shared/helpers/validators/optional-length.validator';
 import { SettingsService } from '@/app/shared/services/api/settings.service';
 import { UserStore } from '@/app/shared/stores/user.store';
+import { AuthenticationService } from '@/app/shared/services/api/authentication.service';
+import { RouterModule } from '@angular/router';
+import { AppRoutes } from '@/app/shared/enums/app-routes.enum';
 
 @Component({
   selector: 'app-profile-form',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, InputComponent, TextareaComponent, PrimaryButtonComponent, PicturePickerComponent],
+  imports: [CommonModule, RouterModule, ReactiveFormsModule, InputComponent, TextareaComponent, PrimaryButtonComponent, PicturePickerComponent],
   templateUrl: './profile-form.component.html',
   styleUrl: './profile-form.component.scss'
 })
@@ -32,11 +35,15 @@ export class ProfileFormComponent {
   private userStore: UserStore = inject(UserStore);
   private userService: UserService = inject(UserService);
   private settingsService: SettingsService = inject(SettingsService);
+  private authenticationService: AuthenticationService = inject(AuthenticationService);
 
   private isPicturePristine: boolean = true;
   public form: FormGroup;
   public submitting: boolean = false;
   public errorMessage: string | null = null;
+  public phoneNumber: string | null = null;
+  public email: string | null = null;
+  public chngeEmailRoute = "/" + AppRoutes.Profile.CHANGE_EMAIL;
 
   constructor() {
     this.form = this.fb.group({
@@ -44,7 +51,9 @@ export class ProfileFormComponent {
       username: "",
       bio: "",
       profilePicture: null,
-    })
+    });
+    this.phoneNumber = this.authenticationService.firebaseAuth.currentUser?.phoneNumber || null;
+    this.email = this.authenticationService.firebaseAuth.currentUser?.email || null;
   }
 
   ngOnInit() {

@@ -1,0 +1,12 @@
+<div class="popup">
+    <app-close-button
+        class="popup__close"
+        (handleClick)="onCloseDialog()" />
+    <h2>Session expired</h2>
+    <p>For your security, please sign in again to continue.</p>
+    <app-primary-button
+        [fullWidth]="true"
+        (handleClick)="logout()">
+        Log out
+    </app-primary-button>
+</div>

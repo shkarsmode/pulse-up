@@ -1,0 +1,36 @@
+<app-profile-layout title="Change email">
+    <form
+        [formGroup]="form"
+        class="change-email-form">
+        <div class="change-email-form__field">
+            <label
+                for="email"
+                class="visualy-hidden">
+                Email
+            </label>
+            <app-input
+                type="text"
+                id="email"
+                name="email"
+                autocomplete="email"
+                placeholder=""
+                formControlName="email"
+                [hasErrorClass]="hasErrorClass" />
+            <div *ngIf="getErrorMessage() as error">
+                <span class="change-email-form__error">{{ error }}</span>
+            </div>
+        </div>
+        <div
+            *ngIf="errorMessage"
+            class="change-email-form__error change-email-form__error--center">
+            {{ errorMessage }}
+        </div>
+        <app-primary-button
+            [fullWidth]="true"
+            [disabled]="disabled"
+            [loading]="submitting"
+            (click)="onSubmit()">
+            Change email
+        </app-primary-button>
+    </form>
+</app-profile-layout>

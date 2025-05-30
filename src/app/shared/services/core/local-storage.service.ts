@@ -58,3 +58,9 @@ export class LocalStorageService {
         return localStorage.getItem(key) !== null;
     }
 }
+
+export const LOCAL_STORAGE_KEYS = {
+    changeEmail: 'change_email',
+    verifyEmail: 'verify_email',
+    personalInfoPopupShown: 'personal_info_popup_shown',
+}

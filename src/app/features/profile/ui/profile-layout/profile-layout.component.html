@@ -1,0 +1,14 @@
+@if (isLoading) {
+<div class="profile-loading">
+    <app-logo></app-logo>
+</div>
+} @else {
+<app-container>
+    <div class="profile">
+        <div class="profile__container">
+            <h1 class="profile__title" *ngIf="title">{{ title }}</h1>
+            <ng-content></ng-content>
+        </div>
+    </div>
+</app-container>
+}

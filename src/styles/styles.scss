@@ -8,6 +8,8 @@
 @import "mapbox-gl/dist/mapbox-gl.css";
 @import "@splidejs/splide/css";
 
+/* Reset styles */
+
 *,
 html {
     scroll-behavior: smooth;
@@ -70,6 +72,23 @@ h3 {
     font-weight: 600;
 }
 
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+textarea:-webkit-autofill,
+textarea:-webkit-autofill:hover,
+textarea:-webkit-autofill:focus,
+select:-webkit-autofill,
+select:-webkit-autofill:hover,
+select:-webkit-autofill:focus {
+    border: none;
+    -webkit-text-fill-color: var(--black-color);
+    -webkit-box-shadow: 0 0 0px 1000px #fff inset;
+    transition: background-color 5000s ease-in-out 0s;
+}
+
+/* Global classes */
+
 .no-scroll {
     overflow: hidden;
     position: fixed;
@@ -98,6 +117,8 @@ h3 {
     display: none;
 }
 
+/* intl-tel-input styles */
+
 .iti {
     --iti-path-flags-1x: url("/assets/img/flags.png");
     --iti-path-flags-2x: url("/assets/img/flags@2x.png");
@@ -110,6 +131,8 @@ h3 {
         outline-color: var(--accent-color);
     }
 }
+
+/* OTP input styles */
 
 div.otp-custom-container {
     input.otp-custom-input {
@@ -129,17 +152,31 @@ div.otp-custom-container {
     }
 }
 
-input:-webkit-autofill,
-input:-webkit-autofill:hover, 
-input:-webkit-autofill:focus,
-textarea:-webkit-autofill,
-textarea:-webkit-autofill:hover,
-textarea:-webkit-autofill:focus,
-select:-webkit-autofill,
-select:-webkit-autofill:hover,
-select:-webkit-autofill:focus {
-  border: none;
-  -webkit-text-fill-color: var(--black-color);
-  -webkit-box-shadow: 0 0 0px 1000px #fff inset;
-  transition: background-color 5000s ease-in-out 0s;
+/* Snackbar styles */
+
+.mdc-snackbar.mat-mdc-snack-bar-container {
+    &.snackbar-error {
+        .mdc-snackbar__surface {
+            background-color: #f44336; // Material Red 500
+            color: white;
+        }
+    }
+
+    &.snackbar-success {
+        .mdc-snackbar__surface {
+            background-color: #4caf50; // Material Green 500
+            color: white;
+        }
+    }
+
+    &.snackbar-info {
+        .mdc-snackbar__surface {
+            background-color: #2196f3; // Material Blue 500
+            color: white;
+        }
+    }
+
+    .mat-mdc-button.mat-mdc-snack-bar-action:not(:disabled) {
+        color: var(--white-color);
+    }
 }
