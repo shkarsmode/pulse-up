@@ -62,6 +62,11 @@ export class ChangeEmailComponent {
         return !!(this.form.get("name")?.touched && this.form.get("name")?.invalid);
     }
 
+    public get isUserVerified(): boolean {
+        const user = this.authenticationService.firebaseAuth.currentUser;
+        return !!(user?.email && user?.emailVerified)
+    }
+
     private get emailControl(): AbstractControl<any, any> | null {
         return this.form.get("email");
     }
@@ -79,63 +84,40 @@ export class ChangeEmailComponent {
         this.submitting = true;
         this.errorMessage = null;
 
-        const changingEmail = this.firebaseUser?.email && this.firebaseUser?.emailVerified;
-        const verifyingEmail = !changingEmail;
+        const hasEmail = this.firebaseUser?.email && this.firebaseUser?.emailVerified;
+        const action = hasEmail ? "changeEmail" : "verifyEmail";
 
-        if (verifyingEmail) {
-            this.authenticationService
-                .verifyEmail({
-                    email: this.emailControl?.value,
-                    continueUrl: window.location.origin + "/profile/verify-email?mode=verifyEmail",
-                })
-                .subscribe({
-                    next: () => {
-                        this.submitting = false;
-                        this.router.navigateByUrl(
-                            `/${AppRoutes.Profile.VERIFY_EMAIL}?mode=verifyEmail`,
-                            { replaceUrl: true },
-                        );
-                    },
-                    error: (error) => {
-                        this.submitting = false;
-                        this.errorMessage =
-                            error.message ||
-                            "An error occurred while verifying the email. Please try again.";
-                    },
-                });
-        } else if (changingEmail) {
-            this.authenticationService
-                .changeEmail({
-                    email: this.emailControl?.value,
-                    continueUrl:
-                        window.location.origin +
-                        "/profile/verify-email?mode=changeEmail&showPopup=true",
-                })
-                .subscribe({
-                    next: () => {
-                        this.submitting = false;
-                        this.router.navigateByUrl(
-                            `/${AppRoutes.Profile.VERIFY_EMAIL}?mode=changeEmail`,
-                            { replaceUrl: true },
-                        );
-                    },
-                    error: (error) => {
-                        this.submitting = false;
+        this.authenticationService
+            .changeEmail({
+                email: this.emailControl?.value,
+                continueUrl:
+                    window.location.origin +
+                    `/profile/verify-email?action=${action}&showPopup=true`,
+            })
+            .subscribe({
+                next: () => {
+                    this.submitting = false;
+                    this.router.navigateByUrl(
+                        `/${AppRoutes.Profile.VERIFY_EMAIL}?action=${action}`,
+                        { replaceUrl: true },
+                    );
+                },
+                error: (error) => {
+                    this.submitting = false;
 
-                        if (error instanceof RecentLoginRequiredError) {
-                          this.dialog.open(SigninRequiredPopupComponent, {
+                    if (error instanceof RecentLoginRequiredError) {
+                        this.dialog.open(SigninRequiredPopupComponent, {
                             width: "500px",
                             panelClass: "custom-dialog-container",
                             backdropClass: "custom-dialog-backdrop",
-                          })
-                          return;
-                        }
+                        });
+                        return;
+                    }
 
-                        this.errorMessage =
-                            error.message ||
-                            "An error occurred while changing the email. Please try again.";
-                    },
-                });
-        }
+                    this.errorMessage =
+                        error.message ||
+                        "An error occurred while changing the email. Please try again.";
+                },
+            });
     }
 }

@@ -2,11 +2,11 @@
     <!-- <app-close-button
         class="popup__close"
         (handleClick)="onCloseDialog()" /> -->
-    <h2>Confirm Email Change</h2>
-    <p>Please log in again to complete the email change process.</p>
+    <h2>Email Successfully Updated</h2>
+    <p>Your email has been successfully {{ isVerifyEmailMode ? "added" : "changed" }}. Please log in again to complete the process.</p>
     <app-primary-button
         [fullWidth]="true"
         (handleClick)="logout()">
-        Log out
+        Log in again
     </app-primary-button>
 </div>

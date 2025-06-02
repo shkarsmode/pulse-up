@@ -25,7 +25,7 @@ export class VerifyEmailComponent implements OnInit {
   public email: string | null = null;
 
   ngOnInit() {
-    const mode = this.activatedRoute.snapshot.queryParamMap.get('mode');
+    const mode = this.activatedRoute.snapshot.queryParamMap.get('action');
 
     if (mode === "verifyEmail") {
       this.email = LocalStorageService.get<string>(LOCAL_STORAGE_KEYS.verifyEmail);
@@ -33,21 +33,19 @@ export class VerifyEmailComponent implements OnInit {
         this.router.navigate(['/', AppRoutes.Auth.SIGN_IN]);
         return;
       }
-      this.authenticationService.linkVerifiedEmail({
-        continueUrl: window.location.href
-      }).subscribe({
-        next: (user) => {
-          if (user) {
-            console.log('Email verified successfully:', user);
-            this.router.navigateByUrl(`/${AppRoutes.Profile.EDIT}`, { replaceUrl: true });
-            this.notificationService.success('Email verified successfully!');
+
+      const showPopup = this.activatedRoute.snapshot.queryParamMap.get('showPopup');
+      if (showPopup === 'true') {
+        this.dialog.open(ChangeEmailPopupComponent, {
+          width: "630px",
+          panelClass: "custom-dialog-container",
+          backdropClass: "custom-dialog-backdrop",
+          disableClose: true,
+          data: {
+            mode: 'verifyEmail'
           }
-        },
-        error: (error) => {
-          console.error('Error verifying email:', error);
-          this.notificationService.error(error.message || 'Failed to verify email. Please try again.');
-        }
-      })
+        });
+      }
     } else if (mode === "changeEmail") {
       this.email = LocalStorageService.get<string>(LOCAL_STORAGE_KEYS.changeEmail);
       if (!this.email) {
@@ -62,6 +60,9 @@ export class VerifyEmailComponent implements OnInit {
           panelClass: "custom-dialog-container",
           backdropClass: "custom-dialog-backdrop",
           disableClose: true,
+          data: {
+            mode: 'changeEmail'
+          }
         });
       }
     }

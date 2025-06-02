@@ -1,4 +1,4 @@
-<app-profile-layout title="Change email">
+<app-profile-layout title="{{ isUserVerified ? 'Change' : 'Add' }} email">
     <form
         [formGroup]="form"
         class="change-email-form">
@@ -30,7 +30,7 @@
             [disabled]="disabled"
             [loading]="submitting"
             (click)="onSubmit()">
-            Change email
+            {{ isUserVerified ? 'Change' : 'Add' }} email
         </app-primary-button>
     </form>
 </app-profile-layout>
