@@ -1,5 +1,6 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, Input } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { CloseButtonComponent } from "../../ui-kit/buttons/close-button/close-button.component";
 import { PrimaryButtonComponent } from "../../ui-kit/buttons/primary-button/primary-button.component";
 import { Router } from '@angular/router';
@@ -13,9 +14,15 @@ import { AppRoutes } from '@/app/shared/enums/app-routes.enum';
   styleUrl: './change-email-popup.component.scss'
 })
 export class ChangeEmailPopupComponent {
+  @Input() public mode: 'verifyEmail' | 'changeEmail' = 'verifyEmail';
 
   private readonly router: Router = inject(Router);
   private readonly dialogRef: MatDialogRef<any> = inject(MatDialogRef);
+  private readonly data: { mode: 'verifyEmail' | 'changeEmail' } = inject(MAT_DIALOG_DATA);
+
+  public get isVerifyEmailMode(): boolean {
+    return this.data.mode === 'verifyEmail';
+  }
 
   public onCloseDialog(): void {
     this.dialogRef.close();
