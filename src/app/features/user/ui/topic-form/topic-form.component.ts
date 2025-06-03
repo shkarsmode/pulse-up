@@ -1,8 +1,10 @@
-import { Component, ElementRef, inject, ViewChild } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AppRoutes } from '../../../../shared/enums/app-routes.enum';
 import { SendTopicService } from '../../../../shared/services/core/send-topic.service';
+import { ErrorMessageBuilder } from '../../helpers/error-message-builder';
+import { tooltipText } from '../../constants/tooltip-text';
 
 interface Topic {
     name: string;
@@ -16,8 +18,6 @@ interface Topic {
     styleUrl: './topic-form.component.scss',
 })
 export class TopicFormComponent {
-    @ViewChild('descriptionPictures', { static: true })
-    public descriptionPictures: ElementRef;
 
     public routes = AppRoutes.User.Topic;
     public topicForm: FormGroup;
@@ -25,8 +25,7 @@ export class TopicFormComponent {
     public categoriesForForm: Array<string>;
     public categories: Topic[] = categories;
     public selectedIcon: string | ArrayBuffer | null;
-    public selectedPicture: string | ArrayBuffer | null;
-    public selectedTypeOfPicture: 'img' | 'gif' | 'smile' | '';
+    public tooltipText = tooltipText
 
     private readonly router: Router = inject(Router);
     public readonly sendTopicService: SendTopicService =
@@ -37,27 +36,46 @@ export class TopicFormComponent {
         this.categoriesForForm = this.categories.map(
             (category) => category.name
         );
-        this.setIconIfItExists();
+        // this.setIconIfItExists();
     }
 
-    private setIconIfItExists(): void {
-        if (this.topicForm.get('icon')?.value) {
-            this.updateSelectedFile('icon');
+    public control(name: string) {
+        return this.topicForm.get(name);
+    }
+
+    public getErrorMessage(name: string) {
+        const control = this.topicForm.get(name);
+        if (!control) return null;
+        return ErrorMessageBuilder.getErrorMessage(control, name)
+    }
+
+    public onBlur(name: string) {
+        console.log(!!this.control('headline')?.invalid, !!this.control('headline')?.touched);
+        
+        const control = this.topicForm.get(name);
+        if (control) {
+          control.markAsTouched();
         }
-    }
+      }
 
-    public openInputForDescription(acceptType: 'img' | 'gif' | 'smile'): void {
-        const inputElement = this.descriptionPictures.nativeElement;
+    // private setIconIfItExists(): void {
+    //     if (this.topicForm.get('icon')?.value) {
+    //         this.updateSelectedFile('icon');
+    //     }
+    // }
 
-        const acceptTypeKeyMap = {
-            img: '.png, .jpg, .jpeg',
-            gif: '.gif',
-            smile: '.svg',
-        };
+    // public openInputForDescription(acceptType: 'img' | 'gif' | 'smile'): void {
+    //     const inputElement = this.descriptionPictures.nativeElement;
 
-        inputElement.setAttribute('accept', acceptTypeKeyMap[acceptType]);
-        inputElement.click();
-    }
+    //     const acceptTypeKeyMap = {
+    //         img: '.png, .jpg, .jpeg',
+    //         gif: '.gif',
+    //         smile: '.svg',
+    //     };
+
+    //     inputElement.setAttribute('accept', acceptTypeKeyMap[acceptType]);
+    //     inputElement.click();
+    // }
 
     public getCurrentTopicInfo(): { title: string; description: string } {
         const category = this.topicForm.get('category')?.value;
@@ -66,70 +84,74 @@ export class TopicFormComponent {
         )[0];
     }
 
-    public onFileSelected(
-        event: Event,
-        formControlName: 'icon' | 'picture'
-    ): void {
-        const file = (event.target as HTMLInputElement).files?.[0];
+    // public onFileSelected(
+    //     event: Event,
+    //     formControlName: 'icon' | 'picture'
+    // ): void {
+    //     const file = (event.target as HTMLInputElement).files?.[0];
 
-        this.topicForm.patchValue({ [formControlName]: file });
-        this.updateSelectedFile(formControlName);
-    }
+    //     this.topicForm.patchValue({ [formControlName]: file });
+    //     this.updateSelectedFile(formControlName);
+    // }
 
     public onNextButtonClick(): void {
+        
+        this.topicForm.markAllAsTouched();
+        this.topicForm.updateValueAndValidity();
+        console.log({errors: this.topicForm.errors, value: this.topicForm.value});
         if (this.topicForm.valid) {
             this.router.navigateByUrl('user/topic/contact-info');
         }
     }
 
-    public deleteChosenPicture(): void {
-        this.topicForm.get('picture')?.setValue('');
-        this.selectedTypeOfPicture = '';
-        this.selectedPicture = '';
-    }
+    // public deleteChosenPicture(): void {
+    //     this.topicForm.get('picture')?.setValue('');
+    //     this.selectedTypeOfPicture = '';
+    //     this.selectedPicture = '';
+    // }
 
-    public updateSelectedFile(formControlName: 'icon' | 'picture'): void {
-        const file = this.topicForm.get(formControlName)?.value;
-        const fieldName = ('selected' + this.capitalize(formControlName)) as
-            | 'selectedIcon'
-            | 'selectedPicture';
+    // public updateSelectedFile(formControlName: 'icon' | 'picture'): void {
+    //     const file = this.topicForm.get(formControlName)?.value;
+    //     const fieldName = ('selected' + this.capitalize(formControlName)) as
+    //         | 'selectedIcon'
+    //         | 'selectedPicture';
 
-        if (file) {
-            const reader = new FileReader();
+    //     if (file) {
+    //         const reader = new FileReader();
 
-            reader.onload = () => {
-                this[fieldName] = reader.result;
-                if (formControlName === 'picture') {
-                    this.selectedTypeOfPicture =
-                        this.getSelectedTypeOfPicture();
-                }
-            };
-            reader.readAsDataURL(file);
-        }
-    }
+    //         reader.onload = () => {
+    //             this[fieldName] = reader.result;
+    //             if (formControlName === 'picture') {
+    //                 this.selectedTypeOfPicture =
+    //                     this.getSelectedTypeOfPicture();
+    //             }
+    //         };
+    //         reader.readAsDataURL(file);
+    //     }
+    // }
 
-    private getSelectedTypeOfPicture(): 'img' | 'gif' | 'smile' {
-        const extension = this.getExtensionFromBase64(this.selectedPicture);
-        switch (extension) {
-            case 'png':
-            case 'jpeg':
-            case 'jpg':
-                return 'img';
-            case 'gif':
-                return 'gif';
-            default:
-                return 'smile';
-        }
-    }
+    // private getSelectedTypeOfPicture(): 'img' | 'gif' | 'smile' {
+    //     const extension = this.getExtensionFromBase64(this.selectedPicture);
+    //     switch (extension) {
+    //         case 'png':
+    //         case 'jpeg':
+    //         case 'jpg':
+    //             return 'img';
+    //         case 'gif':
+    //             return 'gif';
+    //         default:
+    //             return 'smile';
+    //     }
+    // }
 
-    private getExtensionFromBase64(dataUrl: any): string | null {
-        const match = dataUrl.toString().match(/^data:(.+?);base64,/);
-        if (match) {
-            const mimeType = match[1];
-            return mimeType.split('/')[1];
-        }
-        return null;
-    }
+    // private getExtensionFromBase64(dataUrl: any): string | null {
+    //     const match = dataUrl.toString().match(/^data:(.+?);base64,/);
+    //     if (match) {
+    //         const mimeType = match[1];
+    //         return mimeType.split('/')[1];
+    //     }
+    //     return null;
+    // }
 
     private capitalize(str: string): string {
         if (!str) return '';

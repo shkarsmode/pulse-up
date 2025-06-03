@@ -1,0 +1,35 @@
+@use "../../../../../../styles/mixins" as *;
+
+.location {
+    display: flex;
+    flex-direction: column;
+    row-gap: 8px;
+}
+
+.location__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    column-gap: 8px;
+
+    label {
+        @include text-16px;
+        color: var(--dark-grey-color); 
+    }
+}
+
+.location__text {
+    @include text-12px;
+    color: var(--dark-grey-color); 
+}
+
+.location__link {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    column-gap: 8px;
+    padding: 10px 16px;
+    border: 1px solid var(--light-grey-color);
+    background-color: var(--white-color);
+    border-radius: 10px;
+}

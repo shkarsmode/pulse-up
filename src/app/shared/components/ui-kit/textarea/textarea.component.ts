@@ -1,3 +1,4 @@
+import { CommonModule } from '@angular/common';
 import {
     AfterViewInit,
     Component,
@@ -26,7 +27,7 @@ export const APP_UI_INPUT_ACCESSOR = {
 @Component({
     selector: 'app-textarea',
     standalone: true,
-    imports: [FormsModule],
+    imports: [CommonModule, FormsModule],
     providers: [APP_UI_INPUT_ACCESSOR],
     templateUrl: './textarea.component.html',
     styleUrl: './textarea.component.scss',

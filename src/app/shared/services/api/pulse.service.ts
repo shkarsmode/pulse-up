@@ -1,9 +1,10 @@
 import { HttpClient } from "@angular/common/http";
 import { inject, Injectable } from "@angular/core";
-import { first, map, Observable, tap } from "rxjs";
+import { catchError, first, map, Observable, of, tap } from "rxjs";
 import { IPulse, ISettings } from "../../interfaces";
 import { API_URL } from "../../tokens/tokens";
 import { ITopPulse } from "../../interfaces/top-pulse.interface";
+import { IValidateTopicTitleResponse } from "../../interfaces/validate-topic-title.response";
 
 @Injectable({
     providedIn: "root",
@@ -131,7 +132,7 @@ export class PulseService {
         return this.http
             .get<Array<{ id: string; votes: number; children: any }>>(
                 this.apiUrl +
-                `/map?NE.latitude=${NElatitude}&NE.longitude=${NElongitude}&SW.latitude=${SWlatitude}&SW.longitude=${SWlongitude}&resolution=${resolution}`,
+                    `/map?NE.latitude=${NElatitude}&NE.longitude=${NElongitude}&SW.latitude=${SWlatitude}&SW.longitude=${SWlongitude}&resolution=${resolution}`,
             )
             .pipe(
                 map((response) => {
@@ -230,6 +231,18 @@ export class PulseService {
                         return prev;
                     }, {} as Record<string, ITopPulse>);
                 }),
+            );
+    }
+
+    public validateTitle(value: string) {
+        return this.http
+            .post<IValidateTopicTitleResponse>(`${this.apiUrl}/topics/validate`, { title: value })
+            .pipe(
+                catchError((error) => {
+                    console.error("Username validation error:", error);
+                    return of(false);
+                }),
+                map((result) => !!result),
             );
     }
 }

@@ -1,0 +1,10 @@
+<button
+    [matTooltip]="text"
+    #tooltip="matTooltip"
+    matTooltipPosition="above"
+    (click)="tooltip.show()"
+    (mouseenter)="$event.stopImmediatePropagation()"
+    (mouseleave)="$event.stopImmediatePropagation()"
+    matTooltipClass="tooltip-info">
+    <svg-icon src="assets/svg/info.svg" />
+</button>

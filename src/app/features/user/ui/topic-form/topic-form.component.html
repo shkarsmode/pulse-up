@@ -1,0 +1,111 @@
+<form [formGroup]="topicForm">
+    <div class="wrap-inputs">
+        <div class="group">
+            <div class="icon-group">
+                <app-picture-picker
+                    id="icon"
+                    name="icon"
+                    label="Icon"
+                    [control]="control('icon')" />
+                <p class="icon-group__text">
+                    Choose an image that best represents your topic. <br />
+                    Simple symbols, logos, or recognizable visuals work best. <br />
+                    (Minimum size: 128x128 px).
+                </p>
+            </div>
+            <div *ngIf="getErrorMessage('icon') as error">
+                <span class="group__error">{{ error }}</span>
+            </div>
+            <div class="group__info">
+                <app-topic-info [text]="tooltipText.icon" />
+            </div>
+        </div>
+
+        <div class="group">
+            <app-input
+                autocomplete="off"
+                tabindex="2"
+                type="text"
+                placeholder="Enter an engaging headline"
+                id="headline"
+                name="headline"
+                label="Headline"
+                formControlName="headline"
+                [hasErrorClass]="!!control('headline')?.invalid && !!control('headline')?.touched"
+                (emitBlur)="onBlur('headline')" />
+            <div *ngIf="getErrorMessage('headline') as error">
+                <span class="group__error">{{ error }}</span>
+            </div>
+            <div class="group__info">
+                <app-topic-info [text]="tooltipText.title" />
+            </div>
+        </div>
+
+        <div class="group">
+            <app-select
+                id="category"
+                name="category"
+                label="Category"
+                formControlName="category"
+                [options]="categoriesForForm"
+                [info]="getCurrentTopicInfo()"
+                [hasErrorClass]="!!control('category')?.invalid && !!control('category')?.touched"
+                (emitBlur)="onBlur('category')" />
+            <div *ngIf="getErrorMessage('category') as error">
+                <span class="group__error">{{ error }}</span>
+            </div>
+        </div>
+
+        <div class="group">
+            <app-topic-description
+                [textControl]="control('description')"
+                [pictureControl]="control('picture')"
+                (handleBlur)="onBlur('description')" />
+            <div *ngIf="getErrorMessage('description') as error">
+                <span class="group__error">{{ error }}</span>
+            </div>
+            <div class="group__info">
+                <app-topic-info [text]="tooltipText.description" />
+            </div>
+        </div>
+
+        <div class="group">
+            <app-chips-input
+                formControlName="keywords"
+                [limit]="3"
+                [hasErrorClass]="!!control('keywords')?.invalid && !!control('keywords')?.touched">
+            </app-chips-input>
+            <div *ngIf="getErrorMessage('keywords') as error">
+                <span class="group__error">{{ error }}</span>
+            </div>
+            <div class="group__info">
+                <app-topic-info [text]="tooltipText.keywords" />
+            </div>
+        </div>
+
+        <app-location-picker />
+
+        <!-- <div class="group">
+            <label for="keywords">Keywords</label>
+            <app-input
+                tabindex="4"
+                type="text"
+                placeholder="Add up to 5 keywords"
+                id="keywords" name="keywords"
+                formControlName="keywords"
+                [hasErrorClass]="
+                    !!topicForm.get('keywords')?.invalid && !!topicForm.get('keywords')?.dirty
+                "/>
+                
+            <div class="keys">
+                @if (sendTopicService.topicsArrayKeywords.length) {
+                    @for (key of sendTopicService.topicsArrayKeywords; track key) {
+                        <span>{{ key }}</span>
+                    }
+                }
+            </div>
+        </div> -->
+    </div>
+
+    <app-primary-button (handleClick)="onNextButtonClick()"> Next </app-primary-button>
+</form>

@@ -12,6 +12,7 @@ import { SubmittedComponent } from './submitted/submitted.component';
 import { SuggestComponent } from './suggest/suggest.component';
 import { TopicComponent } from './topic.component';
 import { TopicRoutingModule } from './topic.routing';
+import { PicturePickerComponent } from '@/app/shared/components/ui-kit/picture-picker/picture-picker.component';
 
 @NgModule({
     declarations: [
@@ -29,6 +30,7 @@ import { TopicRoutingModule } from './topic.routing';
         SvgIconComponent,
         PrimaryButtonComponent,
         SecondaryButtonComponent,
+        PicturePickerComponent,
     ],
 })
 export class TopicModule {}
