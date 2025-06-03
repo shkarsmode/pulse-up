@@ -36,6 +36,9 @@ export class TopicFormComponent {
         this.categoriesForForm = this.categories.map(
             (category) => category.name
         );
+        this.topicForm.valueChanges.subscribe((value) => {
+            console.log('Form value changed:', value);
+        });
         // this.setIconIfItExists();
     }
 

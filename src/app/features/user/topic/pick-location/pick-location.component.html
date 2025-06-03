@@ -11,8 +11,15 @@
         [zoom]="[2.8]"
         [minZoom]="2.8"
         [isRounded]="true"
-        (mapLoaded)="onMapLoaded($event)"/>
-        <div class="location__search">
-            <app-places-autocomplete (locationSelected)="onLocationSelected($event)"/>
-        </div>
+        (mapLoaded)="onMapLoaded($event)" />
+    <div class="location__search">
+        <app-places-autocomplete (locationSelected)="onLocationSelected($event)" />
+    </div>
+    <div *ngIf="selectedLocation" class="location__confirm">
+        <app-primary-button
+            [fullWidth]="true"
+            (click)="onConfirmLocation()">
+            Confirm Location
+        </app-primary-button>
+    </div>
 </div>
