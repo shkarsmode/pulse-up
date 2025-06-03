@@ -7,6 +7,7 @@ import { pictureValidator } from "../../helpers/validators/picture.validator";
 import { asyncValidator } from "../../helpers/validators/async.validator";
 import { noConsecutiveNewlinesValidator } from "../../helpers/validators/no-consecutive-new-lines.validator";
 import { arrayLengthValidator } from "../../helpers/validators/array-length-validator";
+import { TopicLocation } from "@/app/features/user/interfaces/topic-location.interface";
 
 @Injectable({
     providedIn: "root",
@@ -48,12 +49,27 @@ export class SendTopicService {
             category: ["", Validators.required],
             keywords: [[], [Validators.required, arrayLengthValidator(1, 3)]],
             picture: [""],
+            location: this.formBuilder.group({
+                country: [""],
+                state: [""],
+                city: [""],
+            }),
         });
 
         this.userForm = this.formBuilder.group({
             name: ["", Validators.required],
             phone: ["", Validators.required],
             email: ["", [Validators.required, Validators.email]],
+        });
+    }
+
+    public setTopicLocation(location: TopicLocation) {
+        this.currentTopic.patchValue({
+            location: {
+                country: location.country,
+                state: location.state,
+                city: location.city,
+            },
         });
     }
 
