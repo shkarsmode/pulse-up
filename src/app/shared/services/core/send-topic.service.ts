@@ -1,36 +1,59 @@
-import { inject, Injectable } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
-import { first } from 'rxjs';
-import { PulseService } from '../api/pulse.service';
+import { inject, Injectable } from "@angular/core";
+import { FormBuilder, FormGroup, Validators } from "@angular/forms";
+import { Router } from "@angular/router";
+import { first } from "rxjs";
+import { PulseService } from "../api/pulse.service";
+import { pictureValidator } from "../../helpers/validators/picture.validator";
+import { asyncValidator } from "../../helpers/validators/async.validator";
+import { noConsecutiveNewlinesValidator } from "../../helpers/validators/no-consecutive-new-lines.validator";
+import { arrayLengthValidator } from "../../helpers/validators/array-length-validator";
 
 @Injectable({
-    providedIn: 'root',
+    providedIn: "root",
 })
 export class SendTopicService {
     public currentTopic: FormGroup;
     public userForm: FormGroup;
     public resultId: string;
 
-    private formBuilder: FormBuilder = inject(FormBuilder);
-
     private readonly router: Router = inject(Router);
+    private readonly formBuilder: FormBuilder = inject(FormBuilder);
     private readonly pulseService: PulseService = inject(PulseService);
 
     constructor() {
         this.currentTopic = this.formBuilder.group({
-            icon: ['', Validators.required],
-            headline: ['', Validators.required],
-            description: ['', Validators.required],
-            category: ['', Validators.required],
-            keywords: ['', Validators.required],
-            picture: [''],
+            icon: ["", [Validators.required, pictureValidator()]],
+            headline: [
+                "",
+                [Validators.required, Validators.minLength(6), Validators.maxLength(60)],
+                [
+                    asyncValidator({
+                        validationFn: this.pulseService.validateTitle.bind(this.pulseService),
+                        error: {
+                            notUnique:
+                                "A topic with this name already exists. Please choose a different name.",
+                        },
+                    }),
+                ],
+            ],
+            description: [
+                "",
+                [
+                    Validators.required,
+                    Validators.minLength(150),
+                    Validators.maxLength(600),
+                    noConsecutiveNewlinesValidator(),
+                ],
+            ],
+            category: ["", Validators.required],
+            keywords: [[], [Validators.required, arrayLengthValidator(1, 3)]],
+            picture: [""],
         });
 
         this.userForm = this.formBuilder.group({
-            name: ['', Validators.required],
-            phone: ['', Validators.required],
-            email: ['', [Validators.required, Validators.email]],
+            name: ["", Validators.required],
+            phone: ["", Validators.required],
+            email: ["", [Validators.required, Validators.email]],
         });
     }
 
@@ -52,9 +75,9 @@ export class SendTopicService {
                 email: this.userForm.value.email,
             },
             location: {
-                country: 'Test country',
-                state: 'Test state',
-                city: 'Test city',
+                country: "Test country",
+                state: "Test state",
+                city: "Test city",
             },
         };
 
@@ -66,15 +89,15 @@ export class SendTopicService {
 
                 this.userForm.reset();
                 this.currentTopic.reset();
-                this.router.navigateByUrl('user/topic/submitted');
+                this.router.navigateByUrl("user/topic/submitted");
             });
     }
 
     public get topicsArrayKeywords(): Array<string> {
-        const keywords = this.currentTopic.get('keywords')?.value;
-        if (typeof keywords === 'object') return keywords;
-        
-        const keywordsString = keywords || '';
+        const keywords = this.currentTopic.get("keywords")?.value;
+        if (typeof keywords === "object") return keywords;
+
+        const keywordsString = keywords || "";
         const keywordsArray = keywordsString
             .split(/[,;]+/)
             .map((keyword: string) => keyword.trim())

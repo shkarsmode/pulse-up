@@ -1,17 +1,20 @@
-<div
-    class="chips-input-wrapper">
-    <label for="chips-input">Keywords <span class="limit">({{ chips.length }}/{{ limit }})</span></label>
-    <div class="chips-container">
+<div class="chips-input-wrapper">
+    <label for="chips-input">
+        Keywords <span class="limit">{{ chips.length }}/{{ limit }}</span>
+    </label>
+    <div
+        class="chips-container"
+        [class.chips-container--error]="hasErrorClass">
         @for (chip of chips; track chip; let i = $index ) {
-            <span class="chip">
-                {{ chip }}
-                <button
-                    type="button"
-                    aria-label="Remove tag"
-                    (click)="removeChip(i)">
-                    <svg-icon src="assets/svg/close.svg" />
-                </button>
-            </span>
+        <span class="chip">
+            {{ chip }}
+            <button
+                type="button"
+                aria-label="Remove tag"
+                (click)="removeChip(i)">
+                <svg-icon src="assets/svg/close.svg" />
+            </button>
+        </span>
         }
         <input
             id="chips-input"
@@ -21,7 +24,6 @@
             [hidden]="chips.length === limit"
             (keydown)="addChip($event)"
             maxlength="40"
-            [placeholder]="chips.length === limit ? '' : 'Add a tag...'"
-        />
+            [placeholder]="chips.length === limit ? '' : 'Add a tag...'" />
     </div>
 </div>

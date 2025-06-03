@@ -7,7 +7,6 @@ export function pictureValidator(): ValidatorFn {
 
     if (!file) return null; // Allow null (no file yet)
 
-    const validTypes = ['image/png', 'image/jpeg'];
     const validExtensions = ['.png', '.jpeg', '.jpg'];
     const maxSizeInBytes = 10 * 1024 * 1024; // 10 MB
 

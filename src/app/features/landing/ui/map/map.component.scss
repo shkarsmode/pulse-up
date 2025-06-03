@@ -43,9 +43,13 @@
     width: 100%;
     overflow: hidden;
     cursor: grab;
-}
-.map-container_rounded {
-    border-radius: 20px;
+
+    &.map-container_rounded {
+        border-radius: 20px;
+    }
+    &.map-container_preview {
+        cursor: auto;
+    }
 }
 
 ::ng-deep .mapboxgl-control-container {

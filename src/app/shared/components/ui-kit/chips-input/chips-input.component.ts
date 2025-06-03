@@ -23,6 +23,7 @@ import { SvgIconComponent } from 'angular-svg-icon';
 })
 export class ChipsInputComponent implements ControlValueAccessor {
     @Input() limit: number = 5;
+    @Input() hasErrorClass: boolean = false;
 
     chips: string[] = [];
     inputValue: string = '';

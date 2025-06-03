@@ -15,7 +15,7 @@ import { Component } from '@angular/core';
             border-radius: 20px;
             margin: 0 auto;
             background: linear-gradient(267.31deg, rgba(119, 0, 238, 0.04) 1.01%, rgba(119, 0, 238, 0.04) 99.02%);
-            padding: 0 24px;
+            // padding: 0 24px;
         }
 
         @media screen and (max-width: 500px) {

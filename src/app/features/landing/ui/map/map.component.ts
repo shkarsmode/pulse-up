@@ -64,6 +64,7 @@ export class MapComponent implements OnInit {
 
     @Input() public pulseId: number;
     @Input() public isPreview: boolean = false;
+    @Input() public isToShowMarkers: boolean = true;
     @Input() public isToShowHeatmap: boolean = true;
     @Input() public isToShowTooltip: boolean = false;
     @Input() public isHideDebugger: boolean = false;
@@ -151,8 +152,8 @@ export class MapComponent implements OnInit {
     get heatmapIntensity() {
         return this.heatmapLayerService.intensity;
     }
-    get isToShowMarkers() {
-        return !this.pulseId;
+    get isMarkersVisible() {
+        return this.isToShowMarkers !== undefined ? this.isToShowMarkers : !this.pulseId;
     }
     get currentHeatmapDepth() {
         return this.pulseService.currentHeatmapDepth;

@@ -33,8 +33,12 @@ select {
         font-size: 16px;
     }
 
-    &::active+svg-icon {
+    &:active+svg-icon {
         rotate: 180deg;
+    }
+
+    &.app-ui-input--error {
+        border-color: var(--error-color);
     }
 }
 

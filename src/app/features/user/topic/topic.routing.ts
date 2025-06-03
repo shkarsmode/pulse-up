@@ -7,6 +7,7 @@ import { SuggestComponent } from './suggest/suggest.component';
 import { TopicComponent } from './topic.component';
 import { PrivatePageGuard } from '@/app/shared/helpers/guards/private-page.guard';
 import { SuggestGuard } from '../guards/suggest.guard';
+import { PickLocationComponent } from './pick-location/pick-location.component';
 import { HowItWorksGuard } from '../guards/how-it-works.guard';
 
 const routes: Routes = [
@@ -33,6 +34,11 @@ const routes: Routes = [
             {
                 path: 'submitted',
                 component: SubmittedComponent,
+                canActivate: [PrivatePageGuard]
+            },
+            {
+                path: 'pick-location',
+                component: PickLocationComponent,
                 canActivate: [PrivatePageGuard]
             },
         ],

@@ -12,6 +12,9 @@ export const API_URL: InjectionToken<string> = new InjectionToken(
     'apiUrl'
 );
 
+export const GEOCODE_API_URL: InjectionToken<string> = new InjectionToken(
+    'geocodeApiUrl'
+);
 
 export const FIREBASE_CONFIG: InjectionToken<IFirebaseConfig> = new InjectionToken(
     'fireBaseConfig'

@@ -1,4 +1,4 @@
-<label for="picture">Profile picture</label>
+<label [htmlFor]="id">{{ label }}</label>
 <div class="placeholder">
     <input
         #customIcon
@@ -17,7 +17,7 @@
             alt="Selected Image" />
         <img
             *ngIf="!selectedPicture"
-            src="assets/svg/plus.svg"
+            src="assets/svg/plus-placeholder.svg"
             width="98"
             height="98"
             alt="plus" />

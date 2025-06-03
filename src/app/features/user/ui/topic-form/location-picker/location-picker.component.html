@@ -1,0 +1,14 @@
+<div class="location">
+    <div class="location__header">
+        <label for="location">Set your topic’s starting location</label>
+        <app-topic-info [text]="tooltipText" />
+    </div>
+    <p class="location__text">
+        Your topic will appear here first. As the creator, your pulse will auto-renew daily for 7
+        days, keeping it on the map while others discover and spread it.
+    </p>
+    <a [routerLink]="pickLicationAppRoute" class="location__link">
+        <span>Dana Point, California, USA</span>
+        <svg-icon src="assets/svg/starting-location.svg"/>
+    </a>
+</div>

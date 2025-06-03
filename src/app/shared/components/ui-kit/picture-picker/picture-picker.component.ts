@@ -1,18 +1,18 @@
 import { CommonModule } from '@angular/common';
 import { Component, Input } from '@angular/core';
 import { AbstractControl } from '@angular/forms';
-import { SvgIconComponent } from 'angular-svg-icon';
 
 @Component({
   selector: 'app-picture-picker',
   standalone: true,
-  imports: [CommonModule, SvgIconComponent],
+  imports: [CommonModule],
   templateUrl: './picture-picker.component.html',
   styleUrl: './picture-picker.component.scss'
 })
 export class PicturePickerComponent {
   @Input() public id: string = '';
   @Input() public name: string = '';
+  @Input() public label: string = '';
   @Input() public previewUrl: string = '';
   @Input() public control: AbstractControl<File | null, any> | null = null;
 

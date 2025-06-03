@@ -1,0 +1,95 @@
+@use '../../../../../styles/mixins'as *;
+
+form {
+    width: 100%;
+    position: relative;
+    transition: all .3s;
+
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+}
+
+.wrap-inputs {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+
+.group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    width: 100%;
+
+    position: relative;
+}
+
+.group__error {
+    @include text-14px;
+    color: var(--error-color);
+}
+
+label {
+    @include text-16px;
+    color: var(--dark-grey-color);
+
+
+    display: inline-block;
+    cursor: pointer;
+    user-select: none;
+}
+
+
+
+.keys {
+    display: flex;
+    height: 16px;
+    gap: 5px;
+
+    span {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        border-radius: 20px;
+        padding: 3px 8px;
+        font-size: 12px;
+
+        color: #fff;
+        background-color: var(--accent-color);
+    }
+}
+
+.has-error {
+    border-color: var(--error-color);
+}
+
+.icon-group {
+    display: flex;
+    column-gap: 20px;
+
+    @include media-2xs {
+        flex-direction: column;
+        row-gap: 8px;
+    }
+}
+
+.icon-group__text {
+    @include text-14px;
+    color: var(--dark-grey-color);
+    padding-top: 30px;
+
+
+    @include media-2xs {
+        padding-top: 0;
+    }
+}
+
+.group__info {
+    position: absolute;
+    top: 0px;
+    right: 0;
+}
