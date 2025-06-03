@@ -1,6 +1,7 @@
 export const environment = {
     production: true,
     apiUrl: 'https://app-pulseapi-prod-bxdye7b9b2fdc0b5.eastus2-01.azurewebsites.net',
+    geocodeApiUrl: 'https://api.mapbox.com/search/geocode/v6',
     mapboxToken:
         'pk.eyJ1IjoibmF2ZWVuZ29wdWxzZSIsImEiOiJjbTFxb2YyYzIwMjc3MmtvbXRob20yNGY2In0.7Eyobg6zrbOwPXMmW6BAMA',
     mapStyleUrl:

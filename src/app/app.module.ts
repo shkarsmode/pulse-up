@@ -16,6 +16,7 @@ import { ErrorInterceptor } from "./shared/helpers/interceptors/error.intercepto
 import { MaterialModule } from "./shared/modules/material.module";
 import {
     API_URL,
+    GEOCODE_API_URL,
     FIREBASE_CONFIG,
     MAPBOX_ACCESS_TOKEN,
     MAPBOX_STYLE,
@@ -45,6 +46,10 @@ import { JwtInterceptor } from "./shared/helpers/interceptors/jwt.interceptor";
         {
             provide: API_URL,
             useValue: environment.apiUrl,
+        },
+        {
+            provide: GEOCODE_API_URL,
+            useValue: environment.geocodeApiUrl,
         },
         {
             provide: MAPBOX_ACCESS_TOKEN,

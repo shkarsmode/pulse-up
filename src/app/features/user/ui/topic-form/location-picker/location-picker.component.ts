@@ -3,6 +3,7 @@ import { TopicInfoComponent } from "../topic-info/topic-info.component";
 import { tooltipText } from '../../../constants/tooltip-text';
 import { RouterModule } from '@angular/router';
 import { SvgIconComponent } from 'angular-svg-icon';
+import { AppRoutes } from '@/app/shared/enums/app-routes.enum';
 
 @Component({
   selector: 'app-location-picker',
@@ -13,4 +14,5 @@ import { SvgIconComponent } from 'angular-svg-icon';
 })
 export class LocationPickerComponent {
   public tooltipText = tooltipText.location
+  public pickLicationAppRoute = `/${AppRoutes.User.Topic.PICK_LOCATION}`
 }

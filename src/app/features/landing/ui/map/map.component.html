@@ -1,6 +1,7 @@
 <mgl-map
     class="map-container"
     [class.map-container_rounded]="isRounded"
+    [class.map-container_preview]="isPreview"
     [style]="mapStylesUrl"
     [center]="center"
     [interactive]="!isPreview"
@@ -21,7 +22,7 @@
     (touchStart)="handleTouchStart()"
     (styleData)="onStyleData($event)">
 
-    @if (isToShowMarkers) {
+    @if (isMarkersVisible) {
         @for (marker of markers; track marker.h3Index) { 
         
             <app-map-marker

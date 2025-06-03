@@ -1,0 +1,18 @@
+<div class="location">
+    <app-map
+        [isHideDebugger]="true"
+        [isSearch]="false"
+        [isLocationName]="false"
+        [isZoomButton]="false"
+        [isToShowTooltip]="false"
+        [isToShowMarkers]="false"
+        [isToShowHeatmap]="false"
+        [isPreview]="true"
+        [zoom]="[2.8]"
+        [minZoom]="2.8"
+        [isRounded]="true"
+        (mapLoaded)="onMapLoaded($event)"/>
+        <div class="location__search">
+            <app-places-autocomplete (locationSelected)="onLocationSelected($event)"/>
+        </div>
+</div>

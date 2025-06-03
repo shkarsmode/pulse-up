@@ -1,0 +1,49 @@
+<div class="places-autocomplete">
+    <div class="places-autocomplete__wrap">
+        <label
+            for="search"
+            class="visualy-hidden"
+            >Search city or address</label
+        >
+        <input
+            id="search"
+            name="search"
+            type="text"
+            autocomplete="off"
+            [formControl]="search"
+            placeholder="Search city or address"
+            class="places-autocomplete__input"
+            (focus)="onFocus()"
+            (blur)="onBlur()" />
+        <svg-icon
+            src="assets/svg/search.svg"
+            class="places-autocomplete__icon" />
+        <div class="places-autocomplete__right">
+            @if (loading) {
+            <app-spinner />
+            } @else if (clearButtonVisible) {
+            <button
+                class="places-autocomplete__clear"
+                (click)="clear()">
+                <svg-icon src="assets/svg/close.svg" />
+            </button>
+            }
+        </div>
+    </div>
+    @if (suggestionsVisible) {
+    <ul class="places-autocomplete__suggestions">
+        @for (suggestion of suggestions; track suggestion.id) {
+        <li
+            class="places-autocomplete__suggestion"
+            (mousedown)="selectSuggestion(suggestion)">
+            {{ suggestion.name }}
+        </li>
+        }
+    </ul>
+    }
+    <div
+        class="places-autocomplete__error"
+        *ngIf="search.invalid && (search.dirty || search.touched)">
+        <small *ngIf="search.hasError('pattern')">Only Latin letters are allowed.</small>
+    </div>
+</div>
