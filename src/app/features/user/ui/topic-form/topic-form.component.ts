@@ -36,9 +36,6 @@ export class TopicFormComponent {
         this.categoriesForForm = this.categories.map(
             (category) => category.name
         );
-        this.topicForm.valueChanges.subscribe((value) => {
-            console.log('Form value changed:', value);
-        });
         // this.setIconIfItExists();
     }
 
@@ -53,8 +50,6 @@ export class TopicFormComponent {
     }
 
     public onBlur(name: string) {
-        console.log(!!this.control('headline')?.invalid, !!this.control('headline')?.touched);
-        
         const control = this.topicForm.get(name);
         if (control) {
           control.markAsTouched();
@@ -101,7 +96,6 @@ export class TopicFormComponent {
         
         this.topicForm.markAllAsTouched();
         this.topicForm.updateValueAndValidity();
-        console.log({errors: this.topicForm.errors, value: this.topicForm.value});
         if (this.topicForm.valid) {
             this.router.navigateByUrl('user/topic/contact-info');
         }

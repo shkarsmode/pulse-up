@@ -35,12 +35,12 @@ export class H3LayerService {
         });
     }
 
-    public addH3PolygonsToMap({map, h3Indexes}: {map: mapboxgl.Map, h3Indexes: string[]}): void {
+    public addH3PolygonsToMap({map, h3Indexes, sourceId}: {map: mapboxgl.Map, h3Indexes: string[], sourceId?: string}): void {
         const hexagons = h3Indexes.filter((h3Index) => !MapUtils.isHexagonCrossesAntimeridian(h3Index));
         const hexagonFeatures = hexagons.map((hex) => this.h3ToPolygonFeature(hex));
         MapUtils.setSourceData({
             map,
-            sourceId: this.sourceId,
+            sourceId: sourceId || this.sourceId,
             data: {
                 type: "FeatureCollection",
                 features: hexagonFeatures,

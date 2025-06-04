@@ -28,8 +28,11 @@ textarea {
         color: var(--dark-grey-color);
         font-size: 16px;
     }
-}
 
-.app-ui-textarea--error {
-    border-color: var(--error-color) !important;
+    &.app-ui-textarea--focus {
+        border-color: var(--accent-color) !important;
+    }
+    &.app-ui-textarea--error {
+        border-color: var(--error-color) !important;
+    }
 }
