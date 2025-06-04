@@ -1,0 +1,77 @@
+<div
+    class="pulse"
+    fadeIn
+    [childrenFadeIn]="true">
+    <div class="pulse__header">
+        <img
+            class="pulse__header-logo"
+            [src]="icon"
+            width="160"
+            height="160"
+            alt="pulse icon" />
+        <div class="pulse__header-title">
+            <h2>{{ title }}</h2>
+            <span>{{ name }}</span>
+        </div>
+    </div>
+
+    <div class="pulse__info">
+        <div class="pulse__info-description">
+            <div
+                class="pulse__info-description-text"
+                [class.pulse__info-description-text--read-more]="isReadMore"
+                #description
+                [innerHTML]="isReadMore ? longDescription : shortDescription"></div>
+            @if (!isReadMore) {
+            <div
+                class="pulse__info-description-read-more"
+                (click)="onReadMore()">
+                Read More
+            </div>
+            }
+        </div>
+        <div class="pulse__info-keywords">
+            @for (keyword of keywords; track keyword) {
+            <div>{{ keyword }}</div>
+            }
+        </div>
+        <div class="pulse__info-media">
+            <img
+                *ngIf="picture"
+                [src]="picture"
+                width="275"
+                height="180"
+                [alt]="title" />
+
+            <div class="pulse-map">
+                <p class="pulse-map__top-text">Your topic will appear here first</p>
+                <div class="pulse__info-media__map">
+                    <svg-icon
+                        [src]="'assets/svg/location-accent.svg'"
+                        class="pulse__info-media__map-marker" />
+                    <app-map
+                        [isHideDebugger]="true"
+                        [isToShowHeatmap]="true"
+                        [isToShowHeatmap]="false"
+                        [isToShowMarkers]="false"
+                        [isPreview]="true"
+                        [zoom]="[6]"
+                        [minZoom]="6"
+                        [center]="[customLocationCoordinates.lng, customLocationCoordinates.lat]" />
+                </div>
+                <p class="pulse-map__bottom-text">Auto-pulse from this location active for 7 days</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="pulse__submit">
+        <app-primary-button
+            size="large"
+            [fullWidth]="true"
+            [loading]="(isSubmitting | async) || false"
+            [disabled]="(isSubmitting | async) || false"
+            (handleClick)="onPublish()">
+            Publish
+        </app-primary-button>
+    </div>
+</div>

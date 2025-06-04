@@ -1,10 +1,11 @@
 import { HttpClient } from "@angular/common/http";
 import { inject, Injectable } from "@angular/core";
 import { catchError, first, map, Observable, of, tap } from "rxjs";
-import { IPulse, ISettings } from "../../interfaces";
+import { IPulse } from "../../interfaces";
 import { API_URL } from "../../tokens/tokens";
 import { ITopPulse } from "../../interfaces/top-pulse.interface";
 import { IValidateTopicTitleResponse } from "../../interfaces/validate-topic-title.response";
+import { ICategory } from "../../interfaces/category.interface";
 
 @Injectable({
     providedIn: "root",
@@ -13,6 +14,7 @@ export class PulseService {
     public latestAppVersionNumber: number;
     public currentHeatmapDepth: number = 3;
     public actualTopicsImageKeyMap: { [key: string]: string } = {};
+    public isJustCreatedTopic: boolean = false;
 
     private readonly apiUrl: string = inject(API_URL);
     private readonly http: HttpClient = inject(HttpClient);
@@ -54,15 +56,12 @@ export class PulseService {
             state?: string;
             city?: string;
         };
-        author: {
-            name: string;
-            phoneNumber: string;
-            email?: string;
-        };
-    }): Observable<{ requestId: string }> {
+    }): Observable<IPulse> {
         const formData = new FormData();
 
-        formData.append("Location.Country", params.location.country);
+        if (params.location.country) {
+            formData.append("Location.Country", params.location.country);
+        }
         if (params.location.state) {
             formData.append("Location.State", params.location.state);
         }
@@ -72,18 +71,15 @@ export class PulseService {
         if (params.picture) {
             formData.append("Picture", params.picture);
         }
-        formData.append("Author.Name", params.author.name);
-        formData.append("Author.PhoneNumber", params.author.phoneNumber);
-        if (params.author.email) {
-            formData.append("Author.Email", params.author.email);
-        }
         formData.append("Title", params.title);
         formData.append("Description", params.description);
         formData.append("Category", params.category);
-        formData.append("Keywords", params.keywords.join(","));
         formData.append("Icon", params.icon);
+        params.keywords.forEach((keyword, index) => {
+            formData.append(`Keywords[${index}]`, keyword);
+        });
 
-        return this.http.post<{ requestId: string }>(`${this.apiUrl}/topics/create`, formData);
+        return this.http.post<IPulse>(`${this.apiUrl}/topics/create`, formData);
     }
 
     public getById(id: string | number): Observable<IPulse> {
@@ -243,6 +239,24 @@ export class PulseService {
                     return of(false);
                 }),
                 map((result) => !!result),
+            );
+    }
+
+    public getCategories(): Observable<ICategory[]> {
+        return this.http.get<ICategory[]>(`${this.apiUrl}/topics/categories`);
+    }
+
+    public getShareKeyFromTitle(title: string): Observable<string> {
+        return this.http
+            .post<IValidateTopicTitleResponse>(`${this.apiUrl}/topics/validate`, {
+                title: title,
+            })
+            .pipe(
+                map((response) => response.shareKey),
+                catchError((error) => {
+                    console.error("Error fetching share key:", error);
+                    return of("");
+                }),
             );
     }
 }

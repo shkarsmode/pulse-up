@@ -11,7 +11,6 @@ import { InputComponent } from "../../shared/components/ui-kit/input/input.compo
 import { SelectComponent } from "../../shared/components/ui-kit/select/select.component";
 import { PulsePlaceholderComponent } from "./ui/pulse-placeholder/pulse-placeholder.component";
 import { TopicFormComponent } from "./ui/topic-form/topic-form.component";
-import { UserFormComponent } from "./ui/user-form/user-form.component";
 import { UserComponent } from "./user.component";
 import { UserRoutingModule } from "./user.routing";
 import { PicturePickerComponent } from "../../shared/components/ui-kit/picture-picker/picture-picker.component";
@@ -21,7 +20,7 @@ import { TopicInfoComponent } from "./ui/topic-form/topic-info/topic-info.compon
 import { LocationPickerComponent } from "./ui/topic-form/location-picker/location-picker.component";
 
 @NgModule({
-    declarations: [UserComponent, TopicFormComponent, UserFormComponent, PulsePlaceholderComponent],
+    declarations: [UserComponent, TopicFormComponent, PulsePlaceholderComponent],
     imports: [
     CommonModule,
     UserRoutingModule,
@@ -40,6 +39,6 @@ import { LocationPickerComponent } from "./ui/topic-form/location-picker/locatio
     TopicInfoComponent,
     LocationPickerComponent
 ],
-    exports: [TopicFormComponent, UserFormComponent, PulsePlaceholderComponent],
+    exports: [TopicFormComponent, PulsePlaceholderComponent],
 })
 export class UserModule {}

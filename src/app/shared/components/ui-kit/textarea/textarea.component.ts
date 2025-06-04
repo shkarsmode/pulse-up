@@ -16,7 +16,6 @@ import {
     FormsModule,
     NG_VALUE_ACCESSOR,
 } from '@angular/forms';
-import { BehaviorSubject } from 'rxjs';
 
 export const APP_UI_INPUT_ACCESSOR = {
     provide: NG_VALUE_ACCESSOR,

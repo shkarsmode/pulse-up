@@ -1,4 +1,4 @@
-import { Component, EventEmitter, inject, Output } from "@angular/core";
+import { Component, ElementRef, EventEmitter, inject, Output, ViewChild } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { FormControl, FormsModule, ReactiveFormsModule, Validators } from "@angular/forms";
 import { SvgIconComponent } from "angular-svg-icon";
@@ -23,6 +23,8 @@ interface Suggestion {
 })
 export class PlacesAutocompleteComponent {
     @Output() locationSelected = new EventEmitter<TopicLocation>();
+
+    @ViewChild("searchInput") searchInput!: ElementRef<HTMLInputElement>;
 
     private readonly geocodeService = inject(GeocodeService);
 
@@ -68,6 +70,7 @@ export class PlacesAutocompleteComponent {
     clear() {
         this.search.setValue("");
         this.features = [];
+        this.searchInput?.nativeElement.focus();
     }
 
     selectSuggestion(suggestion: Suggestion) {
@@ -104,7 +107,6 @@ export class PlacesAutocompleteComponent {
                 if (value && this.search.valid) {
                     this.geocodeService.getPlaces(value).subscribe({
                         next: (places) => {
-                            console.log(places);
                             this.features = places.features;
                             this.loading = false;
                         },

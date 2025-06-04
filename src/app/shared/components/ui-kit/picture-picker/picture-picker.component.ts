@@ -21,6 +21,7 @@ export class PicturePickerComponent {
 
   ngOnInit(): void {
     this.selectedPicture = this.previewUrl;
+    this.updateSelectedFile()
   }
 
   public deleteChosenPicture(): void {
@@ -45,8 +46,6 @@ export class PicturePickerComponent {
       reader.onload = () => {
         this.selectedPicture = reader.result;
         this.selectedTypeOfPicture = this.getSelectedTypeOfPicture();
-        console.log({ selectedPicture: this.selectedPicture, selectedTypeOfPicture: this.selectedTypeOfPicture });
-        
       };
       reader.readAsDataURL(file);
     }

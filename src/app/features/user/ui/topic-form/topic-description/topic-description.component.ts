@@ -1,4 +1,4 @@
-import { Component, ElementRef, EventEmitter, Input, Output, ViewChild } from "@angular/core";
+import { Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild } from "@angular/core";
 import { TextareaComponent } from "../../../../../shared/components/ui-kit/textarea/textarea.component";
 import { SvgIconComponent } from "angular-svg-icon";
 import { AbstractControl } from "@angular/forms";
@@ -11,7 +11,7 @@ import { CommonModule } from "@angular/common";
     templateUrl: "./topic-description.component.html",
     styleUrl: "./topic-description.component.scss",
 })
-export class TopicDescriptionComponent {
+export class TopicDescriptionComponent implements OnInit {
     @Input() public textControl: AbstractControl | null = null;
     @Input() public pictureControl: AbstractControl | null = null;
     @Output() public handleBlur: EventEmitter<any> = new EventEmitter();
@@ -28,6 +28,10 @@ export class TopicDescriptionComponent {
             !!(this.pictureControl?.touched && this.pictureControl?.invalid) ||
             !!(this.textControl?.touched && this.textControl?.invalid)
         );
+    }
+
+    ngOnInit(): void {
+        this.updateSelectedFile(this.pictureControl?.value || null);
     }
 
     public onFocus(): void {

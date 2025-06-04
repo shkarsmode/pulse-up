@@ -47,12 +47,14 @@
                 name="category"
                 label="Category"
                 formControlName="category"
-                [options]="categoriesForForm"
-                [info]="getCurrentTopicInfo()"
+                [options]="(categoriesForForm | async) || []"
                 [hasErrorClass]="!!control('category')?.invalid && !!control('category')?.touched"
                 (emitBlur)="onBlur('category')" />
             <div *ngIf="getErrorMessage('category') as error">
                 <span class="group__error">{{ error }}</span>
+            </div>
+            <div class="group__info">
+                <app-topic-info [text]="tooltipText.category" />
             </div>
         </div>
 
@@ -84,28 +86,7 @@
         </div>
 
         <app-location-picker />
-
-        <!-- <div class="group">
-            <label for="keywords">Keywords</label>
-            <app-input
-                tabindex="4"
-                type="text"
-                placeholder="Add up to 5 keywords"
-                id="keywords" name="keywords"
-                formControlName="keywords"
-                [hasErrorClass]="
-                    !!topicForm.get('keywords')?.invalid && !!topicForm.get('keywords')?.dirty
-                "/>
-                
-            <div class="keys">
-                @if (sendTopicService.topicsArrayKeywords.length) {
-                    @for (key of sendTopicService.topicsArrayKeywords; track key) {
-                        <span>{{ key }}</span>
-                    }
-                }
-            </div>
-        </div> -->
     </div>
 
-    <app-primary-button [fullWidth]="true" (handleClick)="onNextButtonClick()"> Next </app-primary-button>
+    <app-primary-button [fullWidth]="true" (handleClick)="onNextButtonClick()"> Preview </app-primary-button>
 </form>

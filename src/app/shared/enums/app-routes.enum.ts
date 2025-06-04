@@ -23,7 +23,7 @@ enum CommunityRoutes {
 export enum TopicRoutes {
     HOW_IT_WORKS = 'user/topic/how-it-works',
     SUGGEST = 'user/topic/suggest',
-    CONTACT_INFO = 'user/topic/contact-info',
+    PREVIEW = 'user/topic/preview',
     SUBMITTED = 'user/topic/submitted', // as idea /:status if respond fails we can show smth like error component 
     PICK_LOCATION = 'user/topic/pick-location',
 }
@@ -49,24 +49,5 @@ export const AppRoutes = {
     },
     'Profile': ProfileRoutes,
 }
-
-
-// export const UserRoutes = {
-//     USER: 'user',
-//     ProfileRoutes: {
-//         PROFILE: 'user/profile',
-//         PROFILE_STARTED: 'user/profile/started',
-//         PROFILE_SUPPORTED: 'user/profile/supported',
-//     },
-//     NewTopicRoutes: {
-//         NEW_TOPIC: 'user/-topic',
-//         HOW_IT_WORKS: 'user/new-topic/how-it-works',
-//         FORM: {
-//             SUGGEST_TOPIC: 'user/new-topic/form/suggest-topic',
-//             CONTACT_INFO: 'user/add-topic/form/contact-info',
-//             SUBMIT_SUCSESS: 'user/new-topic/form/submit-success', 
-//         }
-//     },
-// }
 
 

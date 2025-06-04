@@ -4,6 +4,7 @@ import { CommonModule } from "@angular/common";
 import { catchError, first, Observable, of } from "rxjs";
 import { SvgIconComponent } from "angular-svg-icon";
 import { AppRoutes } from "@/app/shared/enums/app-routes.enum";
+import { MatDialog } from "@angular/material/dialog";
 import { IPulse } from "@/app/shared/interfaces";
 import { PulseService } from "@/app/shared/services/api/pulse.service";
 import { MetadataService } from "@/app/shared/services/core/metadata.service";
@@ -21,6 +22,7 @@ import { SpinnerComponent } from "@/app/shared/components/ui-kit/spinner/spinner
 import { LoadImgPathDirective } from "@/app/shared/directives/load-img-path/load-img-path.directive";
 import { FlatButtonDirective } from "@/app/shared/components/ui-kit/buttons/flat-button/flat-button.directive";
 import { OpenGetAppPopupDirective } from "@/app/shared/components/popups/get-app-popup/open-get-app-popup.directive";
+import { TopicPublishedComponent } from "@/app/shared/components/popups/topic-published/topic-published.component";
 
 @Component({
     selector: "app-pulse-page",
@@ -57,6 +59,7 @@ export class PulsePageComponent implements OnInit {
     @ViewChild("description", { static: false })
     public description: ElementRef<HTMLDivElement>;
 
+    private dialog: MatDialog = inject(MatDialog);
     private readonly router: Router = inject(Router);
     private readonly route: ActivatedRoute = inject(ActivatedRoute);
     private readonly pulseService: PulseService = inject(PulseService);
@@ -65,6 +68,7 @@ export class PulsePageComponent implements OnInit {
 
     public ngOnInit(): void {
         this.initPulseUrlIdListener();
+        this.openJustCtreatedTipicPopup();
     }
 
     public onReadMore(): void {
@@ -156,5 +160,17 @@ export class PulsePageComponent implements OnInit {
 
         // If there's a match, return the first URL, otherwise return null
         return match ? match[0] : null;
+    }
+
+    private openJustCtreatedTipicPopup(): void {
+        if (this.pulseService.isJustCreatedTopic) {
+            setTimeout(() => {
+                this.dialog.open(TopicPublishedComponent, {
+                    width: "500px",
+                    panelClass: "custom-dialog-container",
+                    backdropClass: "custom-dialog-backdrop",
+                });
+            }, 1000);
+        }
     }
 }
