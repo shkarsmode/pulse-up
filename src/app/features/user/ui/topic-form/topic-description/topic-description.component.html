@@ -7,6 +7,7 @@
         id="description"
         name="description"
         label="Description"
+        [value]="textControl?.value || ''"
         formControlName="description"
         [hasErrorClass]="hasErrorClass"
         (emitFocus)="onFocus()"

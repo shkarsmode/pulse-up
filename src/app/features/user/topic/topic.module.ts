@@ -6,7 +6,6 @@ import { PrimaryButtonComponent } from "../../../shared/components/ui-kit/button
 import { SecondaryButtonComponent } from "../../../shared/components/ui-kit/buttons/secondary-button/secondary-button.component";
 import { SelectComponent } from "../../../shared/components/ui-kit/select/select.component";
 import { UserModule } from "../user.module";
-import { ContactInfoComponent } from "./contact-info/contact-info.component";
 import { HowItWorksComponent } from "./how-it-works/how-it-works.component";
 import { SubmittedComponent } from "./submitted/submitted.component";
 import { SuggestComponent } from "./suggest/suggest.component";
@@ -17,28 +16,31 @@ import { PickLocationComponent } from "./pick-location/pick-location.component";
 import { MapComponent } from "../../landing/ui/map/map.component";
 import { MglMapComponent } from "../../landing/ui/maps/mgl-map.component";
 import { PlacesAutocompleteComponent } from "../../../shared/components/places-autocomplete/places-autocomplete.component";
+import { TopicPreviewComponent } from './topic-preview/topic-preview.component';
+import { FadeInDirective } from "@/app/shared/animations/fade-in.directive";
 
 @NgModule({
     declarations: [
         TopicComponent,
         HowItWorksComponent,
         SubmittedComponent,
-        ContactInfoComponent,
         SuggestComponent,
         PickLocationComponent,
+        TopicPreviewComponent,
     ],
     imports: [
-    CommonModule,
-    TopicRoutingModule,
-    UserModule,
-    SelectComponent,
-    SvgIconComponent,
-    PrimaryButtonComponent,
-    SecondaryButtonComponent,
-    PicturePickerComponent,
-    MapComponent,
-    MglMapComponent,
-    PlacesAutocompleteComponent
-],
+        CommonModule,
+        TopicRoutingModule,
+        UserModule,
+        SelectComponent,
+        SvgIconComponent,
+        PrimaryButtonComponent,
+        SecondaryButtonComponent,
+        PicturePickerComponent,
+        MapComponent,
+        MglMapComponent,
+        PlacesAutocompleteComponent,
+        FadeInDirective,
+    ],
 })
 export class TopicModule {}

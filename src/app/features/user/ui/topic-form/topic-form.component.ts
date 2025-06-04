@@ -1,10 +1,11 @@
-import { Component, inject } from "@angular/core";
+import { Component, EventEmitter, inject, Output } from "@angular/core";
 import { FormGroup } from "@angular/forms";
-import { Router } from "@angular/router";
 import { AppRoutes } from "../../../../shared/enums/app-routes.enum";
 import { SendTopicService } from "../../../../shared/services/core/send-topic.service";
 import { ErrorMessageBuilder } from "../../helpers/error-message-builder";
 import { tooltipText } from "../../constants/tooltip-text";
+import { PulseService } from "@/app/shared/services/api/pulse.service";
+import { map, Observable } from "rxjs";
 
 interface Topic {
     name: string;
@@ -18,20 +19,25 @@ interface Topic {
     styleUrl: "./topic-form.component.scss",
 })
 export class TopicFormComponent {
+    @Output() public submit = new EventEmitter<void>();
+
+    public readonly pulseService: PulseService = inject(PulseService);
+    public readonly sendTopicService: SendTopicService = inject(SendTopicService);
+
     public routes = AppRoutes.User.Topic;
     public topicForm: FormGroup;
     public imageSrc: string | ArrayBuffer | null = null;
-    public categoriesForForm: Array<string>;
+    public categoriesForForm: Observable<string[]>;
     public categories: Topic[] = categories;
     public selectedIcon: string | ArrayBuffer | null;
     public tooltipText = tooltipText;
 
-    private readonly router: Router = inject(Router);
-    public readonly sendTopicService: SendTopicService = inject(SendTopicService);
 
     public ngOnInit(): void {
         this.topicForm = this.sendTopicService.currentTopic;
-        this.categoriesForForm = this.categories.map((category) => category.name);
+        this.categoriesForForm = this.pulseService.getCategories().pipe(
+            map(categories => categories.map(category => category.name))
+        );
     }
 
     public control(name: string) {
@@ -60,7 +66,8 @@ export class TopicFormComponent {
         this.topicForm.markAllAsTouched();
         this.topicForm.updateValueAndValidity();
         if (this.topicForm.valid) {
-            this.router.navigateByUrl("user/topic/contact-info");
+            this.submit.emit();
+            this.sendTopicService.markAsReadyForPreview();
         }
     }
 }
