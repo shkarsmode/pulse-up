@@ -21,9 +21,6 @@
         <ng-otp-input
             [formControl]="code"
             [config]="config" />
-        <div class="confirm__error">
-            <span *ngIf="errorMessage$ | async">{{ errorMessage$ | async }}</span>
-        </div>
     </div>
     @if (isVerifyingCode()) {
     <div class="consirm__loading-overlay">

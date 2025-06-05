@@ -62,5 +62,7 @@ export class LocalStorageService {
 export const LOCAL_STORAGE_KEYS = {
     changeEmail: 'change_email',
     verifyEmail: 'verify_email',
+    phoneNumberForChanging: 'phone_number_for_changing',
     personalInfoPopupShown: 'personal_info_popup_shown',
+    verificationId: 'verification_id',
 }

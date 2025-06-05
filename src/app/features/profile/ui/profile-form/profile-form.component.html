@@ -51,7 +51,7 @@
     </div>
     <div class="profile-form__field">
         <span class="profile-form__label">Phone number</span>
-        <a class="profile-form__link">{{ phoneNumber }}</a>
+        <a [routerLink]="chngePhoneNumberRoute" class="profile-form__link">{{ phoneNumber }}</a>
     </div>
     <div class="profile-form__field profile-form__field--textarea">
         <app-textarea

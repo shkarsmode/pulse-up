@@ -10,6 +10,7 @@ import { Component } from "@angular/core";
         </div>
 
         <app-footer />
+        <div id="recaptcha-container"></div>
     `,
     styles: `
         :host { 

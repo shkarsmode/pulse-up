@@ -30,6 +30,8 @@ export const formatFirebaseError = (error: any): string | null => {
       return "The verification code has expired. Please request a new code.";
     case "auth/session-expired":
       return "Session expired. Please sign in again.";
+    case "auth/account-exists-with-different-credential":
+      return "An account already exists with the same email or phone number.";
     default:
       return null;
   }

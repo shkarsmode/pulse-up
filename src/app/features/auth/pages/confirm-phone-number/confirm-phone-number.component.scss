@@ -26,13 +26,6 @@
     color: var(--dark-grey-color);
 }
 
-.confirm__error {
-    @include text-14px;
-    color: var(--error-color);
-    min-height: 32px;
-    text-align: center;
-}
-
 .consirm__loading-overlay {
     position: absolute;
     top: 0;

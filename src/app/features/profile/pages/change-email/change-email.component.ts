@@ -15,8 +15,8 @@ import { ProfileLayoutComponent } from "../../ui/profile-layout/profile-layout.c
 import { PrimaryButtonComponent } from "../../../../shared/components/ui-kit/buttons/primary-button/primary-button.component";
 import { ErrorMessageBuilder } from "../../helpers/error-message-builder";
 import { AppRoutes } from "@/app/shared/enums/app-routes.enum";
-import { RecentLoginRequiredError } from "../../helpers/change-email-error";
 import { SigninRequiredPopupComponent } from "@/app/shared/components/popups/signin-required-popup/signin-required-popup.component";
+import { AuthenticationError, AuthenticationErrorCode } from "@/app/shared/helpers/errors/authentication-error";
 
 @Component({
     selector: "app-change-email",
@@ -105,7 +105,7 @@ export class ChangeEmailComponent {
                 error: (error) => {
                     this.submitting = false;
 
-                    if (error instanceof RecentLoginRequiredError) {
+                    if (error instanceof AuthenticationError && error.code === AuthenticationErrorCode.REAUTHENTICATE) {
                         this.dialog.open(SigninRequiredPopupComponent, {
                             width: "500px",
                             panelClass: "custom-dialog-container",

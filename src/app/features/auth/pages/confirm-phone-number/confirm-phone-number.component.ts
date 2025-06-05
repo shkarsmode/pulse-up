@@ -1,13 +1,14 @@
 import { AfterViewInit, Component, inject, OnDestroy, OnInit, ViewChild } from "@angular/core";
 import { CommonModule } from "@angular/common";
+import { ActivatedRoute } from "@angular/router";
 import { ReactiveFormsModule } from "@angular/forms";
 import { Subscription } from "rxjs";
 import { NgOtpInputComponent, NgOtpInputModule } from "ng-otp-input";
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
 import { AuthLayoutComponent } from "../../ui/auth-layout/auth-layout.component";
 import { LinkButtonComponent } from "@/app/shared/components/ui-kit/buttons/link-button/link-button.component";
 import { LocalStorageService } from "@/app/shared/services/core/local-storage.service";
-import { ConfirmPhoneNumberService } from "../../services/confirm-phone-number.service";
+import { ConfirmPhoneNumberService } from "../../../../shared/services/core/confirm-phone-number.service";
 
 @Component({
     selector: "app-confirm-phone-number",
@@ -25,7 +26,9 @@ import { ConfirmPhoneNumberService } from "../../services/confirm-phone-number.s
     providers: [ConfirmPhoneNumberService],
 })
 export class ConfirmPhoneNumberComponent implements OnInit, AfterViewInit, OnDestroy {
-    private readonly confirmPhoneNumberService: ConfirmPhoneNumberService = inject(ConfirmPhoneNumberService);
+    private readonly confirmPhoneNumberService: ConfirmPhoneNumberService =
+        inject(ConfirmPhoneNumberService);
+    private readonly route: ActivatedRoute = inject(ActivatedRoute);
 
     @ViewChild(NgOtpInputComponent, { static: false }) ngOtpInput: NgOtpInputComponent;
     public cooldown = 0;
@@ -33,9 +36,9 @@ export class ConfirmPhoneNumberComponent implements OnInit, AfterViewInit, OnDes
     public config = this.confirmPhoneNumberService.otpInputConfig;
     public isVerifyingCode = this.confirmPhoneNumberService.isVerifyingCode;
     public isResendingCode = this.confirmPhoneNumberService.isResendingCode$.asObservable();
-    public errorMessage$ = this.confirmPhoneNumberService.errorMessage$;
     private savedPhoneNumber: string = LocalStorageService.get("phoneNumberForSignin") || "";
     private cooldownSub?: Subscription;
+    private mode: string;
 
     public get phoneNumber(): string {
         const value = this.savedPhoneNumber.toString();
@@ -61,10 +64,19 @@ export class ConfirmPhoneNumberComponent implements OnInit, AfterViewInit, OnDes
     }
 
     ngOnInit() {
+        this.route.queryParamMap.subscribe((params) => {
+            const mode = params.get("mode");
+            if (mode) {
+                this.mode = mode;
+                this.confirmPhoneNumberService.initialize({
+                    mode: this.mode,
+                });
+            }
+        });
         this.code.valueChanges.subscribe((value) => {
             this.confirmPhoneNumberService.onConfirmationCodeChange(value || "");
         });
-        this.cooldownSub = this.confirmPhoneNumberService.cooldown$.subscribe(seconds => {
+        this.cooldownSub = this.confirmPhoneNumberService.cooldown$.subscribe((seconds) => {
             this.cooldown = seconds;
         });
     }

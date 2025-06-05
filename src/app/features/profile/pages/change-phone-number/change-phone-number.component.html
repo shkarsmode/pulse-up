@@ -1,0 +1,37 @@
+<app-profile-layout title="Change phone number">
+    <form
+        class="change-phone-form phone-number-form"
+        [formGroup]="signInForm"
+        (ngSubmit)="onSubmit()">
+        <label
+            for="phone"
+            class="visualy-hidden">
+            Phone
+        </label>
+        <mat-form-field
+            appearance="outline"
+            class="change-phone-form__field">
+            <input
+                matInput
+                #telInput
+                required
+                type="tel"
+                id="phone"
+                name="phone"
+                inputmode="tel"
+                autocomplete="tel-national"
+                formControlName="phone"
+                [errorStateMatcher]="errorStateMatcher" 
+                class="change-phone-form__input"/>
+            <mat-error>Invalid phone number</mat-error>
+        </mat-form-field>
+        <app-primary-button
+            [fullWidth]="true"
+            size="large"
+            type="submit"
+            [loading]="(isLoading$ | async) || false"
+            [disabled]="disabled">
+            Continue
+        </app-primary-button>
+    </form>
+</app-profile-layout>

@@ -44,6 +44,7 @@ export class ProfileFormComponent {
   public phoneNumber: string | null = null;
   public email: string | null = null;
   public chngeEmailRoute = "/" + AppRoutes.Profile.CHANGE_EMAIL;
+  public chngePhoneNumberRoute = "/" + AppRoutes.Profile.CHANGE_PHONE_NUMBER;
 
   constructor() {
     this.form = this.fb.group({

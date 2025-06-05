@@ -1,47 +1,48 @@
-import { AfterViewInit, Component, inject, OnDestroy, ViewChild } from "@angular/core";
-import { Router, RouterLink } from "@angular/router";
-import { CommonModule } from "@angular/common";
-import { toSignal } from "@angular/core/rxjs-interop";
-import { MatInputModule } from "@angular/material/input";
-import { ErrorStateMatcher } from "@angular/material/core";
+import { Component, inject, ViewChild } from "@angular/core";
 import { FormGroup, ReactiveFormsModule } from "@angular/forms";
+import { Router } from "@angular/router";
+import { toSignal } from "@angular/core/rxjs-interop";
+import { ErrorStateMatcher } from "@angular/material/core";
+import { MatInputModule } from "@angular/material/input";
 import { MatFormFieldModule } from "@angular/material/form-field";
-import { SvgIconComponent } from "angular-svg-icon";
+import { SignInFormService } from "@/app/shared/services/core/sign-in-form.service";
 import { AppRoutes } from "@/app/shared/enums/app-routes.enum";
+import { ProfileLayoutComponent } from "../../ui/profile-layout/profile-layout.component";
+import { CommonModule } from "@angular/common";
 import { PrimaryButtonComponent } from "../../../../shared/components/ui-kit/buttons/primary-button/primary-button.component";
-import { SignInFormService } from "../../../../shared/services/core/sign-in-form.service";
-import { AuthLayoutComponent } from "../../ui/auth-layout/auth-layout.component";
-import { LinkButtonComponent } from "@/app/shared/components/ui-kit/buttons/link-button/link-button.component";
+import { AuthenticationService } from "@/app/shared/services/api/authentication.service";
 
 @Component({
-    selector: "app-sign-in",
+    selector: "app-change-phone-number",
     standalone: true,
     imports: [
         CommonModule,
-        RouterLink,
+        ReactiveFormsModule,
         MatInputModule,
         MatFormFieldModule,
-        ReactiveFormsModule,
-        SvgIconComponent,
+        ProfileLayoutComponent,
         PrimaryButtonComponent,
-        AuthLayoutComponent,
-        LinkButtonComponent,
     ],
     providers: [SignInFormService],
-    templateUrl: "./sign-in.component.html",
-    styleUrl: "./sign-in.component.scss",
+    templateUrl: "./change-phone-number.component.html",
+    styleUrl: "./change-phone-number.component.scss",
 })
-export class SignInComponent implements AfterViewInit, OnDestroy {
+export class ChangePhoneNumberComponent {
     private router: Router = inject(Router);
     private signInFormService: SignInFormService = inject(SignInFormService);
-    private readonly appRotes = AppRoutes;
+    private authenticationService: AuthenticationService = inject(AuthenticationService);
+    private appRotes = AppRoutes;
+    private initialValue = this.authenticationService.firebaseAuth.currentUser?.phoneNumber || "";
 
-    public readonly isLoading = toSignal(this.signInFormService.isSigninInProgress);
+    public isLoading$ = this.signInFormService.isChangingPhoneNumberInProgress.asObservable();
 
     @ViewChild("telInput") telInput: { nativeElement: HTMLInputElement };
 
     constructor() {
-        this.signInFormService.initialize();
+        this.signInFormService.initialize({
+            initialValue: this.initialValue,
+            mode: "changePhoneNumber",
+        });
     }
 
     public get signInForm(): FormGroup {
@@ -57,6 +58,13 @@ export class SignInComponent implements AfterViewInit, OnDestroy {
         return `/${this.appRotes.Community.PRIVACY}`;
     }
 
+    public get disabled(): boolean {
+        return (
+            this.signInFormService.control.value === this.initialValue ||
+            !!this.signInFormService.isChangingPhoneNumberInProgress.value
+        );
+    }
+
     ngAfterViewInit(): void {
         this.signInFormService.onViewInit(this.telInput.nativeElement);
     }
@@ -67,13 +75,5 @@ export class SignInComponent implements AfterViewInit, OnDestroy {
 
     public onSubmit() {
         return this.signInFormService.submit();
-    }
-
-    public onClickGuest() {
-        this.navigateToHomePage();
-    }
-
-    private navigateToHomePage(){
-        this.router.navigate([this.appRotes.Landing.HOME]);
     }
 }
