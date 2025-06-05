@@ -38,13 +38,17 @@ export class ProfileFormComponent {
   private authenticationService: AuthenticationService = inject(AuthenticationService);
 
   private isPicturePristine: boolean = true;
+  private emailPlaceholder: string = "Add an email to secure your account";
   public form: FormGroup;
   public submitting: boolean = false;
   public errorMessage: string | null = null;
   public phoneNumber: string | null = null;
-  public email: string | null = null;
+  public email: string = this.emailPlaceholder;
   public chngeEmailRoute = "/" + AppRoutes.Profile.CHANGE_EMAIL;
   public chngePhoneNumberRoute = "/" + AppRoutes.Profile.CHANGE_PHONE_NUMBER;
+  public classes = {
+    email: {}
+  };
 
   constructor() {
     this.form = this.fb.group({
@@ -54,7 +58,7 @@ export class ProfileFormComponent {
       profilePicture: null,
     });
     this.phoneNumber = this.authenticationService.firebaseAuth.currentUser?.phoneNumber || null;
-    this.email = this.authenticationService.firebaseAuth.currentUser?.email || null;
+    this.email = this.authenticationService.firebaseAuth.currentUser?.email || this.emailPlaceholder;
   }
 
   ngOnInit() {
@@ -86,13 +90,16 @@ export class ProfileFormComponent {
       ],
       profilePicture: [null, [pictureValidator()]]
     });
-
     this.form.valueChanges.subscribe((values) => {
       this.errorMessage = null;
     });
     this.form.get('profilePicture')?.valueChanges.subscribe((value) => {
       this.isPicturePristine = false;
     });
+    this.classes.email = {
+      "profile-form__link": true,
+      "profile-form__link--placeholder": this.email === this.emailPlaceholder,
+    }
   }
 
   public get previewUrl(): string {

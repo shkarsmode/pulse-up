@@ -47,7 +47,7 @@
     </div>
     <div class="profile-form__field">
         <span class="profile-form__label">Email</span>
-        <a [routerLink]="chngeEmailRoute" class="profile-form__link">{{ email }}</a>
+        <a [routerLink]="chngeEmailRoute" [ngClass]="classes.email">{{ email }}</a>
     </div>
     <div class="profile-form__field">
         <span class="profile-form__label">Phone number</span>

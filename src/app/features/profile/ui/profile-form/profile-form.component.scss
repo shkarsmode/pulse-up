@@ -33,4 +33,8 @@
     border: 1px solid var(--light-grey-color);
     border-radius: 10px;
     background-color: var(--white-color);
+
+    &.profile-form__link--placeholder {
+        color: var(--dark-grey-color);
+    }
 }
