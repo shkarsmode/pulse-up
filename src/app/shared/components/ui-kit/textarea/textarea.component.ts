@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+import { CommonModule } from "@angular/common";
 import {
     AfterViewInit,
     Component,
@@ -10,12 +10,8 @@ import {
     OnInit,
     Output,
     ViewChild,
-} from '@angular/core';
-import {
-    ControlValueAccessor,
-    FormsModule,
-    NG_VALUE_ACCESSOR,
-} from '@angular/forms';
+} from "@angular/core";
+import { ControlValueAccessor, FormsModule, NG_VALUE_ACCESSOR } from "@angular/forms";
 
 export const APP_UI_INPUT_ACCESSOR = {
     provide: NG_VALUE_ACCESSOR,
@@ -24,51 +20,49 @@ export const APP_UI_INPUT_ACCESSOR = {
 };
 
 @Component({
-    selector: 'app-textarea',
+    selector: "app-textarea",
     standalone: true,
     imports: [CommonModule, FormsModule],
     providers: [APP_UI_INPUT_ACCESSOR],
-    templateUrl: './textarea.component.html',
-    styleUrl: './textarea.component.scss',
+    templateUrl: "./textarea.component.html",
+    styleUrl: "./textarea.component.scss",
 })
-export class TextareaComponent
-    implements OnInit, AfterViewInit, ControlValueAccessor
-{
+export class TextareaComponent implements OnInit, AfterViewInit, ControlValueAccessor {
     @Input() public id: string;
     @Input() public name: string;
-    @Input() public label: string = '';
+    @Input() public label: string = "";
     @Input() public hasErrorClass: boolean;
-    @Input() public placeholder: string = '';
+    @Input() public placeholder: string = "";
     @Input() public required: boolean = false;
 
     @Output() public emitBlur: EventEmitter<any> = new EventEmitter();
     @Output() public emitFocus: EventEmitter<any> = new EventEmitter();
     @Output() public onInput: EventEmitter<any> = new EventEmitter();
 
-    @ViewChild('textareaRef', { static: true }) public textareaRef: ElementRef;
+    @ViewChild("textareaRef", { static: true }) public textareaRef: ElementRef;
 
     public isOnFocus: boolean;
 
-    private readonly TEXTAREA_IN_FOCUS_CLASS = 'app-ui-textarea--focus';
-    private readonly TEXTAREA_HAS_VALUE_CLASS = 'app-ui-textarea--has-value';
-    private _value = '';
+    private readonly TEXTAREA_IN_FOCUS_CLASS = "app-ui-textarea--focus";
+    private readonly TEXTAREA_HAS_VALUE_CLASS = "app-ui-textarea--has-value";
+    private _value = "";
 
     disabled: boolean;
     onTouched: () => void;
 
-    @HostBinding('attr.class')
+    @HostBinding("attr.class")
     private get classes() {
         return [
-            this.isOnFocus ? this.TEXTAREA_IN_FOCUS_CLASS : '',
-            this.value?.length ? this.TEXTAREA_HAS_VALUE_CLASS : '',
+            this.isOnFocus ? this.TEXTAREA_IN_FOCUS_CLASS : "",
+            this.value?.length ? this.TEXTAREA_HAS_VALUE_CLASS : "",
         ]
             .filter(Boolean)
-            .join(' ');
+            .join(" ");
     }
 
     @Input()
     set value(val: any) {
-        this._value = val ? val : '';
+        this._value = val ? val : "";
         this.onChange(this._value);
     }
 
@@ -79,6 +73,10 @@ export class TextareaComponent
     ngOnInit(): void {}
 
     ngAfterViewInit(): void {}
+
+    public get nativeElement(): HTMLTextAreaElement {
+        return this.textareaRef.nativeElement;
+    }
 
     public onChange(val: string) {}
 
