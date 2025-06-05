@@ -15,6 +15,33 @@
     <h3>Premium Perk:</h3>
     <p>Premium users get 30-day auto-pulse for extended reach</p>
     <div class="footer">
-        <app-primary-button [disabled]="true" (handleClick)="copyLink()"> Copy link </app-primary-button>
+        <div class="footer__button">
+            <app-primary-button
+                size="large"
+                [fullWidth]="true"
+                (handleClick)="copyLink()">
+                {{ copied ? "Link copied!" : "Copy link" }}
+            </app-primary-button>
+        </div>
+        <div class="footer__button">
+            <app-menu [content]="menuContent">
+                <app-primary-button
+                    size="large"
+                    [fullWidth]="true">
+                    Share
+                </app-primary-button>
+            </app-menu>
+        </div>
     </div>
 </div>
+
+<ng-template #menuContent>
+    <div class="pulse__socials">
+        <app-copy-button
+            link="{{ link }}"
+            (handleClick)="onCopySocialLink($event)" />
+        <app-socials-button [variant]="'facebook'" />
+        <app-socials-button [variant]="'x'" />
+        <app-socials-button [variant]="'email'" />
+    </div>
+</ng-template>

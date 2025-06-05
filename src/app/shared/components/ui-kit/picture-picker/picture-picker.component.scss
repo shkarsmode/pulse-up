@@ -33,6 +33,10 @@ label {
         height: 100%;
         cursor: pointer;
     }
+
+    &.placeholder--error {
+        border-color: var(--error-color);
+    }
 }
 
 .custom-icon {

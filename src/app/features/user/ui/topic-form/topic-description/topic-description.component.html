@@ -4,6 +4,7 @@
     [class.topic-description--focus]="isDescriptionFocused"
     [class.topic-description--error]="hasErrorClass">
     <app-textarea
+        #descriptionInput
         id="description"
         name="description"
         label="Description"
@@ -22,8 +23,7 @@
             height="370"
             alt="Selected Picture"
             class="description-pictures__preview" />
-        } 
-        @if (pictureControl.value?.name) {
+        } @if (pictureControl.value?.name) {
         <div
             class="description-picture"
             (click)="deleteChosenPicture()">
@@ -43,10 +43,17 @@
                 (click)="openInputForDescription('gif')"
                 src="assets/svg/form/gif.svg" />
             <svg-icon
-                [class.active]="selectedTypeOfPicture === 'smile'"
-                (click)="openInputForDescription('smile')"
+                [class.active]="showEmojiPicker"
+                (click)="toggleEmojiPicker()"
                 src="assets/svg/form/smile.svg" />
         </div>
+        <emoji-mart
+            class="emoji-mart"
+            [set]="'twitter'"
+            [showPreview]="false"
+            *ngIf="showEmojiPicker"
+            (emojiSelect)="addEmoji($event)"
+            title="Pick your emoji…"></emoji-mart>
     </div>
 
     <input

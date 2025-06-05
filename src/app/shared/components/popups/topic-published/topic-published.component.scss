@@ -68,3 +68,21 @@ ul {
         }
     }
 }
+
+.footer {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    column-gap: 16px;
+}
+
+.footer__button {
+    width: 100%;
+    max-width: 140px;
+}
+
+.pulse__socials {
+    display: flex;
+    column-gap: 12px;
+}

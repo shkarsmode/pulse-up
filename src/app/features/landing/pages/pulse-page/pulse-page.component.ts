@@ -169,6 +169,9 @@ export class PulsePageComponent implements OnInit {
                     width: "500px",
                     panelClass: "custom-dialog-container",
                     backdropClass: "custom-dialog-backdrop",
+                    data: {
+                        shareKey: this.pulse?.shareKey,
+                    },
                 });
             }, 1000);
         }
