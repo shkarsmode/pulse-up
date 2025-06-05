@@ -1,13 +1,22 @@
-import { Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild } from "@angular/core";
+import {
+    Component,
+    ElementRef,
+    EventEmitter,
+    Input,
+    OnInit,
+    Output,
+    ViewChild,
+} from "@angular/core";
+import { CommonModule } from "@angular/common";
+import { AbstractControl } from "@angular/forms";
+import { PickerComponent } from "@ctrl/ngx-emoji-mart";
 import { TextareaComponent } from "../../../../../shared/components/ui-kit/textarea/textarea.component";
 import { SvgIconComponent } from "angular-svg-icon";
-import { AbstractControl } from "@angular/forms";
-import { CommonModule } from "@angular/common";
 
 @Component({
     selector: "app-topic-description",
     standalone: true,
-    imports: [CommonModule, SvgIconComponent, TextareaComponent],
+    imports: [CommonModule, SvgIconComponent, PickerComponent, TextareaComponent],
     templateUrl: "./topic-description.component.html",
     styleUrl: "./topic-description.component.scss",
 })
@@ -17,11 +26,13 @@ export class TopicDescriptionComponent implements OnInit {
     @Output() public handleBlur: EventEmitter<any> = new EventEmitter();
     @Output() public handleFocus: EventEmitter<any> = new EventEmitter();
 
+    @ViewChild("descriptionInput", { static: false }) public descriptionInput: ElementRef;
     @ViewChild("descriptionPictures", { static: false }) public descriptionPictures: ElementRef;
 
     public isDescriptionFocused: boolean = false;
     public selectedPicture: string | ArrayBuffer | null;
     public selectedTypeOfPicture: "img" | "gif" | "smile" | "";
+    public showEmojiPicker = false;
 
     public get hasErrorClass(): boolean {
         return (
@@ -82,7 +93,18 @@ export class TopicDescriptionComponent implements OnInit {
     }
 
     public handleInput(event: Event): void {
-      this.textControl?.setValue((event.target as HTMLTextAreaElement).value);
+        this.textControl?.setValue((event.target as HTMLTextAreaElement).value);
+    }
+
+    public toggleEmojiPicker() {
+        this.showEmojiPicker = !this.showEmojiPicker;
+    }
+
+    public addEmoji(event: any) {
+        const emoji = event.emoji.native;
+        const currentValue = this.textControl?.value || "";
+        this.textControl?.setValue(currentValue + emoji);
+        this.descriptionInput.nativeElement.focus();
     }
 
     private getSelectedTypeOfPicture(): "img" | "gif" | "smile" {
