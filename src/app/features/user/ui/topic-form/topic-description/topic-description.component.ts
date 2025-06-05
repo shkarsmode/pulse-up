@@ -26,7 +26,7 @@ export class TopicDescriptionComponent implements OnInit {
     @Output() public handleBlur: EventEmitter<any> = new EventEmitter();
     @Output() public handleFocus: EventEmitter<any> = new EventEmitter();
 
-    @ViewChild("descriptionInput", { static: false }) public descriptionInput: ElementRef;
+    @ViewChild("descriptionInput") descriptionInput!: TextareaComponent;
     @ViewChild("descriptionPictures", { static: false }) public descriptionPictures: ElementRef;
 
     public isDescriptionFocused: boolean = false;
