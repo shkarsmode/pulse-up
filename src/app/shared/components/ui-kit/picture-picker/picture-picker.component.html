@@ -1,5 +1,7 @@
 <label [htmlFor]="id">{{ label }}</label>
-<div class="placeholder">
+<div
+    class="placeholder"
+    [class.placeholder--error]="invalid">
     <input
         #customIcon
         [id]="id"

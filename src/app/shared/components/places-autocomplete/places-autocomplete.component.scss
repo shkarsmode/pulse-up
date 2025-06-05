@@ -31,7 +31,15 @@
     transform: translateY(-50%);
 }
 .places-autocomplete__clear {
-    padding: 4px;
+    padding: 6px;
+    border-radius: 4px;
+    &:hover {
+        background-color: rgba($color: #000000, $alpha: 0.045);
+    }
+
+    svg-icon {
+        display: flex;
+    }
 }
 .places-autocomplete__error {
     @include text-14px;

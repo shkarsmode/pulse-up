@@ -68,6 +68,7 @@ export class MapComponent implements OnInit {
     @Input() public isToShowHeatmap: boolean = true;
     @Input() public isToShowTooltip: boolean = false;
     @Input() public isHideDebugger: boolean = false;
+    @Input() public isToShowWeights: boolean = true;
 
     @Input() public isSearch: boolean = false;
     @Input() public isZoomButton: boolean = false;

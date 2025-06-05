@@ -6,7 +6,8 @@
                     id="icon"
                     name="icon"
                     label="Icon"
-                    [control]="control('icon')" />
+                    [control]="control('icon')"
+                    [invalid]="!!control('icon')?.invalid && !!control('icon')?.touched" />
                 <p class="icon-group__text">
                     Choose an image that best represents your topic. <br />
                     Simple symbols, logos, or recognizable visuals work best. <br />

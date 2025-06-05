@@ -37,7 +37,7 @@
                 (visibilityChange)="onMarkerVisibilityChange($event)"/>
         
         }
-    } @else {
+    } @else if (isToShowWeights) {
         @for (weight of weights; track weight.h3Index) {
             <mgl-marker
                 [lngLat]="[weight.lng, weight.lat]"

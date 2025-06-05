@@ -15,6 +15,7 @@ export class PicturePickerComponent {
   @Input() public label: string = '';
   @Input() public previewUrl: string = '';
   @Input() public control: AbstractControl<File | null, any> | null = null;
+  @Input() public invalid: boolean = false;
 
   public selectedPicture: string | ArrayBuffer | null;
   public selectedTypeOfPicture: 'img' | 'gif' | 'smile' | '';
