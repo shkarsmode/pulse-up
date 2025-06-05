@@ -49,8 +49,8 @@ export class ConfirmPhoneNumberService {
         return this.countdown$.asObservable();
     }
 
-    public initialize({ mode = "signIn" }: { mode?: string } = {}) {
-        this.mode = mode as ServiceWorkMode;
+    public initialize({ mode = "signIn" }: { mode?: ServiceWorkMode } = {}) {
+        this.mode = mode;
     }
 
     public onAfterViewInit(ngOtpInput: NgOtpInputComponent) {

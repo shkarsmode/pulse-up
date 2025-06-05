@@ -19,6 +19,11 @@ export class SignInFormService {
     private readonly authenticationService: AuthenticationService = inject(AuthenticationService);
     private iti: Iti;
     private mode: ServiceWorkMode = "signIn";
+    private confirmPageUrls: Record<ServiceWorkMode, string> = {
+        signIn: AppRoutes.Auth.CONFIRM_PHONE_NUMBER,
+        changePhoneNumber: AppRoutes.Profile.CONFIRM_PHONE_NUMBER,
+    };
+    private confirmPageUrl: string = this.confirmPageUrls[this.mode];
     public isValid = true;
     public countryCodeChanged = false;
     public countryCode: string = "US";
@@ -26,7 +31,8 @@ export class SignInFormService {
     public errorStateMatcher: ErrorStateMatcher;
     public AppRoutes = AppRoutes;
     public isSigninInProgress = this.authenticationService.isSigninInProgress$;
-    public isChangingPhoneNumberInProgress = this.authenticationService.isChangePhoneNumberInProgress$;
+    public isChangingPhoneNumberInProgress =
+        this.authenticationService.isChangePhoneNumberInProgress$;
 
     constructor() {
         this.errorStateMatcher = new CustomErrorStateMatcher(() => this.isValid);
@@ -113,6 +119,7 @@ export class SignInFormService {
     }: { mode?: ServiceWorkMode; initialValue?: string } = {}) {
         this.form = this.createForm(initialValue);
         this.mode = mode;
+        this.confirmPageUrl = this.confirmPageUrls[this.mode];
     }
 
     public onFocus = () => {
@@ -209,9 +216,7 @@ export class SignInFormService {
 
     private navigateToConfirmPage() {
         const redirectUrl = this.getRedirectUrl();
-        const navigationUrl =
-            this.AppRoutes.Auth.CONFIRM_PHONE_NUMBER +
-            (redirectUrl ? `?redirect=${redirectUrl}` : "");
+        const navigationUrl = this.confirmPageUrl + (redirectUrl ? `?redirect=${redirectUrl}` : "");
         const params = new URLSearchParams({
             ...(redirectUrl && { redirect: redirectUrl }),
             mode: this.mode,

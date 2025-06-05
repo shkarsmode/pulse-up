@@ -33,6 +33,12 @@ const routes: Routes = [
                     import("./pages/change-phone-number/change-phone-number.component").then((m) => m.ChangePhoneNumberComponent),
                 canActivate: [PrivatePageGuard],
             },
+            {
+                path: AppRoutes.Profile.CONFIRM_PHONE_NUMBER,
+                loadComponent: () =>
+                    import("./pages/confirm-phone-number/confirm-phone-number.component").then((m) => m.ConfirmPhoneNumberComponent),
+                canActivate: [PrivatePageGuard],
+            },
         ],
     },
 ];
