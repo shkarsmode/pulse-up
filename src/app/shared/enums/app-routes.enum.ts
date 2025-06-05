@@ -33,6 +33,7 @@ enum ProfileRoutes {
     CHANGE_EMAIL = 'profile/change-email',
     VERIFY_EMAIL = 'profile/verify-email',
     CHANGE_PHONE_NUMBER = 'profile/change-phone-number',
+    CONFIRM_PHONE_NUMBER = 'profile/confirm-phone-number',
 }
 
 enum AuthRoutes {

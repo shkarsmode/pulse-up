@@ -4,10 +4,9 @@ import { ReactiveFormsModule } from "@angular/forms";
 import { Subscription } from "rxjs";
 import { NgOtpInputComponent, NgOtpInputModule } from "ng-otp-input";
 import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
-import { AuthLayoutComponent } from "../../ui/auth-layout/auth-layout.component";
-import { LinkButtonComponent } from "@/app/shared/components/ui-kit/buttons/link-button/link-button.component";
 import { LocalStorageService } from "@/app/shared/services/core/local-storage.service";
 import { ConfirmPhoneNumberService } from "@/app/shared/services/core/confirm-phone-number.service";
+import { LinkButtonComponent } from "../../../../shared/components/ui-kit/buttons/link-button/link-button.component";
 
 @Component({
     selector: "app-confirm-phone-number",
@@ -15,13 +14,12 @@ import { ConfirmPhoneNumberService } from "@/app/shared/services/core/confirm-ph
     styleUrl: "./confirm-phone-number.component.scss",
     standalone: true,
     imports: [
-        NgOtpInputModule,
-        CommonModule,
-        MatProgressSpinnerModule,
-        ReactiveFormsModule,
-        AuthLayoutComponent,
-        LinkButtonComponent,
-    ],
+    NgOtpInputModule,
+    CommonModule,
+    MatProgressSpinnerModule,
+    ReactiveFormsModule,
+    LinkButtonComponent
+],
     providers: [ConfirmPhoneNumberService],
 })
 export class ConfirmPhoneNumberComponent implements OnInit, AfterViewInit, OnDestroy {
@@ -63,7 +61,7 @@ export class ConfirmPhoneNumberComponent implements OnInit, AfterViewInit, OnDes
 
     ngOnInit() {
         this.confirmPhoneNumberService.initialize({
-            mode: "signIn",
+            mode: "changePhoneNumber",
         });
         this.code.valueChanges.subscribe((value) => {
             this.confirmPhoneNumberService.onConfirmationCodeChange(value || "");

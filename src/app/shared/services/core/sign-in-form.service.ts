@@ -1,37 +1,50 @@
 // phone-form.service.ts
-import { AppRoutes } from "@/app/shared/enums/app-routes.enum";
-import { AuthenticationService } from "@/app/shared/services/api/authentication.service";
 import { inject } from "@angular/core";
 import { FormBuilder, FormControl, FormGroup, FormGroupDirective, NgForm } from "@angular/forms";
 import { ErrorStateMatcher } from "@angular/material/core";
 import { Router } from "@angular/router";
 import intlTelInput, { Iti } from "intl-tel-input";
 import { CountryCode, isValidPhoneNumber, validatePhoneNumberLength } from "libphonenumber-js";
-import { BehaviorSubject, delay, fromEvent, map } from "rxjs";
+import { delay, fromEvent, map } from "rxjs";
+import { AppRoutes } from "@/app/shared/enums/app-routes.enum";
+import { AuthenticationService } from "@/app/shared/services/api/authentication.service";
+import { NotificationService } from "./notification.service";
+
+type ServiceWorkMode = "signIn" | "changePhoneNumber";
 
 export class SignInFormService {
     private readonly router: Router = inject(Router);
     private readonly formBuilder: FormBuilder = inject(FormBuilder);
+    private readonly notificationService: NotificationService = inject(NotificationService);
     private readonly authenticationService: AuthenticationService = inject(AuthenticationService);
     private iti: Iti;
-    private readonly signInError = new BehaviorSubject<string>("");
+    private mode: ServiceWorkMode = "signIn";
+    private confirmPageUrls: Record<ServiceWorkMode, string> = {
+        signIn: AppRoutes.Auth.CONFIRM_PHONE_NUMBER,
+        changePhoneNumber: AppRoutes.Profile.CONFIRM_PHONE_NUMBER,
+    };
+    private confirmPageUrl: string = this.confirmPageUrls[this.mode];
     public isValid = true;
     public countryCodeChanged = false;
     public countryCode: string = "US";
     public form: FormGroup;
     public errorStateMatcher: ErrorStateMatcher;
     public AppRoutes = AppRoutes;
-    public isLoading$ = this.authenticationService.isSigninInProgress$;
-    public signInError$ = this.signInError.asObservable();
+    public isSigninInProgress = this.authenticationService.isSigninInProgress$;
+    public isChangingPhoneNumberInProgress =
+        this.authenticationService.isChangePhoneNumberInProgress$;
 
     constructor() {
-        this.form = this.createForm();
         this.errorStateMatcher = new CustomErrorStateMatcher(() => this.isValid);
     }
 
-    private createForm(): FormGroup {
+    public get control(): FormControl {
+        return this.form.get("phone") as FormControl;
+    }
+
+    private createForm(initialValue: string = ""): FormGroup {
         return this.formBuilder.group({
-            phone: "",
+            phone: initialValue,
         });
     }
 
@@ -100,6 +113,15 @@ export class SignInFormService {
         return isValid;
     }
 
+    public initialize({
+        mode = "signIn",
+        initialValue,
+    }: { mode?: ServiceWorkMode; initialValue?: string } = {}) {
+        this.form = this.createForm(initialValue);
+        this.mode = mode;
+        this.confirmPageUrl = this.confirmPageUrls[this.mode];
+    }
+
     public onFocus = () => {
         const value = this.form.get("phone")?.value;
         if (!value) {
@@ -166,32 +188,50 @@ export class SignInFormService {
         this.validateNumber();
         if (!this.isValid) return;
         const phone = this.form.value.phone;
-        this.authenticationService.loginWithPhoneNumber(phone).subscribe({
-            next: () => {
-                console.log("Verification code sent successfully");
-                this.navigateToConfirmPage();
-            },
-            error: (error) => {
-                console.log("Error sending verification code:", error);
-                this.signInError.next(error.message);
-            },
-        });
+
+        if (this.mode === "signIn") {
+            this.authenticationService.loginWithPhoneNumber(phone).subscribe({
+                next: () => {
+                    console.log("Verification code sent successfully");
+                    this.navigateToConfirmPage();
+                },
+                error: (error) => {
+                    console.log("Error sending verification code:", error);
+                    this.notificationService.error(error.message);
+                },
+            });
+        } else {
+            this.authenticationService.changePhoneNumber(phone).subscribe({
+                next: () => {
+                    console.log("Verification code sent successfully");
+                    this.navigateToConfirmPage();
+                },
+                error: (error) => {
+                    console.log("Error sending verification code:", error);
+                    this.notificationService.error(error.message);
+                },
+            });
+        }
     };
 
     private navigateToConfirmPage() {
         const redirectUrl = this.getRedirectUrl();
-        const navigationUrl = this.AppRoutes.Auth.CONFIRM_PHONE_NUMBER + (redirectUrl ? `?redirect=${redirectUrl}` : '');
-        this.router.navigateByUrl(navigationUrl);
+        const navigationUrl = this.confirmPageUrl + (redirectUrl ? `?redirect=${redirectUrl}` : "");
+        const params = new URLSearchParams({
+            ...(redirectUrl && { redirect: redirectUrl }),
+            mode: this.mode,
+        }).toString();
+        this.router.navigateByUrl(`${navigationUrl}?${params}`);
     }
 
     private getRedirectUrl(): string | null {
         const tree = this.router.parseUrl(this.router.url);
-        return tree.queryParams['redirect'] || null;
+        return tree.queryParams["redirect"] || null;
     }
 }
 
 class CustomErrorStateMatcher implements ErrorStateMatcher {
-    constructor(private isValidRef: () => boolean) { }
+    constructor(private isValidRef: () => boolean) {}
 
     isErrorState(control: FormControl | null, form: FormGroupDirective | NgForm | null): boolean {
         return !this.isValidRef();

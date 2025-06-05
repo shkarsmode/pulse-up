@@ -15,6 +15,8 @@ import {
     linkWithCredential,
     User,
     verifyBeforeUpdateEmail,
+    PhoneAuthProvider,
+    updatePhoneNumber,
 } from "firebase/auth";
 import { jwtDecode, JwtPayload } from "jwt-decode";
 import { BehaviorSubject, from, Observable, of, throwError } from "rxjs";
@@ -26,8 +28,11 @@ import { UserService } from "./user.service";
 import { AppConstants } from "../../constants";
 import { WindowService } from "../core/window.service";
 import { LOCAL_STORAGE_KEYS, LocalStorageService } from "../core/local-storage.service";
-import { formatFirebaseError } from "@/app/features/auth/utils/formatFirebaseError";
-import { RecentLoginRequiredError } from "@/app/features/profile/helpers/change-email-error";
+import { formatFirebaseError } from "../../helpers/formatFirebaseError";
+import {
+    AuthenticationErrorCode,
+    AuthenticationError,
+} from "../../helpers/errors/authentication-error";
 
 @Injectable({
     providedIn: "root",
@@ -44,6 +49,7 @@ export class AuthenticationService {
     public defaultHeaders = new HttpHeaders();
     public isSigninInProgress$: BehaviorSubject<boolean>;
     public isConfirmInProgress$: BehaviorSubject<boolean>;
+    public isChangePhoneNumberInProgress$: BehaviorSubject<boolean>;
     public isResendInProgress$: BehaviorSubject<boolean>;
 
     private anonymousUser$: BehaviorSubject<string | null>;
@@ -60,6 +66,7 @@ export class AuthenticationService {
         this.isSigninInProgress$ = new BehaviorSubject<boolean>(false);
         this.isConfirmInProgress$ = new BehaviorSubject<boolean>(false);
         this.isResendInProgress$ = new BehaviorSubject<boolean>(false);
+        this.isChangePhoneNumberInProgress$ = new BehaviorSubject<boolean>(false);
         this.windowRef = this.windowService.windowRef;
     }
 
@@ -100,7 +107,13 @@ export class AuthenticationService {
     public confirmVerificationCode(verificationCode: string): Observable<IProfile> {
         const confirmationResult = this.windowRef.confirmationResult;
         if (!confirmationResult) {
-            return throwError(() => new Error("Confirmation result is not available"));
+            return throwError(
+                () =>
+                    new AuthenticationError(
+                        "Confirmation result is not available",
+                        AuthenticationErrorCode.INVALID_CREDENTIALS,
+                    ),
+            );
         }
 
         return of(null).pipe(
@@ -121,7 +134,7 @@ export class AuthenticationService {
         const phoneNumber = LocalStorageService.get<string>("phoneNumberForSignin");
         if (!phoneNumber) {
             return throwError(
-                () => new Error("Failed to resend verification code. Please try again to login."),
+                () => new AuthenticationError("Failed to resend verification code. Please try again to login.", AuthenticationErrorCode.INVALID_CREDENTIALS),
             );
         }
         return of(null).pipe(
@@ -176,23 +189,23 @@ export class AuthenticationService {
 
         const email = LocalStorageService.get<string>(LOCAL_STORAGE_KEYS.verifyEmail);
         if (!email) {
-            return throwError(() => new Error("Email not found."));
+            return throwError(() => new AuthenticationError("Email not found.", AuthenticationErrorCode.INVALID_CREDENTIALS));
         }
 
         const user = this.firebaseAuth.currentUser;
         if (!user) {
-            return throwError(() => new Error("No authenticated user found."));
+            return throwError(() => new AuthenticationError("No authenticated user found.", AuthenticationErrorCode.INVALID_CREDENTIALS));
         }
 
         const credential = EmailAuthProvider.credentialWithLink(email, continueUrl);
 
         return from(linkWithCredential(user, credential)).pipe(
-            switchMap(() => from(user.reload())),
+            tap(() => user.reload()),
             switchMap(() => {
                 const updatedUser = this.firebaseAuth.currentUser;
                 if (!updatedUser) {
                     return throwError(
-                        () => new Error("Failed to update user after linking email."),
+                        () => new AuthenticationError("Failed to update user after linking email.", AuthenticationErrorCode.INVALID_CREDENTIALS),
                     );
                 }
                 return of(updatedUser);
@@ -206,7 +219,7 @@ export class AuthenticationService {
     public changeEmail = ({ email, continueUrl }: { email: string; continueUrl: string }) => {
         const user = this.firebaseAuth.currentUser;
         if (!user) {
-            return throwError(() => new Error("No authenticated user found."));
+            return throwError(() => new AuthenticationError("No authenticated user found.", AuthenticationErrorCode.INVALID_CREDENTIALS));
         }
         return from(
             verifyBeforeUpdateEmail(user, email, {
@@ -218,6 +231,76 @@ export class AuthenticationService {
                 LocalStorageService.set(LOCAL_STORAGE_KEYS.changeEmail, email);
             }),
             catchError(this.handleEmailChangingError),
+        );
+    };
+
+    public changePhoneNumber = (phoneNumber: string) => {
+        return of(null).pipe(
+            tap(() => this.isChangePhoneNumberInProgress$.next(true)),
+            switchMap(this.prepareRecaptcha),
+            switchMap(() => this.sendVerificationCodeToNewPhoneNumber(phoneNumber)),
+            tap((verificationId) => {
+                this.isChangePhoneNumberInProgress$.next(false);
+                LocalStorageService.set(LOCAL_STORAGE_KEYS.verificationId, verificationId);
+                LocalStorageService.set(LOCAL_STORAGE_KEYS.phoneNumberForChanging, phoneNumber);
+            }),
+            catchError(this.handleChangePhoneNumberError),
+        );
+    };
+
+    public confirmNewPhoneNumber = (verificationCode: string) => {
+        if (this.windowRef.recaptchaVerifier) {
+            this.windowRef.recaptchaVerifier?.clear();
+            this.windowRef.recaptchaVerifier = undefined;
+        }
+        const verificationId = LocalStorageService.get<string>(LOCAL_STORAGE_KEYS.verificationId);
+        if (!verificationId) {
+            console.log("Verification ID not found.");
+            return throwError(
+                () =>
+                    new AuthenticationError(
+                        "Failed to verify phone number. Please try again.",
+                        AuthenticationErrorCode.INVALID_CREDENTIALS,
+                    ),
+            );
+        }
+
+        const phoneNumberForChanging = LocalStorageService.get<string>(
+            LOCAL_STORAGE_KEYS.phoneNumberForChanging,
+        );
+        if (!phoneNumberForChanging) {
+            console.log("Phone number for changing not found.");
+            return throwError(
+                () =>
+                    new AuthenticationError(
+                        "Failed to verify phone number. Please try again.",
+                        AuthenticationErrorCode.INVALID_CREDENTIALS,
+                    ),
+            );
+        }
+
+        const user = this.firebaseAuth.currentUser;
+        if (!user) {
+            console.log("No authenticated user found for changing phone number.");
+            return throwError(
+                () =>
+                    new AuthenticationError(
+                        "Failed to verify phone number. Please try again.",
+                        AuthenticationErrorCode.INVALID_CREDENTIALS,
+                    ),
+            );
+        }
+
+        const phoneCredential = PhoneAuthProvider.credential(verificationId, verificationCode);
+        return of(null).pipe(
+            tap(() => this.isConfirmInProgress$.next(true)),
+            switchMap(() => updatePhoneNumber(user, phoneCredential)),
+            tap(() => {
+                this.isConfirmInProgress$.next(false);
+                LocalStorageService.remove(LOCAL_STORAGE_KEYS.verificationId);
+                LocalStorageService.remove(LOCAL_STORAGE_KEYS.phoneNumberForChanging);
+            }),
+            catchError(this.handleConfirmNewPhoneNumberError),
         );
     };
 
@@ -236,7 +319,7 @@ export class AuthenticationService {
                 LocalStorageService.remove(LOCAL_STORAGE_KEYS.personalInfoPopupShown);
             }),
             catchError((error: any) => {
-                throw new Error(error.message);
+                throw new AuthenticationError(error.message, AuthenticationErrorCode.UNKNOWN_ERROR);
             }),
         );
     };
@@ -284,7 +367,11 @@ export class AuthenticationService {
     ): Observable<boolean> => {
         if (!identityCheckResult)
             return throwError(
-                () => new Error("Provided phoner number cannot be used for registration"),
+                () =>
+                    new AuthenticationError(
+                        "Provided phoner number cannot be used for registration",
+                        AuthenticationErrorCode.INVALID_CREDENTIALS,
+                    ),
             );
         return of(true);
     };
@@ -307,7 +394,13 @@ export class AuthenticationService {
     private sendVerificationCode = (phoneNumber: string) => {
         const recaptchaVerifier = this.windowRef.recaptchaVerifier;
         if (!recaptchaVerifier) {
-            return throwError(() => new Error("Recaptcha verification failed. Please try again."));
+            return throwError(
+                () =>
+                    new AuthenticationError(
+                        "Recaptcha verification failed. Please try again.",
+                        AuthenticationErrorCode.INVALID_RECAPTCHA,
+                    ),
+            );
         }
         return from(signInWithPhoneNumber(this.firebaseAuth, phoneNumber, recaptchaVerifier)).pipe(
             map((confirmationResult) => {
@@ -332,11 +425,20 @@ export class AuthenticationService {
                 return this.identityService.createWithToken(token).pipe(
                     catchError(() => {
                         console.log("Error creating profile with token");
-                        return throwError(() => new Error("Failed to create profile with token"));
+                        return throwError(
+                            () =>
+                                new AuthenticationError(
+                                    "Failed to create profile. Please try again.",
+                                    AuthenticationErrorCode.INTERBAL_SERVER_ERROR,
+                                ),
+                        );
                     }),
                     map((newProfile) => {
                         if (!newProfile) {
-                            throw new Error("Failed to create profile with token");
+                            throw new AuthenticationError(
+                                "Failed to create profile. Please try again.",
+                                AuthenticationErrorCode.INTERBAL_SERVER_ERROR,
+                            );
                         }
                         return { ...newProfile, token };
                     }),
@@ -365,32 +467,80 @@ export class AuthenticationService {
         );
     };
 
+    private sendVerificationCodeToNewPhoneNumber = (phoneNumber: string) => {
+        const provider = new PhoneAuthProvider(this.firebaseAuth);
+        const applicationVerifier = this.windowRef.recaptchaVerifier;
+        if (!applicationVerifier) {
+            return throwError(
+                () =>
+                    new AuthenticationError(
+                        "Recaptcha verification failed. Please try again.",
+                        AuthenticationErrorCode.INVALID_RECAPTCHA,
+                    ),
+            );
+        }
+        return from(provider.verifyPhoneNumber(phoneNumber, applicationVerifier));
+    };
+
     private handleLoginWithPhoneNumberError = (error: any) => {
         console.log("Error sending verification code", error);
         LocalStorageService.remove("phoneNumberForSignin");
-        return throwError(() => error);
+
+        if (error instanceof AuthenticationError) throwError(() => error);
+
+        let errorMessage = "Failed to send verification code. Please try again.";
+        if (error instanceof FirebaseError) {
+            errorMessage = formatFirebaseError(error) || errorMessage;
+            return throwError(
+                () => new AuthenticationError(errorMessage, AuthenticationErrorCode.FIREBASE_ERROR),
+            );
+        }
+        return throwError(
+            () => new AuthenticationError(errorMessage, AuthenticationErrorCode.UNKNOWN_ERROR),
+        );
     };
 
     private handleConfirmCodeVerificationError = (error: any): Observable<never> => {
         console.error("Error verifying confirmation code", error);
         LocalStorageService.remove("phoneNumberForSignin");
-        return throwError(() => error);
+
+        if (error instanceof AuthenticationError) throwError(() => error);
+
+        let errorMessage = "Failed to verify confirmation code. Please try again.";
+        if (error instanceof FirebaseError) {
+            errorMessage = formatFirebaseError(error) || errorMessage;
+            return throwError(
+                () => new AuthenticationError(errorMessage, AuthenticationErrorCode.FIREBASE_ERROR),
+            );
+        }
+        return throwError(
+            () => new AuthenticationError(errorMessage, AuthenticationErrorCode.UNKNOWN_ERROR),
+        );
     };
 
     private handleEmailVerificationError = (error: any) => {
         console.error("Error verifying email", error);
         LocalStorageService.remove(LOCAL_STORAGE_KEYS.verifyEmail);
 
+        if (error instanceof AuthenticationError) throwError(() => error);
+
         let errorMessage = "Failed to verify email. Please try again.";
         if (error instanceof FirebaseError) {
             errorMessage = formatFirebaseError(error) || errorMessage;
+            return throwError(
+                () => new AuthenticationError(errorMessage, AuthenticationErrorCode.FIREBASE_ERROR),
+            );
         }
-        return throwError(() => new Error(errorMessage));
+        return throwError(
+            () => new AuthenticationError(errorMessage, AuthenticationErrorCode.UNKNOWN_ERROR),
+        );
     };
 
     private handleEmailChangingError = (error: any) => {
         console.error("Error changing email", error);
         LocalStorageService.remove(LOCAL_STORAGE_KEYS.changeEmail);
+
+        if (error instanceof AuthenticationError) throwError(() => error);
 
         let errorMessage = "Failed to change email. Please try again.";
         if (error instanceof FirebaseError) {
@@ -398,10 +548,80 @@ export class AuthenticationService {
                 error?.code === "auth/requires-recent-login" ||
                 error?.code === "auth/user-token-expired"
             ) {
-                return throwError(() => new RecentLoginRequiredError())
+                return throwError(
+                    () =>
+                        new AuthenticationError(
+                            "Please login again to change your email.",
+                            AuthenticationErrorCode.REAUTHENTICATE,
+                        ),
+                );
             }
             errorMessage = formatFirebaseError(error) || errorMessage;
+            return throwError(
+                () => new AuthenticationError(errorMessage, AuthenticationErrorCode.FIREBASE_ERROR),
+            );
         }
-        return throwError(() => new Error(errorMessage));
+        return throwError(
+            () => new AuthenticationError(errorMessage, AuthenticationErrorCode.UNKNOWN_ERROR),
+        );
+    };
+
+    private handleChangePhoneNumberError = (error: any) => {
+        console.log("Error sending verification code to a new phone number", error);
+        this.isChangePhoneNumberInProgress$.next(false);
+        LocalStorageService.remove(LOCAL_STORAGE_KEYS.verificationId);
+        LocalStorageService.remove(LOCAL_STORAGE_KEYS.phoneNumberForChanging);
+
+        if (error instanceof AuthenticationError) throwError(() => error);
+
+        let errorMessage = "Failed to send verification code. Please try again.";
+        if (error instanceof FirebaseError) {
+            if (
+                error?.code === "auth/requires-recent-login" ||
+                error?.code === "auth/user-token-expired"
+            ) {
+                return throwError(
+                    () =>
+                        new AuthenticationError(
+                            "Please login again to change your phone number.",
+                            AuthenticationErrorCode.REAUTHENTICATE,
+                        ),
+                );
+            }
+            errorMessage = formatFirebaseError(error) || errorMessage;
+            return throwError(
+                () => new AuthenticationError(errorMessage, AuthenticationErrorCode.FIREBASE_ERROR),
+            );
+        }
+        return throwError(
+            () => new AuthenticationError(errorMessage, AuthenticationErrorCode.UNKNOWN_ERROR),
+        );
+    };
+
+    private handleConfirmNewPhoneNumberError = (error: any) => {
+        console.log("Error confirming new phone number", error);
+        this.isConfirmInProgress$.next(false);
+
+        if (error instanceof AuthenticationError) {
+            if (
+                error.code === AuthenticationErrorCode.REAUTHENTICATE ||
+                error.code === AuthenticationErrorCode.INVALID_CREDENTIALS
+            ) {
+                LocalStorageService.remove(LOCAL_STORAGE_KEYS.verificationId);
+                LocalStorageService.remove(LOCAL_STORAGE_KEYS.phoneNumberForChanging);
+            }
+            throwError(() => error);
+        }
+
+        let errorMessage = "Failed to confirm new phone number. Please try again.";
+        if (error instanceof FirebaseError) {
+            errorMessage = formatFirebaseError(error) || errorMessage;
+            return throwError(
+                () => new AuthenticationError(errorMessage, AuthenticationErrorCode.FIREBASE_ERROR),
+            );
+        }
+        return throwError(
+            () => new AuthenticationError(errorMessage, AuthenticationErrorCode.UNKNOWN_ERROR),
+        );
     };
 }

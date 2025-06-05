@@ -1,4 +1,4 @@
-<app-auth-layout>
+<div class="container">
     <div class="confirm">
         <h1 class="confirm__title">Verify phone</h1>
         <p class="confirm__text">
@@ -13,9 +13,9 @@
                 Resend Code
             </app-link-button>
             @if (isResendCodeHintVisible) {
-                <div class="confirm__resend-text">
-                    {{ resendCodeHint }}
-                </div>
+            <div class="confirm__resend-text">
+                {{ resendCodeHint }}
+            </div>
             }
         </div>
         <ng-otp-input
@@ -30,4 +30,4 @@
             class="consirm__spinner" />
     </div>
     }
-</app-auth-layout>
+</div>

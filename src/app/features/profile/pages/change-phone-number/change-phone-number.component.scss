@@ -1,0 +1,21 @@
+.change-phone-form {
+    width: 100%;
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    row-gap: 8px;
+}
+
+.change-phone-form__field {
+    position: relative;
+    z-index: 100;
+}
+
+.change-phone-form__input {
+    &:-webkit-autofill,
+    &:-webkit-autofill:hover,
+    &:-webkit-autofill:focus {
+        -webkit-box-shadow: 0 0 0px 1000px #FAF5FE inset;
+    }
+}
