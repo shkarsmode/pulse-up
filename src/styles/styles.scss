@@ -7,7 +7,7 @@
 @import url("./_uikit.scss");
 @import "mapbox-gl/dist/mapbox-gl.css";
 @import "@splidejs/splide/css";
-@import '@ctrl/ngx-emoji-mart/picker';
+@import "@ctrl/ngx-emoji-mart/picker";
 
 /* Reset styles */
 
@@ -186,4 +186,10 @@ div.otp-custom-container {
 .emoji-mart .emoji-mart {
     width: 100% !important;
     border-width: 0;
+}
+
+/* mat dialog */
+.cdk-overlay-pane.mat-mdc-dialog-panel {
+    overflow-y: auto;
+    overflow-x: hidden;
 }
