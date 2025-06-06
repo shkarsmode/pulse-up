@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { AbstractControl } from '@angular/forms';
 
 @Component({
@@ -13,43 +13,44 @@ export class PicturePickerComponent {
   @Input() public id: string = '';
   @Input() public name: string = '';
   @Input() public label: string = '';
+  @Input() public picture: File | null = null;
   @Input() public previewUrl: string = '';
-  @Input() public control: AbstractControl<File | null, any> | null = null;
   @Input() public invalid: boolean = false;
+
+  @Output() public pictureSelected = new EventEmitter<Event>();
+  @Output() public pictureDeleted = new EventEmitter<void>();
 
   public selectedPicture: string | ArrayBuffer | null;
   public selectedTypeOfPicture: 'img' | 'gif' | 'smile' | '';
 
   ngOnInit(): void {
     this.selectedPicture = this.previewUrl;
-    this.updateSelectedFile()
+    if (this.picture) {
+      this.updateSelectedFile(this.picture);
+    }
   }
 
   public deleteChosenPicture(): void {
-    this.control?.setValue(null);
     this.selectedTypeOfPicture = '';
     this.selectedPicture = '';
+    this.pictureSelected.emit();
   }
 
   public onFileSelected(event: Event): void {
     const file = (event.target as HTMLInputElement).files?.[0];
-
-    this.control?.setValue(file);
-    this.updateSelectedFile();
+    if (file) {
+      this.updateSelectedFile(file);
+      this.pictureSelected.emit(event);
+    }
   }
 
-  private updateSelectedFile(): void {
-    const file = this.control?.value;
-
-    if (file) {
-      const reader = new FileReader();
-
-      reader.onload = () => {
-        this.selectedPicture = reader.result;
-        this.selectedTypeOfPicture = this.getSelectedTypeOfPicture();
-      };
-      reader.readAsDataURL(file);
-    }
+  private updateSelectedFile(file: File): void {
+    const reader = new FileReader();
+    reader.onload = () => {
+      this.selectedPicture = reader.result;
+      this.selectedTypeOfPicture = this.getSelectedTypeOfPicture();
+    };
+    reader.readAsDataURL(file);
   }
 
   private getSelectedTypeOfPicture(): 'img' | 'gif' | 'smile' {

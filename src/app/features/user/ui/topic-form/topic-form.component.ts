@@ -6,6 +6,7 @@ import { ErrorMessageBuilder } from "../../helpers/error-message-builder";
 import { tooltipText } from "../../constants/tooltip-text";
 import { PulseService } from "@/app/shared/services/api/pulse.service";
 import { map, Observable } from "rxjs";
+import { MatDialog } from "@angular/material/dialog";
 
 interface Topic {
     name: string;
@@ -25,16 +26,14 @@ export class TopicFormComponent {
     public readonly sendTopicService: SendTopicService = inject(SendTopicService);
 
     public routes = AppRoutes.User.Topic;
-    public topicForm: FormGroup;
-    public imageSrc: string | ArrayBuffer | null = null;
+    public topicForm: FormGroup = this.sendTopicService.currentTopic;
+    public selectedIcon = this.sendTopicService.currentTopic.get("icon")?.value || null;
     public categoriesForForm: Observable<string[]>;
     public categories: Topic[] = categories;
-    public selectedIcon: string | ArrayBuffer | null;
     public tooltipText = tooltipText;
 
 
     public ngOnInit(): void {
-        this.topicForm = this.sendTopicService.currentTopic;
         this.categoriesForForm = this.pulseService.getCategories().pipe(
             map(categories => categories.map(category => category.name))
         );
@@ -55,6 +54,17 @@ export class TopicFormComponent {
         if (control) {
             control.markAsTouched();
         }
+    }
+
+    public onSelectIcon(event: Event): void {
+        const file = (event.target as HTMLInputElement).files?.[0];
+        if (file) {
+            this.topicForm.get("icon")?.setValue(file);
+        }
+    }
+
+    public onDeleteIcon(): void {
+        this.topicForm.get("icon")?.setValue(null);
     }
 
     public getCurrentTopicInfo(): { title: string; description: string } {

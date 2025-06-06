@@ -45,7 +45,7 @@ export class SendTopicService {
 
     constructor() {
         this.currentTopic = this.formBuilder.group({
-            icon: ["", [Validators.required, pictureValidator()]],
+            icon: [null, [Validators.required, pictureValidator()]],
             headline: [
                 "",
                 [Validators.required, Validators.minLength(6), Validators.maxLength(60)],

@@ -1,0 +1,13 @@
+<app-popup>
+    <app-popup-close-button (close)="closeDialog()" />
+    <app-popup-title>Crop image</app-popup-title>
+    <image-cropper
+        [imageChangedEvent]="imageChangedEvent"
+        [maintainAspectRatio]="true"
+        [aspectRatio]="4 / 3"
+        format="png"
+        (imageCropped)="imageCropped($event)"
+        (imageLoaded)="imageLoaded($event)"
+        (cropperReady)="cropperReady()"
+        (loadImageFailed)="loadImageFailed()"></image-cropper>
+</app-popup>

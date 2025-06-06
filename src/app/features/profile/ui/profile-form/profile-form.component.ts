@@ -44,6 +44,7 @@ export class ProfileFormComponent {
   public errorMessage: string | null = null;
   public phoneNumber: string | null = null;
   public email: string = this.emailPlaceholder;
+  public profilePicture: File | null = null;
   public chngeEmailRoute = "/" + AppRoutes.Profile.CHANGE_EMAIL;
   public chngePhoneNumberRoute = "/" + AppRoutes.Profile.CHANGE_PHONE_NUMBER;
   public classes = {
@@ -59,6 +60,7 @@ export class ProfileFormComponent {
     });
     this.phoneNumber = this.authenticationService.firebaseAuth.currentUser?.phoneNumber || null;
     this.email = this.authenticationService.firebaseAuth.currentUser?.email || this.emailPlaceholder;
+    this.profilePicture = this.form.get('profilePicture')?.value || null;
   }
 
   ngOnInit() {
@@ -131,6 +133,18 @@ export class ProfileFormComponent {
     if (control) {
       control.markAsTouched();
     }
+  }
+
+  public onSelectPicture(event: Event): void {
+    const file = (event.target as HTMLInputElement).files?.[0];
+    if (file) {
+      this.form.get('profilePicture')?.setValue(file);
+      this.isPicturePristine = false;
+    }
+  }
+
+  public onDeletePicture(): void {
+    this.form.get('profilePicture')?.setValue(null);
   }
 
   public submit(event: MouseEvent) {
