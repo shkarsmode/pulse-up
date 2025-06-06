@@ -126,7 +126,7 @@ export class PlacesAutocompleteComponent {
             )
             .subscribe((value) => {
                 if (value && this.search.valid) {
-                    this.geocodeService.getPlaces(value).subscribe({
+                    this.geocodeService.getPlacesByQuery(value).subscribe({
                         next: (places) => {
                             this.features = places.features;
                             this.loading = false;

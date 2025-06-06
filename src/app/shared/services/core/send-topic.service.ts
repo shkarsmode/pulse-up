@@ -10,6 +10,8 @@ import { noConsecutiveNewlinesValidator } from "../../helpers/validators/no-cons
 import { arrayLengthValidator } from "../../helpers/validators/array-length-validator";
 import { TopicLocation } from "@/app/features/user/interfaces/topic-location.interface";
 import { NotificationService } from "./notification.service";
+import { GeocodeService } from "../api/geocode.service";
+import { AppConstants } from "../../constants";
 
 interface TopicFormValues {
     icon: File;
@@ -38,6 +40,7 @@ export class SendTopicService {
     private readonly router: Router = inject(Router);
     private readonly formBuilder: FormBuilder = inject(FormBuilder);
     private readonly pulseService: PulseService = inject(PulseService);
+    private readonly geocodeService: GeocodeService = inject(GeocodeService);
     private readonly notificationService: NotificationService = inject(NotificationService);
 
     constructor() {
@@ -74,6 +77,22 @@ export class SendTopicService {
                 city: [""],
             }),
         });
+
+        this.geocodeService.getPlaceByCoordinates(
+            AppConstants.DEFAULT_USER_LOCATION.longitude,
+            AppConstants.DEFAULT_USER_LOCATION.latitude,
+        ).subscribe((place) => {
+            if (place) {
+                const context = place.features[0].properties.context
+                this.setTopicLocation({
+                    country: context.country?.name || "",
+                    state: context.region?.name || context.district?.name ||  "",
+                    city: context.place?.name || "",
+                    lng: AppConstants.DEFAULT_USER_LOCATION.longitude,
+                    lat: AppConstants.DEFAULT_USER_LOCATION.latitude,
+                })
+            }
+        })
     }
 
     public setTopicLocation(location: TopicLocation) {
