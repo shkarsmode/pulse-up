@@ -32,6 +32,6 @@ export class AddTopicPopupComponent {
 
   public onSignIn(): void {
     this.dialogRef.close();
-    this.router.navigateByUrl(`${AppRoutes.Auth.SIGN_IN}?redirect=${AppRoutes.Landing.TOPICS}`);
+    this.router.navigateByUrl(`${AppRoutes.Auth.SIGN_IN}?redirect=${AppRoutes.Landing.TOPICS}`, { replaceUrl: true });
   }
 }
