@@ -32,12 +32,12 @@ export class PlacesAutocompleteComponent {
         validators: [
             Validators.required,
             Validators.minLength(2),
-            Validators.pattern(/^[a-zA-Z\s.,'’-]+$/),
         ],
     });
     features: MapboxFeature[] = [];
     loading = false;
     showSuggestions = false;
+    validationError = "";
 
     ngOnInit() {
         this.listenValueChanges();
@@ -66,6 +66,27 @@ export class PlacesAutocompleteComponent {
     onBlur() {
         this.showSuggestions = false;
     }
+
+    onKeyDown(event: KeyboardEvent) {
+        const key = event.key;
+        const allowedPattern = /^[a-zA-Z\s.,'’-]$/;
+        const specialKeys = [
+            'Backspace', 'Tab', 'ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown',
+            'Delete', 'Home', 'End'
+        ];
+        if (specialKeys.includes(key)) {
+            this.validationError = "";
+            return;
+        }
+        if (!allowedPattern.test(key)) {
+            this.validationError = "Only Latin letters are allowed.";
+            event.preventDefault();
+            return;
+        }
+
+        this.validationError = "";
+    }
+    
 
     clear() {
         this.search.setValue("");
