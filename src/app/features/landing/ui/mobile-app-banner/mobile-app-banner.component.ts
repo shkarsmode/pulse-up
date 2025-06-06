@@ -16,8 +16,6 @@ export class MobileAppBannerComponent implements OnInit, OnChanges {
     public classes = {};
 
     ngOnInit(): void {
-        console.log("visible", this.visible);
-
         this.classes = {
             "mobile-app-banner": true,
             "mobile-app-banner--visible": this.visible,
@@ -31,8 +29,6 @@ export class MobileAppBannerComponent implements OnInit, OnChanges {
     }
 
     private updateClasses(): void {
-      console.log("visible", this.visible);
-      
         this.classes = {
             "mobile-app-banner": true,
             "mobile-app-banner--visible": this.visible,

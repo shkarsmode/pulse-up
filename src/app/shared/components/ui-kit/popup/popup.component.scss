@@ -8,13 +8,13 @@
     align-items: center;
     max-height: 100%;
     max-width: 100%;
-    padding: 72px 38px;
+    padding: 64px 38px 48px;
     background-color: var(--white-popup);
 
     @include media-lg {
-        padding: 72px 24px;
+        padding: 64px 24px;
     }
     @include media-lg {
-        padding: 64px 24px;
+        padding: 48px 24px;
     }
 }

@@ -7,6 +7,9 @@ import { tooltipText } from "../../constants/tooltip-text";
 import { PulseService } from "@/app/shared/services/api/pulse.service";
 import { map, Observable } from "rxjs";
 import { MatDialog } from "@angular/material/dialog";
+import { CropImagePopupComponent } from "../crop-image-popup/crop-image-popup.component";
+import { CropResult } from "../../interfaces/crop-result.interface";
+import { NotificationService } from "@/app/shared/services/core/notification.service";
 
 interface Topic {
     name: string;
@@ -22,8 +25,10 @@ interface Topic {
 export class TopicFormComponent {
     @Output() public submit = new EventEmitter<void>();
 
+    private readonly dialog = inject(MatDialog);
     public readonly pulseService: PulseService = inject(PulseService);
     public readonly sendTopicService: SendTopicService = inject(SendTopicService);
+    public readonly notificationService: NotificationService = inject(NotificationService);
 
     public routes = AppRoutes.User.Topic;
     public topicForm: FormGroup = this.sendTopicService.currentTopic;
@@ -32,11 +37,10 @@ export class TopicFormComponent {
     public categories: Topic[] = categories;
     public tooltipText = tooltipText;
 
-
     public ngOnInit(): void {
-        this.categoriesForForm = this.pulseService.getCategories().pipe(
-            map(categories => categories.map(category => category.name))
-        );
+        this.categoriesForForm = this.pulseService
+            .getCategories()
+            .pipe(map((categories) => categories.map((category) => category.name)));
     }
 
     public control(name: string) {
@@ -59,7 +63,14 @@ export class TopicFormComponent {
     public onSelectIcon(event: Event): void {
         const file = (event.target as HTMLInputElement).files?.[0];
         if (file) {
-            this.topicForm.get("icon")?.setValue(file);
+            const dialogRef = this.dialog.open(CropImagePopupComponent, {
+                width: "100%",
+                maxWidth: "630px",
+                panelClass: "custom-dialog-container",
+                backdropClass: "custom-dialog-backdrop",
+                data: { event },
+            });
+            dialogRef.afterClosed().subscribe(this.onCroppedImage);
         }
     }
 
@@ -78,6 +89,15 @@ export class TopicFormComponent {
         if (this.topicForm.valid) {
             this.submit.emit();
             this.sendTopicService.markAsReadyForPreview();
+        }
+    }
+
+    private onCroppedImage = (result: CropResult) => {
+        if (result.success) {
+            this.selectedIcon = result.imageFile;
+            this.topicForm.get("icon")?.setValue(result.imageFile);
+        } else {
+            this.notificationService.error("Image cropping failed");
         }
     }
 }
