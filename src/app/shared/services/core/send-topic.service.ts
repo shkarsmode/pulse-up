@@ -10,6 +10,8 @@ import { noConsecutiveNewlinesValidator } from "../../helpers/validators/no-cons
 import { arrayLengthValidator } from "../../helpers/validators/array-length-validator";
 import { TopicLocation } from "@/app/features/user/interfaces/topic-location.interface";
 import { NotificationService } from "./notification.service";
+import { GeocodeService } from "../api/geocode.service";
+import { AppConstants } from "../../constants";
 
 interface TopicFormValues {
     icon: File;
@@ -38,11 +40,12 @@ export class SendTopicService {
     private readonly router: Router = inject(Router);
     private readonly formBuilder: FormBuilder = inject(FormBuilder);
     private readonly pulseService: PulseService = inject(PulseService);
+    private readonly geocodeService: GeocodeService = inject(GeocodeService);
     private readonly notificationService: NotificationService = inject(NotificationService);
 
     constructor() {
         this.currentTopic = this.formBuilder.group({
-            icon: ["", [Validators.required, pictureValidator()]],
+            icon: [null, [Validators.required, pictureValidator()]],
             headline: [
                 "",
                 [Validators.required, Validators.minLength(6), Validators.maxLength(60)],
@@ -74,6 +77,22 @@ export class SendTopicService {
                 city: [""],
             }),
         });
+
+        this.geocodeService.getPlaceByCoordinates(
+            AppConstants.DEFAULT_USER_LOCATION.longitude,
+            AppConstants.DEFAULT_USER_LOCATION.latitude,
+        ).subscribe((place) => {
+            if (place) {
+                const context = place.features[0].properties.context
+                this.setTopicLocation({
+                    country: context.country?.name || "",
+                    state: context.region?.name || context.district?.name ||  "",
+                    city: context.place?.name || "",
+                    lng: AppConstants.DEFAULT_USER_LOCATION.longitude,
+                    lat: AppConstants.DEFAULT_USER_LOCATION.latitude,
+                })
+            }
+        })
     }
 
     public setTopicLocation(location: TopicLocation) {
@@ -136,9 +155,11 @@ export class SendTopicService {
                     this.currentTopic.reset();
                     this.pulseService.isJustCreatedTopic = true;
                     this.router.navigateByUrl(`/topic/${topic.id}`);
+                    this.submitting.next(false);
                 },
                 error: (err) => {
                     console.error(err);
+                    this.submitting.next(false);
 
                     const fallbackMessage = "Failed to create topic.";
 
@@ -160,11 +181,6 @@ export class SendTopicService {
                     } else {
                         this.notificationService.error(fallbackMessage);
                     }
-                },
-                complete: () => {
-                    console.log("Topic created successfully.");
-                    this.isTopicReadyForPreview = false;
-                    this.submitting.next(false);
                 },
             });
     }

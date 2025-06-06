@@ -8,9 +8,10 @@
             id="profilePicture"
             name="profilePicture"
             label="Profile picture"
-            [control]="form.get('profilePicture')"
             [previewUrl]="previewUrl"
-            />
+            [picture]="profilePicture"
+            (pictureSelected)="onSelectPicture($event)"
+            (pictureDeleted)="onDeletePicture()" />
         <div *ngIf="getPictureErrorMessage() as error">
             <span class="profile-form__error">{{ error }}</span>
         </div>

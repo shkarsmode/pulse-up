@@ -12,7 +12,7 @@ export class GeocodeService {
     private readonly accessToken: string = inject(MAPBOX_ACCESS_TOKEN);
     private readonly http: HttpClient = inject(HttpClient);
 
-    public getPlaces = (query: string) => {
+    public getPlacesByQuery = (query: string) => {
         const params = new URLSearchParams({
             q: query,
             access_token: this.accessToken,
@@ -24,11 +24,31 @@ export class GeocodeService {
 
         const fetchPromise = fetch(`${this.apiUrl}/forward?${params}`).then((res) => {
             if (!res.ok) {
-                throw new Error(`Fetch failed with status ${res.status}`);
+                throw new Error("Failed to fetch places by query.");
             }
             return res.json() as Promise<MapboxFeatureCollection>;
         });
 
         return from(fetchPromise);
     };
+
+    public getPlaceByCoordinates = (lng: number, lat: number) => {
+        const params = new URLSearchParams({
+            access_token: this.accessToken,
+            longitude: lng.toString(),
+            latitude: lat.toString(),
+            limit: "1",
+            language: "en",
+            types: "country,region,district,place",
+        });
+
+        const fetchPromise = fetch(`${this.apiUrl}/reverse?${params}`).then((res) => {
+            if (!res.ok) {
+                throw new Error("Failed to fetch place by coordinates.");
+            }
+            return res.json() as Promise<MapboxFeatureCollection>;
+        });
+
+        return from(fetchPromise);
+    }
 }

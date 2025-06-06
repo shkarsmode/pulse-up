@@ -1,0 +1,78 @@
+<app-popup>
+    <app-popup-close-button (close)="closeDialog()" />
+    <div class="cropper">
+        <div
+            #spinner
+            [ngClass]="classes.spinner">
+            <app-spinner />
+        </div>
+        <div [ngClass]="classes.cropper">
+            <image-cropper
+                format="png"
+                [aspectRatio]="3 / 4"
+                [maintainAspectRatio]="true"
+                [onlyScaleDown]="true"
+                backgroundColor="#faf5fe"
+                [cropperMinWidth]="128"
+                [cropperMinHeight]="128"
+                [transform]="transform"
+                [canvasRotation]="canvasRotation"
+                [imageChangedEvent]="imageChangedEvent"
+                (imageCropped)="imageCropped($event)"
+                (imageLoaded)="imageLoaded($event)"
+                (cropperReady)="cropperReady()"
+                (loadImageFailed)="loadImageFailed()" />
+        </div>
+    </div>
+    <div class="cropper-tools">
+        <div class="cropper-tools__top">
+            <div class="cropper-tools__button">
+                <app-secondary-button
+                    [fullWidth]="true"
+                    (handleClick)="resetImage()">
+                    Reset
+                </app-secondary-button>
+            </div>
+            <div class="cropper-tools__zoom">
+                <span>-</span>
+                <mat-slider
+                    [min]="minScale"
+                    [max]="maxScale"
+                    [step]="stepScale"
+                    color="accent">
+                    <input
+                        matSliderThumb
+                        [value]="scale"
+                        (input)="zoomChange($event)" />
+                </mat-slider>
+                <span>+</span>
+            </div>
+            <div class="cropper-tools__rotate">
+                <button (click)="rotateLeft()">
+                    <svg-icon src="assets/svg/arrow-rotate.svg" />
+                    <span class="visualy-hidden">Rotate left</span>
+                </button>
+                <button (click)="rotateRight()">
+                    <svg-icon src="assets/svg/arrow-rotate.svg" />
+                    <span class="visualy-hidden">Rotate right</span>
+                </button>
+            </div>
+        </div>
+        <div class="cropper-tools__buttons">
+            <div class="cropper-tools__button">
+                <app-secondary-button
+                    [fullWidth]="true"
+                    (handleClick)="onCancel()">
+                    Cancel
+                </app-secondary-button>
+            </div>
+            <div class="cropper-tools__button">
+                <app-primary-button
+                    [fullWidth]="true"
+                    (handleClick)="onSave()">
+                    Save
+                </app-primary-button>
+            </div>
+        </div>
+    </div>
+</app-popup>

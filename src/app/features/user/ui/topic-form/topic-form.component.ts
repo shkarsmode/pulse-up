@@ -6,6 +6,10 @@ import { ErrorMessageBuilder } from "../../helpers/error-message-builder";
 import { tooltipText } from "../../constants/tooltip-text";
 import { PulseService } from "@/app/shared/services/api/pulse.service";
 import { map, Observable } from "rxjs";
+import { MatDialog } from "@angular/material/dialog";
+import { CropImagePopupComponent } from "../crop-image-popup/crop-image-popup.component";
+import { CropResult } from "../../interfaces/crop-result.interface";
+import { NotificationService } from "@/app/shared/services/core/notification.service";
 
 interface Topic {
     name: string;
@@ -21,23 +25,22 @@ interface Topic {
 export class TopicFormComponent {
     @Output() public submit = new EventEmitter<void>();
 
+    private readonly dialog = inject(MatDialog);
     public readonly pulseService: PulseService = inject(PulseService);
     public readonly sendTopicService: SendTopicService = inject(SendTopicService);
+    public readonly notificationService: NotificationService = inject(NotificationService);
 
     public routes = AppRoutes.User.Topic;
-    public topicForm: FormGroup;
-    public imageSrc: string | ArrayBuffer | null = null;
+    public topicForm: FormGroup = this.sendTopicService.currentTopic;
+    public selectedIcon = this.sendTopicService.currentTopic.get("icon")?.value || null;
     public categoriesForForm: Observable<string[]>;
     public categories: Topic[] = categories;
-    public selectedIcon: string | ArrayBuffer | null;
     public tooltipText = tooltipText;
 
-
     public ngOnInit(): void {
-        this.topicForm = this.sendTopicService.currentTopic;
-        this.categoriesForForm = this.pulseService.getCategories().pipe(
-            map(categories => categories.map(category => category.name))
-        );
+        this.categoriesForForm = this.pulseService
+            .getCategories()
+            .pipe(map((categories) => categories.map((category) => category.name)));
     }
 
     public control(name: string) {
@@ -57,6 +60,24 @@ export class TopicFormComponent {
         }
     }
 
+    public onSelectIcon(event: Event): void {
+        const file = (event.target as HTMLInputElement).files?.[0];
+        if (file) {
+            const dialogRef = this.dialog.open(CropImagePopupComponent, {
+                width: "100%",
+                maxWidth: "630px",
+                panelClass: "custom-dialog-container",
+                backdropClass: "custom-dialog-backdrop",
+                data: { event },
+            });
+            dialogRef.afterClosed().subscribe(this.onCroppedImage);
+        }
+    }
+
+    public onDeleteIcon(): void {
+        this.topicForm.get("icon")?.setValue(null);
+    }
+
     public getCurrentTopicInfo(): { title: string; description: string } {
         const category = this.topicForm.get("category")?.value;
         return this.categories.filter((categoryObj) => categoryObj.name === category)[0];
@@ -68,6 +89,15 @@ export class TopicFormComponent {
         if (this.topicForm.valid) {
             this.submit.emit();
             this.sendTopicService.markAsReadyForPreview();
+        }
+    }
+
+    private onCroppedImage = (result: CropResult) => {
+        if (result.success) {
+            this.selectedIcon = result.imageFile;
+            this.topicForm.get("icon")?.setValue(result.imageFile);
+        } else {
+            this.notificationService.error("Image cropping failed");
         }
     }
 }

@@ -49,6 +49,7 @@
                     <svg-icon
                         [src]="'assets/svg/location-accent.svg'"
                         class="pulse__info-media__map-marker" />
+                    <span class="pulse-map__location-name">{{ customLocationName }}</span>
                     <app-map
                         [isHideDebugger]="true"
                         [isToShowHeatmap]="true"
@@ -59,7 +60,9 @@
                         [minZoom]="6"
                         [center]="[customLocationCoordinates.lng, customLocationCoordinates.lat]" />
                 </div>
-                <p class="pulse-map__bottom-text">Auto-pulse from this location active for 7 days</p>
+                <p class="pulse-map__bottom-text">
+                    Auto-pulse from this location active for 7 days
+                </p>
             </div>
         </div>
     </div>

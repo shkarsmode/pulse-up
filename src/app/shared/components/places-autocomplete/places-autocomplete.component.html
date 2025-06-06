@@ -2,9 +2,9 @@
     <div class="places-autocomplete__wrap">
         <label
             for="search-location"
-            class="visualy-hidden"
-            >Search city or address</label
-        >
+            class="visualy-hidden">
+            Relevant Region (Optional)
+        </label>
         <input
             #searchInput
             id="search-location"
@@ -15,7 +15,8 @@
             placeholder="Search city or address"
             class="places-autocomplete__input"
             (focus)="onFocus()"
-            (blur)="onBlur()" />
+            (blur)="onBlur()"
+            (keydown)="onKeyDown($event)" />
         <svg-icon
             src="assets/svg/search.svg"
             class="places-autocomplete__icon" />
@@ -44,7 +45,7 @@
     }
     <div
         class="places-autocomplete__error"
-        *ngIf="search.invalid && (search.dirty || search.touched)">
-        <small *ngIf="search.hasError('pattern')">Only Latin letters are allowed.</small>
+        *ngIf="validationError">
+        <small>{{ validationError }}</small>
     </div>
 </div>
