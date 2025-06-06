@@ -10,6 +10,9 @@
     z-index: 1000 !important; 
 }
 
+body .cdk-overlay-pane.mat-mdc-dialog-panel {
+    padding: 20px 0 !important;
+} 
 @media screen and (max-width: 680px) {
     body .cdk-overlay-pane.mat-mdc-dialog-panel {
         padding: 20px !important;
