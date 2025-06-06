@@ -155,9 +155,11 @@ export class SendTopicService {
                     this.currentTopic.reset();
                     this.pulseService.isJustCreatedTopic = true;
                     this.router.navigateByUrl(`/topic/${topic.id}`);
+                    this.submitting.next(false);
                 },
                 error: (err) => {
                     console.error(err);
+                    this.submitting.next(false);
 
                     const fallbackMessage = "Failed to create topic.";
 
@@ -179,11 +181,6 @@ export class SendTopicService {
                     } else {
                         this.notificationService.error(fallbackMessage);
                     }
-                },
-                complete: () => {
-                    console.log("Topic created successfully.");
-                    this.isTopicReadyForPreview = false;
-                    this.submitting.next(false);
                 },
             });
     }
