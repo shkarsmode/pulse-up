@@ -22,6 +22,7 @@ export interface CropImagePopupData {
     minWidth?: number;
     minHeight?: number;
     aspectRatio?: number;
+    maintainAspectRatio?: boolean;
 }
 
 @Component({
@@ -62,6 +63,7 @@ export class CropImagePopupComponent {
     aspectRatio = this.data.aspectRatio || 1;
     minWidth = this.data.minWidth || 100;
     minHeight = this.data.minHeight || 100;
+    maintainAspectRatio = this.data.maintainAspectRatio ?? true;
     classes = {
         cropper: {},
         spinner: {},
