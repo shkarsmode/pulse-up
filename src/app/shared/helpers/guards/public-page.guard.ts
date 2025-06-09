@@ -13,8 +13,6 @@ export class PublicPageGuard implements CanActivate {
     private readonly authenticationService: AuthenticationService = inject(AuthenticationService);
 
     canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> {
-        console.log("PublicPageGuard");
-
         const userToken = this.authenticationService.userTokenValue;
         const anonymousToken = this.authenticationService.anonymousUserValue;
 

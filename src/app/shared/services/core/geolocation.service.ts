@@ -14,8 +14,6 @@ export class GeolocationService {
     public currentPosition: GeolocationPosition | null = null;
 
     getCurrentPosition(): Observable<GeolocationPosition> {
-        console.log("GeolocationService: getCurrentPosition called");
-        
         if (!this.isSupported) {
             this.statusSubject.next("error");
             return new Observable((observer) => {

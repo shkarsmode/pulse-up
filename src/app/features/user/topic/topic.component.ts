@@ -27,7 +27,7 @@ import { Component } from '@angular/core';
                 border-radius: 0px;
                 margin-top: -1px;
                 height: 100%;
-                padding: 0 20px;
+                padding: 20px;
             }
 
         }  
