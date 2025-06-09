@@ -3,11 +3,18 @@
         {{ label }}
     </label>
 }
-@if (svg) {
-    <div class="svg">
-        <svg-icon [src]="'assets/svg/' + svg + '.svg'"></svg-icon>
+@if (iconStart) {
+    <div class="icon icon--start">
+        <svg-icon [src]="'assets/svg/' + iconStart + '.svg'"></svg-icon>
     </div>
 }
+
+@if (iconEnd) {
+    <div class="icon icon--end">
+        <svg-icon [src]="'assets/svg/' + iconEnd + '.svg'"></svg-icon>
+    </div>
+}
+
 <input
     [attr.id]="id"
     [attr.name]="name"

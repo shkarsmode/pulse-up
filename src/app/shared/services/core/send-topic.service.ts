@@ -71,39 +71,17 @@ export class SendTopicService {
             category: ["", Validators.required],
             keywords: [[], [Validators.required, arrayLengthValidator(1, 3)]],
             picture: [""],
-            location: this.formBuilder.group({
-                country: [""],
-                state: [""],
-                city: [""],
-            }),
+            location: ["", [Validators.required]],
         });
-
-        this.geocodeService.getPlaceByCoordinates(
-            AppConstants.DEFAULT_USER_LOCATION.longitude,
-            AppConstants.DEFAULT_USER_LOCATION.latitude,
-        ).subscribe((place) => {
-            if (place) {
-                const context = place.features[0].properties.context
-                this.setTopicLocation({
-                    country: context.country?.name || "",
-                    state: context.region?.name || context.district?.name ||  "",
-                    city: context.place?.name || "",
-                    lng: AppConstants.DEFAULT_USER_LOCATION.longitude,
-                    lat: AppConstants.DEFAULT_USER_LOCATION.latitude,
-                })
-            }
-        })
     }
 
     public setTopicLocation(location: TopicLocation) {
         this.customLocation = location;
-        this.currentTopic.patchValue({
-            location: {
-                country: location.country,
-                state: location.state,
-                city: location.city,
-            },
-        });
+        this.currentTopic
+            .get("location")
+            ?.setValue(
+                [location.city, location.state, location.country].filter(Boolean).join(", "),
+            );
     }
 
     public getFormValues(): TopicFormValues {

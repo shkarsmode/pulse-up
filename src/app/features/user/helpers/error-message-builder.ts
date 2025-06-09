@@ -49,5 +49,8 @@ export class ErrorMessageBuilder {
             minLengthArray: "At least one keyword is required",
             maxLengthArray: "You can add up to 3 keywords",
         },
+        location: {
+            required: "Location is required",
+        },
     };
 }

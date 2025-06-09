@@ -27,21 +27,30 @@ input {
     }
 }
 
-.svg {
+.icon {
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
-    left: 22px;
+    transition: all 0.3s;
 
-    transition: all .3s;
+    &.icon--start {
+        left: 22px;
 
-    &+input {
-        padding-left: 54px;
+        & + input {
+            padding-left: 54px;
+        }
+    }
+    &.icon--end {
+        right: 22px;
+
+        & + input {
+            padding-right: 54px;
+        }
     }
 
-    &:has(+ input:not(:placeholder-shown)) {
-        transform: translateY(-50%) rotate(90deg);
-    }
+    // &:has(+ input:not(:placeholder-shown)) {
+    //     transform: translateY(-50%) rotate(90deg);
+    // }
 }
 
 app-spinner {

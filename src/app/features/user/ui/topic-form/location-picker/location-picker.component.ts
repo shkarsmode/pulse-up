@@ -1,16 +1,16 @@
-import { Component, inject } from '@angular/core';
-import { TopicInfoComponent } from "../topic-info/topic-info.component";
-import { tooltipText } from '../../../constants/tooltip-text';
+import { Component, inject, Input } from '@angular/core';
 import { RouterModule } from '@angular/router';
-import { SvgIconComponent } from 'angular-svg-icon';
+import { ReactiveFormsModule } from '@angular/forms';
 import { AppRoutes } from '@/app/shared/enums/app-routes.enum';
 import { SendTopicService } from '@/app/shared/services/core/send-topic.service';
+import { TopicInfoComponent } from "../topic-info/topic-info.component";
+import { tooltipText } from '../../../constants/tooltip-text';
 import { TopicLocation } from '../../../interfaces/topic-location.interface';
 
 @Component({
   selector: 'app-location-picker',
   standalone: true,
-  imports: [RouterModule, SvgIconComponent, TopicInfoComponent],
+  imports: [RouterModule, ReactiveFormsModule, TopicInfoComponent],
   templateUrl: './location-picker.component.html',
   styleUrl: './location-picker.component.scss'
 })
@@ -21,7 +21,7 @@ export class LocationPickerComponent {
 
   public get topicLocation() {
     const location = this.createTopicService.currentTopic.get("location")?.value as TopicLocation;
-    return [location.country, location.state, location.city]
+    return [location.city, location.state, location.country]
       .filter(Boolean)
       .join(", ");
   }
