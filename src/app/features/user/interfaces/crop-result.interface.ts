@@ -8,7 +8,7 @@ interface SuccessCropResult {
 
 interface ErrorCropResult {
     success: false;
-    message: string;
+    message?: string;
 }
 
 export type CropResult = SuccessCropResult | ErrorCropResult;
