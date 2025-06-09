@@ -8,14 +8,14 @@
                     [isLoading]="(loading$ | async) || false"
                     (handleValueChange)="onSearchValueChange($event)" />
 
-                <button
+                <a
                     *ngIf="!(isAuthenticated$ | async)"
-                    openAddTopicPopup
+                    [routerLink]="signInRoute"
                     class="add-topic-button">
                     <svg-icon
                         src="assets/svg/add.svg"
                         style="height: 22px" />
-                </button>
+                </a>
                 <button
                     *ngIf="(isAuthenticated$ | async) && !(isProfileComplete$ | async)"
                     openCompleteProfilePopup
