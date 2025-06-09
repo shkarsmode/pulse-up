@@ -31,7 +31,7 @@ export class PicturePickerComponent {
     }
 
     ngOnChanges(changes: SimpleChanges): void {
-        if (changes["picture"].currentValue) {
+        if (changes["picture"]?.currentValue) {
           this.updateSelectedFile(changes["picture"].currentValue);
         }
     }
