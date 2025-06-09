@@ -11,7 +11,6 @@ import { PromoteAdsComponent } from "./components/promote-ads/promote-ads.compon
 import { InfiniteLoaderService } from "../../services/infinite-loader.service";
 import { AppConstants } from "@/app/shared/constants/app.constants";
 import { LoadingIndicatorComponent } from "@/app/shared/components/loading-indicator/loading-indicator.component";
-import { AddTopicPopupDirective } from "@/app/shared/components/popups/add-topic-popup/add-topic-popup.directive";
 import { CompleteProfilePopupDirective } from "@/app/shared/components/popups/complete-profile-popup/complete-profile-popup.directive";
 import { AuthenticationService } from "@/app/shared/services/api/authentication.service";
 import { UserStore } from "@/app/shared/stores/user.store";
@@ -32,7 +31,6 @@ import { AppRoutes } from "@/app/shared/enums/app-routes.enum";
         InputSearchComponent,
         LargePulseComponent,
         PromoteAdsComponent,
-        AddTopicPopupDirective,
         CompleteProfilePopupDirective
     ],
     providers: [InfiniteLoaderService],
@@ -47,6 +45,7 @@ export class PulsesComponent implements OnInit {
     public pulses: IPulse[] = [];
     public isLoading: boolean = true;
     public addTopicRoute = "/" + AppRoutes.User.Topic.SUGGEST;
+    public signInRoute = "/" + AppRoutes.Auth.SIGN_IN;
     public loading$ = new BehaviorSubject(true);
     public paginator$: Observable<IPaginator<IPulse>>;
     public readonly isAuthenticated$ = this.authenticationService.userToken;
