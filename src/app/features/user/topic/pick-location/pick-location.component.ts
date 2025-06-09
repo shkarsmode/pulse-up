@@ -101,7 +101,6 @@ export class PickLocationComponent implements OnInit {
             .getCurrentPosition()
             .pipe(
                 catchError((error) => {
-                    console.error("Geolocation error:", error);
                     return throwError(
                         () =>
                             new Error(
@@ -110,7 +109,6 @@ export class PickLocationComponent implements OnInit {
                     );
                 }),
                 tap((position) => {
-                    console.log("Geolocation position:", position);
                     const { latitude, longitude } = position.coords;
                     this.map?.jumpTo({
                         center: [longitude, latitude],
@@ -122,7 +120,6 @@ export class PickLocationComponent implements OnInit {
                     return this.geteocodeService.getPlaceByCoordinates(longitude, latitude);
                 }),
                 catchError((error) => {
-                    console.error("Geolocation error:", error);
                     return throwError(
                         () =>
                             new Error(
@@ -133,7 +130,6 @@ export class PickLocationComponent implements OnInit {
             )
             .subscribe({
                 next: (place) => {
-                    console.log("Geocoding result:", place);
                     this.selectedLocation = place;
                 },
                 error: (error) => {
