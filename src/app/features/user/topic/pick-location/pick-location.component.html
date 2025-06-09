@@ -36,4 +36,9 @@
             <svg-icon src="assets/svg/my-location.svg" />
         </button>
     </div>
+    <div
+        *ngIf="isGeolocationRequestInProgress$ | async"
+        class="location__loading">
+        <app-spinner />
+    </div>
 </div>

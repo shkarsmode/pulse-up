@@ -20,6 +20,7 @@ import { TopicPreviewComponent } from './topic-preview/topic-preview.component';
 import { FadeInDirective } from "@/app/shared/animations/fade-in.directive";
 import { FlatButtonDirective } from "@/app/shared/components/ui-kit/buttons/flat-button/flat-button.directive";
 import { RippleEffectDirective } from "@/app/shared/directives/ripple-effect";
+import { SpinnerComponent } from "../../../shared/components/ui-kit/spinner/spinner.component";
 
 @NgModule({
     declarations: [
@@ -31,20 +32,21 @@ import { RippleEffectDirective } from "@/app/shared/directives/ripple-effect";
         TopicPreviewComponent,
     ],
     imports: [
-        CommonModule,
-        TopicRoutingModule,
-        UserModule,
-        SelectComponent,
-        SvgIconComponent,
-        PrimaryButtonComponent,
-        SecondaryButtonComponent,
-        PicturePickerComponent,
-        MapComponent,
-        MglMapComponent,
-        PlacesAutocompleteComponent,
-        FadeInDirective,
-        FlatButtonDirective,
-        RippleEffectDirective,
-    ],
+    CommonModule,
+    TopicRoutingModule,
+    UserModule,
+    SelectComponent,
+    SvgIconComponent,
+    PrimaryButtonComponent,
+    SecondaryButtonComponent,
+    PicturePickerComponent,
+    MapComponent,
+    MglMapComponent,
+    PlacesAutocompleteComponent,
+    FadeInDirective,
+    FlatButtonDirective,
+    RippleEffectDirective,
+    SpinnerComponent
+],
 })
 export class TopicModule {}

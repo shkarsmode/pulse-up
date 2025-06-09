@@ -1,5 +1,6 @@
 import { Component, inject, OnInit } from "@angular/core";
 import { Router } from "@angular/router";
+import { BehaviorSubject, catchError, switchMap, tap, throwError } from "rxjs";
 import mapboxgl from "mapbox-gl";
 import * as h3 from "h3-js";
 import { SendTopicService } from "@/app/shared/services/core/send-topic.service";
@@ -10,7 +11,6 @@ import { GeolocationService } from "@/app/shared/services/core/geolocation.servi
 import { NotificationService } from "@/app/shared/services/core/notification.service";
 import { TopicLocation } from "../../interfaces/topic-location.interface";
 import { GeocodeService } from "@/app/shared/services/api/geocode.service";
-import { catchError, of, switchMap, tap, throwError } from "rxjs";
 
 @Component({
     selector: "app-pick-location",
@@ -29,6 +29,8 @@ export class PickLocationComponent implements OnInit {
     map: mapboxgl.Map | null = null;
     selectedLocation = this.sendTopicService.customLocation;
     isGeolocationSupported = this.geolocationService.isSupported;
+    isGeolocationRequestInProgress = new BehaviorSubject<boolean>(true);
+    isGeolocationRequestInProgress$ = this.isGeolocationRequestInProgress.asObservable();
 
     get isMyPositionSelected() {
         return this.selectedLocation && this.geolocationService.currentPosition;
@@ -97,6 +99,7 @@ export class PickLocationComponent implements OnInit {
     }
 
     getMyPosition = () => {
+        this.isGeolocationRequestInProgress.next(true);
         this.geolocationService
             .getCurrentPosition()
             .pipe(
@@ -131,9 +134,11 @@ export class PickLocationComponent implements OnInit {
             .subscribe({
                 next: (place) => {
                     this.selectedLocation = place;
+                    this.isGeolocationRequestInProgress.next(false);
                 },
                 error: (error) => {
                     this.notificationService.error(error.message);
+                    this.isGeolocationRequestInProgress.next(false);
                 },
             });
     };
