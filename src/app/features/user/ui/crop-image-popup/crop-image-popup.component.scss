@@ -63,7 +63,24 @@
     display: flex;
     align-items: center;
     column-gap: 8px;
+
+    &::ng-deep {
+        &.mat-accent.mat-mdc-slider {
+            --mdc-slider-handle-color: var(--accent-color);
+            --mdc-slider-focus-handle-color: var(--accent-color);
+            --mdc-slider-hover-handle-color: var(--accent-color);
+            --mdc-slider-active-track-color: var(--accent-color);
+            --mdc-slider-with-tick-marks-active-container-color: #ffffff;
+            --mdc-slider-label-container-color: var(--accent-color);
+            --mdc-slider-label-label-text-color: #ffffff;
+            --mdc-slider-with-overlap-handle-outline-color: #ffffff;
+            --mat-slider-ripple-color: var(--accent-color);
+            --mat-slider-hover-state-layer-color: rgba(94, 0, 204, 0.05);
+            --mat-slider-focus-state-layer-color: rgba(94, 0, 204, 0.2);
+        }
+    }
 }
+
 .cropper-tools__rotate {
     display: flex;
     align-items: center;

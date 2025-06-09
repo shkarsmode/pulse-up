@@ -1,7 +1,7 @@
-import { Component, ElementRef, inject, ViewChild } from "@angular/core";
+import { Component, ElementRef, inject, Input, ViewChild } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
-import {MatSliderModule} from '@angular/material/slider';
+import { MatSliderModule } from "@angular/material/slider";
 import { DomSanitizer, SafeUrl } from "@angular/platform-browser";
 import {
     ImageCropperComponent,
@@ -17,20 +17,28 @@ import { PrimaryButtonComponent } from "../../../../shared/components/ui-kit/but
 import { SvgIconComponent } from "angular-svg-icon";
 import { CropResult } from "../../interfaces/crop-result.interface";
 
+export interface CropImagePopupData {
+    event: Event;
+    minWidth?: number;
+    minHeight?: number;
+    aspectRatio?: number;
+    maintainAspectRatio?: boolean;
+}
+
 @Component({
     selector: "app-crop-image-popup",
     standalone: true,
     imports: [
-    CommonModule,
-    SvgIconComponent,
-    MatSliderModule,
-    PopupLayoutComponent,
-    PopupCloseButtonComponent,
-    ImageCropperComponent,
-    SpinnerComponent,
-    SecondaryButtonComponent,
-    PrimaryButtonComponent
-],
+        CommonModule,
+        SvgIconComponent,
+        MatSliderModule,
+        PopupLayoutComponent,
+        PopupCloseButtonComponent,
+        ImageCropperComponent,
+        SpinnerComponent,
+        SecondaryButtonComponent,
+        PrimaryButtonComponent,
+    ],
     templateUrl: "./crop-image-popup.component.html",
     styleUrl: "./crop-image-popup.component.scss",
 })
@@ -39,7 +47,7 @@ export class CropImagePopupComponent {
 
     private readonly sanitizer: DomSanitizer = inject(DomSanitizer);
     private readonly dialogRef: MatDialogRef<CropImagePopupComponent> = inject(MatDialogRef);
-    private readonly data: { event: Event } = inject(MAT_DIALOG_DATA);
+    private readonly data: CropImagePopupData = inject(MAT_DIALOG_DATA);
 
     minScale: number = 1;
     maxScale: number = 3;
@@ -52,6 +60,10 @@ export class CropImagePopupComponent {
     rotation = 0;
     canvasRotation = 0;
     transform: ImageTransform = {};
+    aspectRatio = this.data.aspectRatio || 1;
+    minWidth = this.data.minWidth || 100;
+    minHeight = this.data.minHeight || 100;
+    maintainAspectRatio = this.data.maintainAspectRatio ?? true;
     classes = {
         cropper: {},
         spinner: {},
@@ -72,14 +84,11 @@ export class CropImagePopupComponent {
         this.updateClasses();
     }
 
-    cropperReady() {}
-
     loadImageFailed() {
-        // show message
-    }
-
-    closeDialog() {
-        this.dialogRef.close();
+        this.closeDialog({
+            success: false,
+            message: "Image loading failed",
+        });
     }
 
     resetImage() {
@@ -118,33 +127,33 @@ export class CropImagePopupComponent {
     }
 
     rotateLeft() {
-      this.canvasRotation--;
-      this.flipAfterRotate();
+        this.canvasRotation--;
+        this.flipAfterRotate();
     }
-  
+
     rotateRight() {
-      this.canvasRotation++;
-      this.flipAfterRotate();
+        this.canvasRotation++;
+        this.flipAfterRotate();
     }
 
     onCancel() {
-        this.dialogRef.close({
+        this.closeDialog({
             success: false,
-            message: "Crop cancelled",
-        } as CropResult);
+        });
     }
 
     onSave() {
         if (this.croppedImageBlob) {
-            this.dialogRef.close({
+            this.closeDialog({
                 success: true,
                 imageUrl: this.croppedImageUrl as string,
                 imageFile: new File(
-                    [this.croppedImageBlob], 
-                    (this.imageChangedEvent?.target as HTMLInputElement)?.files?.[0]?.name || "cropped-image", 
-                    { type: this.croppedImageBlob.type }
+                    [this.croppedImageBlob],
+                    (this.imageChangedEvent?.target as HTMLInputElement)?.files?.[0]?.name ||
+                        "cropped-image",
+                    { type: this.croppedImageBlob.type },
                 ),
-            } as CropResult);
+            });
         }
     }
 
@@ -170,12 +179,16 @@ export class CropImagePopupComponent {
     }
 
     private flipAfterRotate() {
-      const flippedH = this.transform.flipH;
-      const flippedV = this.transform.flipV;
-      this.transform = {
-        ...this.transform,
-        flipH: flippedV,
-        flipV: flippedH,
-      };
+        const flippedH = this.transform.flipH;
+        const flippedV = this.transform.flipV;
+        this.transform = {
+            ...this.transform,
+            flipH: flippedV,
+            flipV: flippedH,
+        };
+    }
+
+    private closeDialog(data: CropResult) {
+        this.dialogRef.close(data);
     }
 }

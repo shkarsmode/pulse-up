@@ -18,6 +18,8 @@ import { MglMapComponent } from "../../landing/ui/maps/mgl-map.component";
 import { PlacesAutocompleteComponent } from "../../../shared/components/places-autocomplete/places-autocomplete.component";
 import { TopicPreviewComponent } from './topic-preview/topic-preview.component';
 import { FadeInDirective } from "@/app/shared/animations/fade-in.directive";
+import { FlatButtonDirective } from "@/app/shared/components/ui-kit/buttons/flat-button/flat-button.directive";
+import { RippleEffectDirective } from "@/app/shared/directives/ripple-effect";
 
 @NgModule({
     declarations: [
@@ -41,6 +43,8 @@ import { FadeInDirective } from "@/app/shared/animations/fade-in.directive";
         MglMapComponent,
         PlacesAutocompleteComponent,
         FadeInDirective,
+        FlatButtonDirective,
+        RippleEffectDirective,
     ],
 })
 export class TopicModule {}

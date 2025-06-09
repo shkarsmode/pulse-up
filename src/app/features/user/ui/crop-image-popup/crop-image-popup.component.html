@@ -1,5 +1,5 @@
 <app-popup>
-    <app-popup-close-button (close)="closeDialog()" />
+    <app-popup-close-button (close)="onCancel()" />
     <div class="cropper">
         <div
             #spinner
@@ -9,18 +9,17 @@
         <div [ngClass]="classes.cropper">
             <image-cropper
                 format="png"
-                [aspectRatio]="1 / 1"
-                [maintainAspectRatio]="true"
+                [aspectRatio]="aspectRatio"
+                [maintainAspectRatio]="maintainAspectRatio"
                 [onlyScaleDown]="true"
                 backgroundColor="#faf5fe"
-                [cropperMinWidth]="128"
-                [cropperMinHeight]="128"
+                [cropperMinWidth]="minWidth"
+                [cropperMinHeight]="minHeight"
                 [transform]="transform"
                 [canvasRotation]="canvasRotation"
                 [imageChangedEvent]="imageChangedEvent"
                 (imageCropped)="imageCropped($event)"
                 (imageLoaded)="imageLoaded($event)"
-                (cropperReady)="cropperReady()"
                 (loadImageFailed)="loadImageFailed()" />
         </div>
     </div>

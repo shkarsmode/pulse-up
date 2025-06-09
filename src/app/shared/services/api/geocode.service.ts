@@ -1,8 +1,9 @@
 import { inject, Injectable } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
 import { GEOCODE_API_URL, MAPBOX_ACCESS_TOKEN } from "../../tokens/tokens";
-import { MapboxFeatureCollection } from "../../interfaces";
-import { from, of } from "rxjs";
+import { MapboxFeature, MapboxFeatureCollection } from "../../interfaces";
+import { from, Observable } from "rxjs";
+import { TopicLocation } from "@/app/features/user/interfaces/topic-location.interface";
 
 @Injectable({
     providedIn: "root",
@@ -32,7 +33,7 @@ export class GeocodeService {
         return from(fetchPromise);
     };
 
-    public getPlaceByCoordinates = (lng: number, lat: number) => {
+    public getPlaceByCoordinates = (lng: number, lat: number): Observable<TopicLocation> => {
         const params = new URLSearchParams({
             access_token: this.accessToken,
             longitude: lng.toString(),
@@ -47,8 +48,18 @@ export class GeocodeService {
                 throw new Error("Failed to fetch place by coordinates.");
             }
             return res.json() as Promise<MapboxFeatureCollection>;
-        });
+        }).then((data) => this.parseMapboxFeature(data.features[0]));
 
         return from(fetchPromise);
+    }
+
+    public parseMapboxFeature = ({properties, geometry}: MapboxFeature): TopicLocation => {
+        return {
+            lng: geometry.coordinates[0],
+            lat: geometry.coordinates[1],
+            city: properties.context.place?.name || "",
+            state: properties.context.region?.name || properties.context.district?.name || "",
+            country: properties.context.country?.name || "",
+        }
     }
 }

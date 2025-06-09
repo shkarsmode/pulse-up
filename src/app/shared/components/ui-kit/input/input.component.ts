@@ -38,7 +38,8 @@ export class InputComponent
 {
     @Input() public id: string;
     @Input() public name: string;
-    @Input() public svg: string;
+    @Input() public iconStart: string;
+    @Input() public iconEnd: string;
     @Input() public min: number | string;
     @Input() public max: number | string;
     @Input() public label: string = '';

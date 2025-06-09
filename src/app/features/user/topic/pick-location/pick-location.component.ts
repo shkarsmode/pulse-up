@@ -1,26 +1,52 @@
-import { Component, inject } from "@angular/core";
+import { Component, inject, OnInit } from "@angular/core";
 import { Router } from "@angular/router";
 import mapboxgl from "mapbox-gl";
 import * as h3 from "h3-js";
 import { SendTopicService } from "@/app/shared/services/core/send-topic.service";
-import { TopicLocation } from "../../interfaces/topic-location.interface";
 import { AppRoutes } from "@/app/shared/enums/app-routes.enum";
 import { H3LayerService } from "@/app/features/landing/services/h3-layer.service";
 import { MapUtils } from "@/app/features/landing/services/map-utils.service";
+import { GeolocationService } from "@/app/shared/services/core/geolocation.service";
+import { NotificationService } from "@/app/shared/services/core/notification.service";
+import { TopicLocation } from "../../interfaces/topic-location.interface";
+import { GeocodeService } from "@/app/shared/services/api/geocode.service";
+import { catchError, of, switchMap, tap, throwError } from "rxjs";
 
 @Component({
     selector: "app-pick-location",
     templateUrl: "./pick-location.component.html",
     styleUrl: "./pick-location.component.scss",
 })
-export class PickLocationComponent {
+export class PickLocationComponent implements OnInit {
     private readonly router = inject(Router);
-    private readonly createTopicService = inject(SendTopicService);
+    private readonly sendTopicService = inject(SendTopicService);
     private readonly h3LayerService = inject(H3LayerService);
+    private readonly geteocodeService = inject(GeocodeService);
+    private readonly geolocationService = inject(GeolocationService);
+    private readonly notificationService = inject(NotificationService);
     private readonly sourceId = "search-polygons";
 
     map: mapboxgl.Map | null = null;
-    selectedLocation: TopicLocation | null = null;
+    selectedLocation = this.sendTopicService.customLocation;
+    isGeolocationSupported = this.geolocationService.isSupported;
+
+    get isMyPositionSelected() {
+        return this.selectedLocation && this.geolocationService.currentPosition;
+    }
+
+    ngOnInit(): void {
+        if (this.selectedLocation) {
+            this.map?.jumpTo({
+                center: [this.selectedLocation.lng, this.selectedLocation.lat],
+                zoom: 10,
+            });
+            return;
+        }
+
+        if (!this.isGeolocationSupported) return;
+
+        this.getMyPosition();
+    }
 
     onMapLoaded(map: mapboxgl.Map) {
         this.map = map;
@@ -65,10 +91,56 @@ export class PickLocationComponent {
 
     onConfirmLocation() {
         if (this.selectedLocation) {
-            this.createTopicService.setTopicLocation(this.selectedLocation);
+            this.sendTopicService.setTopicLocation(this.selectedLocation);
             this.router.navigateByUrl("/" + AppRoutes.User.Topic.SUGGEST);
         }
     }
+
+    getMyPosition = () => {
+        this.geolocationService
+            .getCurrentPosition()
+            .pipe(
+                catchError((error) => {
+                    console.error("Geolocation error:", error);
+                    return throwError(
+                        () =>
+                            new Error(
+                                "Geolocation not available. Please select a location manually.",
+                            ),
+                    );
+                }),
+                tap((position) => {
+                    console.log("Geolocation position:", position);
+                    const { latitude, longitude } = position.coords;
+                    this.map?.jumpTo({
+                        center: [longitude, latitude],
+                        zoom: 10,
+                    });
+                }),
+                switchMap((position) => {
+                    const { latitude, longitude } = position.coords;
+                    return this.geteocodeService.getPlaceByCoordinates(longitude, latitude);
+                }),
+                catchError((error) => {
+                    console.error("Geolocation error:", error);
+                    return throwError(
+                        () =>
+                            new Error(
+                                "Failed to retrieve location details. Please select a location manually.",
+                            ),
+                    );
+                }),
+            )
+            .subscribe({
+                next: (place) => {
+                    console.log("Geocoding result:", place);
+                    this.selectedLocation = place;
+                },
+                error: (error) => {
+                    this.notificationService.error(error.message);
+                },
+            });
+    };
 
     private onFlyEnd = () => {
         if (this.map) {

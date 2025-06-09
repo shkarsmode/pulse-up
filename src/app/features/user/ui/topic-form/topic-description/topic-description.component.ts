@@ -2,6 +2,7 @@ import {
     Component,
     ElementRef,
     EventEmitter,
+    inject,
     Input,
     OnInit,
     Output,
@@ -9,9 +10,16 @@ import {
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { AbstractControl } from "@angular/forms";
+import { MatDialog } from "@angular/material/dialog";
+import { SvgIconComponent } from "angular-svg-icon";
 import { PickerComponent } from "@ctrl/ngx-emoji-mart";
 import { TextareaComponent } from "../../../../../shared/components/ui-kit/textarea/textarea.component";
-import { SvgIconComponent } from "angular-svg-icon";
+import {
+    CropImagePopupComponent,
+    CropImagePopupData,
+} from "../../crop-image-popup/crop-image-popup.component";
+import { CropResult } from "../../../interfaces/crop-result.interface";
+import { NotificationService } from "@/app/shared/services/core/notification.service";
 
 @Component({
     selector: "app-topic-description",
@@ -28,6 +36,9 @@ export class TopicDescriptionComponent implements OnInit {
 
     @ViewChild("descriptionInput") descriptionInput!: TextareaComponent;
     @ViewChild("descriptionPictures", { static: false }) public descriptionPictures: ElementRef;
+
+    private readonly dialog = inject(MatDialog);
+    public readonly notificationService = inject(NotificationService);
 
     public isDescriptionFocused: boolean = false;
     public selectedPicture: string | ArrayBuffer | null;
@@ -76,8 +87,23 @@ export class TopicDescriptionComponent implements OnInit {
 
     public onFileSelected(event: Event): void {
         const file = (event.target as HTMLInputElement).files?.[0];
-        this.pictureControl?.setValue(file);
-        this.updateSelectedFile(file || null);
+        if (file) {
+            const dialogRef = this.dialog.open<CropImagePopupComponent, CropImagePopupData>(
+                CropImagePopupComponent,
+                {
+                    width: "100%",
+                    maxWidth: "630px",
+                    panelClass: "custom-dialog-container",
+                    backdropClass: "custom-dialog-backdrop",
+                    data: {
+                        event: event,
+                        aspectRatio: 3 / 4,
+                        maintainAspectRatio: false,
+                    },
+                },
+            );
+            dialogRef.afterClosed().subscribe(this.onCroppedImage);
+        }
     }
 
     public updateSelectedFile(file: File | null): void {
@@ -129,4 +155,13 @@ export class TopicDescriptionComponent implements OnInit {
         }
         return null;
     }
+
+    private onCroppedImage = (result: CropResult) => {
+        if (result.success) {
+            this.pictureControl?.setValue(result.imageFile);
+            this.updateSelectedFile(result.imageFile);
+        } else if (result.message) {
+            this.notificationService.error(result.message);
+        }
+    };
 }

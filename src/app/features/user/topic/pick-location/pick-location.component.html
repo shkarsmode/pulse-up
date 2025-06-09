@@ -16,11 +16,24 @@
     <div class="location__search">
         <app-places-autocomplete (locationSelected)="onLocationSelected($event)" />
     </div>
-    <div *ngIf="selectedLocation" class="location__confirm">
+    <div
+        *ngIf="selectedLocation"
+        class="location__confirm">
         <app-primary-button
             [fullWidth]="true"
             (click)="onConfirmLocation()">
             Confirm Location
         </app-primary-button>
+    </div>
+    <div
+        *ngIf="!isMyPositionSelected"
+        class="location__my-position">
+        <button
+            flatButton
+            appRippleEffect
+            rippleColor="rgba(94, 0, 204, 0.35)"
+            (click)="getMyPosition()">
+            <svg-icon src="assets/svg/my-location.svg" />
+        </button>
     </div>
 </div>
