@@ -4,7 +4,10 @@ import {
     EventEmitter,
     inject,
     Input,
+    OnChanges,
+    OnInit,
     Output,
+    SimpleChanges,
     ViewChild,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
@@ -30,7 +33,7 @@ interface Suggestion {
     standalone: true,
     imports: [CommonModule, FormsModule, ReactiveFormsModule, SvgIconComponent, SpinnerComponent],
 })
-export class PlacesAutocompleteComponent {
+export class PlacesAutocompleteComponent implements OnInit, OnChanges {
     @Input() initialValue: string = "";
 
     @Output() selectLocation = new EventEmitter<TopicLocation | null>();
@@ -39,7 +42,7 @@ export class PlacesAutocompleteComponent {
 
     private readonly geocodeService = inject(GeocodeService);
 
-    search = new FormControl(this.initialValue, {
+    search = new FormControl("", {
         validators: [Validators.required, Validators.minLength(2)],
     });
     features: MapboxFeature[] = [];
@@ -49,8 +52,13 @@ export class PlacesAutocompleteComponent {
 
     ngOnInit() {
         this.listenValueChanges();
-        this.search.setValue(this.initialValue, { emitEvent: false });
         this.searchInput?.nativeElement.focus();
+    }
+
+    ngOnChanges(changes: SimpleChanges) {
+        if (changes["initialValue"] && this.initialValue && !this.search.value) {
+            this.search.patchValue(this.initialValue);
+        }
     }
 
     get clearButtonVisible(): boolean {
