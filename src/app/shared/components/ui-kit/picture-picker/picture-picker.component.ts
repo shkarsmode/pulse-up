@@ -1,5 +1,5 @@
 import { CommonModule } from "@angular/common";
-import { Component, EventEmitter, Input, Output, SimpleChanges } from "@angular/core";
+import { Component, ElementRef, EventEmitter, Input, Output, SimpleChanges, ViewChild } from "@angular/core";
 import { AbstractControl } from "@angular/forms";
 
 @Component({
@@ -19,6 +19,8 @@ export class PicturePickerComponent {
 
     @Output() public pictureSelected = new EventEmitter<Event>();
     @Output() public pictureDeleted = new EventEmitter<void>();
+
+    @ViewChild("customIcon") public customIcon: ElementRef<HTMLInputElement>;
 
     public selectedPicture: string | ArrayBuffer | null;
     public selectedTypeOfPicture: "img" | "gif" | "smile" | "";
@@ -47,6 +49,10 @@ export class PicturePickerComponent {
         if (file) {
             this.pictureSelected.emit(event);
         }
+    }
+
+    public clearInputValue(): void {
+        this.customIcon.nativeElement.value = "";
     }
 
     private updateSelectedFile(file: File): void {
