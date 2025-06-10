@@ -40,8 +40,14 @@
         <app-copy-button
             link="{{ link }}"
             (handleClick)="onCopySocialLink($event)" />
-        <app-socials-button [variant]="'facebook'" />
-        <app-socials-button [variant]="'x'" />
-        <app-socials-button [variant]="'email'" />
+        <app-socials-button
+            [variant]="'facebook'"
+            [url]="link" />
+        <app-socials-button
+            [variant]="'x'"
+            [url]="link" />
+        <app-socials-button
+            [variant]="'email'"
+            [url]="link" />
     </div>
 </ng-template>
