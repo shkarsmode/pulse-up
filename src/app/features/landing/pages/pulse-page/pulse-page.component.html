@@ -13,7 +13,9 @@
             appLoadImgPath />
         <div class="pulse__header-title">
             <h2>{{ pulse.title }}</h2>
-            <a [routerLink]="['/user', pulse.author.username]" [state]="{ pulseId: pulse.id}">
+            <a
+                [routerLink]="['/user', pulse.author.username]"
+                [state]="{ pulseId: pulse.id }">
                 {{ pulse.author.name }}
             </a>
         </div>
@@ -130,6 +132,9 @@
                     [pulseId]="pulse.id"
                     [isToShowHeatmap]="true"
                     [isHideDebugger]="true"
+                    [isToShowMarkers]="false"
+                    [isToShowWeights]="true"
+                    [showEmptyPolygons]="false"
                     [zoom]="[1.5]"
                     [minZoom]="1.5" />
             </div>
