@@ -66,9 +66,15 @@
                     <app-copy-button
                         link="{{ pulseUrl }}"
                         (handleClick)="onCopyLink($event)" />
-                    <app-socials-button [variant]="'facebook'" />
-                    <app-socials-button [variant]="'x'" />
-                    <app-socials-button [variant]="'email'" />
+                    <app-socials-button
+                        [variant]="'facebook'"
+                        [url]="pulseUrl" />
+                    <app-socials-button
+                        [variant]="'x'"
+                        [url]="pulseUrl" />
+                    <app-socials-button
+                        [variant]="'email'"
+                        [url]="pulseUrl" />
                 </div>
             </ng-template>
         </div>

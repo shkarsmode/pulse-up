@@ -10,6 +10,7 @@ type IconVariant = 'facebook' | 'x' | 'email';
     template: `
         <button
             shareButton="{{ variant }}"
+            [url]="url"
             [ngClass]="'socials-btn socials-btn_' + variant"
         >
             <svg-icon
@@ -23,8 +24,8 @@ type IconVariant = 'facebook' | 'x' | 'email';
     standalone: true,
 })
 export class SocialsButtonComponent {
-    @Input()
-    variant: IconVariant;
+    @Input() variant: IconVariant;
+    @Input() url: string;
 
     iconsNames: Partial<Record<IconVariant, string>> = {
         facebook: 'assets/svg/socials/fb.svg',
