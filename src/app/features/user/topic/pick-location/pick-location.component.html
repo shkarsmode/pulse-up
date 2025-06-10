@@ -14,10 +14,12 @@
         [isRounded]="true"
         (mapLoaded)="onMapLoaded($event)" />
     <div class="location__search">
-        <app-places-autocomplete (locationSelected)="onLocationSelected($event)" />
+        <app-places-autocomplete
+            [initialValue]="(selectedLocationName$ | async) || ''"
+            (selectLocation)="onLocationSelected($event)" />
     </div>
     <div
-        *ngIf="selectedLocation"
+        *ngIf="selectedLocation$ | async"
         class="location__confirm">
         <app-primary-button
             [fullWidth]="true"
@@ -26,7 +28,7 @@
         </app-primary-button>
     </div>
     <div
-        *ngIf="!isMyPositionSelected"
+        *ngIf="!(isMyPositionSelected$ | async)"
         class="location__my-position">
         <button
             flatButton

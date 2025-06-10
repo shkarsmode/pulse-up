@@ -1,4 +1,12 @@
-import { Component, ElementRef, EventEmitter, inject, Output, ViewChild } from "@angular/core";
+import {
+    Component,
+    ElementRef,
+    EventEmitter,
+    inject,
+    Input,
+    Output,
+    ViewChild,
+} from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { FormControl, FormsModule, ReactiveFormsModule, Validators } from "@angular/forms";
 import { SvgIconComponent } from "angular-svg-icon";
@@ -12,6 +20,7 @@ interface Suggestion {
     id: string;
     name: string;
     lng: number;
+    lat: number;
 }
 
 @Component({
@@ -22,17 +31,16 @@ interface Suggestion {
     imports: [CommonModule, FormsModule, ReactiveFormsModule, SvgIconComponent, SpinnerComponent],
 })
 export class PlacesAutocompleteComponent {
-    @Output() locationSelected = new EventEmitter<TopicLocation>();
+    @Input() initialValue: string = "";
+
+    @Output() selectLocation = new EventEmitter<TopicLocation | null>();
 
     @ViewChild("searchInput") searchInput!: ElementRef<HTMLInputElement>;
 
     private readonly geocodeService = inject(GeocodeService);
 
-    search = new FormControl("", {
-        validators: [
-            Validators.required,
-            Validators.minLength(2),
-        ],
+    search = new FormControl(this.initialValue, {
+        validators: [Validators.required, Validators.minLength(2)],
     });
     features: MapboxFeature[] = [];
     loading = false;
@@ -41,6 +49,8 @@ export class PlacesAutocompleteComponent {
 
     ngOnInit() {
         this.listenValueChanges();
+        this.search.setValue(this.initialValue, { emitEvent: false });
+        this.searchInput?.nativeElement.focus();
     }
 
     get clearButtonVisible(): boolean {
@@ -48,12 +58,16 @@ export class PlacesAutocompleteComponent {
     }
 
     get suggestions(): Suggestion[] {
-        return this.features.map<Suggestion>((feature) => ({
-            id: feature.id,
-            name: this.getLocationName(feature),
-            lng: feature.geometry.coordinates[0],
-            lat: feature.geometry.coordinates[1],
-        }));
+        return this.features.map<Suggestion>((feature) => {
+            const location = this.geocodeService.parseMapboxFeature(feature);
+            const locationName = this.getLocationName(location);
+            return {
+                id: feature.id,
+                name: locationName,
+                lng: location.lng,
+                lat: location.lat,
+            };
+        });
     }
 
     get suggestionsVisible(): boolean {
@@ -71,8 +85,15 @@ export class PlacesAutocompleteComponent {
         const key = event.key;
         const allowedPattern = /^[a-zA-Z\s.,'’-]$/;
         const specialKeys = [
-            'Backspace', 'Tab', 'ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown',
-            'Delete', 'Home', 'End'
+            "Backspace",
+            "Tab",
+            "ArrowLeft",
+            "ArrowRight",
+            "ArrowUp",
+            "ArrowDown",
+            "Delete",
+            "Home",
+            "End",
         ];
         if (specialKeys.includes(key)) {
             this.validationError = "";
@@ -86,12 +107,12 @@ export class PlacesAutocompleteComponent {
 
         this.validationError = "";
     }
-    
 
     clear() {
         this.search.setValue("");
         this.features = [];
         this.searchInput?.nativeElement.focus();
+        this.selectLocation.emit(null);
     }
 
     selectSuggestion(suggestion: Suggestion) {
@@ -101,14 +122,15 @@ export class PlacesAutocompleteComponent {
             geometry,
             properties: { context },
         } = feature;
-        this.locationSelected.emit({
+        const location: TopicLocation = {
             lng: geometry.coordinates[0],
             lat: geometry.coordinates[1],
             country: context.country?.name || "",
-            state: (context.region?.name || context.district?.name) || "",
+            state: context.region?.name || context.district?.name || "",
             city: context.place?.name || "",
-        });
-        this.search.setValue(suggestion.name);
+        };
+        this.selectLocation.emit(location);
+        this.search.setValue(this.getLocationName(location));
         this.showSuggestions = false;
         this.features = [];
     }
@@ -143,7 +165,7 @@ export class PlacesAutocompleteComponent {
             });
     }
 
-    private getLocationName(place: MapboxFeature): string {
-        return place.properties.full_address;
+    private getLocationName(location: TopicLocation): string {
+        return [location.city, location.state, location.country].filter(Boolean).join(", ");
     }
 }
