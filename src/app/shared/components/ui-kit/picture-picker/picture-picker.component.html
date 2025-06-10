@@ -8,7 +8,8 @@
         [name]="name"
         type="file"
         accept=".jpg, .png, .jpeg"
-        (change)="onFileSelected($event)" />
+        (change)="onFileSelected($event)" 
+        (mousedown)="clearInputValue()"/>
 
     <div class="custom-icon">
         <img

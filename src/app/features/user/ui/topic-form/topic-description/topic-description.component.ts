@@ -67,7 +67,9 @@ export class TopicDescriptionComponent implements OnInit {
     }
 
     public openInputForDescription(acceptType: "img" | "gif" | "smile"): void {
-        const inputElement = this.descriptionPictures.nativeElement;
+        const inputElement = this.descriptionPictures.nativeElement as HTMLInputElement;
+        inputElement.files = null;
+        inputElement.value = "";
 
         const acceptTypeKeyMap = {
             img: ".png, .jpg, .jpeg",
