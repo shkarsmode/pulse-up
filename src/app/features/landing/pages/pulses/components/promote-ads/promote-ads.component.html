@@ -2,7 +2,7 @@
 
 <app-primary-button
     *ngIf="!(isAuthenticated$ | async)"
-    openAddTopicPopup>
+    [routerLink]="signInRoute">
     Start A Topic
 </app-primary-button>
 <app-primary-button

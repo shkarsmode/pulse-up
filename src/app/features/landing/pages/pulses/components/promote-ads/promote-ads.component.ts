@@ -1,13 +1,11 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
+import { map } from 'rxjs';
 import { PrimaryButtonComponent } from '@/app/shared/components/ui-kit/buttons/primary-button/primary-button.component';
-import { AddTopicPopupDirective } from '@/app/shared/components/popups/add-topic-popup/add-topic-popup.directive';
 import { AppRoutes } from '@/app/shared/enums/app-routes.enum';
 import { UserStore } from '@/app/shared/stores/user.store';
 import { AuthenticationService } from '@/app/shared/services/api/authentication.service';
-import { map } from 'rxjs';
-import { CompleteProfilePopupDirective } from '@/app/shared/components/popups/complete-profile-popup/complete-profile-popup.directive';
 
 @Component({
     selector: 'app-promote-ads',
@@ -15,7 +13,7 @@ import { CompleteProfilePopupDirective } from '@/app/shared/components/popups/co
     styleUrl: './promote-ads.component.scss',
     changeDetection: ChangeDetectionStrategy.OnPush,
     standalone: true,
-    imports: [CommonModule, PrimaryButtonComponent, AddTopicPopupDirective, CompleteProfilePopupDirective],
+    imports: [CommonModule, PrimaryButtonComponent, RouterModule],
 })
 export class PromoteAdsComponent {
     private readonly router: Router = inject(Router);
@@ -26,6 +24,7 @@ export class PromoteAdsComponent {
     public readonly isProfileComplete$ = this.userStore.profile$.pipe(
         map(profile => !!profile?.name && !!profile?.username)
     );
+    public signInRoute = "/" + AppRoutes.Auth.SIGN_IN;
 
     public onAddTopicClick(): void {
         this.router.navigateByUrl('/' + AppRoutes.User.Topic.SUGGEST);
