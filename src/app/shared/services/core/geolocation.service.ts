@@ -42,6 +42,11 @@ export class GeolocationService {
                     this.statusSubject.next("error");
                     observer.error(error);
                 },
+                {
+                    enableHighAccuracy: false,
+                    timeout: 15000,
+                    maximumAge: 0,
+                }
             );
         });
     }

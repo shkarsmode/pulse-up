@@ -1,6 +1,6 @@
 import { Component, inject, OnInit } from "@angular/core";
 import { Router } from "@angular/router";
-import { BehaviorSubject, catchError, switchMap, tap, throwError } from "rxjs";
+import { BehaviorSubject, catchError, map, switchMap, tap, throwError } from "rxjs";
 import mapboxgl from "mapbox-gl";
 import * as h3 from "h3-js";
 import { SendTopicService } from "@/app/shared/services/core/send-topic.service";
@@ -27,73 +27,52 @@ export class PickLocationComponent implements OnInit {
     private readonly sourceId = "search-polygons";
 
     map: mapboxgl.Map | null = null;
-    selectedLocation = this.sendTopicService.customLocation;
+    selectedLocationSubject = new BehaviorSubject(this.sendTopicService.customLocation);
+    selectedLocation$ = this.selectedLocationSubject.asObservable();
     isGeolocationSupported = this.geolocationService.isSupported;
-    isGeolocationRequestInProgress = new BehaviorSubject<boolean>(true);
+    isGeolocationRequestInProgress = new BehaviorSubject<boolean>(false);
     isGeolocationRequestInProgress$ = this.isGeolocationRequestInProgress.asObservable();
-
-    get isMyPositionSelected() {
-        return this.selectedLocation && this.geolocationService.currentPosition;
-    }
+    isMyPositionSelected$ = this.selectedLocationSubject
+        .asObservable()
+        .pipe(map((location) => !!(location && this.geolocationService.currentPosition)));
+    selectedLocationName$ = this.selectedLocationSubject.asObservable().pipe(
+        map((location) => {
+            if (!location) return "";
+            const { city, state, country } = location;
+            return [city, state, country].filter(Boolean).join(", ");
+        }),
+    );
 
     ngOnInit(): void {
-        if (this.selectedLocation) {
-            this.map?.jumpTo({
-                center: [this.selectedLocation.lng, this.selectedLocation.lat],
-                zoom: 10,
-            });
-            return;
-        }
-
-        if (!this.isGeolocationSupported) return;
-
+        if (this.selectedLocationSubject.value || !this.isGeolocationSupported) return;
         this.getMyPosition();
     }
 
     onMapLoaded(map: mapboxgl.Map) {
         this.map = map;
         this.map.on("moveend", this.onFlyEnd);
-
-        MapUtils.addGeoJsonSource({
-            id: this.sourceId,
-            map: this.map,
-            data: {
-                type: "FeatureCollection",
-                features: [],
-            },
-        });
-        MapUtils.addLineLayer({
-            sourceId: this.sourceId,
-            layerId: "search-polygons-layer-line",
-            map: this.map,
-            data: {
-                "line-color": "#5e00cc",
-                "line-width": 2,
-                "line-opacity": 0.25,
-            },
-        });
-        MapUtils.addFillLayer({
-            sourceId: this.sourceId,
-            layerId: "search-polygons-layer-fill",
-            map: this.map,
-            data: {
-                "fill-color": "#5e00cc",
-                "fill-opacity": 0.15,
-            },
-        });
+        this.addLayersToMap();
+        this.jumpToSelectedLocation();
     }
 
-    onLocationSelected(location: TopicLocation) {
-        this.map?.flyTo({
-            center: [location.lng, location.lat],
-            zoom: 10,
-        });
-        this.selectedLocation = location;
+    onLocationSelected(location: TopicLocation | null) {
+        if (!this.map) return;
+
+        this.selectedLocationSubject.next(location);
+
+        if (location) {
+            this.map?.flyTo({
+                center: [location.lng, location.lat],
+                zoom: 10,
+            });
+        } else {
+            this.removePolygonsFromMap();
+        }
     }
 
     onConfirmLocation() {
-        if (this.selectedLocation) {
-            this.sendTopicService.setTopicLocation(this.selectedLocation);
+        if (this.selectedLocationSubject.value) {
+            this.sendTopicService.setTopicLocation(this.selectedLocationSubject.value);
             this.router.navigateByUrl("/" + AppRoutes.User.Topic.SUGGEST);
         }
     }
@@ -133,7 +112,7 @@ export class PickLocationComponent implements OnInit {
             )
             .subscribe({
                 next: (place) => {
-                    this.selectedLocation = place;
+                    this.selectedLocationSubject.next(place);
                     this.isGeolocationRequestInProgress.next(false);
                 },
                 error: (error) => {
@@ -143,15 +122,71 @@ export class PickLocationComponent implements OnInit {
             });
     };
 
+    private addLayersToMap() {
+        if (!this.map) return;
+        MapUtils.addGeoJsonSource({
+            id: this.sourceId,
+            map: this.map,
+            data: {
+                type: "FeatureCollection",
+                features: [],
+            },
+        });
+        MapUtils.addLineLayer({
+            sourceId: this.sourceId,
+            layerId: "search-polygons-layer-line",
+            map: this.map,
+            data: {
+                "line-color": "#5e00cc",
+                "line-width": 2,
+                "line-opacity": 0.25,
+            },
+        });
+        MapUtils.addFillLayer({
+            sourceId: this.sourceId,
+            layerId: "search-polygons-layer-fill",
+            map: this.map,
+            data: {
+                "fill-color": "#5e00cc",
+                "fill-opacity": 0.15,
+            },
+        });
+    }
+
     private onFlyEnd = () => {
         if (this.map) {
             const center = this.map.getCenter();
             const h3Index = h3.geoToH3(center.lat, center.lng, 6);
-            this.h3LayerService.addH3PolygonsToMap({
-                map: this.map,
-                h3Indexes: [h3Index],
-                sourceId: this.sourceId,
-            });
+            this.addPolygonsToMap([h3Index]);
         }
     };
+
+    private jumpToSelectedLocation() {
+        if (!this.selectedLocationSubject.value || !this.map) return;
+        this.map?.jumpTo({
+            center: [
+                this.selectedLocationSubject.value.lng,
+                this.selectedLocationSubject.value.lat,
+            ],
+            zoom: 10,
+        });
+    }
+
+    private addPolygonsToMap(h3Indexes: string[]) {
+        if (!this.map) return;
+        this.h3LayerService.addH3PolygonsToMap({
+            map: this.map,
+            h3Indexes: h3Indexes,
+            sourceId: this.sourceId,
+        });
+    }
+
+    private removePolygonsFromMap() {
+        if (!this.map) return;
+        this.h3LayerService.addH3PolygonsToMap({
+            map: this.map,
+            h3Indexes: [],
+            sourceId: this.sourceId,
+        });
+    }
 }
