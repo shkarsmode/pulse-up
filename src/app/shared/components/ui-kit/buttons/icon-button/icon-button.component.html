@@ -1,0 +1,11 @@
+<button
+    mat-icon-button
+    class="icon-button"
+    [type]="type"
+    [disabled]="disabled"
+    [class.icon-button--outline]="variant === 'outline'"
+    [style]="{ width: size + 'px', height: size + 'px' }"
+    (click)="handleClick($event)">
+    <span class="visualy-hidden">{{ label }}</span>
+    <ng-content></ng-content>
+</button>
