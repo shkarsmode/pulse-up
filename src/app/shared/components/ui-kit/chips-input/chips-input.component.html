@@ -5,25 +5,38 @@
     <div
         class="chips-container"
         [class.chips-container--error]="hasErrorClass">
-        @for (chip of chips; track chip; let i = $index ) {
-        <span class="chip">
-            {{ chip }}
-            <button
-                type="button"
-                aria-label="Remove tag"
-                (click)="removeChip(i)">
-                <svg-icon src="assets/svg/close.svg" />
-            </button>
-        </span>
-        }
-        <input
-            id="chips-input"
-            type="text"
-            [(ngModel)]="inputValue"
-            [disabled]="chips.length === limit"
-            [hidden]="chips.length === limit"
-            (keydown)="addChip($event)"
-            maxlength="40"
-            [placeholder]="chips.length === limit ? '' : 'Add a tag...'" />
+        <div class="chips-list">
+            @for (chip of chips; track chip; let i = $index ) {
+            <span class="chip">
+                {{ chip }}
+                <button
+                    type="button"
+                    aria-label="Remove tag"
+                    (click)="removeChip(i)">
+                    <svg-icon src="assets/svg/close.svg" />
+                </button>
+            </span>
+            }
+            <input
+                #chipsInput
+                class="chips-input"
+                id="chips-input"
+                type="text"
+                [(ngModel)]="inputValue"
+                [disabled]="chips.length === limit"
+                [hidden]="chips.length === limit"
+                (keydown)="addChip($event)"
+                maxlength="40"
+                [placeholder]="chips.length === limit ? '' : 'Add a tag...'" />
+        </div>
+        <app-icon-button
+            *ngIf="canAddChip"
+            [size]="28"
+            class="chips-add"
+            label="Add keyword"
+            [disabled]="!canAddChip"
+            (click)="addChipWithButton()">
+            <svg-icon src="assets/svg/add.svg" />
+        </app-icon-button>
     </div>
 </div>

@@ -1,0 +1,27 @@
+.icon-button {
+    width: 48px;
+    height: 48px;
+    padding: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    color: var(--accent-color);
+
+    &::ng-deep svg-icon {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        
+        svg {
+            width: 100%;
+            height: 100%;
+        }
+        path {
+            fill: currentColor;
+        }
+    }
+}
+.icon-button--outline {
+    border: 1px solid var(--light-grey-color);
+}
