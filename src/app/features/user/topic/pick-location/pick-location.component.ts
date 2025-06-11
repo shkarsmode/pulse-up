@@ -1,6 +1,15 @@
-import { Component, inject, OnInit } from "@angular/core";
+import { Component, inject, OnDestroy, OnInit } from "@angular/core";
 import { Router } from "@angular/router";
-import { BehaviorSubject, catchError, map, switchMap, tap, throwError } from "rxjs";
+import {
+    BehaviorSubject,
+    catchError,
+    map,
+    Subject,
+    switchMap,
+    takeUntil,
+    tap,
+    throwError,
+} from "rxjs";
 import mapboxgl from "mapbox-gl";
 import * as h3 from "h3-js";
 import { SendTopicService } from "@/app/shared/services/core/send-topic.service";
@@ -17,7 +26,7 @@ import { GeocodeService } from "@/app/shared/services/api/geocode.service";
     templateUrl: "./pick-location.component.html",
     styleUrl: "./pick-location.component.scss",
 })
-export class PickLocationComponent implements OnInit {
+export class PickLocationComponent implements OnInit, OnDestroy {
     private readonly router = inject(Router);
     private readonly sendTopicService = inject(SendTopicService);
     private readonly h3LayerService = inject(H3LayerService);
@@ -25,6 +34,7 @@ export class PickLocationComponent implements OnInit {
     private readonly geolocationService = inject(GeolocationService);
     private readonly notificationService = inject(NotificationService);
     private readonly sourceId = "search-polygons";
+    private destroy$ = new Subject<void>();
 
     map: mapboxgl.Map | null = null;
     selectedLocationSubject = new BehaviorSubject(this.sendTopicService.customLocation);
@@ -46,6 +56,11 @@ export class PickLocationComponent implements OnInit {
     ngOnInit(): void {
         if (this.selectedLocationSubject.value || !this.isGeolocationSupported) return;
         this.getMyPosition();
+    }
+
+    ngOnDestroy(): void {
+        this.destroy$.next();
+        this.destroy$.complete();
     }
 
     onMapLoaded(map: mapboxgl.Map) {
@@ -82,6 +97,7 @@ export class PickLocationComponent implements OnInit {
         this.geolocationService
             .getCurrentPosition()
             .pipe(
+                takeUntil(this.destroy$),
                 catchError((error) => {
                     return throwError(
                         () =>
