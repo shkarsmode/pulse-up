@@ -13,9 +13,6 @@ export class JwtInterceptor implements HttpInterceptor {
 
         return from(currentUser.getIdToken()).pipe(
             switchMap((token) => {
-                const isExpired = this.authenticationService.isTokenExpired(token);
-                console.log(`Token is expired: ${isExpired}`);
-                
                 const cloned = request.clone({
                     setHeaders: {
                         Authorization: `Bearer ${token}`,
