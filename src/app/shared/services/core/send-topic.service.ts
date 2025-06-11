@@ -36,6 +36,7 @@ export class SendTopicService {
     public resultId: string;
     public isTopicReadyForPreview: boolean = false;
     public customLocation: TopicLocation | null = null;
+    public isTopicEditing: boolean = false;
 
     private readonly router: Router = inject(Router);
     private readonly formBuilder: FormBuilder = inject(FormBuilder);
