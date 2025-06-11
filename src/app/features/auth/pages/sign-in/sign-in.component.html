@@ -27,7 +27,8 @@
                         inputmode="tel"
                         autocomplete="tel-national"
                         formControlName="phone"
-                        [errorStateMatcher]="errorStateMatcher" />
+                        [errorStateMatcher]="errorStateMatcher"
+                        (focus)="onFocus()"/>
                     <mat-error>Invalid phone number</mat-error>
                 </mat-form-field>
                 <app-primary-button
