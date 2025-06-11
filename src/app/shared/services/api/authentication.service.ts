@@ -326,18 +326,11 @@ export class AuthenticationService {
     public updateToken = () => {
         const user = this.firebaseAuth.currentUser;
         if (!user) {
-            console.log("No authenticated user found for token update.");
             return throwError(() => new AuthenticationError("No authenticated user found.", AuthenticationErrorCode.INVALID_CREDENTIALS));
         }
         const isAnonymous = LocalStorageService.get<boolean>(LOCAL_STORAGE_KEYS.isAnonymous);
-        const oldToken = isAnonymous 
-            ? LocalStorageService.get<string>(LOCAL_STORAGE_KEYS.anonymousToken) 
-            : LocalStorageService.get<string>(LOCAL_STORAGE_KEYS.userToken);
-        const isExpired = this.isTokenExpired(oldToken || "");
-        console.log(`Token is expired: ${isExpired}`);
         return from(user.getIdToken(true)).pipe(
             map((newToken: string) => {
-                console.log("New token received:", newToken, this.isTokenExpired(newToken));
                 if (isAnonymous) {
                     LocalStorageService.set(LOCAL_STORAGE_KEYS.anonymousToken, newToken);
                     this.anonymousUser$.next(newToken);
@@ -360,7 +353,6 @@ export class AuthenticationService {
         }
 
         const decodedToken = this.decodeToken(token);
-        console.log("Token expiration:", decodedToken?.exp);
         
         if (!decodedToken || !decodedToken.exp) {
             return true;
