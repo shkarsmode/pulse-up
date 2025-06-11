@@ -362,6 +362,10 @@ export class AuthenticationService {
         return decodedToken.exp < currentTime;
     }
 
+    public stopSignInProgress = () => {
+        this.isSigninInProgress$.next(false);
+    }
+
     private decodeToken(token: string): JwtPayload | null {
         try {
             return jwtDecode<JwtPayload>(token);
