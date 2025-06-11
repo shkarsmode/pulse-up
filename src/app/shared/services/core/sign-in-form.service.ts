@@ -165,6 +165,7 @@ export class SignInFormService {
 
     public onDestroy = () => {
         this.iti?.destroy();
+        this.authenticationService.stopSignInProgress();
     };
 
     public validateNumber({ isEmptyValid = false }: { isEmptyValid?: boolean } = {}) {
