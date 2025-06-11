@@ -59,9 +59,9 @@ export class AuthenticationService {
 
     constructor(@Inject(FIREBASE_CONFIG) private readonly firebaseConfig: IFirebaseConfig) {
         this.firebaseApp = this.initFirebaseAppWithConfig();
-        this.anonymousUser$ = new BehaviorSubject(LocalStorageService.get("anonymous"));
+        this.anonymousUser$ = new BehaviorSubject(LocalStorageService.get<string>(LOCAL_STORAGE_KEYS.anonymousToken));
         this.anonymousUser = this.anonymousUser$.asObservable();
-        this.userToken$ = new BehaviorSubject(LocalStorageService.get<string>("userToken"));
+        this.userToken$ = new BehaviorSubject(LocalStorageService.get<string>(LOCAL_STORAGE_KEYS.userToken));
         this.userToken = this.userToken$.asObservable();
         this.isSigninInProgress$ = new BehaviorSubject<boolean>(false);
         this.isConfirmInProgress$ = new BehaviorSubject<boolean>(false);
@@ -154,8 +154,8 @@ export class AuthenticationService {
         return from(signInAnonymously(this.firebaseAuth)).pipe(
             map((response: UserCredential | any) => {
                 const accessToken = response.user.accessToken;
-                LocalStorageService.set("anonymous", accessToken);
-                LocalStorageService.set("isAnonymous", true);
+                LocalStorageService.set(LOCAL_STORAGE_KEYS.anonymousToken, accessToken);
+                LocalStorageService.set(LOCAL_STORAGE_KEYS.isAnonymous, true);
                 this.anonymousUser$.next(accessToken);
 
                 return response;
@@ -307,14 +307,13 @@ export class AuthenticationService {
     public logout = () => {
         return from(signOut(this.firebaseAuth)).pipe(
             tap(() => {
-                LocalStorageService.remove("userToken");
+                LocalStorageService.remove(LOCAL_STORAGE_KEYS.userToken);
                 this.userToken$.next(null);
 
-                LocalStorageService.remove("anonymous");
+                LocalStorageService.remove(LOCAL_STORAGE_KEYS.anonymousToken);
                 this.anonymousUser$.next(null);
 
-                LocalStorageService.remove("isAnonymous");
-                LocalStorageService.remove("token");
+                LocalStorageService.remove(LOCAL_STORAGE_KEYS.isAnonymous);
 
                 LocalStorageService.remove(LOCAL_STORAGE_KEYS.personalInfoPopupShown);
             }),
@@ -324,14 +323,45 @@ export class AuthenticationService {
         );
     };
 
-    private get isTokenExpired(): boolean {
-        const token = this.anonymousUserValue;
+    public updateToken = () => {
+        const user = this.firebaseAuth.currentUser;
+        if (!user) {
+            console.log("No authenticated user found for token update.");
+            return throwError(() => new AuthenticationError("No authenticated user found.", AuthenticationErrorCode.INVALID_CREDENTIALS));
+        }
+        const isAnonymous = LocalStorageService.get<boolean>(LOCAL_STORAGE_KEYS.isAnonymous);
+        const oldToken = isAnonymous 
+            ? LocalStorageService.get<string>(LOCAL_STORAGE_KEYS.anonymousToken) 
+            : LocalStorageService.get<string>(LOCAL_STORAGE_KEYS.userToken);
+        const isExpired = this.isTokenExpired(oldToken || "");
+        console.log(`Token is expired: ${isExpired}`);
+        return from(user.getIdToken(true)).pipe(
+            map((newToken: string) => {
+                console.log("New token received:", newToken, this.isTokenExpired(newToken));
+                if (isAnonymous) {
+                    LocalStorageService.set(LOCAL_STORAGE_KEYS.anonymousToken, newToken);
+                    this.anonymousUser$.next(newToken);
+                } else {
+                    LocalStorageService.set(LOCAL_STORAGE_KEYS.userToken, newToken);
+                    this.userToken$.next(newToken);
+                }
+                return newToken;
+            }),
+            catchError((error: any) => {
+                console.error("Error updating token:", error);
+                return throwError(() => new AuthenticationError(error.message, AuthenticationErrorCode.UNKNOWN_ERROR));
+            }),
+        )
+    }
 
+    public isTokenExpired(token: string): boolean {
         if (!token) {
             return true;
         }
 
         const decodedToken = this.decodeToken(token);
+        console.log("Token expiration:", decodedToken?.exp);
+        
         if (!decodedToken || !decodedToken.exp) {
             return true;
         }
@@ -452,10 +482,10 @@ export class AuthenticationService {
     ): Observable<IProfile> => {
         return of(userData).pipe(
             tap(({ token }) => {
-                LocalStorageService.set("userToken", token);
-                LocalStorageService.set("isAnonymous", false);
+                LocalStorageService.set(LOCAL_STORAGE_KEYS.userToken, token);
+                LocalStorageService.set(LOCAL_STORAGE_KEYS.isAnonymous, false);
                 LocalStorageService.remove("phoneNumberForSignin");
-                LocalStorageService.remove("anonymous");
+                LocalStorageService.remove(LOCAL_STORAGE_KEYS.anonymousToken);
                 this.userToken$.next(token);
                 this.anonymousUser$.next(null);
                 this.isConfirmInProgress$.next(false);

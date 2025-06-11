@@ -11,6 +11,7 @@ import { catchError, filter, switchMap, take } from 'rxjs/operators';
 import { AuthenticationService } from '../../services/api/authentication.service';
 import { Router } from '@angular/router';
 import { AppRoutes } from '../../enums/app-routes.enum';
+import { LOCAL_STORAGE_KEYS, LocalStorageService } from '../../services/core/local-storage.service';
 
 @Injectable()
 export class ErrorInterceptor implements HttpInterceptor {
@@ -68,31 +69,21 @@ export class ErrorInterceptor implements HttpInterceptor {
         request: HttpRequest<any>,
         next: HttpHandler
     ): Observable<HttpEvent<any>> {
+        console.log('handle401Error');
+        
         if (!this.isRefreshing) {
             this.isRefreshing = true;
             this.refreshTokenSubject.next(null);
 
             return this.authenticationService
-                .loginAsAnonymousThroughTheFirebase()
+                .updateToken()
                 .pipe(
-                    switchMap(({ user }: any) => {
-                        console.log(
-                            'this.authenticationService.loginAsAnonymousThroughTheFirebase',
-                            user
-                        );
-                        const accessToken = user.accessToken;
-                        localStorage.setItem('token', 'Bearer ' + accessToken);
+                    switchMap((token) => {
                         this.isRefreshing = false;
-                        this.refreshTokenSubject.next(accessToken);
-
+                        this.refreshTokenSubject.next(token);
                         return next.handle(this.addTokenHeader(request));
                     }),
                     catchError((err) => {
-                        // this.snackBar.open('You need to login', 'Close', {
-                        //     duration: 3500,
-                        //     horizontalPosition: 'center',
-                        //     verticalPosition: 'bottom',
-                        // });
                         this.isRefreshing = false;
                         console.log('log out');
                         this.authenticationService.logout();
@@ -109,23 +100,23 @@ export class ErrorInterceptor implements HttpInterceptor {
     }
 
     private addTokenHeader(request: HttpRequest<any>) {
-        const anonymousToken = this.authenticationService.anonymousUserValue;
-        const userTokenValue =
-            this.authenticationService.userTokenValue;
-
-        if (userTokenValue) {
+        const isAnonymous = LocalStorageService.get<boolean>(LOCAL_STORAGE_KEYS.isAnonymous);
+        const userToken = LocalStorageService.get<boolean>(LOCAL_STORAGE_KEYS.userToken);
+        
+        if (isAnonymous) {
+            const token = LocalStorageService.get<string>(LOCAL_STORAGE_KEYS.anonymousToken);
             request = request.clone({
                 setHeaders: {
-                    Authorization: `Bearer ${userTokenValue}`,
-                },
-                withCredentials: true,
-            });
-        } else if (anonymousToken) {
-            request = request.clone({
-                setHeaders: {
-                    Authorization: `Bearer ${anonymousToken}`,
+                    Authorization: `Bearer ${token}`,
                 },
                 withCredentials: false,
+            });
+        } else if (userToken) {
+            request = request.clone({
+                setHeaders: {
+                    Authorization: `Bearer ${userToken}`,
+                },
+                withCredentials: true,
             });
         }
 

@@ -89,7 +89,7 @@ export class SignInFormService {
 
     private validateChar(event: KeyboardEvent) {
         let isValid = true;
-        const allowedChars = /[0-9\+\-\ ]/;
+        const allowedChars = /[0-9\+\-]/;
         const allowedCtrlChars = /[axcv]/;
         const allowedOtherKeys = [
             "ArrowLeft",
