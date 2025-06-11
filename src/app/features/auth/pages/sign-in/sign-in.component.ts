@@ -65,6 +65,14 @@ export class SignInComponent implements AfterViewInit, OnDestroy {
         this.signInFormService.onDestroy();
     }
 
+    public onFocus() {
+        this.telInput.nativeElement.scrollIntoView({
+            behavior: "smooth",
+            block: "center",
+            inline: "nearest",
+        })
+    }
+
     public onSubmit() {
         return this.signInFormService.submit();
     }
