@@ -144,7 +144,7 @@ export class AuthenticationService {
             tap(() => this.isResendInProgress$.next(false)),
             catchError((error) => {
                 this.isResendInProgress$.next(false);
-                return this.handleLoginWithPhoneNumberError(error);
+                return this.handleResendPhoneNumberError(error);
             }),
         );
     }
@@ -525,9 +525,25 @@ export class AuthenticationService {
         );
     };
 
+    private handleResendPhoneNumberError = (error: any) => {
+        console.log("Error resending verification code", error);
+
+        if (error instanceof AuthenticationError) throwError(() => error);
+
+        let errorMessage = "Failed to resend verification code. Please try again.";
+        if (error instanceof FirebaseError) {
+            errorMessage = formatFirebaseError(error) || errorMessage;
+            return throwError(
+                () => new AuthenticationError(errorMessage, AuthenticationErrorCode.FIREBASE_ERROR),
+            );
+        }
+        return throwError(
+            () => new AuthenticationError(errorMessage, AuthenticationErrorCode.UNKNOWN_ERROR),
+        );
+    };
+
     private handleConfirmCodeVerificationError = (error: any): Observable<never> => {
         console.error("Error verifying confirmation code", error);
-        LocalStorageService.remove("phoneNumberForSignin");
 
         if (error instanceof AuthenticationError) throwError(() => error);
 
