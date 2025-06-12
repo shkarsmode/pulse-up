@@ -1,23 +1,21 @@
 import { Component, inject } from "@angular/core";
-import { combineLatest, filter, merge, of, switchMap, take } from "rxjs";
-import { AuthenticationService } from "./shared/services/api/authentication.service";
+import { ActivatedRoute, NavigationEnd, Router } from "@angular/router";
 import { LoadingService } from "./shared/services/core/loading.service";
 import { MetadataService } from "./shared/services/core/metadata.service";
-import { ActivatedRoute, Router } from "@angular/router";
-import { SettingsService } from "./shared/services/api/settings.service";
+import { filter } from "rxjs";
 
 @Component({
     selector: "app-root",
     template: `
         <div
-            [attr.aria-busy]="isLoading"
+            [attr.aria-busy]="isLoading$ | async"
             aria-live="polite"
             class="height-full">
-            <app-loading-page [isVisible]="isLoading" />
+            <app-loading-page [isVisible]="(isLoading$ | async) || false" />
             <div
-                [attr.aria-disabled]="isLoading"
+                [attr.aria-disabled]="isLoading$ | async"
                 class="height-full">
-                @if (!isLoading) {
+                @if (!(isLoading$ | async)) {
                 <router-outlet></router-outlet>
                 }
             </div>
@@ -32,30 +30,18 @@ import { SettingsService } from "./shared/services/api/settings.service";
     ],
 })
 export class AppComponent {
-    public isLoading: boolean = false;
     private router: Router = inject(Router);
     private activatedRoute: ActivatedRoute = inject(ActivatedRoute);
-    private readonly authenticationService: AuthenticationService = inject(AuthenticationService);
     private readonly loadingService: LoadingService = inject(LoadingService);
     private readonly metadataService: MetadataService = inject(MetadataService);
-    private readonly settingsService: SettingsService = inject(SettingsService);
+
+    public isLoading$ = this.loadingService.isLoadingObservable;
 
     public ngOnInit() {
-        // this.sendInitialQueries();
         this.metadataService.listenToRouteChanges(this.router, this.activatedRoute);
-    }
 
-    private sendInitialQueries(): void {
-        // this.isLoading = true;
-        // this.loadingService.isLoading = true;
-
-        // const anonymousUser$ = this.authenticationService.loginAsAnonymousThroughTheFirebase();
-        const settings$ = this.settingsService.getSettings();
-
-        combineLatest([settings$])
-            .pipe(take(1))
-            .subscribe((_) => {
-                // this.isLoading = false;
-            });
+        this.router.events.pipe(filter((event) => event instanceof NavigationEnd)).subscribe(() => {
+            this.loadingService.isLoading = false;
+        });
     }
 }
