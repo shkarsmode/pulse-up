@@ -16,14 +16,15 @@
         .logo {
             svg {
                 path {
-                    &:nth-child(1) {
+                    &:nth-child(1),
+                    &:nth-child(10) {
                         fill: var(--white-color);
                     }
-                    &:nth-child(n + 2):nth-child(-n + 6) {
-                        fill: #2e3046;
-                    }
-                    &:nth-child(n + 7):nth-child(-n + 14) {
+                    &:nth-child(n + 2):nth-child(-n + 8) {
                         fill: var(--white-color);
+                    }
+                    &:nth-child(n + 11):nth-child(-n + 14) {
+                        fill: var(--black-color);
                     }
                 }
             }
