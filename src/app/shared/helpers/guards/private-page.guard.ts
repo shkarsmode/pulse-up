@@ -10,12 +10,14 @@ import { map, Observable } from "rxjs";
 import { AuthenticationService } from "../../services/api/authentication.service";
 import { SettingsService } from "../../services/api/settings.service";
 import { AppRoutes } from "../../enums/app-routes.enum";
+import { LoadingService } from "../../services/core/loading.service";
 
 @Injectable({
     providedIn: "root",
 })
 export class PrivatePageGuard implements CanActivate {
     private readonly router: Router = inject(Router);
+    private readonly loadingService: LoadingService = inject(LoadingService);
     private readonly settingsService: SettingsService = inject(SettingsService);
     private readonly authenticationService: AuthenticationService = inject(AuthenticationService);
 
@@ -26,7 +28,8 @@ export class PrivatePageGuard implements CanActivate {
         state: RouterStateSnapshot,
     ): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
         const userToken = this.authenticationService.userTokenValue;
-
+        this.loadingService.isLoading = true;
+        
         if (userToken) {
             return this.getInitialData().pipe(map(() => true));
         }

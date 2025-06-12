@@ -63,7 +63,6 @@ export class ConfirmPhoneNumberService {
         if (this.mode === "signIn") {
             this.authenticationService.confirmVerificationCode(value).subscribe({
                 next: (response) => {
-                    console.log("Verification code confirmed successfully", response);
                     this.userStore.refreshProfile();
                     this.navigateToHomePage();
                     this.resetInput();
@@ -73,10 +72,6 @@ export class ConfirmPhoneNumberService {
         } else {
             this.authenticationService.confirmNewPhoneNumber(value).subscribe({
                 next: (response) => {
-                    console.log(
-                        "Verification code for new phone number confirmed successfully",
-                        response,
-                    );
                     this.router.navigateByUrl(`/${this.appRoutes.Profile.EDIT}`);
                     this.notificationService.success("Phone number has been changed successfully.");
                 },
