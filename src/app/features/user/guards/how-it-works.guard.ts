@@ -7,7 +7,6 @@ import { ActivatedRouteSnapshot, CanActivate, CanDeactivate, GuardResult, MaybeA
 })
 export class HowItWorksGuard implements CanActivate, CanDeactivate<unknown> {
     canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): MaybeAsync<GuardResult> {
-        console.log({route, state});
         return true;
     }
     canDeactivate(): boolean {
