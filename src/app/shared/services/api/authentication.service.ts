@@ -134,12 +134,11 @@ export class AuthenticationService {
         const phoneNumber = LocalStorageService.get<string>("phoneNumberForSignin");
         if (!phoneNumber) {
             return throwError(
-                () => new AuthenticationError("Failed to resend verification code. Please try again to login.", AuthenticationErrorCode.INVALID_CREDENTIALS),
+                () => new AuthenticationError("Failed to resend verification code. Please try again.", AuthenticationErrorCode.INVALID_CREDENTIALS),
             );
         }
         return of(null).pipe(
             tap(() => this.isResendInProgress$.next(true)),
-            switchMap(this.logout),
             switchMap(this.prepareRecaptcha),
             switchMap(() => this.sendVerificationCode(phoneNumber)),
             tap(() => this.isResendInProgress$.next(false)),
