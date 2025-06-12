@@ -38,12 +38,13 @@ export class LoadImgPathDirective implements OnInit, AfterViewInit {
 
         const prefix = this.settingsService.blobUrlPrefix;
         const fullSrc = this.elementRef.nativeElement.src;
-        console.log("Icon Prefix:", prefix);
-
+        
         const src = new URL(fullSrc).pathname;
-
+        
         this.elementRef.nativeElement.src = prefix + src;
-
+        console.log("Icon Prefix:", prefix);
+        console.log({"Full Src:": fullSrc, "Updated Src:": this.elementRef.nativeElement.src});
+        
         this.hasPathUpdated = true;
     }
 }
