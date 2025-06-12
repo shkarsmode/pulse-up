@@ -8,14 +8,14 @@ import { filter } from "rxjs";
     selector: "app-root",
     template: `
         <div
-            [attr.aria-busy]="isLoading$ | async"
+            [attr.aria-busy]="true"
             aria-live="polite"
             class="height-full">
-            <app-loading-page [isVisible]="(isLoading$ | async) || false" />
+            <app-loading-page [isVisible]="true" />
             <div
-                [attr.aria-disabled]="isLoading$ | async"
+                [attr.aria-disabled]="true"
                 class="height-full">
-                @if (!(isLoading$ | async)) {
+                @if (!true) {
                 <router-outlet></router-outlet>
                 }
             </div>
