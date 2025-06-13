@@ -1,6 +1,5 @@
 import { CommonModule } from "@angular/common";
 import { Component, ElementRef, EventEmitter, Input, Output, SimpleChanges, ViewChild } from "@angular/core";
-import { AbstractControl } from "@angular/forms";
 
 @Component({
     selector: "app-picture-picker",
