@@ -1,5 +1,14 @@
 <app-popup>
-    <app-popup-close-button (close)="onCloseDialog()"/>
-    <app-popup-title>Topic Limit Reached</app-popup-title>
-    <app-popup-text>You’ve reached the maximum number of topics you can create.</app-popup-text>
+    <app-popup-close-button (close)="onCloseDialog()" />
+    <app-popup-title>Topic creation limit reached</app-popup-title>
+    <app-popup-text>Engage more supporters to unlock additional topic slots.</app-popup-text>
+    <div class="popup-footer">
+        <div class="popup-footer__button">
+            <app-primary-button
+                [fullWidth]="true"
+                (handleClick)="onCloseDialog()">
+                Ok
+            </app-primary-button>
+        </div>
+    </div>
 </app-popup>
