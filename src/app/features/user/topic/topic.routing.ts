@@ -13,6 +13,7 @@ import { CreateTopicGuard } from "../guards/create-topic.guard";
 import { PreviewTopicCanActiveGuard } from "../guards/preview-topic-can-active.guard";
 import { PreviewTopicCanDeactiveGuard } from "../guards/preview-topic-can-deactive.guard";
 import { RequiredPersonalInformationGuard } from "../guards/required-personal-information.guard";
+import { ActiveTopicsLimitGuard } from "../guards/active-topics-limit.guard";
 
 const routes: Routes = [
     {
@@ -31,6 +32,7 @@ const routes: Routes = [
                 canActivate: [
                     PrivatePageGuard,
                     SuggestGuard,
+                    ActiveTopicsLimitGuard,
                     RequiredPersonalInformationGuard,
                     CreateTopicGuard,
                 ],

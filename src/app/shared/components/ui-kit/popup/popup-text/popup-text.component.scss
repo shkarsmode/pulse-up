@@ -1,3 +1,5 @@
+@use "../../../../../../styles/mixins" as *;
+
 .popup-text {
     @include text-16px;
     text-align: center;
