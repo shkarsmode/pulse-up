@@ -4,7 +4,6 @@ import {
     CanActivate,
     GuardResult,
     MaybeAsync,
-    Router,
     RouterStateSnapshot,
 } from "@angular/router";
 import { MatDialog } from "@angular/material/dialog";
@@ -17,7 +16,6 @@ import { CompleteProfilePopupComponent } from "@/app/shared/components/popups/co
     providedIn: "root",
 })
 export class RequiredPersonalInformationGuard implements CanActivate {
-    private router = inject(Router);
     private userStore = inject(UserStore);
     private dialog: MatDialog = inject(MatDialog);
 
