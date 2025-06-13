@@ -12,7 +12,7 @@
             [picture]="profilePicture"
             (pictureSelected)="onSelectPicture($event)"
             (pictureDeleted)="onDeletePicture()" />
-        <div *ngIf="getPictureErrorMessage() as error">
+        <div *ngIf="getErrorMessage('profilePicture') as error">
             <span class="profile-form__error">{{ error }}</span>
         </div>
     </div>
@@ -27,7 +27,7 @@
             formControlName="name"
             [hasErrorClass]="!!(form.get('name')?.touched && form.get('name')?.invalid)"
             (emitBlur)="onBlur('name')" />
-        <div *ngIf="getNameErrorMessage() as error">
+        <div *ngIf="getErrorMessage('name') as error">
             <span class="profile-form__error">{{ error }}</span>
         </div>
     </div>
@@ -42,7 +42,7 @@
             autocomplete="off"
             [hasErrorClass]="!!(form.get('username')?.touched && form.get('username')?.invalid)"
             (emitBlur)="onBlur('username')" />
-        <div *ngIf="getUsernameErrorMessage() as error">
+        <div *ngIf="getErrorMessage('username') as error">
             <span class="profile-form__error">{{ error }}</span>
         </div>
     </div>
@@ -62,7 +62,7 @@
             formControlName="bio"
             [hasErrorClass]="!!(form.get('bio')?.touched && form.get('bio')?.invalid)"
             (emitBlur)="onBlur('bio')" />
-        <div *ngIf="getBioErrorMessage() as error">
+        <div *ngIf="getErrorMessage('bio') as error">
             <span class="profile-form__error">{{ error }}</span>
         </div>
     </div>

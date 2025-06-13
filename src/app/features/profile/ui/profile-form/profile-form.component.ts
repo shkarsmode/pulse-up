@@ -22,6 +22,7 @@ import {
 } from "@/app/features/user/ui/crop-image-popup/crop-image-popup.component";
 import { CropResult } from "@/app/features/user/interfaces/crop-result.interface";
 import { NotificationService } from "@/app/shared/services/core/notification.service";
+import { ErrorMessageBuilder } from "../../helpers/error-message-builder";
 
 @Component({
     selector: "app-profile-form",
@@ -201,93 +202,10 @@ export class ProfileFormComponent {
             this.form.markAllAsTouched();
         }
     }
-
-    public getNameErrorMessage(): string | null {
-        const control = this.form.get("name");
-        if (!control || !(control.touched || control.dirty) || control.valid) {
-            return null;
-        }
-
-        if (control.hasError("required")) {
-            return "Name is required";
-        }
-        if (control.hasError("maxlength")) {
-            return "Name must be 50 characters or less";
-        }
-        if (control.hasError("pattern")) {
-            return "Name must contain only letters";
-        }
-
-        return null;
-    }
-
-    public getUsernameErrorMessage(): string | null {
-        const control = this.form.get("username");
-        if (!control || !(control.touched || control.dirty) || control.valid) {
-            return null;
-        }
-
-        if (control.hasError("required")) {
-            return "Username is required";
-        }
-        if (control.hasError("minlength")) {
-            return "Username must be at least 6 characters long";
-        }
-        if (control.hasError("maxlength")) {
-            return "Username must be 50 characters or less";
-        }
-        if (control.hasError("pattern")) {
-            return "Username must be alphanumeric and can include one underscore";
-        }
-        if (control.hasError("noLetter")) {
-            return "Must contain at least one letter.";
-        }
-        if (control.hasError("notUnique")) {
-            return "Username already taken.";
-        }
-
-        return null;
-    }
-
-    public getBioErrorMessage(): string | null {
-        const control = this.form.get("bio");
-        if (!control || !(control.touched || control.dirty) || control.valid) {
-            return null;
-        }
-
-        if (control.hasError("required")) {
-            return "Bio is required";
-        }
-        if (control.hasError("minlength")) {
-            return "Bio must be at least 3 characters long";
-        }
-        if (control.hasError("maxlength")) {
-            return "Bio must be 150 characters or less";
-        }
-
-        return null;
-    }
-
-    public getPictureErrorMessage(): string | null {
-        const control = this.form.get("profilePicture");
-        if (!control || !control?.value) {
-            return null;
-        }
-
-        if (control.hasError("missingName")) {
-            return "Picture must have a name";
-        }
-        if (control.hasError("invalidType")) {
-            return "File must be an image";
-        }
-        if (control.hasError("invalidExtension")) {
-            return "Only .png, .jpg, .jpeg allowed";
-        }
-        if (control.hasError("fileTooLarge")) {
-            return "File must be smaller than 10 MB";
-        }
-
-        return null;
+    public getErrorMessage(name: string): string | null {
+        const control = this.form.get(name);
+        if (!control) return null;
+        return ErrorMessageBuilder.getErrorMessage(control, name);
     }
 
     private trimBioValue() {
