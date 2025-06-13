@@ -3,6 +3,7 @@ import { MatDialogRef } from '@angular/material/dialog';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { filter } from 'rxjs';
 import { UserService } from '@/app/shared/services/api/user.service';
 import { CloseButtonComponent } from '../../ui-kit/buttons/close-button/close-button.component';
 import { atLeastOneLetterValidator } from '@/app/shared/helpers/validators/at-least-one-letter.validator';
@@ -79,7 +80,11 @@ export class CompleteProfilePopupComponent {
           this.loading = false;
           this.dialogRef.close(res);
           this.userStore.refreshProfile();
-          this.router.navigate([AppRoutes.User.Topic.SUGGEST]);
+          this.userStore.profile$.pipe(
+            filter(profile => !!profile?.name && !!profile?.username),
+          ).subscribe(() => {
+            this.router.navigate([AppRoutes.User.Topic.SUGGEST]);
+          });
         },
         error: (err) => {
           this.loading = false;
