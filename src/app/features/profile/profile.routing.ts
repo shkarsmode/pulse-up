@@ -10,6 +10,12 @@ const routes: Routes = [
         component: ProfileComponent,
         children: [
             {
+                path: AppRoutes.Profile.REVIEW,
+                loadComponent: () =>
+                    import("./pages/review-profile/review-profile.component").then((m) => m.ReviewProfileComponent),
+                canActivate: [PrivatePageGuard],
+            },
+            {
                 path: AppRoutes.Profile.EDIT,
                 loadComponent: () =>
                     import("./pages/edit-profile/edit-profile.component").then((m) => m.EditProfileComponent),

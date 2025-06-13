@@ -1,10 +1,12 @@
-<div class="user-avatar">
+<div
+    class="user-avatar"
+    [ngStyle]="style">
     @if (pictureUrl) {
     <img
         class="user-avatar__img"
         src="{{ pictureUrl }}"
-        width="80"
-        height="80"
+        [width]="size"
+        [height]="size"
         alt="{{ name }}" />
     } @else {
     <div class="user-avatar__placeholder">

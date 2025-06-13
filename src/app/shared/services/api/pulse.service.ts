@@ -44,6 +44,14 @@ export class PulseService {
         );
     }
 
+    public getById(id: string | number): Observable<IPulse> {
+        return this.http.get<IPulse>(`${this.apiUrl}/topics/${id}`);
+    }
+
+    public getMyTopics(params: { skip?: number; take?: number } = {}) {
+        return this.http.get<IPulse[]>(`${this.apiUrl}/topics/my`, { params });
+    }
+
     public create(params: {
         icon: any;
         title: string;
@@ -80,10 +88,6 @@ export class PulseService {
         });
 
         return this.http.post<IPulse>(`${this.apiUrl}/topics/create`, formData);
-    }
-
-    public getById(id: string | number): Observable<IPulse> {
-        return this.http.get<IPulse>(`${this.apiUrl}/topics/${id}`);
     }
 
     public getMapVotes(

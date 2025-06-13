@@ -1,0 +1,46 @@
+@use "../../../../../styles/mixins" as *;
+
+.review-profile {
+    padding: 20px 0;
+}
+
+.header {
+    display: flex;
+    justify-content: center;
+    column-gap: 32px;
+}
+
+.header__left {
+    width: 100%;
+    max-width: 400px;
+    display: flex;
+    flex-direction: column;
+    row-gap: 32px;
+}
+
+.header__text {
+    display: flex;
+    flex-direction: column;
+    row-gap: 8px;
+}
+
+.header__name {
+    @include title-32px;
+    word-break: break-word;
+}
+.header__username {
+    width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    color: var(--dark-grey-color);
+}
+
+.header__buttons {
+    display: flex;
+    column-gap: 16px;
+}
+
+.header-button {
+    width: 100%;
+    max-width: 200px;
+}
