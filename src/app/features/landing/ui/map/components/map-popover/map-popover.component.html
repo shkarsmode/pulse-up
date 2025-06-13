@@ -1,0 +1,14 @@
+<div
+    [tp]="tpl"
+    tpVariation="popper"
+    tpTrigger="mouseenter"
+    tpPlacement="bottom"
+    [tpStaticWidthHost]="true"
+    [tpHideOnClick]="true"
+    [tpDelay]="300">
+    <ng-content select="[buttonContent]"></ng-content>
+</div>
+
+<ng-template #tpl>
+    <ng-content select="[tooltipContent]"></ng-content>
+</ng-template>

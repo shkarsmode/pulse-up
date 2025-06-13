@@ -6,6 +6,12 @@ import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { provideAnimationsAsync } from "@angular/platform-browser/animations/async";
 import { AngularSvgIconModule } from "angular-svg-icon";
 import { NgxMapboxGLModule } from "ngx-mapbox-gl";
+import {
+    provideTippyLoader,
+    provideTippyConfig,
+    tooltipVariation,
+    popperVariation,
+} from "@ngneat/helipopper/config";
 
 import { environment } from "../environments/environment";
 import { AppComponent } from "./app.component";
@@ -67,6 +73,14 @@ import { JwtInterceptor } from "./shared/helpers/interceptors/jwt.interceptor";
         { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true },
         provideAnimationsAsync(),
         WindowService,
+        provideTippyLoader(() => import("tippy.js")),
+        provideTippyConfig({
+            defaultVariation: "tooltip",
+            variations: {
+                tooltip: tooltipVariation,
+                popper: popperVariation,
+            },
+        }),
     ],
     schemas: [CUSTOM_ELEMENTS_SCHEMA],
     bootstrap: [AppComponent],
