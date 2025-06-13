@@ -1,15 +1,14 @@
-import { HttpClient, HttpClientModule } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Component, inject, OnInit } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { SvgIconComponent } from 'angular-svg-icon';
 import { version } from '../../../../assets/data/version';
 import { AppRoutes } from '../../enums/app-routes.enum';
-import { PrimaryButtonComponent } from '../ui-kit/buttons/primary-button/primary-button.component';
 
 @Component({
     selector: 'app-footer',
     standalone: true,
-    imports: [RouterModule, PrimaryButtonComponent, SvgIconComponent, HttpClientModule],
+    imports: [RouterModule, SvgIconComponent],
     templateUrl: './footer.component.html',
     styleUrl: './footer.component.scss',
 })

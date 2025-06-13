@@ -1,20 +1,24 @@
-
 <footer>
-    
     <div class="left-side">
         <ul>
             <li>
-                <a [routerLink]="'/' + CommunityRoutes.TERMS" [routerLinkActive]="CommunityRoutes.TERMS">
+                <a
+                    [routerLink]="'/' + CommunityRoutes.TERMS"
+                    [routerLinkActive]="CommunityRoutes.TERMS">
                     Terms of Use
                 </a>
             </li>
             <li>
-                <a [routerLink]="'/' + CommunityRoutes.PRIVACY" [routerLinkActive]="CommunityRoutes.PRIVACY">
+                <a
+                    [routerLink]="'/' + CommunityRoutes.PRIVACY"
+                    [routerLinkActive]="CommunityRoutes.PRIVACY">
                     Privacy Policy
                 </a>
             </li>
             <li>
-                <a [routerLink]="'/'+ CommunityRoutes.SUPPORT" [routerLinkActive]="CommunityRoutes.SUPPORT">
+                <a
+                    [routerLink]="'/' + CommunityRoutes.SUPPORT"
+                    [routerLinkActive]="CommunityRoutes.SUPPORT">
                     Support
                 </a>
             </li>
@@ -22,19 +26,39 @@
     </div>
 
     <div class="footer-logo">
-        <a class="footer-logo_desctop" routerLink="/" aria-label="home">
+        <a
+            class="footer-logo_desctop"
+            routerLink="/"
+            aria-label="home">
             <svg-icon src="assets/svg/logo.svg" />
         </a>
-        <a class="footer-logo_mobile" routerLink="/" aria-label="home">
+        <a
+            class="footer-logo_mobile"
+            routerLink="/"
+            aria-label="home">
             <svg-icon src="assets/svg/logo-mobile.svg" />
         </a>
     </div>
 
-    <small class="right-side">All right reserved</small>
+    <div class="footer-social">
+        <a
+            class="footer-social__link"
+            href="https://x.com/getpulseup"
+            target="_blank"
+            rel="noopener noreferrer">
+            <svg-icon src="assets/svg/x-social.svg" />
+        </a>
+        <a
+            class="footer-social__link"
+            href="https://www.facebook.com/GetPulseUp"
+            target="_blank"
+            rel="noopener noreferrer">
+            <svg-icon src="assets/svg/fb-social.svg" />
+        </a>
+        <small class="footer-rights">All right reserved</small>
+    </div>
 
     @if (isToShowVersionOfApp) {
-        <div class="version">
-            {{ version.major }}.{{ version.minor }}.{{ version.patch }}
-        </div>
+    <div class="version">{{ version.major }}.{{ version.minor }}.{{ version.patch }}</div>
     }
 </footer>
