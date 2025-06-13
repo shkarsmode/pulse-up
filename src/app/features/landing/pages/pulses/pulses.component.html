@@ -7,25 +7,7 @@
                 <app-input-search
                     [isLoading]="(loading$ | async) || false"
                     (handleValueChange)="onSearchValueChange($event)" />
-
                 <a
-                    *ngIf="!(isAuthenticated$ | async)"
-                    [routerLink]="signInRoute"
-                    class="add-topic-button">
-                    <svg-icon
-                        src="assets/svg/add.svg"
-                        style="height: 22px" />
-                </a>
-                <button
-                    *ngIf="(isAuthenticated$ | async) && !(isProfileComplete$ | async)"
-                    openCompleteProfilePopup
-                    class="add-topic-button">
-                    <svg-icon
-                        src="assets/svg/add.svg"
-                        style="height: 22px" />
-                </button>
-                <a
-                    *ngIf="(isAuthenticated$ | async) && (isProfileComplete$ | async)"
                     [routerLink]="addTopicRoute"
                     class="add-topic-button">
                     <svg-icon

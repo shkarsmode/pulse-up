@@ -217,12 +217,11 @@ export class SignInFormService {
 
     private navigateToConfirmPage() {
         const redirectUrl = this.getRedirectUrl();
-        const navigationUrl = this.confirmPageUrl + (redirectUrl ? `?redirect=${redirectUrl}` : "");
         const params = new URLSearchParams({
             ...(redirectUrl && { redirect: redirectUrl }),
             mode: this.mode,
         }).toString();
-        this.router.navigateByUrl(`${navigationUrl}?${params}`);
+        this.router.navigateByUrl(`${this.confirmPageUrl}?${params}`);
     }
 
     private getRedirectUrl(): string | null {

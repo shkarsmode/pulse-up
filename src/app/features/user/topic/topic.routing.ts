@@ -12,6 +12,7 @@ import { TopicPreviewComponent } from "./topic-preview/topic-preview.component";
 import { CreateTopicGuard } from "../guards/create-topic.guard";
 import { PreviewTopicCanActiveGuard } from "../guards/preview-topic-can-active.guard";
 import { PreviewTopicCanDeactiveGuard } from "../guards/preview-topic-can-deactive.guard";
+import { RequiredPersonalInformationGuard } from "../guards/required-personal-information.guard";
 
 const routes: Routes = [
     {
@@ -27,7 +28,12 @@ const routes: Routes = [
             {
                 path: "suggest",
                 component: SuggestComponent,
-                canActivate: [PrivatePageGuard, SuggestGuard, CreateTopicGuard],
+                canActivate: [
+                    PrivatePageGuard,
+                    SuggestGuard,
+                    RequiredPersonalInformationGuard,
+                    CreateTopicGuard,
+                ],
             },
             {
                 path: "preview",

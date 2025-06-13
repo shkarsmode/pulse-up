@@ -33,7 +33,7 @@ export class PrivatePageGuard implements CanActivate {
             return this.loadInitialData().pipe(map(() => true));
         }
 
-        this.router.navigateByUrl(this.appRoutes.Auth.SIGN_IN);
+        this.router.navigateByUrl(`${this.appRoutes.Auth.SIGN_IN}?redirect=${state.url}`);
         return false;
     }
 

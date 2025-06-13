@@ -1,5 +1,6 @@
 import { Component, inject, OnInit } from "@angular/core";
 import { CommonModule } from "@angular/common";
+import { RouterModule } from "@angular/router";
 import { SvgIconComponent } from "angular-svg-icon";
 import { BehaviorSubject, first, map, Observable } from "rxjs";
 import { InfiniteScrollDirective } from "ngx-infinite-scroll";
@@ -11,10 +12,6 @@ import { PromoteAdsComponent } from "./components/promote-ads/promote-ads.compon
 import { InfiniteLoaderService } from "../../services/infinite-loader.service";
 import { AppConstants } from "@/app/shared/constants/app.constants";
 import { LoadingIndicatorComponent } from "@/app/shared/components/loading-indicator/loading-indicator.component";
-import { CompleteProfilePopupDirective } from "@/app/shared/components/popups/complete-profile-popup/complete-profile-popup.directive";
-import { AuthenticationService } from "@/app/shared/services/api/authentication.service";
-import { UserStore } from "@/app/shared/stores/user.store";
-import { RouterModule } from "@angular/router";
 import { AppRoutes } from "@/app/shared/enums/app-routes.enum";
 
 @Component({
@@ -31,27 +28,18 @@ import { AppRoutes } from "@/app/shared/enums/app-routes.enum";
         InputSearchComponent,
         LargePulseComponent,
         PromoteAdsComponent,
-        CompleteProfilePopupDirective
     ],
     providers: [InfiniteLoaderService],
 })
 export class PulsesComponent implements OnInit {
-    private readonly pulseService: PulseService = inject(PulseService);
-    private readonly userStore: UserStore = inject(UserStore);
-    private readonly authenticationService: AuthenticationService = inject(AuthenticationService);
-    private readonly infiniteLoaderService: InfiniteLoaderService<IPulse> =
-        inject(InfiniteLoaderService);
+    private readonly pulseService = inject(PulseService);
+    private readonly infiniteLoaderService = inject(InfiniteLoaderService);
 
     public pulses: IPulse[] = [];
     public isLoading: boolean = true;
     public addTopicRoute = "/" + AppRoutes.User.Topic.SUGGEST;
-    public signInRoute = "/" + AppRoutes.Auth.SIGN_IN;
     public loading$ = new BehaviorSubject(true);
     public paginator$: Observable<IPaginator<IPulse>>;
-    public readonly isAuthenticated$ = this.authenticationService.userToken;
-    public readonly isProfileComplete$ = this.userStore.profile$.pipe(
-        map(profile => !!profile?.name && !!profile?.username)
-    );
 
     public ngOnInit(): void {
         this.getTrendingPulses();
@@ -64,31 +52,27 @@ export class PulsesComponent implements OnInit {
     }
 
     private getTrendingPulses(keyword: string = ""): void {
-        // this.isLoading = true;
-        // this.pulseService
-        //     .get({ keyword })
-        //     .pipe(first())
-        //     .subscribe((pulses) => {
-        //         this.pulses = pulses;
-        //         this.isLoading = false;
-        //     });
         const take = AppConstants.PULSES_PER_PAGE;
         this.infiniteLoaderService.init({
-            load: (page) => this.pulseService
-                .get({
-                    keyword,
-                    take,
-                    skip: take * (page - 1),
-                })
-                .pipe(
-                    first(),
-                    map((pulses) => ({
-                        page,
-                        items: pulses,
-                        hasMorePages: pulses.length !== 0 && pulses.length === take,
-                    } as IPaginator<IPulse>)),
-                ),
-        })
+            load: (page) =>
+                this.pulseService
+                    .get({
+                        keyword,
+                        take,
+                        skip: take * (page - 1),
+                    })
+                    .pipe(
+                        first(),
+                        map(
+                            (pulses) =>
+                                ({
+                                    page,
+                                    items: pulses,
+                                    hasMorePages: pulses.length !== 0 && pulses.length === take,
+                                } as IPaginator<IPulse>),
+                        ),
+                    ),
+        });
         this.loading$ = this.infiniteLoaderService.loading$;
         this.paginator$ = this.infiniteLoaderService.paginator$;
     }

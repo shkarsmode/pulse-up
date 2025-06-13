@@ -35,9 +35,9 @@ export class TopicPreviewComponent {
     };
     customLocationName = this.sendTopicService.customLocation
         ? [
-              this.sendTopicService.customLocation.country,
-              this.sendTopicService.customLocation.state,
-              this.sendTopicService.customLocation.city,
+            this.sendTopicService.customLocation.city,
+            this.sendTopicService.customLocation.state,
+            this.sendTopicService.customLocation.country,
           ]
               .filter(Boolean)
               .join(", ")
