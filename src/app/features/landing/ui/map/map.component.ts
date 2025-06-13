@@ -601,7 +601,7 @@ export class MapComponent implements OnInit {
 
         if (theSameMarker) {
             this.mapMarkersService.hideTooltip();
-            this.markerClick.emit(marker);
+            // this.markerClick.emit(marker);
         } else {
             this.onMarkerHover(marker)
         }

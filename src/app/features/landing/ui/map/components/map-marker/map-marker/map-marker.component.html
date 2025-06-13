@@ -1,14 +1,38 @@
 <mgl-marker [lngLat]="[marker.lng, marker.lat]">
     @if (showTooltipOnHover) {
-    <button
-        placement="bottom"
+    <app-map-popover>
+        <button
+            buttonContent
+            class="marker-button"
+            [ngStyle]="{ opacity }"
+            (mouseenter)="onMarkerHover()"
+            (click)="onMarkerClick()"
+            aria-label="Show topic details">
+            <app-marker-icon
+                [icon]="marker.icon"
+                [isAnimated]="isAnimated"
+                [animationDelay]="marker.delay"
+                (imageLoaded)="onImageLoaded()" />
+        </button>
+        <a
+            tooltipContent
+            routerLink="/topic/{{ marker.topicId }}">
+            <div
+                class="map-tooltip"
+                [class.map-tooltip--loading]="!tooltipData">
+                @if (tooltipData) {
+                <app-top-pulse-card
+                    [pulse]="tooltipData"
+                    [interactive]="false" />
+                } @else {
+                <app-spinner />
+                }
+            </div>
+        </a>
+    </app-map-popover>
+    <!-- <button
         class="marker-button"
-        ngxTooltip
-        [ngxValue]="isTooltipVisible"
-        [template]="tooltip"
-        bindTo=".mapboxgl-map"
         [ngStyle]="{ opacity }"
-        (hideEnd)="onTooltipHideEnd()"
         (mouseenter)="onMarkerHover()"
         (click)="onMarkerClick()"
         aria-label="Show topic details">
@@ -17,7 +41,7 @@
             [isAnimated]="isAnimated"
             [animationDelay]="marker.delay"
             (imageLoaded)="onImageLoaded()" />
-    </button>
+    </button> -->
     } @else {
     <button
         class="marker-button"

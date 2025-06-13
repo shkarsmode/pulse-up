@@ -13,8 +13,7 @@ export class MapMarkersService {
     private readonly pulseService: PulseService = inject(PulseService);
 
     public markers: IMapMarkerAnimated[] = [];
-    public tooltipData: IPulse & { markerId: number } | null = null;
-    public isTooltipVisible: boolean = false;
+    public tooltipData: (IPulse & { markerId: number }) | null = null;
     public readonly markerHover$ = new Subject<IMapMarker>();
 
     constructor() {
@@ -46,12 +45,10 @@ export class MapMarkersService {
     }
 
     public hideTooltip(): void {
-        this.isTooltipVisible = false;
         this.tooltipData = null;
     }
 
     public handleMarkerHover(marker: IMapMarker): void {
-        this.isTooltipVisible = true;
         this.markerHover$.next(marker);
     }
 

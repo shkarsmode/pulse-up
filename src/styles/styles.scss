@@ -8,6 +8,7 @@
 @import "mapbox-gl/dist/mapbox-gl.css";
 @import "@splidejs/splide/css";
 @import "@ctrl/ngx-emoji-mart/picker";
+@import 'tippy.js/dist/tippy.css';
 
 /* Reset styles */
 
@@ -239,4 +240,16 @@ div.otp-custom-container {
 .cdk-overlay-pane.mat-mdc-dialog-panel {
     overflow-y: auto;
     overflow-x: hidden;
+}
+
+.tippy-content {
+    padding: 0;
+    border-radius: 10px;
+}
+.tippy-box {
+    color: var(--black-color);
+    border-radius: 10px;
+}
+.tippy-arrow {
+    display: none;
 }

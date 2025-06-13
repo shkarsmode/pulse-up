@@ -2,7 +2,6 @@ import { CommonModule } from "@angular/common";
 import { RouterModule } from "@angular/router";
 import { Component, EventEmitter, inject, Input, OnInit, Output } from "@angular/core";
 import { NgxMapboxGLModule } from "ngx-mapbox-gl";
-import { NgxTooltip } from "@ngx-popovers/tooltip";
 import mapboxgl from "mapbox-gl";
 import {
     IMapMarkerAnimated,
@@ -13,6 +12,7 @@ import { TopPulseCardComponent } from "@/app/shared/components/pulses/top-pulse/
 import { IPulse } from "@/app/shared/interfaces";
 import { SpinnerComponent } from "@/app/shared/components/ui-kit/spinner/spinner.component";
 import { MapMarkersService } from "@/app/features/landing/services/map-markers.service";
+import { MapPopoverComponent } from "../../map-popover/map-popover.component";
 
 @Component({
     selector: "app-map-marker",
@@ -20,14 +20,14 @@ import { MapMarkersService } from "@/app/features/landing/services/map-markers.s
     styleUrl: "./map-marker.component.scss",
     standalone: true,
     imports: [
-        CommonModule,
-        RouterModule,
-        NgxMapboxGLModule,
-        NgxTooltip,
-        MarkerIconComponent,
-        TopPulseCardComponent,
-        SpinnerComponent,
-    ],
+    CommonModule,
+    RouterModule,
+    NgxMapboxGLModule,
+    MarkerIconComponent,
+    TopPulseCardComponent,
+    SpinnerComponent,
+    MapPopoverComponent
+],
 })
 export class MapMarkerComponent implements OnInit {
     @Input() marker: IMapMarkerAnimated;
@@ -50,13 +50,6 @@ export class MapMarkerComponent implements OnInit {
 
     ngOnInit(): void {
         this.map?.on("moveend", this.checkMarkerVisibility.bind(this));
-    }
-
-    get isTooltipVisible(): boolean {
-        return (
-            this.mapMarkersService.isTooltipVisible &&
-            this.mapMarkersService.tooltipData?.markerId === this.marker.id
-        );
     }
 
     private checkMarkerVisibility(): void {
