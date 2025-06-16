@@ -3,6 +3,7 @@ import { RouterModule, Routes } from "@angular/router";
 import { AppRoutes } from "@/app/shared/enums/app-routes.enum";
 import { PrivatePageGuard } from "@/app/shared/helpers/guards/private-page.guard";
 import { ProfileComponent } from "./profile.component";
+import { RequiredPersonalInformationGuard } from "./guards/required-personal-information.guard";
 
 const routes: Routes = [
     {
@@ -13,7 +14,7 @@ const routes: Routes = [
                 path: AppRoutes.Profile.REVIEW,
                 loadComponent: () =>
                     import("./pages/review-profile/review-profile.component").then((m) => m.ReviewProfileComponent),
-                canActivate: [PrivatePageGuard],
+                canActivate: [PrivatePageGuard, RequiredPersonalInformationGuard],
             },
             {
                 path: AppRoutes.Profile.EDIT,

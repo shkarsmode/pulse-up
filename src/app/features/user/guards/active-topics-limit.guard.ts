@@ -7,14 +7,17 @@ import {
     CanActivate,
     GuardResult,
     MaybeAsync,
+    Router,
     RouterStateSnapshot,
 } from "@angular/router";
 import { ActiveTopicsLimitPopupComponent } from "../ui/active-topics-limit-popup/active-topics-limit-popup.component";
+import { AppRoutes } from "@/app/shared/enums/app-routes.enum";
 
 @Injectable({
     providedIn: "root",
 })
 export class ActiveTopicsLimitGuard implements CanActivate {
+    private router = inject(Router);
     private userStore = inject(UserStore);
     private dialog: MatDialog = inject(MatDialog);
 
@@ -30,6 +33,7 @@ export class ActiveTopicsLimitGuard implements CanActivate {
                         panelClass: "custom-dialog-container",
                         backdropClass: "custom-dialog-backdrop",
                     });
+                    this.router.navigateByUrl(AppRoutes.Landing.TOPICS);
                     return false;
                 }
                 return true;
