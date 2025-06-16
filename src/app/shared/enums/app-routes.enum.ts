@@ -29,11 +29,13 @@ export enum TopicRoutes {
 }
 
 enum ProfileRoutes {
+    REVIEW = 'profile/review',
     EDIT = 'profile/edit',
     CHANGE_EMAIL = 'profile/change-email',
     VERIFY_EMAIL = 'profile/verify-email',
     CHANGE_PHONE_NUMBER = 'profile/change-phone-number',
     CONFIRM_PHONE_NUMBER = 'profile/confirm-phone-number',
+    DELETE_ACCOUNT = 'profile/delete-account',
 }
 
 enum AuthRoutes {

@@ -1,0 +1,27 @@
+<app-popup>
+    <app-popup-close-button (close)="onCloseDialog()" />
+    <app-popup-title>Confirm Account Deletion"</app-popup-title>
+    <app-popup-text>
+        This action is permanent and cannot be undone. All of your data and history will be
+        permanently erased.
+    </app-popup-text>
+    <app-popup-footer [align]="'center'">
+        <app-primary-button
+            size="large"
+            [fullWidth]="true"
+            class="delete-popup-btn"
+            (click)="onDeleteAccount()"
+            [loading]="loading"
+            [disabled]="loading">
+            Delete Account
+        </app-primary-button>
+        <app-secondary-button
+            size="large"
+            [fullWidth]="true"
+            class="delete-popup-btn"
+            (click)="onCloseDialog()"
+            [disabled]="loading">
+            Cancel
+        </app-secondary-button>
+    </app-popup-footer>
+</app-popup>

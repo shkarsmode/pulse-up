@@ -1,0 +1,31 @@
+@use "../../../../../styles/mixins" as *;
+
+.delete-account {
+    padding: 20px 0;
+}
+
+.delete-account__title {
+    @include title-32px;
+    margin-bottom: 32px;
+    text-align: center;
+}
+
+.delete-account__text {
+    @include text-16px;
+    margin-bottom: 16px;
+}
+
+.delete-account__footer {
+    display: flex;
+    justify-content: center;
+    margin-top: 40px;
+}
+
+.delete-account__btn {
+    width: 100%;
+    max-width: 200px;
+
+    @include media-sm {
+        max-width: unset;
+    }
+}

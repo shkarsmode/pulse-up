@@ -25,31 +25,42 @@ export class IdentityService {
     }
 
     public getByToken(token: string): Observable<IProfile | null> {
-        return this.http.get<IProfile>(`${this.baseUrl}`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          }
-        }).pipe(
-            map((response) => response),
-            catchError(() => {
-              console.log("Error fetching profile by token");
-              return of(null)
-            }),
-        );
+        return this.http
+            .get<IProfile>(`${this.baseUrl}`, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            })
+            .pipe(
+                map((response) => response),
+                catchError(() => {
+                    console.log("Error fetching profile by token");
+                    return of(null);
+                }),
+            );
     }
 
     public createWithToken(token: string): Observable<IProfile | null> {
-      return this.http.post<IProfile>(`${this.baseUrl}/create:withToken`, { idToken: token }, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          }
-      })
-        .pipe(
-            map((response) => response),
-            catchError(() => {
-              console.log("Error creating profile with token");
-              return of(null)
-            }),
-        );
+        return this.http
+            .post<IProfile>(
+                `${this.baseUrl}/create:withToken`,
+                { idToken: token },
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                },
+            )
+            .pipe(
+                map((response) => response),
+                catchError(() => {
+                    console.log("Error creating profile with token");
+                    return of(null);
+                }),
+            );
+    }
+
+    public delete({ deleteIdentity = false }: { deleteIdentity: boolean }) {
+        return this.http.post(`${this.baseUrl}/delete`, { deleteIdentity });
     }
 }

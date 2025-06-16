@@ -10,6 +10,12 @@ const routes: Routes = [
         component: ProfileComponent,
         children: [
             {
+                path: AppRoutes.Profile.REVIEW,
+                loadComponent: () =>
+                    import("./pages/review-profile/review-profile.component").then((m) => m.ReviewProfileComponent),
+                canActivate: [PrivatePageGuard],
+            },
+            {
                 path: AppRoutes.Profile.EDIT,
                 loadComponent: () =>
                     import("./pages/edit-profile/edit-profile.component").then((m) => m.EditProfileComponent),
@@ -37,6 +43,12 @@ const routes: Routes = [
                 path: AppRoutes.Profile.CONFIRM_PHONE_NUMBER,
                 loadComponent: () =>
                     import("./pages/confirm-phone-number/confirm-phone-number.component").then((m) => m.ConfirmPhoneNumberComponent),
+                canActivate: [PrivatePageGuard],
+            },
+            {
+                path: AppRoutes.Profile.DELETE_ACCOUNT,
+                loadComponent: () =>
+                    import("./pages/delete-account/delete-account.component").then((m) => m.DeleteAccountComponent),
                 canActivate: [PrivatePageGuard],
             },
         ],

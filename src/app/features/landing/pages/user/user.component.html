@@ -18,7 +18,10 @@
             <div class="user-header__info">
                 <app-user-avatar
                     [url]="user.picture"
-                    [name]="user.name" />
+                    [name]="user.name"
+                    [width]="80"
+                    [height]="80"
+                    class="user-header__avatar"/>
                 <div class="user-header__text">
                     <h1 class="user-header__name">{{ user.name }}</h1>
                     <div class="user-header__username">&#64;{{ user.username }}</div>

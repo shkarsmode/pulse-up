@@ -1,0 +1,29 @@
+<app-container size="md">
+    <div class="delete-account">
+        <h1 class="delete-account__title">Confirm deletion</h1>
+        <p class="delete-account__text">
+            Deleting your account will permanently remove your profile and all associated voting
+            history. However, any votes cast prior to deletion will remain valid for 24 hours from
+            the time they were made.
+        </p>
+        <p class="delete-account__text">
+            After deletion, you will have the option to create a new account using the same phone
+            number or email. The new account will not retain any of the voting history from your
+            previous account.
+        </p>
+        <p class="delete-account__text">
+            To prevent abuse, you may not be able to create a new account using the same credentials
+            for 24 hours after deletion.
+        </p>
+        <div class="delete-account__footer">
+            <div class="delete-account__btn">
+                <app-primary-button
+                    size="large"
+                    [fullWidth]="true"
+                    (handleClick)="onDeleteAccount()">
+                    Delete Account
+                </app-primary-button>
+            </div>
+        </div>
+    </div>
+</app-container>
