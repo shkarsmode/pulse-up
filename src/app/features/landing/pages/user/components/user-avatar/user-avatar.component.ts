@@ -13,25 +13,12 @@ import { SettingsService } from "@/app/shared/services/api/settings.service";
 export class UserAvatarComponent {
     @Input() public url?: string = "";
     @Input() public name: string = "";
-    @Input() public size: number = 80;
+    @Input() public width: number = 80;
+    @Input() public height: number = 80;
 
     private readonly settingsService: SettingsService = inject(SettingsService);
 
     public get pictureUrl(): string | null {
         return this.url ? this.settingsService.blobUrlPrefix + this.url : null;
-    }
-
-    public style = {
-        "width.px": this.size,
-        "height.px": this.size,
-    };
-
-    ngOnInit() {
-      console.log({size: this.size});
-      
-        this.style = {
-            "width.px": this.size,
-            "height.px": this.size,
-        };
     }
 }
