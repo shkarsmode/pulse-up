@@ -314,8 +314,6 @@ export class AuthenticationService {
 
                 LocalStorageService.remove(LOCAL_STORAGE_KEYS.isAnonymous);
 
-                LocalStorageService.remove(LOCAL_STORAGE_KEYS.personalInfoPopupShown);
-
                 this.userService.refreshProfile();
             }),
             catchError((error: any) => {
