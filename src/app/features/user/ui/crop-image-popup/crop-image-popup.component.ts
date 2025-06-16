@@ -75,7 +75,6 @@ export class CropImagePopupComponent {
     }
 
     imageCropped(event: ImageCroppedEvent) {
-        console.log("Image cropped event:", event);
         this.croppedImageUrl = this.sanitizer.bypassSecurityTrustUrl(event.objectUrl || "");
         this.croppedImageBlob = event.blob || null;
     }

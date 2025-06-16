@@ -1,6 +1,6 @@
 import { Component, inject, Input } from "@angular/core";
 import { CommonModule } from "@angular/common";
-import { RouterModule } from "@angular/router";
+import { Router, RouterModule } from "@angular/router";
 import { MatDialog } from "@angular/material/dialog";
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
 import { InputComponent } from "@/app/shared/components/ui-kit/input/input.component";
@@ -47,6 +47,7 @@ export class ProfileFormComponent {
         picture: string | null;
     };
 
+    private router = inject(Router);
     private dialog = inject(MatDialog);
     private fb: FormBuilder = inject(FormBuilder);
     private userStore: UserStore = inject(UserStore);
@@ -59,7 +60,6 @@ export class ProfileFormComponent {
     private emailPlaceholder: string = "Add an email to secure your account";
     public form: FormGroup;
     public submitting: boolean = false;
-    public errorMessage: string | null = null;
     public phoneNumber: string | null = null;
     public email: string = this.emailPlaceholder;
     public profilePicture: File | null = null;
@@ -110,9 +110,6 @@ export class ProfileFormComponent {
             ],
             bio: [this.initialValues.bio, [optionalLengthValidator(3, 150)]],
             profilePicture: [null, [pictureValidator()]],
-        });
-        this.form.valueChanges.subscribe((values) => {
-            this.errorMessage = null;
         });
         this.form.get("profilePicture")?.valueChanges.subscribe((value) => {
             this.isPicturePristine = false;
@@ -192,10 +189,12 @@ export class ProfileFormComponent {
                     this.form.markAsUntouched();
                     this.isPicturePristine = true;
                     this.userStore.refreshProfile();
+                    this.notificationService.success("Profile updated successfully.");
+                    this.router.navigateByUrl("/" + AppRoutes.Profile.REVIEW);
                 },
                 error: () => {
                     this.submitting = false;
-                    this.errorMessage = "Failed to update profile. Please try again.";
+                    this.notificationService.error("Failed to update profile. Please try again.");
                 },
             });
         } else {

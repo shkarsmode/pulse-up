@@ -1,6 +1,7 @@
 import { Component, inject } from "@angular/core";
 import { CommonModule } from "@angular/common";
-import { Router, RouterModule } from "@angular/router";
+import { RouterModule } from "@angular/router";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { BehaviorSubject, filter, map, Observable, tap } from "rxjs";
 import { InfiniteScrollDirective } from "ngx-infinite-scroll";
 import { ContainerComponent } from "@/app/shared/components/ui-kit/container/container.component";
@@ -15,34 +16,33 @@ import { AppConstants } from "@/app/shared/constants";
 import { IPaginator, IPulse } from "@/app/shared/interfaces";
 import { LargePulseComponent } from "@/app/shared/components/pulses/large-pulse/large-pulse.component";
 import { LoadingIndicatorComponent } from "@/app/shared/components/loading-indicator/loading-indicator.component";
-import { SpinnerComponent } from "../../../../shared/components/ui-kit/spinner/spinner.component";
+import { SpinnerComponent } from "@/app/shared/components/ui-kit/spinner/spinner.component";
 
 @Component({
     selector: "app-review-profile",
     standalone: true,
     imports: [
-    CommonModule,
-    RouterModule,
-    InfiniteScrollDirective,
-    UserAvatarComponent,
-    ContainerComponent,
-    PrimaryButtonComponent,
-    SecondaryButtonComponent,
-    LargePulseComponent,
-    LoadingIndicatorComponent,
-    SpinnerComponent
-],
+        CommonModule,
+        RouterModule,
+        InfiniteScrollDirective,
+        UserAvatarComponent,
+        ContainerComponent,
+        PrimaryButtonComponent,
+        SecondaryButtonComponent,
+        LargePulseComponent,
+        LoadingIndicatorComponent,
+        SpinnerComponent,
+    ],
     templateUrl: "./review-profile.component.html",
     styleUrl: "./review-profile.component.scss",
     providers: [InfiniteLoaderService],
 })
 export class ReviewProfileComponent {
-    private readonly router = inject(Router);
     private userStore = inject(UserStore);
     private readonly userService = inject(UserService);
     private readonly infiniteLoaderService = inject(InfiniteLoaderService);
 
-    private initialLoading = new BehaviorSubject(true);
+    private initialLoading = new BehaviorSubject(false);
     initialLoading$ = this.initialLoading.asObservable();
     paginator$: Observable<IPaginator<IPulse>>;
     loading$ = new BehaviorSubject(true);
@@ -57,15 +57,21 @@ export class ReviewProfileComponent {
     loadMore = this.infiniteLoaderService.loadMore.bind(this.infiniteLoaderService);
 
     constructor() {
-        this.profile$.pipe(
-            filter((profile) => !!profile),
-            tap((profile) => {
-                this.loadTopics(profile.id, profile.name);
-            }),
-        ).subscribe();
+        this.profile$
+            .pipe(
+                filter((profile) => !!profile),
+                tap((profile) => {
+                    if (profile.totalTopics) {
+                        this.loadTopics(profile.id, profile.name);
+                    }
+                }),
+                takeUntilDestroyed(),
+            )
+            .subscribe();
     }
 
     private loadTopics(userId: string, name: string) {
+        this.initialLoading.next(true);
         this.infiniteLoaderService.init({
             load: (page) =>
                 this.userService
@@ -89,7 +95,7 @@ export class ReviewProfileComponent {
                                 },
                             })),
                         })),
-                        tap(() => this.initialLoading.next(false))
+                        tap(() => this.initialLoading.next(false)),
                     ),
         });
         this.paginator$ = this.infiniteLoaderService.paginator$;
