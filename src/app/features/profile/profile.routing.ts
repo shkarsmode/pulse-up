@@ -45,6 +45,12 @@ const routes: Routes = [
                     import("./pages/confirm-phone-number/confirm-phone-number.component").then((m) => m.ConfirmPhoneNumberComponent),
                 canActivate: [PrivatePageGuard],
             },
+            {
+                path: AppRoutes.Profile.DELETE_ACCOUNT,
+                loadComponent: () =>
+                    import("./pages/delete-account/delete-account.component").then((m) => m.DeleteAccountComponent),
+                canActivate: [PrivatePageGuard],
+            },
         ],
     },
 ];

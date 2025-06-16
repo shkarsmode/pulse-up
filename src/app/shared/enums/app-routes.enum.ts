@@ -35,6 +35,7 @@ enum ProfileRoutes {
     VERIFY_EMAIL = 'profile/verify-email',
     CHANGE_PHONE_NUMBER = 'profile/change-phone-number',
     CONFIRM_PHONE_NUMBER = 'profile/confirm-phone-number',
+    DELETE_ACCOUNT = 'profile/delete-account',
 }
 
 enum AuthRoutes {

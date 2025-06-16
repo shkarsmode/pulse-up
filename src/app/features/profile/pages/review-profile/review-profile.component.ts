@@ -52,6 +52,7 @@ export class ReviewProfileComponent {
     picture$ = this.profile$.pipe(map((profile) => profile.picture || ""));
     topicsCount$ = this.profile$.pipe(map((profile) => profile.totalTopics || 0));
     editRpofileRoute = "/" + AppRoutes.Profile.EDIT;
+    deleteAccountRoute = "/" + AppRoutes.Profile.DELETE_ACCOUNT;
 
     loadMore = this.infiniteLoaderService.loadMore.bind(this.infiniteLoaderService);
 
