@@ -7,21 +7,17 @@ import {
     Router,
     RouterStateSnapshot,
 } from "@angular/router";
-import { MatDialog } from "@angular/material/dialog";
-import { map } from "rxjs";
 import { UserStore } from "@/app/shared/stores/user.store";
-import { CompleteProfilePopupComponent } from "@/app/shared/components/popups/complete-profile-popup/complete-profile-popup.component";
+import { map } from "rxjs";
 import { AppRoutes } from "@/app/shared/enums/app-routes.enum";
 
 @Injectable({
     providedIn: "root",
 })
 export class RequiredPersonalInformationGuard implements CanActivate {
-    private router = inject(Router);
-    private userStore = inject(UserStore);
-    private dialog: MatDialog = inject(MatDialog);
-
-    private hasPublicInformation$ = this.userStore.hasPublicInformation$
+    private readonly router = inject(Router);
+    private readonly userStore = inject(UserStore);
+    private readonly hasPublicInformation$ = this.userStore.hasPublicInformation$;
 
     canActivate(
         route: ActivatedRouteSnapshot,
@@ -30,20 +26,11 @@ export class RequiredPersonalInformationGuard implements CanActivate {
         return this.hasPublicInformation$.pipe(
             map((hasPublicInformation) => {
                 if (!hasPublicInformation) {
-                    this.openPopup();
-                    this.router.navigateByUrl(AppRoutes.Landing.TOPICS);
+                    this.router.navigateByUrl("/" + AppRoutes.Profile.EDIT);
                     return false;
                 }
                 return true;
             }),
         );
-    }
-
-    private openPopup() {
-        return this.dialog.open(CompleteProfilePopupComponent, {
-            width: "630px",
-            panelClass: "custom-dialog-container",
-            backdropClass: "custom-dialog-backdrop",
-        });
     }
 }
