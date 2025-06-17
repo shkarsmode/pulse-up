@@ -50,15 +50,13 @@ export class DeleteAccountPopupComponent {
         this.identityService
             .delete({ deleteIdentity: true })
             .pipe(
-                catchError((error) => {
-                    console.error("Error deleting account", error);
+                catchError(() => {
                     return throwError(
                         () => new Error("Failed to delete account. Please try again."),
                     );
                 }),
                 switchMap(() => this.authenticationService.logout()),
-                catchError((error) => {
-                    console.error("Error logging out after account deletion", error);
+                catchError(() => {
                     return throwError(
                         () =>
                             new Error(

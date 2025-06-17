@@ -17,7 +17,6 @@ export class UserService {
         switchMap(() =>
             this.http.get<IProfile>(`${this.apiUrl}/users/self`).pipe(
                 catchError((error) => {
-                    console.error("Failed to fetch own profile:", error);
                     return of(null);
                 })
             )
@@ -125,8 +124,7 @@ export class UserService {
 
     public validateUsername = (username: string): Observable<boolean> => {
         return this.http.post<{ username: string }>(`${this.apiUrl}/users/validate`, { username }).pipe(
-            catchError((error) => {
-                console.error("Username validation error:", error);
+            catchError(() => {
                 return of(false);
             }),
             map((result) => !!result),

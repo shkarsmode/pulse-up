@@ -1,5 +1,5 @@
 import { inject, Injectable } from "@angular/core";
-import { ActivatedRouteSnapshot, CanActivateChild, RouterStateSnapshot } from "@angular/router";
+import { ActivatedRouteSnapshot, CanActivate, RouterStateSnapshot } from "@angular/router";
 import { Observable } from "rxjs";
 import { AuthenticationService } from "../../services/api/authentication.service";
 import { CollectUserInfoService } from "../../services/user/collect-user-info.service";
@@ -7,11 +7,11 @@ import { CollectUserInfoService } from "../../services/user/collect-user-info.se
 @Injectable({
   providedIn: 'root',
 })
-export class CollectPersonalInfoGuard implements CanActivateChild {
+export class CollectPersonalInfoGuard implements CanActivate {
   private readonly authenticationService: AuthenticationService = inject(AuthenticationService);
   private readonly collectUserInfoService: CollectUserInfoService = inject(CollectUserInfoService);
 
-  canActivateChild(
+  canActivate(
     childRoute: ActivatedRouteSnapshot,
     state: RouterStateSnapshot
   ): Observable<boolean> | boolean {

@@ -238,8 +238,7 @@ export class PulseService {
         return this.http
             .post<IValidateTopicTitleResponse>(`${this.apiUrl}/topics/validate`, { title: value })
             .pipe(
-                catchError((error) => {
-                    console.error("Username validation error:", error);
+                catchError(() => {
                     return of(false);
                 }),
                 map((result) => !!result),
@@ -257,8 +256,7 @@ export class PulseService {
             })
             .pipe(
                 map((response) => response.shareKey),
-                catchError((error) => {
-                    console.error("Error fetching share key:", error);
+                catchError(() => {
                     return of("");
                 }),
             );

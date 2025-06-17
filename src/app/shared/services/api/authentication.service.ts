@@ -313,8 +313,6 @@ export class AuthenticationService {
                 this.anonymousUser$.next(null);
 
                 LocalStorageService.remove(LOCAL_STORAGE_KEYS.isAnonymous);
-
-                this.userService.refreshProfile();
             }),
             catchError((error: any) => {
                 throw new AuthenticationError(error.message, AuthenticationErrorCode.UNKNOWN_ERROR);
@@ -340,7 +338,6 @@ export class AuthenticationService {
                 return newToken;
             }),
             catchError((error: any) => {
-                console.error("Error updating token:", error);
                 return throwError(() => new AuthenticationError(error.message, AuthenticationErrorCode.UNKNOWN_ERROR));
             }),
         )
@@ -369,7 +366,6 @@ export class AuthenticationService {
         try {
             return jwtDecode<JwtPayload>(token);
         } catch (error) {
-            console.error("Invalid token or unable to decode:", error);
             return null;
         }
     }
@@ -543,8 +539,6 @@ export class AuthenticationService {
     };
 
     private handleConfirmCodeVerificationError = (error: any): Observable<never> => {
-        console.error("Error verifying confirmation code", error);
-
         if (error instanceof AuthenticationError) throwError(() => error);
 
         let errorMessage = "Failed to verify confirmation code. Please try again.";
@@ -560,7 +554,6 @@ export class AuthenticationService {
     };
 
     private handleEmailVerificationError = (error: any) => {
-        console.error("Error verifying email", error);
         LocalStorageService.remove(LOCAL_STORAGE_KEYS.verifyEmail);
 
         if (error instanceof AuthenticationError) throwError(() => error);
@@ -578,7 +571,6 @@ export class AuthenticationService {
     };
 
     private handleEmailChangingError = (error: any) => {
-        console.error("Error changing email", error);
         LocalStorageService.remove(LOCAL_STORAGE_KEYS.changeEmail);
 
         if (error instanceof AuthenticationError) throwError(() => error);
