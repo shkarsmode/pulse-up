@@ -14,21 +14,26 @@ export class CollectUserInfoService {
   private isOpened = false;
 
   public collectPersonalInfo(): void {
-    const alreadyShown = LocalStorageService.get<boolean>(LOCAL_STORAGE_KEYS.personalInfoPopupShown);
+    const accountsIds = LocalStorageService.get<string[]>(LOCAL_STORAGE_KEYS.personalInfoPopupShown) || [];
     this.userStore.profile$.subscribe((profile) => {
+      if (!profile?.id) return;
+      const alreadyShown = accountsIds && accountsIds.includes(profile.id);
       if (!this.isOpened && !alreadyShown && profile && (!profile.name || !profile.username)) {
         this.openDialog();
-        LocalStorageService.set(LOCAL_STORAGE_KEYS.personalInfoPopupShown, true);
+        LocalStorageService.set(LOCAL_STORAGE_KEYS.personalInfoPopupShown, [...accountsIds, profile.id]);
       }
     })
   }
 
   private openDialog(): void {
     this.isOpened = true;
-    this.dialog.open(PersonalInfoPopupComponent, {
+    const dialogRef = this.dialog.open(PersonalInfoPopupComponent, {
       width: '500px',
       panelClass: 'custom-dialog-container',
       backdropClass: 'custom-dialog-backdrop',
+    });
+    dialogRef.afterClosed().subscribe(() => {
+      this.isOpened = false;
     });
   }
 }
