@@ -93,6 +93,7 @@ export class AuthenticationService {
             switchMap(() => this.identityService.checkByPhoneNumber(phoneNumber)),
             switchMap(this.handleIdentityCheckByPhoneNumber),
             switchMap(() => this.validatePhoneNumberOnVoip(phoneNumber)),
+            switchMap(this.handlePhoneNumberVoipValidation),
             switchMap(this.logout),
             switchMap(this.prepareRecaptcha),
             switchMap(() => this.sendVerificationCode(phoneNumber)),
@@ -237,6 +238,10 @@ export class AuthenticationService {
         return of(null).pipe(
             tap(() => this.isChangePhoneNumberInProgress$.next(true)),
             switchMap(this.prepareRecaptcha),
+            switchMap(() => this.identityService.checkByPhoneNumber(phoneNumber)),
+            switchMap(this.handleCheckPhoneNumberBeforeChange),
+            switchMap(() => this.validatePhoneNumberOnVoip(phoneNumber)),
+            switchMap(this.handlePhoneNumberVoipValidation),
             switchMap(() => this.sendVerificationCodeToNewPhoneNumber(phoneNumber)),
             tap((verificationId) => {
                 this.isChangePhoneNumberInProgress$.next(false);
@@ -397,6 +402,20 @@ export class AuthenticationService {
         return of(true);
     };
 
+    private handleCheckPhoneNumberBeforeChange = (
+        identityCheckResult: boolean,
+    ): Observable<boolean> => {
+        if (!identityCheckResult)
+            return throwError(
+                () =>
+                    new AuthenticationError(
+                        "An account already exists with the same phone number.",
+                        AuthenticationErrorCode.INVALID_CREDENTIALS,
+                    ),
+            );
+        return of(true);
+    };
+
     private prepareRecaptcha = () => {
         this.windowRef.recaptchaVerifier?.clear();
         const recaptchaId = `recaptcha-container-${Math.random().toString(36).substring(2, 15)}`;
@@ -524,7 +543,7 @@ export class AuthenticationService {
     private handleResendPhoneNumberError = (error: any) => {
         console.log("Error resending verification code", error);
 
-        if (error instanceof AuthenticationError) throwError(() => error);
+        if (error instanceof AuthenticationError) return throwError(() => error);
 
         let errorMessage = "Failed to resend verification code. Please try again.";
         if (error instanceof FirebaseError) {
@@ -539,7 +558,7 @@ export class AuthenticationService {
     };
 
     private handleConfirmCodeVerificationError = (error: any): Observable<never> => {
-        if (error instanceof AuthenticationError) throwError(() => error);
+        if (error instanceof AuthenticationError) return throwError(() => error);
 
         let errorMessage = "Failed to verify confirmation code. Please try again.";
         if (error instanceof FirebaseError) {
@@ -556,7 +575,7 @@ export class AuthenticationService {
     private handleEmailVerificationError = (error: any) => {
         LocalStorageService.remove(LOCAL_STORAGE_KEYS.verifyEmail);
 
-        if (error instanceof AuthenticationError) throwError(() => error);
+        if (error instanceof AuthenticationError) return throwError(() => error);
 
         let errorMessage = "Failed to verify email. Please try again.";
         if (error instanceof FirebaseError) {
@@ -573,7 +592,7 @@ export class AuthenticationService {
     private handleEmailChangingError = (error: any) => {
         LocalStorageService.remove(LOCAL_STORAGE_KEYS.changeEmail);
 
-        if (error instanceof AuthenticationError) throwError(() => error);
+        if (error instanceof AuthenticationError) return throwError(() => error);
 
         let errorMessage = "Failed to change email. Please try again.";
         if (error instanceof FirebaseError) {
@@ -605,7 +624,7 @@ export class AuthenticationService {
         LocalStorageService.remove(LOCAL_STORAGE_KEYS.verificationId);
         LocalStorageService.remove(LOCAL_STORAGE_KEYS.phoneNumberForChanging);
 
-        if (error instanceof AuthenticationError) throwError(() => error);
+        if (error instanceof AuthenticationError) return throwError(() => error);
 
         let errorMessage = "Failed to send verification code. Please try again.";
         if (error instanceof FirebaseError) {
@@ -643,7 +662,7 @@ export class AuthenticationService {
                 LocalStorageService.remove(LOCAL_STORAGE_KEYS.verificationId);
                 LocalStorageService.remove(LOCAL_STORAGE_KEYS.phoneNumberForChanging);
             }
-            throwError(() => error);
+            return throwError(() => error);
         }
 
         let errorMessage = "Failed to confirm new phone number. Please try again.";
@@ -657,4 +676,17 @@ export class AuthenticationService {
             () => new AuthenticationError(errorMessage, AuthenticationErrorCode.UNKNOWN_ERROR),
         );
     };
+
+    private handlePhoneNumberVoipValidation = (isValid: boolean): Observable<boolean> => {
+        if (!isValid) {
+            return throwError(
+                () =>
+                    new AuthenticationError(
+                        "Please enter a valid mobile number. Landlines, VoIP and temporary numbers are not supported.",
+                        AuthenticationErrorCode.INVALID_CREDENTIALS,
+                    ),
+            );
+        }
+        return of(isValid);
+    }
 }
