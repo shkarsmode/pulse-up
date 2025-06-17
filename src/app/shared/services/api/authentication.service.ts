@@ -390,7 +390,7 @@ export class AuthenticationService {
             return throwError(
                 () =>
                     new AuthenticationError(
-                        "Provided phoner number cannot be used for registration",
+                        "Registration temporarily unavailable for this phone number",
                         AuthenticationErrorCode.INVALID_CREDENTIALS,
                     ),
             );
@@ -507,7 +507,7 @@ export class AuthenticationService {
         console.log("Error sending verification code", error);
         LocalStorageService.remove("phoneNumberForSignin");
 
-        if (error instanceof AuthenticationError) throwError(() => error);
+        if (error instanceof AuthenticationError) return throwError(() => error);
 
         let errorMessage = "Failed to send verification code. Please try again.";
         if (error instanceof FirebaseError) {
