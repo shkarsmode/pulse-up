@@ -10,8 +10,7 @@ import { noConsecutiveNewlinesValidator } from "../../helpers/validators/no-cons
 import { arrayLengthValidator } from "../../helpers/validators/array-length-validator";
 import { TopicLocation } from "@/app/features/user/interfaces/topic-location.interface";
 import { NotificationService } from "./notification.service";
-import { GeocodeService } from "../api/geocode.service";
-import { AppConstants } from "../../constants";
+import { UserService } from "../api/user.service";
 
 interface TopicFormValues {
     icon: File;
@@ -41,7 +40,7 @@ export class SendTopicService {
     private readonly router: Router = inject(Router);
     private readonly formBuilder: FormBuilder = inject(FormBuilder);
     private readonly pulseService: PulseService = inject(PulseService);
-    private readonly geocodeService: GeocodeService = inject(GeocodeService);
+    private readonly userService: UserService = inject(UserService);
     private readonly notificationService: NotificationService = inject(NotificationService);
 
     constructor() {
@@ -133,6 +132,7 @@ export class SendTopicService {
                 next: (topic) => {
                     this.currentTopic.reset();
                     this.pulseService.isJustCreatedTopic = true;
+                    this.userService.refreshProfile();
                     this.router.navigateByUrl(`/topic/${topic.id}`);
                     this.submitting.next(false);
                 },

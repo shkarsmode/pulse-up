@@ -1,13 +1,14 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { LandingComponent } from './landing.component';
-import { AppRoutes } from '../../shared/enums/app-routes.enum';
-import { FooterGuard } from '../../shared/components/footer/footer.guard';
-import { FooterCleanupGuard } from '../../shared/components/footer/footerCleanup.guard';
+import { AppRoutes } from '@/app/shared/enums/app-routes.enum';
+import { FooterGuard } from '@/app/shared/components/footer/footer.guard';
+import { FooterCleanupGuard } from '@/app/shared/components/footer/footerCleanup.guard';
 import { HeaderGuard } from '@/app/shared/components/header/header.guard';
 import { HeaderCleanupGuard } from '@/app/shared/components/header/header-cleanup.guard';
 import { metaTagsData } from '@/assets/data/meta-tags';
 import { PublicPageGuard } from '@/app/shared/helpers/guards/public-page.guard';
+import { CollectPersonalInfoGuard } from '@/app/shared/helpers/guards/collect-personal-info.guard';
 
 let Landing = AppRoutes.Landing;
 
@@ -20,7 +21,7 @@ const routes: Routes = [
             {
                 path: Landing.HOME,
                 loadComponent: () => import('./pages/main/main.component').then((m) => m.MainComponent),
-                canActivate: [HeaderGuard, PublicPageGuard],
+                canActivate: [HeaderGuard, PublicPageGuard, CollectPersonalInfoGuard],
                 canDeactivate: [HeaderCleanupGuard],
                 data: metaTagsData.home,
             },

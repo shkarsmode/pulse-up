@@ -1,5 +1,5 @@
 import { inject } from "@angular/core";
-import { BehaviorSubject, interval, Subscription, takeWhile } from "rxjs";
+import { BehaviorSubject, filter, interval, Subscription, switchMap, takeWhile, tap } from "rxjs";
 import { Router } from "@angular/router";
 import { FormControl } from "@angular/forms";
 import { toSignal } from "@angular/core/rxjs-interop";
@@ -61,9 +61,14 @@ export class ConfirmPhoneNumberService {
         if (value?.length !== 6) return;
 
         if (this.mode === "signIn") {
-            this.authenticationService.confirmVerificationCode(value).subscribe({
-                next: (response) => {
+            this.authenticationService.confirmVerificationCode(value).pipe(
+                switchMap(() => {
                     this.userStore.refreshProfile();
+                    return this.userStore.profile$
+                }),
+                filter((profile) => !!profile),
+            ).subscribe({
+                next: () => {
                     this.navigateToHomePage();
                     this.resetInput();
                 },

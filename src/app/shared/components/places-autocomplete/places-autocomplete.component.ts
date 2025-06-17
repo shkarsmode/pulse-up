@@ -161,8 +161,7 @@ export class PlacesAutocompleteComponent implements OnInit, OnChanges {
                             this.features = places.features;
                             this.loading = false;
                         },
-                        error: (err) => {
-                            console.error("Error fetching places:", err);
+                        error: () => {
                             this.loading = false;
                         },
                         complete: () => {

@@ -8,7 +8,7 @@ export class LocalStorageService {
         try {
             localStorage.setItem(key, JSON.stringify(value));
         } catch (error) {
-            console.error(`Error saving to localStorage key "${key}":`, error);
+            console.log(`Error saving to localStorage key "${key}":`, error);
         }
     }
 
@@ -22,7 +22,7 @@ export class LocalStorageService {
             const item = localStorage.getItem(key);
             return item ? (JSON.parse(item) as T) : null;
         } catch (error) {
-            console.error(`Error reading from localStorage key "${key}":`, error);
+            console.log(`Error reading from localStorage key "${key}":`, error);
             return null;
         }
     }
@@ -35,7 +35,7 @@ export class LocalStorageService {
         try {
             localStorage.removeItem(key);
         } catch (error) {
-            console.error(`Error removing localStorage key "${key}":`, error);
+            console.log(`Error removing localStorage key "${key}":`, error);
         }
     }
 
@@ -46,7 +46,7 @@ export class LocalStorageService {
         try {
             localStorage.clear();
         } catch (error) {
-            console.error("Error clearing localStorage:", error);
+            console.log("Error clearing localStorage:", error);
         }
     }
 
