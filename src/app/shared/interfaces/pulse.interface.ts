@@ -16,7 +16,14 @@ export interface IPulse {
     picture: string;
     shareKey: string;
     category: string;
+    state: PulseState;
 }
+
+export enum PulseState {
+    Active = "Active",
+    Archived = "Archived",
+    Blocked = "Blocked",
+};
 
 interface Location {
     country: string;

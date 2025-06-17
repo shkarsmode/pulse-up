@@ -11,12 +11,12 @@ import { PrimaryButtonComponent } from "@/app/shared/components/ui-kit/buttons/p
 import { AppRoutes } from "@/app/shared/enums/app-routes.enum";
 import { SecondaryButtonComponent } from "@/app/shared/components/ui-kit/buttons/secondary-button/secondary-button.component";
 import { InfiniteLoaderService } from "@/app/features/landing/services/infinite-loader.service";
-import { UserService } from "@/app/shared/services/api/user.service";
 import { AppConstants } from "@/app/shared/constants";
-import { IPaginator, IPulse } from "@/app/shared/interfaces";
+import { IPaginator, IPulse, PulseState } from "@/app/shared/interfaces";
 import { LargePulseComponent } from "@/app/shared/components/pulses/large-pulse/large-pulse.component";
 import { LoadingIndicatorComponent } from "@/app/shared/components/loading-indicator/loading-indicator.component";
 import { SpinnerComponent } from "@/app/shared/components/ui-kit/spinner/spinner.component";
+import { PulseService } from "@/app/shared/services/api/pulse.service";
 
 @Component({
     selector: "app-review-profile",
@@ -39,8 +39,8 @@ import { SpinnerComponent } from "@/app/shared/components/ui-kit/spinner/spinner
 })
 export class ReviewProfileComponent {
     private userStore = inject(UserStore);
-    private readonly userService = inject(UserService);
-    private readonly infiniteLoaderService = inject(InfiniteLoaderService);
+    private readonly pulseService = inject(PulseService);
+    private readonly infiniteLoaderService = inject(InfiniteLoaderService<IPulse>);
 
     private initialLoading = new BehaviorSubject(false);
     initialLoading$ = this.initialLoading.asObservable();
@@ -62,7 +62,8 @@ export class ReviewProfileComponent {
                 filter((profile) => !!profile),
                 tap((profile) => {
                     if (profile.totalTopics) {
-                        this.loadTopics(profile.id, profile.name);
+                        this.initialLoading.next(true);
+                        this.loadTopics(profile.name);
                     }
                 }),
                 takeUntilDestroyed(),
@@ -70,35 +71,54 @@ export class ReviewProfileComponent {
             .subscribe();
     }
 
-    private loadTopics(userId: string, name: string) {
-        this.initialLoading.next(true);
+    private loadTopics(name: string) {
         this.infiniteLoaderService.init({
-            load: (page) =>
-                this.userService
-                    .getTopics({
-                        userId,
-                        page,
-                        itemsPerPage: AppConstants.PULSES_PER_PAGE,
-                        includeStats: true,
+            load: (page) => {
+                return this.pulseService
+                    .getMyTopics({
+                        take: AppConstants.PULSES_PER_PAGE,
+                        skip: AppConstants.PULSES_PER_PAGE * (page - 1),
+                        state: [PulseState.Active, PulseState.Archived, PulseState.Blocked],
                     })
                     .pipe(
-                        map((response) => ({
-                            ...response,
-                            items: response.items.map((topic) => ({
-                                ...topic,
-                                author: { ...topic.author, name },
-                                stats: {
-                                    ...topic.stats,
-                                    totalVotes: topic.stats?.totalVotes || 0,
-                                    totalUniqueUsers: topic.stats?.totalUniqueUsers || 0,
-                                    lastDayVotes: topic.stats?.lastDayVotes || 0,
-                                },
-                            })),
-                        })),
+                        map((topics) => this.sortByDate(topics)),
+                        map((topics) => this.fillWithDefaultValues(topics, name)),
+                        map((topics) => this.convertToPaginator(topics, page)),
                         tap(() => this.initialLoading.next(false)),
-                    ),
+                    );
+            },
+        
         });
         this.paginator$ = this.infiniteLoaderService.paginator$;
         this.loading$ = this.infiniteLoaderService.loading$;
+    }
+
+    private convertToPaginator(topics: IPulse[], page: number): IPaginator<IPulse> {
+        return {
+            items: topics,
+            page: page,
+            hasMorePages: topics.length !== 0 && topics.length === AppConstants.PULSES_PER_PAGE,
+        };
+    }
+
+    private fillWithDefaultValues(topics: IPulse[], authorName: string): IPulse[] {
+        return topics.map((topic) => ({
+            ...topic,
+            author: { ...topic.author, name: authorName },
+            stats: {
+                ...topic.stats,
+                totalVotes: topic.stats?.totalVotes || 0,
+                totalUniqueUsers: topic.stats?.totalUniqueUsers || 0,
+                lastDayVotes: topic.stats?.lastDayVotes || 0,
+            },
+        }));
+    }
+
+    private sortByDate(topics: IPulse[]): IPulse[] {
+        return topics.sort((a, b) => {
+            const dateA = new Date(a.createdAt).getTime();
+            const dateB = new Date(b.createdAt).getTime();
+            return dateB - dateA;
+        });
     }
 }

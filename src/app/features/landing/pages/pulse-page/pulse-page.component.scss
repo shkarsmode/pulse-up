@@ -127,6 +127,16 @@
                     height: 26px;
                 }
             }
+
+            &.pulse__stats-button--archived {
+                ::ng-deep button {
+                    cursor: not-allowed;
+
+                    svg-icon {
+                        opacity: 0;
+                    }
+                }
+            }
         }
     }
 
