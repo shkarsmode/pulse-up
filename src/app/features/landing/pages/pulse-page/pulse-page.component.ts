@@ -5,7 +5,7 @@ import { catchError, first, Observable, of } from "rxjs";
 import { SvgIconComponent } from "angular-svg-icon";
 import { AppRoutes } from "@/app/shared/enums/app-routes.enum";
 import { MatDialog } from "@angular/material/dialog";
-import { IPulse } from "@/app/shared/interfaces";
+import { IPulse, PulseState } from "@/app/shared/interfaces";
 import { PulseService } from "@/app/shared/services/api/pulse.service";
 import { MetadataService } from "@/app/shared/services/core/metadata.service";
 import { SettingsService } from "@/app/shared/services/api/settings.service";
@@ -23,6 +23,7 @@ import { LoadImgPathDirective } from "@/app/shared/directives/load-img-path/load
 import { FlatButtonDirective } from "@/app/shared/components/ui-kit/buttons/flat-button/flat-button.directive";
 import { OpenGetAppPopupDirective } from "@/app/shared/components/popups/get-app-popup/open-get-app-popup.directive";
 import { TopicPublishedComponent } from "@/app/shared/components/popups/topic-published/topic-published.component";
+import { HeartBeatDirective } from "@/app/shared/animations/heart-beat.directive";
 
 @Component({
     selector: "app-pulse-page",
@@ -46,6 +47,7 @@ import { TopicPublishedComponent } from "@/app/shared/components/popups/topic-pu
         LoadImgPathDirective,
         FlatButtonDirective,
         OpenGetAppPopupDirective,
+        HeartBeatDirective
     ],
 })
 export class PulsePageComponent implements OnInit {
@@ -55,6 +57,7 @@ export class PulsePageComponent implements OnInit {
     public suggestions: IPulse[] = [];
     public pulseUrl: string = "";
     public shortPulseDescription: string = "";
+    public isArchived: boolean = false;
 
     @ViewChild("description", { static: false })
     public description: ElementRef<HTMLDivElement>;
@@ -96,6 +99,7 @@ export class PulsePageComponent implements OnInit {
             this.createLink(pulse.description);
             this.updateSuggestions();
             this.pulseUrl = this.settingsService.shareTopicBaseUrl + pulse.shareKey;
+            this.isArchived = pulse.state === PulseState.Archived;
             this.metadataService.setTitle(`${pulse.title} | Support What Matters – Pulse Up`);
             this.metadataService.setMetaTag(
                 "description",

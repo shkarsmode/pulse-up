@@ -1,7 +1,7 @@
 import { HttpClient } from "@angular/common/http";
 import { inject, Injectable } from "@angular/core";
 import { catchError, first, map, Observable, of, tap } from "rxjs";
-import { IPulse } from "../../interfaces";
+import { IPulse, PulseState } from "../../interfaces";
 import { API_URL } from "../../tokens/tokens";
 import { ITopPulse } from "../../interfaces/top-pulse.interface";
 import { IValidateTopicTitleResponse } from "../../interfaces/validate-topic-title.response";
@@ -48,7 +48,7 @@ export class PulseService {
         return this.http.get<IPulse>(`${this.apiUrl}/topics/${id}`);
     }
 
-    public getMyTopics(params: { skip?: number; take?: number } = {}) {
+    public getMyTopics(params: { skip?: number; take?: number, state?: PulseState[] } = {}) {
         return this.http.get<IPulse[]>(`${this.apiUrl}/topics/my`, { params });
     }
 

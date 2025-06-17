@@ -49,9 +49,13 @@
         <div class="pulse__buttons">
             <app-primary-button
                 class="pulse__stats-button"
+                [class.pulse__stats-button--archived]="isArchived"
+                [disabled]="isArchived"
                 openGetAppPopup>
                 <svg-icon src="assets/svg/heart.svg" />
-                <span>Tap to Pulse</span>
+                <span>
+                    {{ isArchived ? 'Archived' : 'Tap to Pulse' }}
+                </span>
                 <svg-icon
                     src="assets/svg/logo/logo-v2.svg"
                     heartBeatAnimation />
