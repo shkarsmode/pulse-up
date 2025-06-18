@@ -55,7 +55,6 @@ export class ProfileFormComponent {
     private router = inject(Router);
     private dialog = inject(MatDialog);
     private fb: FormBuilder = inject(FormBuilder);
-    public readonly location: Location = inject(Location);
     private userStore: UserStore = inject(UserStore);
     private userService: UserService = inject(UserService);
     private settingsService: SettingsService = inject(SettingsService);
@@ -221,7 +220,7 @@ export class ProfileFormComponent {
     }
 
     public onCancel(): void {
-        this.location.back();
+        this.router.navigateByUrl("/" + AppRoutes.Profile.REVIEW);
     }
 
     public getErrorMessage(name: string): string | null {
