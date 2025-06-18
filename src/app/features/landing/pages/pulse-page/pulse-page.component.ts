@@ -1,7 +1,7 @@
 import { Component, ElementRef, inject, OnInit, ViewChild } from "@angular/core";
 import { ActivatedRoute, ParamMap, Router, RouterModule } from "@angular/router";
 import { CommonModule } from "@angular/common";
-import { catchError, first, Observable, of } from "rxjs";
+import { catchError, first, Observable, of, take } from "rxjs";
 import { SvgIconComponent } from "angular-svg-icon";
 import { AppRoutes } from "@/app/shared/enums/app-routes.enum";
 import { MatDialog } from "@angular/material/dialog";
@@ -47,7 +47,7 @@ import { HeartBeatDirective } from "@/app/shared/animations/heart-beat.directive
         LoadImgPathDirective,
         FlatButtonDirective,
         OpenGetAppPopupDirective,
-        HeartBeatDirective
+        HeartBeatDirective,
     ],
 })
 export class PulsePageComponent implements OnInit {
@@ -83,7 +83,9 @@ export class PulsePageComponent implements OnInit {
     }
 
     private initPulseUrlIdListener(): void {
-        this.route.paramMap.subscribe(this.handlePulseUrlIdListener.bind(this));
+        this.route.paramMap
+            .pipe(take(1))
+            .subscribe(this.handlePulseUrlIdListener.bind(this));
     }
 
     private handlePulseUrlIdListener(data: ParamMap): void {
@@ -91,7 +93,7 @@ export class PulsePageComponent implements OnInit {
         this.pulse = null;
         this.isLoading = true;
         const pulse = this.getPulseById(id);
-        pulse.subscribe((pulse) => {
+        pulse.pipe(take(1)).subscribe((pulse) => {
             this.shortPulseDescription = pulse.description.replace(/\n/g, " ");
             this.pulse = pulse;
             this.isLoading = false;

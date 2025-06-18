@@ -1,5 +1,14 @@
 import { inject } from "@angular/core";
-import { BehaviorSubject, filter, interval, Subscription, switchMap, takeWhile, tap } from "rxjs";
+import {
+    BehaviorSubject,
+    filter,
+    interval,
+    Subscription,
+    switchMap,
+    take,
+    takeWhile,
+    tap,
+} from "rxjs";
 import { Router } from "@angular/router";
 import { FormControl } from "@angular/forms";
 import { toSignal } from "@angular/core/rxjs-interop";
@@ -61,27 +70,36 @@ export class ConfirmPhoneNumberService {
         if (value?.length !== 6) return;
 
         if (this.mode === "signIn") {
-            this.authenticationService.confirmVerificationCode(value).pipe(
-                switchMap(() => {
-                    this.userStore.refreshProfile();
-                    return this.userStore.profile$
-                }),
-                filter((profile) => !!profile),
-            ).subscribe({
-                next: () => {
-                    this.navigateToHomePage();
-                    this.resetInput();
-                },
-                error: this.handleEror,
-            });
+            this.authenticationService
+                .confirmVerificationCode(value)
+                .pipe(take(1))
+                .pipe(
+                    switchMap(() => {
+                        this.userStore.refreshProfile();
+                        return this.userStore.profile$;
+                    }),
+                    filter((profile) => !!profile),
+                )
+                .subscribe({
+                    next: () => {
+                        this.navigateToHomePage();
+                        this.resetInput();
+                    },
+                    error: this.handleEror,
+                });
         } else {
-            this.authenticationService.confirmNewPhoneNumber(value).subscribe({
-                next: (response) => {
-                    this.router.navigateByUrl(`/${this.appRoutes.Profile.EDIT}`);
-                    this.notificationService.success("Phone number has been changed successfully.");
-                },
-                error: this.handleEror,
-            });
+            this.authenticationService
+                .confirmNewPhoneNumber(value)
+                .pipe(take(1))
+                .subscribe({
+                    next: (response) => {
+                        this.router.navigateByUrl(`/${this.appRoutes.Profile.EDIT}`);
+                        this.notificationService.success(
+                            "Phone number has been changed successfully.",
+                        );
+                    },
+                    error: this.handleEror,
+                });
         }
     };
 
@@ -94,15 +112,18 @@ export class ConfirmPhoneNumberService {
             return;
         this.isResendingCode$.next(true);
         this.resetInput();
-        this.authenticationService.resendVerificationCode().subscribe({
-            next: () => {
-                console.log("Verification code resent successfully");
-                this.resendCodeAttemptsLeft--;
-                this.isResendingCode$.next(false);
-                this.startCooldown(60);
-            },
-            error: this.handleEror,
-        });
+        this.authenticationService
+            .resendVerificationCode()
+            .pipe(take(1))
+            .subscribe({
+                next: () => {
+                    console.log("Verification code resent successfully");
+                    this.resendCodeAttemptsLeft--;
+                    this.isResendingCode$.next(false);
+                    this.startCooldown(60);
+                },
+                error: this.handleEror,
+            });
     };
 
     public startCooldown(seconds: number) {

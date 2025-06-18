@@ -9,14 +9,19 @@ import {
     ReactiveFormsModule,
     Validators,
 } from "@angular/forms";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
+import { take } from "rxjs";
 import { AuthenticationService } from "@/app/shared/services/api/authentication.service";
 import { InputComponent } from "@/app/shared/components/ui-kit/input/input.component";
 import { ProfileLayoutComponent } from "../../ui/profile-layout/profile-layout.component";
-import { PrimaryButtonComponent } from "../../../../shared/components/ui-kit/buttons/primary-button/primary-button.component";
+import { PrimaryButtonComponent } from "@/app/shared/components/ui-kit/buttons/primary-button/primary-button.component";
 import { ErrorMessageBuilder } from "../../helpers/error-message-builder";
 import { AppRoutes } from "@/app/shared/enums/app-routes.enum";
 import { SigninRequiredPopupComponent } from "@/app/shared/components/popups/signin-required-popup/signin-required-popup.component";
-import { AuthenticationError, AuthenticationErrorCode } from "@/app/shared/helpers/errors/authentication-error";
+import {
+    AuthenticationError,
+    AuthenticationErrorCode,
+} from "@/app/shared/helpers/errors/authentication-error";
 
 @Component({
     selector: "app-change-email",
@@ -47,7 +52,7 @@ export class ChangeEmailComponent {
         this.form = this.fb.group({
             email: [this.firebaseUser?.email || "", [Validators.required, Validators.email]],
         });
-        this.form.valueChanges.subscribe(() => {
+        this.form.valueChanges.pipe(takeUntilDestroyed()).subscribe(() => {
             this.errorMessage = null;
         });
     }
@@ -64,7 +69,7 @@ export class ChangeEmailComponent {
 
     public get isUserVerified(): boolean {
         const user = this.authenticationService.firebaseAuth.currentUser;
-        return !!(user?.email && user?.emailVerified)
+        return !!(user?.email && user?.emailVerified);
     }
 
     private get emailControl(): AbstractControl<any, any> | null {
@@ -94,6 +99,7 @@ export class ChangeEmailComponent {
                     window.location.origin +
                     `/profile/verify-email?action=${action}&showPopup=true`,
             })
+            .pipe(take(1))
             .subscribe({
                 next: () => {
                     this.submitting = false;
@@ -105,7 +111,10 @@ export class ChangeEmailComponent {
                 error: (error) => {
                     this.submitting = false;
 
-                    if (error instanceof AuthenticationError && error.code === AuthenticationErrorCode.REAUTHENTICATE) {
+                    if (
+                        error instanceof AuthenticationError &&
+                        error.code === AuthenticationErrorCode.REAUTHENTICATE
+                    ) {
                         this.dialog.open(SigninRequiredPopupComponent, {
                             width: "500px",
                             panelClass: "custom-dialog-container",

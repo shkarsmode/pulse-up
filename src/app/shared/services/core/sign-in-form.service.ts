@@ -5,7 +5,7 @@ import { ErrorStateMatcher } from "@angular/material/core";
 import { Router } from "@angular/router";
 import intlTelInput, { Iti } from "intl-tel-input";
 import { CountryCode, isValidPhoneNumber, validatePhoneNumberLength } from "libphonenumber-js";
-import { delay, fromEvent, map } from "rxjs";
+import { delay, fromEvent, map, Subscription, take } from "rxjs";
 import { AppRoutes } from "@/app/shared/enums/app-routes.enum";
 import { AuthenticationService } from "@/app/shared/services/api/authentication.service";
 import { NotificationService } from "./notification.service";
@@ -24,6 +24,7 @@ export class SignInFormService {
         changePhoneNumber: AppRoutes.Profile.CONFIRM_PHONE_NUMBER,
     };
     private confirmPageUrl: string = this.confirmPageUrls[this.mode];
+    private subscriptions: Subscription[] = [];
     public isValid = true;
     public countryCodeChanged = false;
     public countryCode: string = "US";
@@ -155,17 +156,23 @@ export class SignInFormService {
             initialCountry: "US",
             showFlags: true,
         });
-        fromEvent(inputElement, "blur").pipe(delay(100), map(this.onBlur)).subscribe();
-        fromEvent(inputElement, "focus").pipe(map(this.onFocus)).subscribe();
-        fromEvent(inputElement, "countrychange").pipe(map(this.onCountryCodeChange)).subscribe();
-        fromEvent(inputElement, "keydown")
-            .pipe(map((event) => this.onInputKeyDown(event as KeyboardEvent)))
-            .subscribe();
+        this.subscriptions.push(
+            fromEvent(inputElement, "blur").pipe(delay(100), map(this.onBlur)).subscribe(),
+            fromEvent(inputElement, "focus").pipe(map(this.onFocus)).subscribe(),
+            fromEvent(inputElement, "countrychange")
+                .pipe(map(this.onCountryCodeChange))
+                .subscribe(),
+            fromEvent(inputElement, "keydown")
+                .pipe(map((event) => this.onInputKeyDown(event as KeyboardEvent)))
+                .subscribe(),
+        );
     };
 
     public onDestroy = () => {
         this.iti?.destroy();
         this.authenticationService.stopSignInProgress();
+        this.subscriptions.forEach((subscription) => subscription.unsubscribe());
+        this.subscriptions = [];
     };
 
     public validateNumber({ isEmptyValid = false }: { isEmptyValid?: boolean } = {}) {
@@ -191,27 +198,33 @@ export class SignInFormService {
         const phone = this.form.value.phone;
 
         if (this.mode === "signIn") {
-            this.authenticationService.loginWithPhoneNumber(phone).subscribe({
-                next: () => {
-                    console.log("Verification code sent successfully");
-                    this.navigateToConfirmPage();
-                },
-                error: (error) => {
-                    console.log("Error sending verification code:", error);
-                    this.notificationService.error(error.message);
-                },
-            });
+            this.authenticationService
+                .loginWithPhoneNumber(phone)
+                .pipe(take(1))
+                .subscribe({
+                    next: () => {
+                        console.log("Verification code sent successfully");
+                        this.navigateToConfirmPage();
+                    },
+                    error: (error) => {
+                        console.log("Error sending verification code:", error);
+                        this.notificationService.error(error.message);
+                    },
+                });
         } else {
-            this.authenticationService.changePhoneNumber(phone).subscribe({
-                next: () => {
-                    console.log("Verification code sent successfully");
-                    this.navigateToConfirmPage();
-                },
-                error: (error) => {
-                    console.log("Error sending verification code:", error);
-                    this.notificationService.error(error.message);
-                },
-            });
+            this.authenticationService
+                .changePhoneNumber(phone)
+                .pipe(take(1))
+                .subscribe({
+                    next: () => {
+                        console.log("Verification code sent successfully");
+                        this.navigateToConfirmPage();
+                    },
+                    error: (error) => {
+                        console.log("Error sending verification code:", error);
+                        this.notificationService.error(error.message);
+                    },
+                });
         }
     };
 

@@ -1,8 +1,9 @@
-import { Component, inject, Input } from "@angular/core";
+import { Component, DestroyRef, inject, Input } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { Router, RouterModule } from "@angular/router";
 import { MatDialog } from "@angular/material/dialog";
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
+import { take } from "rxjs";
 import { InputComponent } from "@/app/shared/components/ui-kit/input/input.component";
 import { atLeastOneLetterValidator } from "@/app/shared/helpers/validators/at-least-one-letter.validator";
 import { usernameUniqueValidator } from "@/app/shared/helpers/validators/username-unique.validator";
@@ -23,6 +24,7 @@ import {
 import { CropResult } from "@/app/features/user/interfaces/crop-result.interface";
 import { NotificationService } from "@/app/shared/services/core/notification.service";
 import { ErrorMessageBuilder } from "../../helpers/error-message-builder";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 
 @Component({
     selector: "app-profile-form",
@@ -47,6 +49,7 @@ export class ProfileFormComponent {
         picture: string | null;
     };
 
+    private destroyed = inject(DestroyRef);
     private router = inject(Router);
     private dialog = inject(MatDialog);
     private fb: FormBuilder = inject(FormBuilder);
@@ -111,9 +114,12 @@ export class ProfileFormComponent {
             bio: [this.initialValues.bio, [optionalLengthValidator(3, 150)]],
             profilePicture: [null, [pictureValidator()]],
         });
-        this.form.get("profilePicture")?.valueChanges.subscribe((value) => {
-            this.isPicturePristine = false;
-        });
+        this.form
+            .get("profilePicture")
+            ?.valueChanges.pipe(takeUntilDestroyed(this.destroyed))
+            .subscribe(() => {
+                this.isPicturePristine = false;
+            });
         this.classes.email = {
             "profile-form__link": true,
             "profile-form__link--placeholder": this.email === this.emailPlaceholder,
@@ -169,7 +175,7 @@ export class ProfileFormComponent {
                     },
                 },
             );
-            dialogRef.afterClosed().subscribe(this.onCroppedImage);
+            dialogRef.afterClosed().pipe(take(1)).subscribe(this.onCroppedImage);
         }
     }
 
@@ -182,21 +188,26 @@ export class ProfileFormComponent {
         if (this.form.valid) {
             this.trimBioValue();
             this.submitting = true;
-            this.userService.updateOwnProfile(this.form.value).subscribe({
-                next: () => {
-                    this.submitting = false;
-                    this.form.markAsPristine();
-                    this.form.markAsUntouched();
-                    this.isPicturePristine = true;
-                    this.userStore.refreshProfile();
-                    this.notificationService.success("Profile updated successfully.");
-                    this.router.navigateByUrl("/" + AppRoutes.Profile.REVIEW);
-                },
-                error: () => {
-                    this.submitting = false;
-                    this.notificationService.error("Failed to update profile. Please try again.");
-                },
-            });
+            this.userService
+                .updateOwnProfile(this.form.value)
+                .pipe(take(1))
+                .subscribe({
+                    next: () => {
+                        this.submitting = false;
+                        this.form.markAsPristine();
+                        this.form.markAsUntouched();
+                        this.isPicturePristine = true;
+                        this.userStore.refreshProfile();
+                        this.notificationService.success("Profile updated successfully.");
+                        this.router.navigateByUrl("/" + AppRoutes.Profile.REVIEW);
+                    },
+                    error: () => {
+                        this.submitting = false;
+                        this.notificationService.error(
+                            "Failed to update profile. Please try again.",
+                        );
+                    },
+                });
         } else {
             this.form.markAllAsTouched();
         }

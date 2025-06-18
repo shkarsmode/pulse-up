@@ -11,6 +11,7 @@ import {
 import { CommonModule } from "@angular/common";
 import { AbstractControl } from "@angular/forms";
 import { MatDialog } from "@angular/material/dialog";
+import { take } from "rxjs";
 import { SvgIconComponent } from "angular-svg-icon";
 import { PickerComponent } from "@ctrl/ngx-emoji-mart";
 import { TextareaComponent } from "../../../../../shared/components/ui-kit/textarea/textarea.component";
@@ -104,7 +105,7 @@ export class TopicDescriptionComponent implements OnInit {
                     },
                 },
             );
-            dialogRef.afterClosed().subscribe(this.onCroppedImage);
+            dialogRef.afterClosed().pipe(take(1)).subscribe(this.onCroppedImage);
         }
     }
 

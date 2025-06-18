@@ -590,6 +590,7 @@ export class AuthenticationService {
     };
 
     private handleEmailChangingError = (error: any) => {
+        console.log("Error changing email", error);
         LocalStorageService.remove(LOCAL_STORAGE_KEYS.changeEmail);
 
         if (error instanceof AuthenticationError) return throwError(() => error);

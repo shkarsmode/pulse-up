@@ -1,12 +1,12 @@
 import { Component, EventEmitter, inject, Output } from "@angular/core";
 import { FormGroup } from "@angular/forms";
-import { AppRoutes } from "../../../../shared/enums/app-routes.enum";
-import { SendTopicService } from "../../../../shared/services/core/send-topic.service";
+import { MatDialog } from "@angular/material/dialog";
+import { map, Observable, take } from "rxjs";
+import { AppRoutes } from "@/app/shared/enums/app-routes.enum";
+import { SendTopicService } from "@/app/shared/services/core/send-topic.service";
+import { PulseService } from "@/app/shared/services/api/pulse.service";
 import { ErrorMessageBuilder } from "../../helpers/error-message-builder";
 import { tooltipText } from "../../constants/tooltip-text";
-import { PulseService } from "@/app/shared/services/api/pulse.service";
-import { map, Observable } from "rxjs";
-import { MatDialog } from "@angular/material/dialog";
 import {
     CropImagePopupComponent,
     CropImagePopupData,
@@ -81,7 +81,7 @@ export class TopicFormComponent {
                     },
                 },
             );
-            dialogRef.afterClosed().subscribe(this.onCroppedImage);
+            dialogRef.afterClosed().pipe(take(1)).subscribe(this.onCroppedImage);
         }
     }
 
