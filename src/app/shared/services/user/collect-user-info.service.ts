@@ -16,7 +16,7 @@ export class CollectUserInfoService {
 
     public collectPersonalInfo(): void {
         const accountsIds =
-            LocalStorageService.get<string[]>(LOCAL_STORAGE_KEYS.personalInfoPopupShown) || [];
+            LocalStorageService.get<string[]>(LOCAL_STORAGE_KEYS.personalInfoPopupShownForProfiles) || [];
         this.userStore.profile$.pipe(first((profile) => !!profile)).subscribe((profile) => {
             if (!profile?.id) return;
             const alreadyShown = accountsIds && accountsIds.includes(profile.id);
@@ -27,7 +27,7 @@ export class CollectUserInfoService {
                 (!profile.name || !profile.username)
             ) {
                 this.openDialog();
-                LocalStorageService.set(LOCAL_STORAGE_KEYS.personalInfoPopupShown, [
+                LocalStorageService.set(LOCAL_STORAGE_KEYS.personalInfoPopupShownForProfiles, [
                     ...accountsIds,
                     profile.id,
                 ]);

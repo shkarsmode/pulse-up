@@ -63,20 +63,22 @@ export class DeleteAccountPopupComponent {
                     );
                 }),
                 switchMap(() => this.userStore.profile$),
+                take(1),
                 tap((profile) => {
                     const accountsIds =
                         LocalStorageService.get<string[]>(
-                            LOCAL_STORAGE_KEYS.personalInfoPopupShown,
+                            LOCAL_STORAGE_KEYS.personalInfoPopupShownForProfiles,
                         ) || [];
                     if (profile?.id && accountsIds.includes(profile.id)) {
                         const mewAccountsIds = accountsIds.filter(
                             (accountId) => accountId !== profile.id,
                         );
                         LocalStorageService.set(
-                            LOCAL_STORAGE_KEYS.personalInfoPopupShown,
+                            LOCAL_STORAGE_KEYS.personalInfoPopupShownForProfiles,
                             mewAccountsIds,
                         );
                     }
+                    this.userStore.refreshProfile();
                 }),
                 switchMap(() => this.authenticationService.logout()),
                 catchError(() => {

@@ -11,7 +11,7 @@ export class UserStore {
     public profile$ = this.userService.profile$;
 
     public hasPublicInformation$ = this.profile$.pipe(
-        map((profile) => (profile ? !!(profile.name && profile.username) : false)),
+        map((profile) => profile && !!(profile.name && profile.username)),
     );
 
     public refreshProfile(): void {
