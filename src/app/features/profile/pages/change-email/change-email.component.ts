@@ -90,7 +90,7 @@ export class ChangeEmailComponent {
         this.errorMessage = null;
 
         const hasEmail = this.firebaseUser?.email && this.firebaseUser?.emailVerified;
-        const action = hasEmail ? "changeEmail" : "verifyEmail";
+        const action = "changeEmail";
 
         this.authenticationService
             .changeEmail({
