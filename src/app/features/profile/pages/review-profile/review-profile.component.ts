@@ -17,22 +17,26 @@ import { LargePulseComponent } from "@/app/shared/components/pulses/large-pulse/
 import { LoadingIndicatorComponent } from "@/app/shared/components/loading-indicator/loading-indicator.component";
 import { SpinnerComponent } from "@/app/shared/components/ui-kit/spinner/spinner.component";
 import { PulseService } from "@/app/shared/services/api/pulse.service";
+import { LinkButtonComponent } from "@/app/shared/components/ui-kit/buttons/link-button/link-button.component";
+import { SvgIconComponent } from "angular-svg-icon";
 
 @Component({
     selector: "app-review-profile",
     standalone: true,
     imports: [
-        CommonModule,
-        RouterModule,
-        InfiniteScrollDirective,
-        UserAvatarComponent,
-        ContainerComponent,
-        PrimaryButtonComponent,
-        SecondaryButtonComponent,
-        LargePulseComponent,
-        LoadingIndicatorComponent,
-        SpinnerComponent,
-    ],
+    CommonModule,
+    RouterModule,
+    SvgIconComponent,
+    InfiniteScrollDirective,
+    UserAvatarComponent,
+    ContainerComponent,
+    PrimaryButtonComponent,
+    SecondaryButtonComponent,
+    LargePulseComponent,
+    LoadingIndicatorComponent,
+    SpinnerComponent,
+    LinkButtonComponent
+],
     templateUrl: "./review-profile.component.html",
     styleUrl: "./review-profile.component.scss",
     providers: [InfiniteLoaderService],
@@ -52,8 +56,10 @@ export class ReviewProfileComponent implements OnInit {
     username$ = this.profile$.pipe(map((profile) => profile.username));
     picture$ = this.profile$.pipe(map((profile) => profile.picture || ""));
     topicsCount$ = this.profile$.pipe(map((profile) => profile.totalTopics || 0));
+    hasTopics$ = this.topicsCount$.pipe(map((count) => !!count));
     editRpofileRoute = "/" + AppRoutes.Profile.EDIT;
     deleteAccountRoute = "/" + AppRoutes.Profile.DELETE_ACCOUNT;
+    addTopicRoute = "/" + AppRoutes.User.Topic.SUGGEST;
 
     loadMore = this.infiniteLoaderService.loadMore.bind(this.infiniteLoaderService);
 
