@@ -35,6 +35,13 @@
                 {{ topicsCount$ | async }}
                 {{ (topicsCount$ | async) === 1 ? "topic" : "topics" }} started
             </div>
+            <app-link-button
+                class="topics__add-link"
+                [routerLink]="addTopicRoute"
+                *ngIf="!(hasTopics$ | async)">
+                Start a topic
+                <svg-icon src="assets/svg/arrow-right.svg" />
+            </app-link-button>
             <app-spinner
                 *ngIf="initialLoading$ | async"
                 class="topics__loading" />
