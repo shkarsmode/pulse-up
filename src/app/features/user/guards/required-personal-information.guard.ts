@@ -31,7 +31,7 @@ export class RequiredPersonalInformationGuard implements CanActivate {
             map((hasPublicInformation) => {
                 if (!hasPublicInformation) {
                     this.openPopup();
-                    this.router.navigateByUrl(AppRoutes.Landing.TOPICS);
+                    this.router.navigateByUrl("/" + AppRoutes.Landing.TOPICS);
                     return false;
                 }
                 return true;
