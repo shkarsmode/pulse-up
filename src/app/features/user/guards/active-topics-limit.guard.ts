@@ -28,12 +28,12 @@ export class ActiveTopicsLimitGuard implements CanActivate {
         return this.userStore.profile$.pipe(
             map((profile) => {
                 if (profile && profile.activeTopics >= profile.activeTopicsLimit) {
+                    this.router.navigateByUrl("/" + AppRoutes.Landing.TOPICS);
                     this.dialog.open(ActiveTopicsLimitPopupComponent, {
                         width: "630px",
                         panelClass: "custom-dialog-container",
                         backdropClass: "custom-dialog-backdrop",
                     });
-                    this.router.navigateByUrl(AppRoutes.Landing.TOPICS);
                     return false;
                 }
                 return true;

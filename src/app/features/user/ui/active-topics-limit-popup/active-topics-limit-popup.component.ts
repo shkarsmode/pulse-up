@@ -1,7 +1,5 @@
 import { Component, inject } from "@angular/core";
-import { Router } from "@angular/router";
 import { MatDialogRef } from "@angular/material/dialog";
-import { AppRoutes } from "@/app/shared/enums/app-routes.enum";
 import { PopupLayoutComponent } from "@/app/shared/components/ui-kit/popup/popup.component";
 import { PopupTitleComponent } from "@/app/shared/components/ui-kit/popup/popup-title/popup-title.component";
 import { PopupTextComponent } from "@/app/shared/components/ui-kit/popup/popup-text/popup-text.component";
@@ -22,12 +20,10 @@ import { PrimaryButtonComponent } from "@/app/shared/components/ui-kit/buttons/p
     styleUrl: "./active-topics-limit-popup.component.scss",
 })
 export class ActiveTopicsLimitPopupComponent {
-    private readonly router = inject(Router);
     private readonly dialogRef: MatDialogRef<ActiveTopicsLimitPopupComponent> =
         inject(MatDialogRef);
 
     public onCloseDialog(): void {
         this.dialogRef.close();
-        this.router.navigateByUrl("/" + AppRoutes.Landing.TOPICS);
     }
 }

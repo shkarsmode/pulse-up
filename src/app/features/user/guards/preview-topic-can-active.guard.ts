@@ -23,7 +23,7 @@ export class PreviewTopicCanActiveGuard implements CanActivate {
     ): MaybeAsync<GuardResult> {
         const isAllowed = this.sendTopicService.isTopicEditing;
         if (!isAllowed) {
-            this.router.navigateByUrl(AppRoutes.Landing.TOPICS);
+            this.router.navigateByUrl("/" + AppRoutes.Landing.TOPICS);
             return false;
         }
         return true;
