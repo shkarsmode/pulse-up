@@ -1,5 +1,5 @@
 import { Component, DestroyRef, inject, Input } from "@angular/core";
-import { CommonModule } from "@angular/common";
+import { CommonModule, Location } from "@angular/common";
 import { Router, RouterModule } from "@angular/router";
 import { MatDialog } from "@angular/material/dialog";
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
@@ -25,6 +25,7 @@ import { CropResult } from "@/app/features/user/interfaces/crop-result.interface
 import { NotificationService } from "@/app/shared/services/core/notification.service";
 import { ErrorMessageBuilder } from "../../helpers/error-message-builder";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
+import { SecondaryButtonComponent } from "@/app/shared/components/ui-kit/buttons/secondary-button/secondary-button.component";
 
 @Component({
     selector: "app-profile-form",
@@ -37,6 +38,7 @@ import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
         TextareaComponent,
         PrimaryButtonComponent,
         PicturePickerComponent,
+        SecondaryButtonComponent,
     ],
     templateUrl: "./profile-form.component.html",
     styleUrl: "./profile-form.component.scss",
@@ -53,6 +55,7 @@ export class ProfileFormComponent {
     private router = inject(Router);
     private dialog = inject(MatDialog);
     private fb: FormBuilder = inject(FormBuilder);
+    public readonly location: Location = inject(Location);
     private userStore: UserStore = inject(UserStore);
     private userService: UserService = inject(UserService);
     private settingsService: SettingsService = inject(SettingsService);
@@ -183,7 +186,7 @@ export class ProfileFormComponent {
         this.form.get("profilePicture")?.setValue(null);
     }
 
-    public submit(event: MouseEvent) {
+    public onSubmit(event: MouseEvent) {
         event.preventDefault();
         if (this.form.valid) {
             this.trimBioValue();
@@ -216,6 +219,11 @@ export class ProfileFormComponent {
             this.form.markAllAsTouched();
         }
     }
+
+    public onCancel(): void {
+        this.location.back();
+    }
+
     public getErrorMessage(name: string): string | null {
         const control = this.form.get(name);
         if (!control) return null;

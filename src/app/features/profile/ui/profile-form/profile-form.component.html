@@ -1,10 +1,8 @@
-
-
 <form
     [formGroup]="form"
     class="profile-form">
     <div class="profile-form__field">
-        <app-picture-picker 
+        <app-picture-picker
             id="profilePicture"
             name="profilePicture"
             label="Profile picture"
@@ -48,11 +46,19 @@
     </div>
     <div class="profile-form__field">
         <span class="profile-form__label">Email</span>
-        <a [routerLink]="chngeEmailRoute" [ngClass]="classes.email">{{ email }}</a>
+        <a
+            [routerLink]="chngeEmailRoute"
+            [ngClass]="classes.email"
+            >{{ email }}</a
+        >
     </div>
     <div class="profile-form__field">
         <span class="profile-form__label">Phone number</span>
-        <a [routerLink]="chngePhoneNumberRoute" class="profile-form__link">{{ phoneNumber }}</a>
+        <a
+            [routerLink]="chngePhoneNumberRoute"
+            class="profile-form__link"
+            >{{ phoneNumber }}</a
+        >
     </div>
     <div class="profile-form__field profile-form__field--textarea">
         <app-textarea
@@ -66,12 +72,19 @@
             <span class="profile-form__error">{{ error }}</span>
         </div>
     </div>
-    <app-primary-button
-        type="submit"
-        [fullWidth]="true"
-        [disabled]="isDisabled()"
-        [loading]="submitting"
-        (handleClick)="submit($event)">
-        Save
-    </app-primary-button>
+    <div class="footer">
+        <app-primary-button
+            type="submit"
+            [fullWidth]="true"
+            [disabled]="isDisabled()"
+            [loading]="submitting"
+            (handleClick)="onSubmit($event)">
+            Save
+        </app-primary-button>
+        <app-secondary-button
+            [fullWidth]="true"
+            (handleClick)="onCancel()">
+            Cancel
+        </app-secondary-button>
+    </div>
 </form>
