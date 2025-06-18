@@ -3,7 +3,7 @@ import { CommonModule } from "@angular/common";
 import { Router, RouterModule } from "@angular/router";
 import { MatDialog } from "@angular/material/dialog";
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
-import { take } from "rxjs";
+import { first, switchMap, take, tap } from "rxjs";
 import { InputComponent } from "@/app/shared/components/ui-kit/input/input.component";
 import { atLeastOneLetterValidator } from "@/app/shared/helpers/validators/at-least-one-letter.validator";
 import { usernameUniqueValidator } from "@/app/shared/helpers/validators/username-unique.validator";
@@ -190,14 +190,18 @@ export class ProfileFormComponent {
             this.submitting = true;
             this.userService
                 .updateOwnProfile(this.form.value)
-                .pipe(take(1))
+                .pipe(
+                    take(1),
+                    tap(() => this.userStore.refreshProfile()),
+                    switchMap(() => this.userStore.profile$.pipe(first((profile) => !!profile))),
+                )
+
                 .subscribe({
                     next: () => {
                         this.submitting = false;
                         this.form.markAsPristine();
                         this.form.markAsUntouched();
                         this.isPicturePristine = true;
-                        this.userStore.refreshProfile();
                         this.notificationService.success("Profile updated successfully.");
                         this.router.navigateByUrl("/" + AppRoutes.Profile.REVIEW);
                     },

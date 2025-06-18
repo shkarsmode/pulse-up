@@ -64,6 +64,7 @@ export const LOCAL_STORAGE_KEYS = {
     verifyEmail: "verify_email",
     phoneNumberForChanging: "phone_number_for_changing",
     personalInfoPopupShown: "personal_info_popup_shown",
+    personalInfoPopupShownForProfiles: "personal_info_popup_shown_for_profiles",
     verificationId: "verification_id",
     isAnonymous: "isAnonymous",
     anonymousToken: "anonymous",
