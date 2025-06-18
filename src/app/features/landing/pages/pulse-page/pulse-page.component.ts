@@ -68,10 +68,19 @@ export class PulsePageComponent implements OnInit {
     private readonly pulseService: PulseService = inject(PulseService);
     private readonly metadataService: MetadataService = inject(MetadataService);
     private readonly settingsService: SettingsService = inject(SettingsService);
+    private mutationObserver: MutationObserver | null = null;
 
-    public ngOnInit(): void {
+    ngOnInit(): void {
         this.initPulseUrlIdListener();
         this.openJustCtreatedTipicPopup();
+    }
+
+    ngAfterViewInit(): void {
+        this.observeDescriptionMutations();
+    }
+
+    ngOnDestroy(): void {
+        this.mutationObserver?.disconnect();
     }
 
     public onReadMore(): void {
@@ -83,9 +92,7 @@ export class PulsePageComponent implements OnInit {
     }
 
     private initPulseUrlIdListener(): void {
-        this.route.paramMap
-            .pipe(take(1))
-            .subscribe(this.handlePulseUrlIdListener.bind(this));
+        this.route.paramMap.pipe(take(1)).subscribe(this.handlePulseUrlIdListener.bind(this));
     }
 
     private handlePulseUrlIdListener(data: ParamMap): void {
@@ -97,7 +104,6 @@ export class PulsePageComponent implements OnInit {
             this.shortPulseDescription = pulse.description.replace(/\n/g, " ");
             this.pulse = pulse;
             this.isLoading = false;
-            this.determineIfNeedToRemoveShowMoreButton();
             this.createLink(pulse.description);
             this.updateSuggestions();
             this.pulseUrl = this.settingsService.shareTopicBaseUrl + pulse.shareKey;
@@ -120,17 +126,6 @@ export class PulsePageComponent implements OnInit {
         ) as Observable<IPulse>;
     }
 
-    private determineIfNeedToRemoveShowMoreButton(): void {
-        setTimeout(() => {
-            const textElement = this.description.nativeElement;
-
-            const fullHeight = textElement!.scrollHeight;
-            const visibleHeight = textElement!.clientHeight + 2;
-            const heightDiff = fullHeight - visibleHeight;
-            const isTruncated = heightDiff > 19;
-            this.isReadMore = !isTruncated;
-        }, 100);
-    }
 
     private updateSuggestions(): void {
         this.pulseService
@@ -181,5 +176,31 @@ export class PulsePageComponent implements OnInit {
                 });
             }, 1000);
         }
+    }
+
+    private observeDescriptionMutations(): void {
+        if (!this.description?.nativeElement) return;
+
+        this.mutationObserver = new MutationObserver(() => {
+            this.checkIfTruncated();
+        });
+
+        this.mutationObserver.observe(this.description.nativeElement, {
+            childList: true,
+            subtree: true,
+            characterData: true,
+        });
+    }
+
+    private checkIfTruncated(): void {
+        const textElement = this.description?.nativeElement;
+        if (!textElement) return;
+
+        const fullHeight = textElement.scrollHeight;
+        const visibleHeight = textElement.clientHeight + 2;
+        const heightDiff = fullHeight - visibleHeight;
+        const isTruncated = heightDiff > 19;
+
+        this.isReadMore = !isTruncated;
     }
 }
