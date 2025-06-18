@@ -1,8 +1,7 @@
 import { Component, EventEmitter, Input, OnInit, Output } from "@angular/core";
-import { SvgIconComponent } from "angular-svg-icon";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { asyncScheduler, Subject, ThrottleConfig, throttleTime } from "rxjs";
 import { InputComponent } from "@/app/shared/components/ui-kit/input/input.component";
-import { AppRoutes } from "@/app/shared/enums/app-routes.enum";
 
 @Component({
     selector: "app-input-search",
@@ -11,7 +10,7 @@ import { AppRoutes } from "@/app/shared/enums/app-routes.enum";
     standalone: true,
     imports: [InputComponent],
 })
-export class InputSearchComponent implements OnInit {
+export class InputSearchComponent {
     @Input()
     public isLoading: boolean = false;
 
@@ -24,7 +23,7 @@ export class InputSearchComponent implements OnInit {
         trailing: true,
     };
 
-    public ngOnInit(): void {
+    constructor() {
         this.initThrottleInputValueChange();
     }
 
@@ -35,7 +34,7 @@ export class InputSearchComponent implements OnInit {
     private initThrottleInputValueChange(): void {
         if (this.inputValueChanged$.observers.length === 0)
             this.inputValueChanged$
-                .pipe(throttleTime(800, asyncScheduler, this.throttleConfig))
+                .pipe(throttleTime(800, asyncScheduler, this.throttleConfig), takeUntilDestroyed())
                 .subscribe(this.handleInputValue.bind(this));
     }
 

@@ -1,7 +1,7 @@
 import { Component, inject } from "@angular/core";
 import { Router } from "@angular/router";
 import { MatDialogRef } from "@angular/material/dialog";
-import { catchError, switchMap, tap, throwError } from "rxjs";
+import { catchError, switchMap, take, tap, throwError } from "rxjs";
 import { PopupLayoutComponent } from "@/app/shared/components/ui-kit/popup/popup.component";
 import { PopupTitleComponent } from "@/app/shared/components/ui-kit/popup/popup-title/popup-title.component";
 import { PopupTextComponent } from "@/app/shared/components/ui-kit/popup/popup-text/popup-text.component";
@@ -56,6 +56,7 @@ export class DeleteAccountPopupComponent {
         this.identityService
             .delete({ deleteIdentity: true })
             .pipe(
+                take(1),
                 catchError(() => {
                     return throwError(
                         () => new Error("Failed to delete account. Please try again."),

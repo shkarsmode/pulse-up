@@ -1,10 +1,11 @@
 import { inject, Injectable } from "@angular/core";
 import * as h3 from "h3-js";
-import { debounceTime, Subject } from "rxjs";
+import { debounceTime, first, Subject } from "rxjs";
 import { IMapMarker, IMapMarkerAnimated } from "@/app/shared/interfaces/map-marker.interface";
 import { IH3Pulses } from "../interfaces/h3-pulses.interface";
 import { IPulse } from "@/app/shared/interfaces";
 import { PulseService } from "@/app/shared/services/api/pulse.service";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 
 @Injectable({
     providedIn: "root",
@@ -17,14 +18,17 @@ export class MapMarkersService {
     public readonly markerHover$ = new Subject<IMapMarker>();
 
     constructor() {
-        this.markerHover$.pipe(debounceTime(300)).subscribe((marker) => {
+        this.markerHover$.pipe(debounceTime(300), takeUntilDestroyed()).subscribe((marker) => {
             this.tooltipData = null;
-            this.pulseService.getById(marker.topicId).subscribe((pulse) => {
-                this.tooltipData = {
-                    ...pulse,
-                    markerId: marker.id,
-                };
-            });
+            this.pulseService
+                .getById(marker.topicId)
+                .pipe(first())
+                .subscribe((pulse) => {
+                    this.tooltipData = {
+                        ...pulse,
+                        markerId: marker.id,
+                    };
+                });
         });
     }
 

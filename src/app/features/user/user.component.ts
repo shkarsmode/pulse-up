@@ -1,8 +1,9 @@
-import { Component, inject, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { Component, DestroyRef, inject, OnInit } from "@angular/core";
+import { ActivatedRoute } from "@angular/router";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 
 @Component({
-    selector: 'app-user',
+    selector: "app-user",
     template: `
         <app-header />
 
@@ -11,7 +12,7 @@ import { ActivatedRoute } from '@angular/router';
         </div>
 
         @if (isToShowFooter) {
-            <app-footer />
+        <app-footer />
         }
     `,
     styles: `
@@ -28,17 +29,17 @@ import { ActivatedRoute } from '@angular/router';
 })
 export class UserComponent implements OnInit {
     public isToShowFooter: boolean = true;
-    private readonly route: ActivatedRoute = inject(ActivatedRoute);
+    private readonly destroyed = inject(DestroyRef);
+    private readonly route = inject(ActivatedRoute);
 
     public ngOnInit(): void {
         this.initRouteListenerToChangeFooterVisibility();
     }
 
     private initRouteListenerToChangeFooterVisibility(): void {
-        this.route.data.subscribe(() => {
+        this.route.data.pipe(takeUntilDestroyed(this.destroyed)).subscribe(() => {
             this.isToShowFooter = true;
-            if (window.location.pathname.includes('/user/topic'))
-                this.isToShowFooter = false;
+            if (window.location.pathname.includes("/user/topic")) this.isToShowFooter = false;
         });
     }
 }

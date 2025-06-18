@@ -1,8 +1,9 @@
 import { Component, ElementRef, inject, ViewChild } from "@angular/core";
-import { SendTopicService } from "@/app/shared/services/core/send-topic.service";
-import { UserStore } from "@/app/shared/stores/user.store";
 import { Location } from "@angular/common";
 import { AppConstants } from "@/app/shared/constants";
+import { filter, map } from "rxjs";
+import { UserStore } from "@/app/shared/stores/user.store";
+import { SendTopicService } from "@/app/shared/services/core/send-topic.service";
 
 @Component({
     selector: "app-topic-preview",
@@ -16,8 +17,8 @@ export class TopicPreviewComponent {
 
     @ViewChild("description", { static: false }) descriptionRef: ElementRef<HTMLDivElement>;
 
-    name: string = "";
-    username: string = "";
+    profile$ = this.userStore.profile$.pipe(filter((profile) => !!profile));
+    name$ = this.profile$.pipe(map((profile) => profile.name));
     icon: string | ArrayBuffer | null;
     picture: string | ArrayBuffer | null;
     topicData = this.sendTopicService.getFormValues();
@@ -25,19 +26,22 @@ export class TopicPreviewComponent {
     longDescription = this.topicData.description;
     shortDescription = this.longDescription.replace(/\n/g, " ");
     keywords = this.topicData.keywords;
-    profile$ = this.userStore.profile$;
     isReadMore: boolean = false;
     isReadyForPreview = this.sendTopicService.isTopicReadyForPreview;
     isSubmitting = this.sendTopicService.submitting.asObservable();
     customLocationCoordinates = {
-        lng: this.sendTopicService.customLocation?.lng || AppConstants.DEFAULT_USER_LOCATION.longitude,
-        lat: this.sendTopicService.customLocation?.lat || AppConstants.DEFAULT_USER_LOCATION.latitude,
+        lng:
+            this.sendTopicService.customLocation?.lng ||
+            AppConstants.DEFAULT_USER_LOCATION.longitude,
+        lat:
+            this.sendTopicService.customLocation?.lat ||
+            AppConstants.DEFAULT_USER_LOCATION.latitude,
     };
     customLocationName = this.sendTopicService.customLocation
         ? [
-            this.sendTopicService.customLocation.city,
-            this.sendTopicService.customLocation.state,
-            this.sendTopicService.customLocation.country,
+              this.sendTopicService.customLocation.city,
+              this.sendTopicService.customLocation.state,
+              this.sendTopicService.customLocation.country,
           ]
               .filter(Boolean)
               .join(", ")
@@ -50,8 +54,6 @@ export class TopicPreviewComponent {
     }
 
     ngOnInit(): void {
-        this.updateName();
-        this.updateUsername();
         this.readFiles();
         this.determineIfNeedToRemoveShowMoreButton();
     }
@@ -62,22 +64,6 @@ export class TopicPreviewComponent {
 
     onPublish() {
         this.sendTopicService.createTopic();
-    }
-
-    private updateUsername(): void {
-        this.profile$.subscribe((profile) => {
-            if (profile) {
-                this.username = profile.username;
-            }
-        });
-    }
-
-    private updateName(): void {
-        this.profile$.subscribe((profile) => {
-            if (profile) {
-                this.name = profile.name;
-            }
-        });
     }
 
     private readFiles(): void {

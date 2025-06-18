@@ -1,7 +1,7 @@
 import { inject, Injectable } from "@angular/core";
 import { FormBuilder, FormGroup, Validators } from "@angular/forms";
 import { Router } from "@angular/router";
-import { BehaviorSubject, first, switchMap, tap } from "rxjs";
+import { BehaviorSubject, switchMap, take, tap } from "rxjs";
 import { v4 as uuidv4 } from "uuid";
 import { PulseService } from "../api/pulse.service";
 import { pictureValidator } from "../../helpers/validators/picture.validator";
@@ -122,11 +122,11 @@ export class SendTopicService {
         this.pulseService
             .getShareKeyFromTitle(values.headline)
             .pipe(
+                take(1),
                 tap((shareKey) => {
                     params["shareKey"] = !!shareKey ? shareKey : uuidv4();
                 }),
                 switchMap(() => this.pulseService.create(params)),
-                first(),
             )
             .subscribe({
                 next: (topic) => {

@@ -1,4 +1,12 @@
-import { AfterViewInit, Component, inject, OnDestroy, OnInit, ViewChild } from "@angular/core";
+import {
+    AfterViewInit,
+    Component,
+    DestroyRef,
+    inject,
+    OnDestroy,
+    OnInit,
+    ViewChild,
+} from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { ReactiveFormsModule } from "@angular/forms";
 import { Subscription } from "rxjs";
@@ -8,6 +16,7 @@ import { AuthLayoutComponent } from "../../ui/auth-layout/auth-layout.component"
 import { LinkButtonComponent } from "@/app/shared/components/ui-kit/buttons/link-button/link-button.component";
 import { LocalStorageService } from "@/app/shared/services/core/local-storage.service";
 import { ConfirmPhoneNumberService } from "@/app/shared/services/core/confirm-phone-number.service";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 
 @Component({
     selector: "app-confirm-phone-number",
@@ -25,6 +34,7 @@ import { ConfirmPhoneNumberService } from "@/app/shared/services/core/confirm-ph
     providers: [ConfirmPhoneNumberService],
 })
 export class ConfirmPhoneNumberComponent implements OnInit, AfterViewInit, OnDestroy {
+    private readonly destroyed: DestroyRef = inject(DestroyRef);
     private readonly confirmPhoneNumberService: ConfirmPhoneNumberService =
         inject(ConfirmPhoneNumberService);
 
@@ -65,7 +75,7 @@ export class ConfirmPhoneNumberComponent implements OnInit, AfterViewInit, OnDes
         this.confirmPhoneNumberService.initialize({
             mode: "signIn",
         });
-        this.code.valueChanges.subscribe((value) => {
+        this.code.valueChanges.pipe(takeUntilDestroyed(this.destroyed)).subscribe((value) => {
             this.confirmPhoneNumberService.onConfirmationCodeChange(value || "");
         });
         this.cooldownSub = this.confirmPhoneNumberService.cooldown$.subscribe((seconds) => {

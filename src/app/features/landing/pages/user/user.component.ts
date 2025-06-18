@@ -1,7 +1,7 @@
 import { Component, inject } from "@angular/core";
 import { CommonModule, Location } from "@angular/common";
 import { ActivatedRoute, ParamMap, Router } from "@angular/router";
-import { BehaviorSubject, map, Observable } from "rxjs";
+import { BehaviorSubject, map, Observable, take } from "rxjs";
 import { InfiniteScrollDirective } from "ngx-infinite-scroll";
 import { UserService } from "@/app/shared/services/api/user.service";
 import { IAuthor, IPaginator, IPulse } from "@/app/shared/interfaces";
@@ -70,7 +70,7 @@ export class UserComponent {
     }
 
     private initUserIdListener(): void {
-        this.route.paramMap.subscribe(this.handlePulseUrlIdListener.bind(this));
+        this.route.paramMap.pipe(take(1)).subscribe(this.handlePulseUrlIdListener.bind(this));
     }
 
     private handlePulseUrlIdListener(data: ParamMap): void {
@@ -78,42 +78,50 @@ export class UserComponent {
         this.user = null;
         this.topics = [];
         this.isLoading = true;
-        this.userService.getProfileByUsername(username).subscribe((user) => {
-            this.userService.getAllTopics(user.id).subscribe((topics) => {
-                this.topics = topics.map((topic) => ({
-                    ...topic,
-                    author: { ...topic.author, name: this.user?.name || "" },
-                }));
-                this.loadTopics(user.id);
-                this.user = user;
-                this.isLoading = false;
+        this.userService
+            .getProfileByUsername(username)
+            .pipe(take(1))
+            .subscribe((user) => {
+                this.userService
+                    .getAllTopics(user.id)
+                    .pipe(take(1))
+                    .subscribe((topics) => {
+                        this.topics = topics.map((topic) => ({
+                            ...topic,
+                            author: { ...topic.author, name: this.user?.name || "" },
+                        }));
+                        this.loadTopics(user.id);
+                        this.user = user;
+                        this.isLoading = false;
+                    });
             });
-        });
     }
 
     private loadTopics(userId: string) {
         this.infiniteLoaderService.init({
             load: (page) =>
-                this.userService.getTopics({
-                    userId,
-                    page,
-                    itemsPerPage: AppConstants.PULSES_PER_PAGE,
-                    includeStats: true,
-                }).pipe(
-                    map((response) => ({
-                        ...response,
-                        items: response.items.map((topic) => ({
-                            ...topic,
-                            author: { ...topic.author, name: this.user?.name || "" },
-                            stats: {
-                                ...topic.stats,
-                                totalVotes: topic.stats?.totalVotes || 0,
-                                totalUniqueUsers: topic.stats?.totalUniqueUsers || 0,
-                                lastDayVotes: topic.stats?.lastDayVotes || 0,
-                            },
+                this.userService
+                    .getTopics({
+                        userId,
+                        page,
+                        itemsPerPage: AppConstants.PULSES_PER_PAGE,
+                        includeStats: true,
+                    })
+                    .pipe(
+                        map((response) => ({
+                            ...response,
+                            items: response.items.map((topic) => ({
+                                ...topic,
+                                author: { ...topic.author, name: this.user?.name || "" },
+                                stats: {
+                                    ...topic.stats,
+                                    totalVotes: topic.stats?.totalVotes || 0,
+                                    totalUniqueUsers: topic.stats?.totalUniqueUsers || 0,
+                                    lastDayVotes: topic.stats?.lastDayVotes || 0,
+                                },
+                            })),
                         })),
-                    }))
-                ),
+                    ),
         });
         this.paginator$ = this.infiniteLoaderService.paginator$;
         this.loading$ = this.infiniteLoaderService.loading$;

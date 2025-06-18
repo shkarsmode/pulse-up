@@ -1,8 +1,9 @@
 import { Component, inject } from "@angular/core";
 import { ActivatedRoute, NavigationEnd, Router } from "@angular/router";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
+import { filter } from "rxjs";
 import { LoadingService } from "./shared/services/core/loading.service";
 import { MetadataService } from "./shared/services/core/metadata.service";
-import { filter } from "rxjs";
 
 @Component({
     selector: "app-root",
@@ -37,11 +38,16 @@ export class AppComponent {
 
     public isLoading$ = this.loadingService.isLoadingObservable;
 
-    public ngOnInit() {
+    constructor() {
         this.metadataService.listenToRouteChanges(this.router, this.activatedRoute);
 
-        this.router.events.pipe(filter((event) => event instanceof NavigationEnd)).subscribe(() => {
-            this.loadingService.isLoading = false;
-        });
+        this.router.events
+            .pipe(
+                filter((event) => event instanceof NavigationEnd),
+                takeUntilDestroyed(),
+            )
+            .subscribe(() => {
+                this.loadingService.isLoading = false;
+            });
     }
 }

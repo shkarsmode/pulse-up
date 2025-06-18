@@ -1,4 +1,4 @@
-import { Component, inject } from "@angular/core";
+import { Component, DestroyRef, inject, OnInit } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { RouterModule } from "@angular/router";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
@@ -37,8 +37,9 @@ import { PulseService } from "@/app/shared/services/api/pulse.service";
     styleUrl: "./review-profile.component.scss",
     providers: [InfiniteLoaderService],
 })
-export class ReviewProfileComponent {
-    private userStore = inject(UserStore);
+export class ReviewProfileComponent implements OnInit {
+    private userStore = inject(UserStore);    
+    private readonly destroyed = inject(DestroyRef);
     private readonly pulseService = inject(PulseService);
     private readonly infiniteLoaderService = inject(InfiniteLoaderService<IPulse>);
 
@@ -56,7 +57,7 @@ export class ReviewProfileComponent {
 
     loadMore = this.infiniteLoaderService.loadMore.bind(this.infiniteLoaderService);
 
-    constructor() {
+    ngOnInit () {
         this.profile$
             .pipe(
                 filter((profile) => !!profile),
@@ -66,7 +67,7 @@ export class ReviewProfileComponent {
                         this.loadTopics(profile.name);
                     }
                 }),
-                takeUntilDestroyed(),
+                takeUntilDestroyed(this.destroyed),
             )
             .subscribe();
     }
