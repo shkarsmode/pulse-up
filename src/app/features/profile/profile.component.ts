@@ -12,14 +12,6 @@ import { Component } from "@angular/core";
         <app-footer />
         <div id="recaptcha-container"></div>
     `,
-    styles: `
-        :host { 
-            display: flex;
-            flex-direction: column;
-            height: 100%; 
-            width: 100%;
-        }
-        .profile-page { flex: 1 1 auto; }
-    `,
+    styleUrls: ["./profile.component.scss"],
 })
 export class ProfileComponent {}
