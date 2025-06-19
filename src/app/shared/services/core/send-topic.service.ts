@@ -36,6 +36,7 @@ export class SendTopicService {
     public isTopicReadyForPreview: boolean = false;
     public customLocation: TopicLocation | null = null;
     public isTopicEditing: boolean = false;
+    public startTopicLocatoinWarningShown = false;
 
     private readonly router: Router = inject(Router);
     private readonly formBuilder: FormBuilder = inject(FormBuilder);
@@ -71,7 +72,7 @@ export class SendTopicService {
             category: ["", Validators.required],
             keywords: [[], [Validators.required, arrayLengthValidator(1, 3)]],
             picture: [""],
-            location: ["", [Validators.required]],
+            location: "",
         });
     }
 
@@ -135,6 +136,7 @@ export class SendTopicService {
                     this.pulseService.isJustCreatedTopic = true;
                     this.router.navigateByUrl(`/topic/${topic.id}`);
                     this.submitting.next(false);
+                    this.startTopicLocatoinWarningShown = false;
                 },
                 error: (err) => {
                     console.error(err);

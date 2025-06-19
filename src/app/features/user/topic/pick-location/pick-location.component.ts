@@ -6,12 +6,14 @@ import {
     map,
     Subject,
     switchMap,
+    take,
     takeUntil,
     tap,
     throwError,
 } from "rxjs";
 import mapboxgl from "mapbox-gl";
 import * as h3 from "h3-js";
+import { MatDialog } from "@angular/material/dialog";
 import { SendTopicService } from "@/app/shared/services/core/send-topic.service";
 import { AppRoutes } from "@/app/shared/enums/app-routes.enum";
 import { H3LayerService } from "@/app/features/landing/services/h3-layer.service";
@@ -20,6 +22,7 @@ import { GeolocationService } from "@/app/shared/services/core/geolocation.servi
 import { NotificationService } from "@/app/shared/services/core/notification.service";
 import { TopicLocation } from "../../interfaces/topic-location.interface";
 import { GeocodeService } from "@/app/shared/services/api/geocode.service";
+import { UnavailableGeolocationPopupComponent } from "../../ui/unavailable-geolocation-popup/unavailable-geolocation-popup.component";
 
 @Component({
     selector: "app-pick-location",
@@ -28,6 +31,7 @@ import { GeocodeService } from "@/app/shared/services/api/geocode.service";
 })
 export class PickLocationComponent implements OnInit, OnDestroy {
     private readonly router = inject(Router);
+    private dialog = inject(MatDialog);
     private readonly sendTopicService = inject(SendTopicService);
     private readonly h3LayerService = inject(H3LayerService);
     private readonly geteocodeService = inject(GeocodeService);
@@ -99,12 +103,7 @@ export class PickLocationComponent implements OnInit, OnDestroy {
             .pipe(
                 takeUntil(this.destroy$),
                 catchError((error) => {
-                    return throwError(
-                        () =>
-                            new Error(
-                                "Geolocation not available. Please select a location manually.",
-                            ),
-                    );
+                    return throwError(() => new Error("Geolocation not available."));
                 }),
                 tap((position) => {
                     const { latitude, longitude } = position.coords;
@@ -115,14 +114,12 @@ export class PickLocationComponent implements OnInit, OnDestroy {
                 }),
                 switchMap((position) => {
                     const { latitude, longitude } = position.coords;
-                    return this.geteocodeService.getPlaceByCoordinates(longitude, latitude);
-                }),
-                catchError((error) => {
-                    return throwError(
-                        () =>
-                            new Error(
-                                "Failed to retrieve location details. Please select a location manually.",
-                            ),
+                    return this.geteocodeService.getPlaceByCoordinates(longitude, latitude).pipe(
+                        catchError((error) => {
+                            return throwError(
+                                () => new Error("Failed to retrieve location details."),
+                            );
+                        }),
                     );
                 }),
             )
@@ -132,8 +129,9 @@ export class PickLocationComponent implements OnInit, OnDestroy {
                     this.isGeolocationRequestInProgress.next(false);
                 },
                 error: (error) => {
-                    this.notificationService.error(error.message);
+                    this.openDialog();
                     this.isGeolocationRequestInProgress.next(false);
+                    this.sendTopicService.startTopicLocatoinWarningShown = true;
                 },
             });
     };
@@ -204,5 +202,22 @@ export class PickLocationComponent implements OnInit, OnDestroy {
             h3Indexes: [],
             sourceId: this.sourceId,
         });
+    }
+
+    private openDialog() {
+        const dialogRef = this.dialog.open(UnavailableGeolocationPopupComponent, {
+            width: "630px",
+            panelClass: "custom-dialog-container",
+            backdropClass: "custom-dialog-backdrop",
+            disableClose: true,
+        });
+        dialogRef
+            .afterClosed()
+            .pipe(take(1))
+            .subscribe((result) => {
+                if (result === "continue") {
+                    this.router.navigateByUrl("/" + AppRoutes.User.Topic.SUGGEST);
+                }
+            });
     }
 }

@@ -33,6 +33,8 @@ export class GeolocationService {
         return new Observable<GeolocationPosition>((observer) => {
             navigator.geolocation.getCurrentPosition(
                 (position) => {
+                    console.log({position: position});
+                    
                     this.currentPosition = position;
                     this.statusSubject.next("success");
                     observer.next(position);

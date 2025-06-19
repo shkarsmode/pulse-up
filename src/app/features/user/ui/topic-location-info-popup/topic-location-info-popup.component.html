@@ -1,0 +1,20 @@
+<app-popup class="location-info-popup">
+    <app-popup-close-button (close)="onCloseDialog()" />
+    <app-popup-subtitle>
+        Please choose your location to enable Auto Pulsing
+    </app-popup-subtitle>
+    <div class="location-info-popup__footer">
+        <app-primary-button
+            [fullWidth]="true"
+            class="geolocation-popup__btn"
+            (handleClick)="onConfirm()">
+            Choose location
+        </app-primary-button>
+        <app-secondary-button
+            [fullWidth]="true"
+            class="geolocation-popup__btn"
+            (handleClick)="onCancel()">
+            Continue without location
+        </app-secondary-button>
+    </div>
+</app-popup>
