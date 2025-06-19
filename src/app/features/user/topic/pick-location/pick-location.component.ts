@@ -92,7 +92,9 @@ export class PickLocationComponent implements OnInit, OnDestroy {
     onConfirmLocation() {
         if (this.selectedLocationSubject.value) {
             this.sendTopicService.setTopicLocation(this.selectedLocationSubject.value);
-            this.router.navigateByUrl("/" + AppRoutes.User.Topic.SUGGEST);
+            this.router.navigateByUrl("/" + AppRoutes.User.Topic.SUGGEST, {
+                replaceUrl: true,
+            });
         }
     }
 
