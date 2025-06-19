@@ -6,6 +6,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    overflow: hidden;
 }
 
 .splide__arrow {
@@ -82,9 +83,9 @@
 :host ::ng-deep .splide {
     display: flex;
     justify-content: center;
-    width: 100vw;
 
     @include media-xs {
+        width: 100vw;
         padding-bottom: 56px;
     }
 
