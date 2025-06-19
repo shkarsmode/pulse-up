@@ -13,6 +13,7 @@ import {
 } from "../crop-image-popup/crop-image-popup.component";
 import { CropResult } from "../../interfaces/crop-result.interface";
 import { NotificationService } from "@/app/shared/services/core/notification.service";
+import { TopicLocationInfoPopupComponent } from "../topic-location-info-popup/topic-location-info-popup.component";
 
 interface Topic {
     name: string;
@@ -33,6 +34,7 @@ export class TopicFormComponent {
     public readonly sendTopicService: SendTopicService = inject(SendTopicService);
     public readonly notificationService: NotificationService = inject(NotificationService);
 
+    private popupShown = this.sendTopicService.startTopicLocatoinWarningShown;
     public routes = AppRoutes.User.Topic;
     public topicForm: FormGroup = this.sendTopicService.currentTopic;
     public selectedIcon = this.sendTopicService.currentTopic.get("icon")?.value || null;
@@ -95,6 +97,11 @@ export class TopicFormComponent {
     }
 
     public onNextButtonClick(): void {
+        if (!this.topicForm.get("location")?.dirty && !this.popupShown) {
+            this.popupShown = true;
+            this.sendTopicService.startTopicLocatoinWarningShown = true;
+            return this.showLocatoinWarning();
+        }
         this.topicForm.markAllAsTouched();
         this.topicForm.updateValueAndValidity();
         if (this.topicForm.valid) {
@@ -111,6 +118,14 @@ export class TopicFormComponent {
             this.notificationService.error(result.message);
         }
     };
+
+    private showLocatoinWarning(): void {
+        this.dialog.open(TopicLocationInfoPopupComponent, {
+            maxWidth: "630px",
+            panelClass: "custom-dialog-container",
+            backdropClass: "custom-dialog-backdrop",
+        });
+    }
 }
 
 const categories = [

@@ -1,0 +1,16 @@
+<app-popup>
+    <app-popup-close-button (close)="onCloseDialog()" />
+    <app-popup-title>Geolocation not available</app-popup-title>
+    <app-popup-text>
+        Since we couldn’t get your location, we cannot set Auto pulsing for you. But auto pulsing
+        for 7 days will be set the first time you pulses.
+    </app-popup-text>
+    <div class="geolocation-popup__help"></div>
+    <div class="geolocation-popup__footer">
+        <app-primary-button
+            class="geolocation-popup__btn"
+            (handleClick)="onContinue()">
+            Continue without location
+        </app-primary-button>
+    </div>
+</app-popup>

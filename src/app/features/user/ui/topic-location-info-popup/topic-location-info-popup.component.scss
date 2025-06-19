@@ -1,0 +1,20 @@
+@use "../../../../../styles/mixins" as *;
+
+.location-info-popup__footer {
+    display: flex;
+    align-items: center;
+    column-gap: 16px;
+    margin-top: 40px;
+
+    @include media-sm {
+        flex-direction: column;
+        row-gap: 16px;
+        column-gap: 0;
+    }
+}
+
+.geolocation-popup__btn {
+    @include media-sm {
+        width: 100%;
+    }
+}
