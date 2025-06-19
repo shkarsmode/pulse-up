@@ -21,17 +21,24 @@
                 inputmode="tel"
                 autocomplete="tel-national"
                 formControlName="phone"
-                [errorStateMatcher]="errorStateMatcher" 
-                class="change-phone-form__input"/>
+                [errorStateMatcher]="errorStateMatcher"
+                class="change-phone-form__input" />
             <mat-error>Invalid phone number</mat-error>
         </mat-form-field>
-        <app-primary-button
-            [fullWidth]="true"
-            size="large"
-            type="submit"
-            [loading]="(isLoading$ | async) || false"
-            [disabled]="disabled">
-            Continue
-        </app-primary-button>
+        <div class="phone-number-form__footer">
+            <app-primary-button
+                [fullWidth]="true"
+                size="large"
+                type="submit"
+                [loading]="(isLoading$ | async) || false"
+                [disabled]="disabled">
+                Continue
+            </app-primary-button>
+            <app-secondary-button
+                [fullWidth]="true"
+                (click)="onCancel()">
+                Cancel
+            </app-secondary-button>
+        </div>
     </form>
 </app-profile-layout>

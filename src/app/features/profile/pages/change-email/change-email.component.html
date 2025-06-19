@@ -25,12 +25,19 @@
             class="change-email-form__error change-email-form__error--center">
             {{ errorMessage }}
         </div>
-        <app-primary-button
-            [fullWidth]="true"
-            [disabled]="disabled"
-            [loading]="submitting"
-            (click)="onSubmit()">
-            Continue
-        </app-primary-button>
+        <div class="change-email-form__footer">
+            <app-primary-button
+                [fullWidth]="true"
+                [disabled]="disabled"
+                [loading]="submitting"
+                (click)="onSubmit()">
+                Continue
+            </app-primary-button>
+            <app-secondary-button
+                [fullWidth]="true"
+                (click)="onCancel()">
+                Cancel
+            </app-secondary-button>
+        </div>
     </form>
 </app-profile-layout>
