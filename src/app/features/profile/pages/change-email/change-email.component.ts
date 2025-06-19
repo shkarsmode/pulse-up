@@ -22,17 +22,19 @@ import {
     AuthenticationError,
     AuthenticationErrorCode,
 } from "@/app/shared/helpers/errors/authentication-error";
+import { SecondaryButtonComponent } from "@/app/shared/components/ui-kit/buttons/secondary-button/secondary-button.component";
 
 @Component({
     selector: "app-change-email",
     standalone: true,
     imports: [
-        CommonModule,
-        ReactiveFormsModule,
-        InputComponent,
-        ProfileLayoutComponent,
-        PrimaryButtonComponent,
-    ],
+    CommonModule,
+    ReactiveFormsModule,
+    InputComponent,
+    ProfileLayoutComponent,
+    PrimaryButtonComponent,
+    SecondaryButtonComponent
+],
     templateUrl: "./change-email.component.html",
     styleUrl: "./change-email.component.scss",
 })
@@ -128,5 +130,9 @@ export class ChangeEmailComponent {
                         "An error occurred while changing the email. Please try again.";
                 },
             });
+    }
+
+    public onCancel(): void {
+        this.router.navigateByUrl(`/${AppRoutes.Profile.EDIT}`);
     }
 }

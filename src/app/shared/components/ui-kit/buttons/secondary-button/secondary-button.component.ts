@@ -11,7 +11,7 @@ import { Colors } from "@/app/shared/enums/colors.enum";
     styleUrl: "./secondary-button.component.scss",
 })
 export class SecondaryButtonComponent {
-    @Input() public type: string = "button";
+    @Input() public type: "button" | "submit" | "reset" = "button";
     @Input() public disabled: boolean = false;
     @Input() public fullWidth: boolean = false;
     @Input() public contrast: boolean = false;

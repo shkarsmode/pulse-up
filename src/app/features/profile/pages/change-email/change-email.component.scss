@@ -19,3 +19,10 @@
 .change-email-form__error-center {
   text-align: center;
 }
+
+.change-email-form__footer {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  row-gap: 16px;
+}

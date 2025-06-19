@@ -1,28 +1,29 @@
 import { Component, inject, ViewChild } from "@angular/core";
 import { FormGroup, ReactiveFormsModule } from "@angular/forms";
 import { Router } from "@angular/router";
-import { toSignal } from "@angular/core/rxjs-interop";
 import { ErrorStateMatcher } from "@angular/material/core";
 import { MatInputModule } from "@angular/material/input";
 import { MatFormFieldModule } from "@angular/material/form-field";
-import { SignInFormService } from "@/app/shared/services/core/sign-in-form.service";
-import { AppRoutes } from "@/app/shared/enums/app-routes.enum";
-import { ProfileLayoutComponent } from "../../ui/profile-layout/profile-layout.component";
 import { CommonModule } from "@angular/common";
-import { PrimaryButtonComponent } from "../../../../shared/components/ui-kit/buttons/primary-button/primary-button.component";
+import { AppRoutes } from "@/app/shared/enums/app-routes.enum";
+import { SignInFormService } from "@/app/shared/services/core/sign-in-form.service";
+import { ProfileLayoutComponent } from "../../ui/profile-layout/profile-layout.component";
+import { PrimaryButtonComponent } from "@/app/shared/components/ui-kit/buttons/primary-button/primary-button.component";
 import { AuthenticationService } from "@/app/shared/services/api/authentication.service";
+import { SecondaryButtonComponent } from "@/app/shared/components/ui-kit/buttons/secondary-button/secondary-button.component";
 
 @Component({
     selector: "app-change-phone-number",
     standalone: true,
     imports: [
-        CommonModule,
-        ReactiveFormsModule,
-        MatInputModule,
-        MatFormFieldModule,
-        ProfileLayoutComponent,
-        PrimaryButtonComponent,
-    ],
+    CommonModule,
+    ReactiveFormsModule,
+    MatInputModule,
+    MatFormFieldModule,
+    ProfileLayoutComponent,
+    PrimaryButtonComponent,
+    SecondaryButtonComponent
+],
     providers: [SignInFormService],
     templateUrl: "./change-phone-number.component.html",
     styleUrl: "./change-phone-number.component.scss",
@@ -75,5 +76,9 @@ export class ChangePhoneNumberComponent {
 
     public onSubmit() {
         return this.signInFormService.submit();
+    }
+
+    public onCancel(): void {
+        this.router.navigateByUrl(`/${AppRoutes.Profile.EDIT}`);
     }
 }
