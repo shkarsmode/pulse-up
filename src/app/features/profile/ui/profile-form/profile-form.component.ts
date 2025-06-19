@@ -195,9 +195,7 @@ export class ProfileFormComponent {
                 .pipe(
                     take(1),
                     tap(() => this.userStore.refreshProfile()),
-                    switchMap(() => this.userStore.profile$.pipe(first((profile) => !!profile))),
                 )
-
                 .subscribe({
                     next: () => {
                         this.submitting = false;

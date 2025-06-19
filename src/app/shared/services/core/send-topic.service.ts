@@ -127,12 +127,12 @@ export class SendTopicService {
                     params["shareKey"] = !!shareKey ? shareKey : uuidv4();
                 }),
                 switchMap(() => this.pulseService.create(params)),
+                tap(() => this.userService.refreshProfile())
             )
             .subscribe({
                 next: (topic) => {
                     this.currentTopic.reset();
                     this.pulseService.isJustCreatedTopic = true;
-                    this.userService.refreshProfile();
                     this.router.navigateByUrl(`/topic/${topic.id}`);
                     this.submitting.next(false);
                 },
