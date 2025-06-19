@@ -33,8 +33,13 @@ export class GeolocationService {
         return new Observable<GeolocationPosition>((observer) => {
             navigator.geolocation.getCurrentPosition(
                 (position) => {
-                    console.log({position: position});
-                    
+                    const accuracy = position.coords.accuracy;
+                    console.log({accuracy});
+                    if (accuracy > 100) {
+                        this.statusSubject.next("error");
+                        observer.error(new Error("Geolocation accuracy is too low"));
+                        return;
+                    }
                     this.currentPosition = position;
                     this.statusSubject.next("success");
                     observer.next(position);
@@ -45,7 +50,7 @@ export class GeolocationService {
                     observer.error(error);
                 },
                 {
-                    enableHighAccuracy: false,
+                    enableHighAccuracy: true,
                     timeout: 15000,
                     maximumAge: 0,
                 }
