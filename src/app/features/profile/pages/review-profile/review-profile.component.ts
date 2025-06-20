@@ -52,6 +52,7 @@ export class ReviewProfileComponent implements OnInit {
     paginator$: Observable<IPaginator<IPulse>>;
     loading$ = new BehaviorSubject(true);
     profile$ = this.userStore.profile$.pipe(filter((profile) => !!profile));
+    bio$ = this.profile$.pipe(map((profile) => profile.bio));
     name$ = this.profile$.pipe(map((profile) => profile.name));
     username$ = this.profile$.pipe(map((profile) => profile.username));
     picture$ = this.profile$.pipe(map((profile) => profile.picture || ""));
