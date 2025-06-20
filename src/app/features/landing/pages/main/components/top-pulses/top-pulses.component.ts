@@ -1,7 +1,7 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { first } from 'rxjs';
-import { IPulse } from '../../../../../../shared/interfaces';
+import { ITopic } from '../../../../../../shared/interfaces';
 import { PulseService } from '../../../../../../shared/services/api/pulse.service';
 import { AppRoutes } from '@/app/shared/enums/app-routes.enum';
 import { Colors } from '@/app/shared/enums/colors.enum';
@@ -20,7 +20,7 @@ import { TopPulseCardComponent } from '@/app/shared/components/pulses/top-pulse/
     ],
 })
 export class TopPulsesComponent implements OnInit {
-    public pulses: IPulse[] = [];
+    public pulses: ITopic[] = [];
     public AppRoutes = AppRoutes;
     public buttonColor = Colors.BLACK;
 

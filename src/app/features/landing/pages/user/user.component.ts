@@ -4,7 +4,7 @@ import { ActivatedRoute, ParamMap, Router } from "@angular/router";
 import { BehaviorSubject, map, Observable, take } from "rxjs";
 import { InfiniteScrollDirective } from "ngx-infinite-scroll";
 import { UserService } from "@/app/shared/services/api/user.service";
-import { IAuthor, IPaginator, IPulse } from "@/app/shared/interfaces";
+import { IAuthor, IPaginator, ITopic } from "@/app/shared/interfaces";
 import { SettingsService } from "@/app/shared/services/api/settings.service";
 import { SpinnerComponent } from "@/app/shared/components/ui-kit/spinner/spinner.component";
 import { ContainerComponent } from "@/app/shared/components/ui-kit/container/container.component";
@@ -50,14 +50,14 @@ export class UserComponent {
     private readonly route: ActivatedRoute = inject(ActivatedRoute);
     private readonly userService: UserService = inject(UserService);
     private readonly settingsService: SettingsService = inject(SettingsService);
-    private readonly infiniteLoaderService: InfiniteLoaderService<IPulse> =
+    private readonly infiniteLoaderService: InfiniteLoaderService<ITopic> =
         inject(InfiniteLoaderService);
 
     public user: IAuthor | null = null;
-    public topics: IPulse[] = [];
+    public topics: ITopic[] = [];
     public isLoading: boolean = true;
     public pulseId: string = "";
-    public paginator$: Observable<IPaginator<IPulse>>;
+    public paginator$: Observable<IPaginator<ITopic>>;
     public loading$ = new BehaviorSubject(true);
     public loadMore = this.infiniteLoaderService.loadMore.bind(this.infiniteLoaderService);
 

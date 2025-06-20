@@ -1,4 +1,4 @@
-export interface IPulseMarker {
+export interface ITopicMarker {
     id: string;
     lng: number;
     lat: number;

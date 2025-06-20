@@ -5,7 +5,7 @@ import { catchError, first, Observable, of, take } from "rxjs";
 import { SvgIconComponent } from "angular-svg-icon";
 import { AppRoutes } from "@/app/shared/enums/app-routes.enum";
 import { MatDialog } from "@angular/material/dialog";
-import { IPulse, PulseState } from "@/app/shared/interfaces";
+import { ITopic, TopicState } from "@/app/shared/interfaces";
 import { PulseService } from "@/app/shared/services/api/pulse.service";
 import { MetadataService } from "@/app/shared/services/core/metadata.service";
 import { SettingsService } from "@/app/shared/services/api/settings.service";
@@ -51,10 +51,10 @@ import { HeartBeatDirective } from "@/app/shared/animations/heart-beat.directive
     ],
 })
 export class PulsePageComponent implements OnInit {
-    public pulse: IPulse | null = null;
+    public pulse: ITopic | null = null;
     public isReadMore: boolean = false;
     public isLoading: boolean = true;
-    public suggestions: IPulse[] = [];
+    public suggestions: ITopic[] = [];
     public pulseUrl: string = "";
     public shortPulseDescription: string = "";
     public isArchived: boolean = false;
@@ -107,7 +107,7 @@ export class PulsePageComponent implements OnInit {
             this.createLink(pulse.description);
             this.updateSuggestions();
             this.pulseUrl = this.settingsService.shareTopicBaseUrl + pulse.shareKey;
-            this.isArchived = pulse.state === PulseState.Archived;
+            this.isArchived = pulse.state === TopicState.Archived;
             this.metadataService.setTitle(`${pulse.title} | Support What Matters – Pulse Up`);
             this.metadataService.setMetaTag(
                 "description",
@@ -123,7 +123,7 @@ export class PulsePageComponent implements OnInit {
                 this.router.navigateByUrl("/" + AppRoutes.Community.INVALID_LINK);
                 return of(error);
             }),
-        ) as Observable<IPulse>;
+        ) as Observable<ITopic>;
     }
 
 

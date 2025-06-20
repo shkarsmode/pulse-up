@@ -9,7 +9,7 @@ import {
 } from "@/app/shared/interfaces/map-marker.interface";
 import { MarkerIconComponent } from "../../map-marker-icon/marker-icon.component";
 import { TopPulseCardComponent } from "@/app/shared/components/pulses/top-pulse/top-pulse-card.component";
-import { IPulse } from "@/app/shared/interfaces";
+import { ITopic } from "@/app/shared/interfaces";
 import { SpinnerComponent } from "@/app/shared/components/ui-kit/spinner/spinner.component";
 import { MapMarkersService } from "@/app/features/landing/services/map-markers.service";
 import { MapPopoverComponent } from "../../map-popover/map-popover.component";
@@ -31,7 +31,7 @@ import { MapPopoverComponent } from "../../map-popover/map-popover.component";
 })
 export class MapMarkerComponent implements OnInit {
     @Input() marker: IMapMarkerAnimated;
-    @Input() tooltipData: IPulse | null;
+    @Input() tooltipData: ITopic | null;
     @Input() showTooltipOnHover: boolean = true;
     @Input() isAnimated: boolean = false;
     @Input() map: mapboxgl.Map | null = null;

@@ -1,6 +1,6 @@
 import { IAuthor } from "./author.interface";
 
-export interface IPulse {
+export interface ITopic {
     id: number;
     icon: string;
     title: string;
@@ -16,14 +16,23 @@ export interface IPulse {
     picture: string;
     shareKey: string;
     category: string;
-    state: PulseState;
+    state: TopicState;
 }
 
-export enum PulseState {
+export enum TopicState {
     Active = "Active",
     Archived = "Archived",
     Blocked = "Blocked",
 };
+
+export interface VoteForTopicRequest {
+    topicId: string;
+    location: {
+        latitude: number;
+        longitude: number;
+    },
+    locationName: string
+}
 
 interface Location {
     country: string;

@@ -3,7 +3,7 @@ import * as h3 from "h3-js";
 import { debounceTime, first, Subject } from "rxjs";
 import { IMapMarker, IMapMarkerAnimated } from "@/app/shared/interfaces/map-marker.interface";
 import { IH3Pulses } from "../interfaces/h3-pulses.interface";
-import { IPulse } from "@/app/shared/interfaces";
+import { ITopic } from "@/app/shared/interfaces";
 import { PulseService } from "@/app/shared/services/api/pulse.service";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 
@@ -14,7 +14,7 @@ export class MapMarkersService {
     private readonly pulseService: PulseService = inject(PulseService);
 
     public markers: IMapMarkerAnimated[] = [];
-    public tooltipData: (IPulse & { markerId: number }) | null = null;
+    public tooltipData: (ITopic & { markerId: number }) | null = null;
     public readonly markerHover$ = new Subject<IMapMarker>();
 
     constructor() {

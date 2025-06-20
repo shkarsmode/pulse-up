@@ -2,7 +2,7 @@ import { Component, HostBinding, HostListener, inject, Input } from '@angular/co
 import { Router } from '@angular/router';
 import { SvgIconComponent } from 'angular-svg-icon';
 import { LoadImgPathDirective } from '../../../directives/load-img-path/load-img-path.directive';
-import { IPulse } from '../../../interfaces';
+import { ITopic } from '../../../interfaces';
 import { FormatNumberPipe } from '../../../pipes/format-number.pipe';
 
 @Component({
@@ -13,7 +13,7 @@ import { FormatNumberPipe } from '../../../pipes/format-number.pipe';
     styleUrl: './top-pulse-card.component.scss',
 })
 export class TopPulseCardComponent {
-    @Input() public pulse: IPulse;
+    @Input() public pulse: ITopic;
     @Input() public index: number;
     @Input() public interactive: boolean = true;
 
