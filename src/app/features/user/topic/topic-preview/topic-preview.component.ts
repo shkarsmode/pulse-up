@@ -29,14 +29,10 @@ export class TopicPreviewComponent {
     isReadMore: boolean = false;
     isReadyForPreview = this.sendTopicService.isTopicReadyForPreview;
     isSubmitting = this.sendTopicService.submitting.asObservable();
-    customLocationCoordinates = {
-        lng:
-            this.sendTopicService.customLocation?.lng ||
-            AppConstants.DEFAULT_USER_LOCATION.longitude,
-        lat:
-            this.sendTopicService.customLocation?.lat ||
-            AppConstants.DEFAULT_USER_LOCATION.latitude,
-    };
+    customLocationCoordinates = this.sendTopicService.customLocation ? {
+        lng: this.sendTopicService.customLocation.lng,
+        lat: this.sendTopicService.customLocation.lat,
+    } : null;
     customLocationName = this.sendTopicService.customLocation
         ? [
               this.sendTopicService.customLocation.city,

@@ -42,7 +42,7 @@
                 width="275"
                 height="180"
                 [alt]="title" />
-
+            @if (customLocationCoordinates) {
             <div class="pulse-map">
                 <p class="pulse-map__top-text">Your topic will appear here first</p>
                 <div class="pulse__info-media__map">
@@ -64,6 +64,7 @@
                     Auto-pulse from this location active for 7 days
                 </p>
             </div>
+            }
         </div>
     </div>
 

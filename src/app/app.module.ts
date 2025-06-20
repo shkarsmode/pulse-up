@@ -1,4 +1,4 @@
-import { CUSTOM_ELEMENTS_SCHEMA, NgModule } from "@angular/core";
+import { CUSTOM_ELEMENTS_SCHEMA, APP_INITIALIZER, NgModule } from "@angular/core";
 import { BrowserModule } from "@angular/platform-browser";
 
 import { HTTP_INTERCEPTORS, HttpClientModule } from "@angular/common/http";
@@ -29,6 +29,11 @@ import {
 } from "./shared/tokens/tokens";
 import { WindowService } from "./shared/services/core/window.service";
 import { JwtInterceptor } from "./shared/helpers/interceptors/jwt.interceptor";
+import { ProfileStore } from "./shared/stores/profile.store";
+
+export function initProfileStore(profileStore: ProfileStore) {
+    return () => profileStore.init(); // must return a function that returns a Promise
+}
 
 @NgModule({
     declarations: [AppComponent],
@@ -71,6 +76,12 @@ import { JwtInterceptor } from "./shared/helpers/interceptors/jwt.interceptor";
         },
         { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },
         { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true },
+        {
+            provide: APP_INITIALIZER,
+            useFactory: initProfileStore,
+            deps: [ProfileStore],
+            multi: true,
+        },
         provideAnimationsAsync(),
         WindowService,
         provideTippyLoader(() => import("tippy.js")),
