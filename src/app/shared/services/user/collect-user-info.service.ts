@@ -1,23 +1,23 @@
 import { inject, Injectable } from "@angular/core";
 import { MatDialog } from "@angular/material/dialog";
 import { first, take } from "rxjs";
-import { UserStore } from "../../stores/user.store";
 import { PersonalInfoPopupComponent } from "../../components/popups/personal-info-popup/personal-info-popup.component";
 import { LOCAL_STORAGE_KEYS, LocalStorageService } from "../core/local-storage.service";
+import { ProfileStore } from "../../stores/profile.store";
 
 @Injectable({
     providedIn: "root",
 })
 export class CollectUserInfoService {
-    private readonly dialog: MatDialog = inject(MatDialog);
-    private readonly userStore: UserStore = inject(UserStore);
+    private readonly dialog = inject(MatDialog);
+    private readonly profileStore = inject(ProfileStore);
 
     private isOpened = false;
 
     public collectPersonalInfo(): void {
         const accountsIds =
             LocalStorageService.get<string[]>(LOCAL_STORAGE_KEYS.personalInfoPopupShownForProfiles) || [];
-        this.userStore.profile$.pipe(first((profile) => !!profile)).subscribe((profile) => {
+        this.profileStore.profile$.pipe(first((profile) => !!profile)).subscribe((profile) => {
             if (!profile?.id) return;
             const alreadyShown = accountsIds && accountsIds.includes(profile.id);
             if (

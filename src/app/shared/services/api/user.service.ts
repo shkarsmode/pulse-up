@@ -4,6 +4,7 @@ import { BehaviorSubject, catchError, expand, last, map, Observable, of, shareRe
 import { IProfile, IPulse, IPaginator } from "../../interfaces";
 import { API_URL } from "../../tokens/tokens";
 import { IPhoneValidationResult } from "../../interfaces/phone-validatuion-result.interface";
+import { Nullable } from "../../types";
 
 @Injectable({
     providedIn: "root",
@@ -11,22 +12,6 @@ import { IPhoneValidationResult } from "../../interfaces/phone-validatuion-resul
 export class UserService {
     private readonly apiUrl: string = inject(API_URL);
     private readonly http: HttpClient = inject(HttpClient);
-    private readonly refreshTrigger$ = new BehaviorSubject<void>(undefined);
-
-    public readonly profile$ = this.refreshTrigger$.pipe(
-        switchMap(() =>
-            this.http.get<IProfile>(`${this.apiUrl}/users/self`).pipe(
-                catchError((error) => {
-                    return of(null);
-                })
-            )
-        ),
-        shareReplay(1)
-    );
-
-    public refreshProfile() {
-        this.refreshTrigger$.next();
-    }
 
     public updateOwnProfile(data: IProfile): Observable<IProfile> {
         const formData = new FormData();
@@ -35,6 +20,15 @@ export class UserService {
             formData.append(key, data[prop] || "");
         }
         return this.http.post<IProfile>(`${this.apiUrl}/users/self`, formData);
+    }
+
+    public getOwnProfile(): Observable<Nullable<IProfile>> {
+        return this.http.get<IProfile>(`${this.apiUrl}/users/self`).pipe(
+            catchError((error) => {
+                console.log("Failed to fetch my profile:", error);
+                return of(null);
+            })  
+        );
     }
 
     public getProfileById(id: string): Observable<IProfile> {

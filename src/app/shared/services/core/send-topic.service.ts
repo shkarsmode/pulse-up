@@ -1,7 +1,7 @@
 import { inject, Injectable } from "@angular/core";
 import { FormBuilder, FormGroup, Validators } from "@angular/forms";
 import { Router } from "@angular/router";
-import { BehaviorSubject, switchMap, take, tap } from "rxjs";
+import { BehaviorSubject, map, switchMap, take, tap } from "rxjs";
 import { v4 as uuidv4 } from "uuid";
 import { PulseService } from "../api/pulse.service";
 import { pictureValidator } from "../../helpers/validators/picture.validator";
@@ -11,6 +11,7 @@ import { arrayLengthValidator } from "../../helpers/validators/array-length-vali
 import { TopicLocation } from "@/app/features/user/interfaces/topic-location.interface";
 import { NotificationService } from "./notification.service";
 import { UserService } from "../api/user.service";
+import { ProfileStore } from "../../stores/profile.store";
 
 interface TopicFormValues {
     icon: File;
@@ -38,11 +39,12 @@ export class SendTopicService {
     public isTopicEditing: boolean = false;
     public startTopicLocatoinWarningShown = false;
 
-    private readonly router: Router = inject(Router);
-    private readonly formBuilder: FormBuilder = inject(FormBuilder);
-    private readonly pulseService: PulseService = inject(PulseService);
-    private readonly userService: UserService = inject(UserService);
-    private readonly notificationService: NotificationService = inject(NotificationService);
+    private readonly router = inject(Router);
+    private readonly formBuilder = inject(FormBuilder);
+    private readonly pulseService = inject(PulseService);
+    private readonly userService = inject(UserService);
+    private readonly notificationService = inject(NotificationService);
+    private readonly profileStore = inject(ProfileStore);
 
     constructor() {
         this.currentTopic = this.formBuilder.group({
@@ -128,7 +130,11 @@ export class SendTopicService {
                     params["shareKey"] = !!shareKey ? shareKey : uuidv4();
                 }),
                 switchMap(() => this.pulseService.create(params)),
-                tap(() => this.userService.refreshProfile())
+                switchMap((topic) => {
+                    return this.profileStore.refreshProfile().pipe(
+                        map(() => topic)
+                    )
+                })
             )
             .subscribe({
                 next: (topic) => {

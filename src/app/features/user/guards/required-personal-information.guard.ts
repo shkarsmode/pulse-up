@@ -9,19 +9,19 @@ import {
 } from "@angular/router";
 import { MatDialog } from "@angular/material/dialog";
 import { map } from "rxjs";
-import { UserStore } from "@/app/shared/stores/user.store";
 import { CompleteProfilePopupComponent } from "@/app/shared/components/popups/complete-profile-popup/complete-profile-popup.component";
 import { AppRoutes } from "@/app/shared/enums/app-routes.enum";
+import { ProfileStore } from "@/app/shared/stores/profile.store";
 
 @Injectable({
     providedIn: "root",
 })
 export class RequiredPersonalInformationGuard implements CanActivate {
     private router = inject(Router);
-    private userStore = inject(UserStore);
+    private profileStore = inject(ProfileStore);
     private dialog: MatDialog = inject(MatDialog);
 
-    private hasPublicInformation$ = this.userStore.hasPublicInformation$
+    private hasPublicInformation$ = this.profileStore.hasPublicInformation$;
 
     canActivate(
         route: ActivatedRouteSnapshot,

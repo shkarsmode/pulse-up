@@ -1,9 +1,9 @@
 import { Component, DestroyRef, inject, Input } from "@angular/core";
-import { CommonModule, Location } from "@angular/common";
+import { CommonModule } from "@angular/common";
 import { Router, RouterModule } from "@angular/router";
 import { MatDialog } from "@angular/material/dialog";
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
-import { first, switchMap, take, tap } from "rxjs";
+import { take } from "rxjs";
 import { InputComponent } from "@/app/shared/components/ui-kit/input/input.component";
 import { atLeastOneLetterValidator } from "@/app/shared/helpers/validators/at-least-one-letter.validator";
 import { usernameUniqueValidator } from "@/app/shared/helpers/validators/username-unique.validator";
@@ -14,7 +14,6 @@ import { PicturePickerComponent } from "@/app/shared/components/ui-kit/picture-p
 import { pictureValidator } from "@/app/shared/helpers/validators/picture.validator";
 import { optionalLengthValidator } from "@/app/shared/helpers/validators/optional-length.validator";
 import { SettingsService } from "@/app/shared/services/api/settings.service";
-import { UserStore } from "@/app/shared/stores/user.store";
 import { AuthenticationService } from "@/app/shared/services/api/authentication.service";
 import { AppRoutes } from "@/app/shared/enums/app-routes.enum";
 import {
@@ -26,6 +25,7 @@ import { NotificationService } from "@/app/shared/services/core/notification.ser
 import { ErrorMessageBuilder } from "../../helpers/error-message-builder";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { SecondaryButtonComponent } from "@/app/shared/components/ui-kit/buttons/secondary-button/secondary-button.component";
+import { ProfileStore } from "@/app/shared/stores/profile.store";
 
 @Component({
     selector: "app-profile-form",
@@ -55,7 +55,7 @@ export class ProfileFormComponent {
     private router = inject(Router);
     private dialog = inject(MatDialog);
     private fb: FormBuilder = inject(FormBuilder);
-    private userStore: UserStore = inject(UserStore);
+    private profileStore: ProfileStore = inject(ProfileStore);
     private userService: UserService = inject(UserService);
     private settingsService: SettingsService = inject(SettingsService);
     private notificationService: NotificationService = inject(NotificationService);
@@ -190,12 +190,9 @@ export class ProfileFormComponent {
         if (this.form.valid) {
             this.trimBioValue();
             this.submitting = true;
-            this.userService
-                .updateOwnProfile(this.form.value)
-                .pipe(
-                    take(1),
-                    tap(() => this.userStore.refreshProfile()),
-                )
+            this.profileStore
+                .updateProfile(this.form.value)
+                .pipe(take(1))
                 .subscribe({
                     next: () => {
                         this.submitting = false;

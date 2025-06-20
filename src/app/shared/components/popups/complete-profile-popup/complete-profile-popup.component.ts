@@ -11,8 +11,8 @@ import { atLeastOneLetterValidator } from "@/app/shared/helpers/validators/at-le
 import { usernameUniqueValidator } from "@/app/shared/helpers/validators/username-unique.validator";
 import { PrimaryButtonComponent } from "../../ui-kit/buttons/primary-button/primary-button.component";
 import { InputComponent } from "../../ui-kit/input/input.component";
-import { UserStore } from "@/app/shared/stores/user.store";
 import { AppRoutes } from "@/app/shared/enums/app-routes.enum";
+import { ProfileStore } from "@/app/shared/stores/profile.store";
 
 @Component({
     selector: "app-complete-profile-popup",
@@ -30,7 +30,7 @@ import { AppRoutes } from "@/app/shared/enums/app-routes.enum";
 export class CompleteProfilePopupComponent {
     private router: Router = inject(Router);
     private fb: FormBuilder = inject(FormBuilder);
-    private userStore: UserStore = inject(UserStore);
+    private profileStore = inject(ProfileStore);
     private userService: UserService = inject(UserService);
     private readonly dialogRef: MatDialogRef<any> = inject(MatDialogRef);
 
@@ -76,15 +76,14 @@ export class CompleteProfilePopupComponent {
     submit() {
         if (this.form.valid) {
             this.loading = true;
-            this.userService
-                .updateOwnProfile(this.form.value)
+            this.profileStore
+                .updateProfile(this.form.value)
                 .pipe(take(1))
                 .subscribe({
-                    next: (res) => {
+                    next: (profile) => {
                         this.loading = false;
-                        this.dialogRef.close(res);
-                        this.userStore.refreshProfile();
-                        this.userStore.profile$
+                        this.dialogRef.close(profile);
+                        this.profileStore.profile$
                             .pipe(filter((profile) => !!profile?.name && !!profile?.username))
                             .subscribe(() => {
                                 this.router.navigate([AppRoutes.User.Topic.SUGGEST]);
