@@ -46,6 +46,7 @@ export class TopicFormComponent {
         this.categoriesForForm = this.pulseService
             .getCategories()
             .pipe(map((categories) => categories.map((category) => category.name)));
+            this.showLocatoinWarning();
     }
 
     public control(name: string) {

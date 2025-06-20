@@ -1,21 +1,19 @@
 @use "../../../../../styles/mixins" as *;
 
 .location-info-popup__footer {
-    display: flex;
-    align-items: center;
-    column-gap: 16px;
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-column-gap: 16px;
     margin-top: 40px;
 
     @include media-sm {
-        flex-direction: column;
-        row-gap: 16px;
-        column-gap: 0;
+        grid-template-columns: 100%;
+        grid-row-gap: 16px;
+        grid-column-gap: 0;
     }
 }
 
 .geolocation-popup__btn {
-    flex-shrink: 0;
-    @include media-sm {
         width: 100%;
-    }
 }
