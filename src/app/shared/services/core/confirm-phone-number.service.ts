@@ -16,7 +16,6 @@ import { MatDialog } from "@angular/material/dialog";
 import { NgOtpInputComponent, NgOtpInputConfig } from "ng-otp-input";
 import { AuthenticationService } from "@/app/shared/services/api/authentication.service";
 import { AppRoutes } from "@/app/shared/enums/app-routes.enum";
-import { UserStore } from "@/app/shared/stores/user.store";
 import { NotificationService } from "./notification.service";
 import {
     AuthenticationError,
@@ -25,16 +24,17 @@ import {
 import { Location } from "@angular/common";
 import { isErrorWithMessage } from "../../helpers/errors/is-error-with-message";
 import { SigninRequiredPopupComponent } from "../../components/popups/signin-required-popup/signin-required-popup.component";
+import { ProfileStore } from "../../stores/profile.store";
 
 type ServiceWorkMode = "signIn" | "changePhoneNumber";
 
 export class ConfirmPhoneNumberService {
-    private dialog: MatDialog = inject(MatDialog);
-    private readonly router: Router = inject(Router);
-    private readonly location: Location = inject(Location);
-    private readonly userStore: UserStore = inject(UserStore);
-    private readonly notificationService: NotificationService = inject(NotificationService);
-    private readonly authenticationService: AuthenticationService = inject(AuthenticationService);
+    private dialog = inject(MatDialog);
+    private readonly router = inject(Router);
+    private readonly location = inject(Location);
+    private readonly profileStore = inject(ProfileStore);
+    private readonly notificationService = inject(NotificationService);
+    private readonly authenticationService = inject(AuthenticationService);
 
     private appRoutes = AppRoutes;
     private ngOtpInput: NgOtpInputComponent;
@@ -74,11 +74,7 @@ export class ConfirmPhoneNumberService {
                 .confirmVerificationCode(value)
                 .pipe(take(1))
                 .pipe(
-                    switchMap(() => {
-                        this.userStore.refreshProfile();
-                        return this.userStore.profile$;
-                    }),
-                    filter((profile) => !!profile),
+                    switchMap(() => this.profileStore.refreshProfile()),
                 )
                 .subscribe({
                     next: () => {

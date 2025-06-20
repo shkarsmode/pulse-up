@@ -2,8 +2,8 @@ import { Component, ElementRef, inject, ViewChild } from "@angular/core";
 import { Location } from "@angular/common";
 import { AppConstants } from "@/app/shared/constants";
 import { filter, map } from "rxjs";
-import { UserStore } from "@/app/shared/stores/user.store";
 import { SendTopicService } from "@/app/shared/services/core/send-topic.service";
+import { ProfileStore } from "@/app/shared/stores/profile.store";
 
 @Component({
     selector: "app-topic-preview",
@@ -12,12 +12,12 @@ import { SendTopicService } from "@/app/shared/services/core/send-topic.service"
 })
 export class TopicPreviewComponent {
     private readonly location = inject(Location);
-    private readonly userStore = inject(UserStore);
+    private profileStore = inject(ProfileStore);
     private readonly sendTopicService = inject(SendTopicService);
 
     @ViewChild("description", { static: false }) descriptionRef: ElementRef<HTMLDivElement>;
 
-    profile$ = this.userStore.profile$.pipe(filter((profile) => !!profile));
+    profile$ = this.profileStore.profile$.pipe(filter((profile) => !!profile));
     name$ = this.profile$.pipe(map((profile) => profile.name));
     icon: string | ArrayBuffer | null;
     picture: string | ArrayBuffer | null;

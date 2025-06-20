@@ -10,7 +10,7 @@ import { PrimaryButtonComponent } from "../../ui-kit/buttons/primary-button/prim
 import { UserService } from "@/app/shared/services/api/user.service";
 import { atLeastOneLetterValidator } from "@/app/shared/helpers/validators/at-least-one-letter.validator";
 import { usernameUniqueValidator } from "@/app/shared/helpers/validators/username-unique.validator";
-import { UserStore } from "@/app/shared/stores/user.store";
+import { ProfileStore } from "@/app/shared/stores/profile.store";
 
 @Component({
     selector: "app-personal-info-popup",
@@ -27,7 +27,7 @@ import { UserStore } from "@/app/shared/stores/user.store";
 })
 export class PersonalInfoPopupComponent {
     private fb: FormBuilder = inject(FormBuilder);
-    private userStore: UserStore = inject(UserStore);
+    private profileStore: ProfileStore = inject(ProfileStore);
     private userService: UserService = inject(UserService);
     private dialogRef: MatDialogRef<any> = inject(MatDialogRef);
 
@@ -78,14 +78,13 @@ export class PersonalInfoPopupComponent {
     submit() {
         if (this.form.valid) {
             this.loading = true;
-            this.userService
-                .updateOwnProfile(this.form.value)
+            this.profileStore
+                .updateProfile(this.form.value)
                 .pipe(take(1))
                 .subscribe({
                     next: (res) => {
                         this.loading = false;
                         this.dialogRef.close(res);
-                        this.userStore.refreshProfile();
                     },
                     error: (err) => {
                         this.loading = false;

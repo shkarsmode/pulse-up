@@ -1,8 +1,8 @@
 import { Component, DestroyRef, inject } from "@angular/core";
-import { UserService } from "@/app/shared/services/api/user.service";
 import { ProfileFormComponent } from "../../ui/profile-form/profile-form.component";
 import { ProfileLayoutComponent } from "../../ui/profile-layout/profile-layout.component";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
+import { ProfileStore } from "@/app/shared/stores/profile.store";
 
 @Component({
     selector: "app-edit-profile",
@@ -12,8 +12,8 @@ import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
     styleUrl: "./edit-profile.component.scss",
 })
 export class EditProfileComponent {
-    private readonly destroyed: DestroyRef = inject(DestroyRef);
-    private readonly userService: UserService = inject(UserService);
+    private readonly destroyed = inject(DestroyRef);
+    private readonly profileStore = inject(ProfileStore);
     public isLoading: boolean = true;
 
     public profileFormvalues = {
@@ -24,7 +24,7 @@ export class EditProfileComponent {
     };
 
     ngOnInit() {
-        this.userService.profile$.pipe(takeUntilDestroyed(this.destroyed)).subscribe((profile) => {
+        this.profileStore.profile$.pipe(takeUntilDestroyed(this.destroyed)).subscribe((profile) => {
             if (profile) {
                 this.profileFormvalues.name = profile.name || "";
                 this.profileFormvalues.username = profile.username || "";

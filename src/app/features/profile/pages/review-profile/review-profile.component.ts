@@ -4,8 +4,8 @@ import { RouterModule } from "@angular/router";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { BehaviorSubject, filter, map, Observable, tap } from "rxjs";
 import { InfiniteScrollDirective } from "ngx-infinite-scroll";
+import { SvgIconComponent } from "angular-svg-icon";
 import { ContainerComponent } from "@/app/shared/components/ui-kit/container/container.component";
-import { UserStore } from "@/app/shared/stores/user.store";
 import { UserAvatarComponent } from "../../../landing/pages/user/components/user-avatar/user-avatar.component";
 import { PrimaryButtonComponent } from "@/app/shared/components/ui-kit/buttons/primary-button/primary-button.component";
 import { AppRoutes } from "@/app/shared/enums/app-routes.enum";
@@ -18,7 +18,7 @@ import { LoadingIndicatorComponent } from "@/app/shared/components/loading-indic
 import { SpinnerComponent } from "@/app/shared/components/ui-kit/spinner/spinner.component";
 import { PulseService } from "@/app/shared/services/api/pulse.service";
 import { LinkButtonComponent } from "@/app/shared/components/ui-kit/buttons/link-button/link-button.component";
-import { SvgIconComponent } from "angular-svg-icon";
+import { ProfileStore } from "@/app/shared/stores/profile.store";
 
 @Component({
     selector: "app-review-profile",
@@ -42,7 +42,7 @@ import { SvgIconComponent } from "angular-svg-icon";
     providers: [InfiniteLoaderService],
 })
 export class ReviewProfileComponent implements OnInit {
-    private userStore = inject(UserStore);    
+    private readonly profileStore = inject(ProfileStore);
     private readonly destroyed = inject(DestroyRef);
     private readonly pulseService = inject(PulseService);
     private readonly infiniteLoaderService = inject(InfiniteLoaderService<IPulse>);
@@ -51,7 +51,7 @@ export class ReviewProfileComponent implements OnInit {
     initialLoading$ = this.initialLoading.asObservable();
     paginator$: Observable<IPaginator<IPulse>>;
     loading$ = new BehaviorSubject(true);
-    profile$ = this.userStore.profile$.pipe(filter((profile) => !!profile));
+    profile$ = this.profileStore.profile$.pipe(filter((profile) => !!profile));
     name$ = this.profile$.pipe(map((profile) => profile.name));
     username$ = this.profile$.pipe(map((profile) => profile.username));
     picture$ = this.profile$.pipe(map((profile) => profile.picture || ""));
