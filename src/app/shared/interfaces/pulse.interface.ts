@@ -25,15 +25,6 @@ export enum TopicState {
     Blocked = "Blocked",
 };
 
-export interface VoteForTopicRequest {
-    topicId: string;
-    location: {
-        latitude: number;
-        longitude: number;
-    },
-    locationName: string
-}
-
 interface Location {
     country: string;
 }

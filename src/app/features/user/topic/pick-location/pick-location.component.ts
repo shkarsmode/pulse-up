@@ -19,7 +19,6 @@ import { AppRoutes } from "@/app/shared/enums/app-routes.enum";
 import { H3LayerService } from "@/app/features/landing/services/h3-layer.service";
 import { MapUtils } from "@/app/features/landing/services/map-utils.service";
 import { GeolocationService } from "@/app/shared/services/core/geolocation.service";
-import { NotificationService } from "@/app/shared/services/core/notification.service";
 import { TopicLocation } from "../../interfaces/topic-location.interface";
 import { GeocodeService } from "@/app/shared/services/api/geocode.service";
 import { UnavailableGeolocationPopupComponent } from "../../ui/unavailable-geolocation-popup/unavailable-geolocation-popup.component";
@@ -36,7 +35,6 @@ export class PickLocationComponent implements OnInit, OnDestroy {
     private readonly h3LayerService = inject(H3LayerService);
     private readonly geteocodeService = inject(GeocodeService);
     private readonly geolocationService = inject(GeolocationService);
-    private readonly notificationService = inject(NotificationService);
     private readonly sourceId = "search-polygons";
     private destroy$ = new Subject<void>();
 
@@ -48,12 +46,11 @@ export class PickLocationComponent implements OnInit, OnDestroy {
     isGeolocationRequestInProgress$ = this.isGeolocationRequestInProgress.asObservable();
     isMyPositionSelected$ = this.selectedLocationSubject
         .asObservable()
-        .pipe(map((location) => !!(location && this.geolocationService.currentPosition)));
+        .pipe(map((location) => !!(location && this.geolocationService.geolocation)));
     selectedLocationName$ = this.selectedLocationSubject.asObservable().pipe(
         map((location) => {
             if (!location) return "";
-            const { city, state, country } = location;
-            return [city, state, country].filter(Boolean).join(", ");
+            return location.fullname;
         }),
     );
 
@@ -101,33 +98,23 @@ export class PickLocationComponent implements OnInit, OnDestroy {
     getMyPosition = () => {
         this.isGeolocationRequestInProgress.next(true);
         this.geolocationService
-            .getCurrentPosition()
+            .getCurrentGeolocation()
             .pipe(
                 takeUntil(this.destroy$),
                 catchError((error) => {
                     return throwError(() => new Error("Geolocation not available."));
                 }),
-                tap((position) => {
-                    const { latitude, longitude } = position.coords;
+                tap((geolocation) => {
+                    const { latitude, longitude } = geolocation.geolocationPosition.coords;
                     this.map?.jumpTo({
                         center: [longitude, latitude],
                         zoom: 10,
                     });
                 }),
-                switchMap((position) => {
-                    const { latitude, longitude } = position.coords;
-                    return this.geteocodeService.getPlaceByCoordinates(longitude, latitude).pipe(
-                        catchError((error) => {
-                            return throwError(
-                                () => new Error("Failed to retrieve location details."),
-                            );
-                        }),
-                    );
-                }),
             )
             .subscribe({
-                next: (place) => {
-                    this.selectedLocationSubject.next(place);
+                next: (geolocation) => {
+                    this.selectedLocationSubject.next(geolocation.details);
                     this.isGeolocationRequestInProgress.next(false);
                 },
                 error: (error) => {

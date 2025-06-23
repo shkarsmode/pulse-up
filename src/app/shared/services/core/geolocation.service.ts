@@ -1,5 +1,7 @@
-import { Injectable } from "@angular/core";
-import { BehaviorSubject, Observable } from "rxjs";
+import { inject, Injectable } from "@angular/core";
+import { BehaviorSubject, catchError, map, Observable, switchMap, throwError } from "rxjs";
+import { GeocodeService } from "../api/geocode.service";
+import { IGeolocation } from "../../interfaces";
 
 type GeolocationStatus = "initial" | "pending" | "success" | "error";
 
@@ -7,13 +9,14 @@ type GeolocationStatus = "initial" | "pending" | "success" | "error";
     providedIn: "root",
 })
 export class GeolocationService {
+    private geocodeService = inject(GeocodeService);
     private statusSubject = new BehaviorSubject<GeolocationStatus>("initial");
     public status$ = this.statusSubject.asObservable();
 
     public isSupported = "geolocation" in navigator;
-    public currentPosition: GeolocationPosition | null = null;
+    public geolocation: IGeolocation | null = null;
 
-    getCurrentPosition(): Observable<GeolocationPosition> {
+    getCurrentGeolocation(): Observable<IGeolocation> {
         if (!this.isSupported) {
             this.statusSubject.next("error");
             return new Observable((observer) => {
@@ -21,27 +24,25 @@ export class GeolocationService {
             });
         }
 
-        if (this.currentPosition) {
-            return new Observable((observer) => {
-                observer.next(this.currentPosition!);
-                observer.complete();
-            });
-        }
+        // if (this.geolocation) {
+        //     return new Observable((observer) => {
+        //         observer.next(this.geolocation!);
+        //         observer.complete();
+        //     });
+        // }
 
         this.statusSubject.next("pending");
 
-        return new Observable<GeolocationPosition>((observer) => {
+        const geolocationPosition$ = new Observable<GeolocationPosition>((observer) => {
             navigator.geolocation.getCurrentPosition(
                 (position) => {
                     const accuracy = position.coords.accuracy;
-                    console.log({accuracy});
+                    console.log({ accuracy });
                     if (accuracy > 100) {
                         this.statusSubject.next("error");
                         observer.error(new Error("Geolocation accuracy is too low"));
                         return;
                     }
-                    this.currentPosition = position;
-                    this.statusSubject.next("success");
                     observer.next(position);
                     observer.complete();
                 },
@@ -53,8 +54,29 @@ export class GeolocationService {
                     enableHighAccuracy: true,
                     timeout: 15000,
                     maximumAge: 0,
-                }
+                },
             );
         });
+
+        return geolocationPosition$.pipe(
+            switchMap((position) => {
+                const { latitude, longitude } = position.coords;
+                return this.geocodeService.getPlaceByCoordinates(longitude, latitude).pipe(
+                    map((place) => {
+                        const result: IGeolocation = {
+                            geolocationPosition: position,
+                            details: place,
+                        };
+                        this.geolocation = result;
+                        this.statusSubject.next("success");
+                        return result;
+                    }),
+                    catchError((error) => {
+                        this.statusSubject.next("error");
+                        return throwError(() => new Error("Failed to retrieve location details."));
+                    }),
+                );
+            }),
+        );
     }
 }

@@ -1,6 +1,5 @@
 import { Component, ElementRef, inject, ViewChild } from "@angular/core";
 import { Location } from "@angular/common";
-import { AppConstants } from "@/app/shared/constants";
 import { filter, map } from "rxjs";
 import { SendTopicService } from "@/app/shared/services/core/send-topic.service";
 import { ProfileStore } from "@/app/shared/stores/profile.store";
@@ -33,15 +32,7 @@ export class TopicPreviewComponent {
         lng: this.sendTopicService.customLocation.lng,
         lat: this.sendTopicService.customLocation.lat,
     } : null;
-    customLocationName = this.sendTopicService.customLocation
-        ? [
-              this.sendTopicService.customLocation.city,
-              this.sendTopicService.customLocation.state,
-              this.sendTopicService.customLocation.country,
-          ]
-              .filter(Boolean)
-              .join(", ")
-        : "";
+    customLocationName = this.sendTopicService.customLocation?.fullname || "";
 
     constructor() {
         if (!this.isReadyForPreview) {

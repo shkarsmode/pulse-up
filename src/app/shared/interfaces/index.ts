@@ -6,4 +6,5 @@ export * from './top-pulse.interface';
 export * from './paginator.interface';
 export * from './profile.interface';
 export * from './mapbox.interface';
+export * from './geolocation.interface';
 
