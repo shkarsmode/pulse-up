@@ -3,7 +3,7 @@ import { CommonModule } from "@angular/common";
 import { ActivatedRoute, ParamMap, Router } from "@angular/router";
 import { toSignal } from "@angular/core/rxjs-interop";
 import { catchError, first, of, take } from "rxjs";
-import { IPulse } from "../../../../shared/interfaces";
+import { ITopic } from "../../../../shared/interfaces";
 import { PulseService } from "../../../../shared/services/api/pulse.service";
 import { AppRoutes } from "../../../../shared/enums/app-routes.enum";
 import { MediaQueryService } from "@/app/shared/services/core/media-query.service";
@@ -62,7 +62,7 @@ export class PulseHeatmapPageComponent {
         },
     };
 
-    public pulse: IPulse;
+    public pulse: ITopic;
     public isLoading: boolean = true;
     public zoom: [number] = this.configMap.default.zoom;
     public minZoom: number = this.configMap.default.minZoom;

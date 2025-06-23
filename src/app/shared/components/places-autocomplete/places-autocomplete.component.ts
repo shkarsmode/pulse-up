@@ -18,6 +18,7 @@ import { GeocodeService } from "../../services/api/geocode.service";
 import { MapboxFeature } from "../../interfaces";
 import { SpinnerComponent } from "../ui-kit/spinner/spinner.component";
 import { TopicLocation } from "@/app/features/user/interfaces/topic-location.interface";
+import { GeolocationUtils } from "../../helpers/geolocation-utils";
 
 interface Suggestion {
     id: string;
@@ -68,7 +69,7 @@ export class PlacesAutocompleteComponent implements OnInit, OnChanges {
     get suggestions(): Suggestion[] {
         return this.features.map<Suggestion>((feature) => {
             const location = this.geocodeService.parseMapboxFeature(feature);
-            const locationName = this.getLocationName(location);
+            const locationName = GeolocationUtils.getLocationFullname(location);
             return {
                 id: feature.id,
                 name: locationName,
@@ -136,9 +137,14 @@ export class PlacesAutocompleteComponent implements OnInit, OnChanges {
             country: context.country?.name || "",
             state: context.region?.name || context.district?.name || "",
             city: context.place?.name || "",
+            fullname: GeolocationUtils.getLocationFullname({
+                country: context.country?.name || "",
+                state: context.region?.name || context.district?.name || "",
+                city: context.place?.name || "",
+            }),
         };
         this.selectLocation.emit(location);
-        this.search.setValue(this.getLocationName(location));
+        this.search.setValue(GeolocationUtils.getLocationFullname(location));
         this.showSuggestions = false;
         this.features = [];
     }
@@ -170,9 +176,5 @@ export class PlacesAutocompleteComponent implements OnInit, OnChanges {
                     });
                 }
             });
-    }
-
-    private getLocationName(location: TopicLocation): string {
-        return [location.city, location.state, location.country].filter(Boolean).join(", ");
     }
 }

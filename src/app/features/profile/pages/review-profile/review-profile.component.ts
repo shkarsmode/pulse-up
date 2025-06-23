@@ -12,7 +12,7 @@ import { AppRoutes } from "@/app/shared/enums/app-routes.enum";
 import { SecondaryButtonComponent } from "@/app/shared/components/ui-kit/buttons/secondary-button/secondary-button.component";
 import { InfiniteLoaderService } from "@/app/features/landing/services/infinite-loader.service";
 import { AppConstants } from "@/app/shared/constants";
-import { IPaginator, IPulse, PulseState } from "@/app/shared/interfaces";
+import { IPaginator, ITopic, TopicState } from "@/app/shared/interfaces";
 import { LargePulseComponent } from "@/app/shared/components/pulses/large-pulse/large-pulse.component";
 import { LoadingIndicatorComponent } from "@/app/shared/components/loading-indicator/loading-indicator.component";
 import { SpinnerComponent } from "@/app/shared/components/ui-kit/spinner/spinner.component";
@@ -45,11 +45,11 @@ export class ReviewProfileComponent implements OnInit {
     private readonly profileStore = inject(ProfileStore);
     private readonly destroyed = inject(DestroyRef);
     private readonly pulseService = inject(PulseService);
-    private readonly infiniteLoaderService = inject(InfiniteLoaderService<IPulse>);
+    private readonly infiniteLoaderService = inject(InfiniteLoaderService<ITopic>);
 
     private initialLoading = new BehaviorSubject(false);
     initialLoading$ = this.initialLoading.asObservable();
-    paginator$: Observable<IPaginator<IPulse>>;
+    paginator$: Observable<IPaginator<ITopic>>;
     loading$ = new BehaviorSubject(true);
     profile$ = this.profileStore.profile$.pipe(filter((profile) => !!profile));
     bio$ = this.profile$.pipe(map((profile) => profile.bio));
@@ -86,7 +86,7 @@ export class ReviewProfileComponent implements OnInit {
                     .getMyTopics({
                         take: AppConstants.PULSES_PER_PAGE,
                         skip: AppConstants.PULSES_PER_PAGE * (page - 1),
-                        state: [PulseState.Active, PulseState.Archived, PulseState.Blocked],
+                        state: [TopicState.Active, TopicState.Archived, TopicState.Blocked],
                     })
                     .pipe(
                         map((topics) => this.sortByDate(topics)),
@@ -101,7 +101,7 @@ export class ReviewProfileComponent implements OnInit {
         this.loading$ = this.infiniteLoaderService.loading$;
     }
 
-    private convertToPaginator(topics: IPulse[], page: number): IPaginator<IPulse> {
+    private convertToPaginator(topics: ITopic[], page: number): IPaginator<ITopic> {
         return {
             items: topics,
             page: page,
@@ -109,7 +109,7 @@ export class ReviewProfileComponent implements OnInit {
         };
     }
 
-    private fillWithDefaultValues(topics: IPulse[], authorName: string): IPulse[] {
+    private fillWithDefaultValues(topics: ITopic[], authorName: string): ITopic[] {
         return topics.map((topic) => ({
             ...topic,
             author: { ...topic.author, name: authorName },
@@ -122,7 +122,7 @@ export class ReviewProfileComponent implements OnInit {
         }));
     }
 
-    private sortByDate(topics: IPulse[]): IPulse[] {
+    private sortByDate(topics: ITopic[]): ITopic[] {
         return topics.sort((a, b) => {
             const dateA = new Date(a.createdAt).getTime();
             const dateB = new Date(b.createdAt).getTime();

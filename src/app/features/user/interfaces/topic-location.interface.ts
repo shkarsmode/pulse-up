@@ -4,4 +4,5 @@ export interface TopicLocation {
     city: string;
     lng: number;
     lat: number;
+    fullname: string;
 }

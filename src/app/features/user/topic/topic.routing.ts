@@ -23,7 +23,7 @@ const routes: Routes = [
             {
                 path: "how-it-works",
                 component: HowItWorksComponent,
-                canActivate: [PrivatePageGuard, HowItWorksGuard],
+                canActivate: [PrivatePageGuard, RequiredPersonalInformationGuard],
                 canDeactivate: [HowItWorksGuard],
             },
             {

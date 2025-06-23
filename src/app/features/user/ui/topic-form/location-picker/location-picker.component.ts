@@ -21,8 +21,6 @@ export class LocationPickerComponent {
 
   public get topicLocation() {
     const location = this.createTopicService.currentTopic.get("location")?.value as TopicLocation;
-    return [location.city, location.state, location.country]
-      .filter(Boolean)
-      .join(", ");
+    return location.fullname;
   }
 }

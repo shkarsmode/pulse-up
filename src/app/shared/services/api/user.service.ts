@@ -1,7 +1,7 @@
 import { inject, Injectable } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
 import { BehaviorSubject, catchError, expand, last, map, Observable, of, shareReplay, Subject, switchMap, takeWhile } from "rxjs";
-import { IProfile, IPulse, IPaginator } from "../../interfaces";
+import { IProfile, ITopic, IPaginator } from "../../interfaces";
 import { API_URL } from "../../tokens/tokens";
 import { IPhoneValidationResult } from "../../interfaces/phone-validatuion-result.interface";
 import { Nullable } from "../../types";
@@ -50,7 +50,7 @@ export class UserService {
         itemsPerPage: number;
         includeStats?: boolean;
     }) {
-        return this.http.get<IPulse[]>(`${this.apiUrl}/users/${userId}/topics`, {
+        return this.http.get<ITopic[]>(`${this.apiUrl}/users/${userId}/topics`, {
             params: {
                 skip: itemsPerPage * (page - 1),
                 take: itemsPerPage,
@@ -61,23 +61,23 @@ export class UserService {
                 items: response,
                 page: page,
                 hasMorePages: response.length !== 0 && response.length === itemsPerPage,
-            } as IPaginator<IPulse>)),
+            } as IPaginator<ITopic>)),
         );
     }
 
-    public getAllTopics(userId: string): Observable<IPulse[]> {
-        const topics: Subject<IPulse[]> = new Subject();
+    public getAllTopics(userId: string): Observable<ITopic[]> {
+        const topics: Subject<ITopic[]> = new Subject();
         const pageSize = 100;
 
         of({
             pageIndex: 0,
-            items: [] as IPulse[],
+            items: [] as ITopic[],
             isComplete: false,
         })
             .pipe(
                 expand(({ items, pageIndex }) =>
                     this.http
-                        .get<IPulse[]>(`${this.apiUrl}/users/${userId}/topics`, {
+                        .get<ITopic[]>(`${this.apiUrl}/users/${userId}/topics`, {
                             params: {
                                 skip: pageIndex * pageSize,
                                 take: pageSize,

@@ -1,17 +1,27 @@
 import { Component, ElementRef, inject, OnInit, ViewChild } from "@angular/core";
 import { ActivatedRoute, ParamMap, Router, RouterModule } from "@angular/router";
 import { CommonModule } from "@angular/common";
-import { catchError, first, Observable, of, take } from "rxjs";
+import {
+    BehaviorSubject,
+    catchError,
+    first,
+    forkJoin,
+    map,
+    Observable,
+    of,
+    switchMap,
+    take,
+    tap,
+} from "rxjs";
 import { SvgIconComponent } from "angular-svg-icon";
 import { AppRoutes } from "@/app/shared/enums/app-routes.enum";
 import { MatDialog } from "@angular/material/dialog";
-import { IPulse, PulseState } from "@/app/shared/interfaces";
+import { ITopic, TopicState } from "@/app/shared/interfaces";
 import { PulseService } from "@/app/shared/services/api/pulse.service";
 import { MetadataService } from "@/app/shared/services/core/metadata.service";
 import { SettingsService } from "@/app/shared/services/api/settings.service";
 import { FadeInDirective } from "@/app/shared/animations/fade-in.directive";
 import { FormatNumberPipe } from "@/app/shared/pipes/format-number.pipe";
-import { PrimaryButtonComponent } from "@/app/shared/components/ui-kit/buttons/primary-button/primary-button.component";
 import { MenuComponent } from "@/app/shared/components/ui-kit/menu/menu.component";
 import { CopyButtonComponent } from "@/app/shared/components/ui-kit/buttons/copy-button/copy-button.component";
 import { SocialsButtonComponent } from "@/app/shared/components/ui-kit/buttons/socials-button/socials-button.component";
@@ -21,9 +31,11 @@ import { TopPulseCardComponent } from "@/app/shared/components/pulses/top-pulse/
 import { SpinnerComponent } from "@/app/shared/components/ui-kit/spinner/spinner.component";
 import { LoadImgPathDirective } from "@/app/shared/directives/load-img-path/load-img-path.directive";
 import { FlatButtonDirective } from "@/app/shared/components/ui-kit/buttons/flat-button/flat-button.directive";
-import { OpenGetAppPopupDirective } from "@/app/shared/components/popups/get-app-popup/open-get-app-popup.directive";
 import { TopicPublishedComponent } from "@/app/shared/components/popups/topic-published/topic-published.component";
-import { HeartBeatDirective } from "@/app/shared/animations/heart-beat.directive";
+import { PulseButtonComponent } from "../../ui/pulse-button/pulse-button.component";
+import { VoteService } from "@/app/shared/services/api/vote.service";
+import { NotificationService } from "@/app/shared/services/core/notification.service";
+import { IVote } from "@/app/shared/interfaces/vote.interface";
 
 @Component({
     selector: "app-pulse-page",
@@ -34,7 +46,6 @@ import { HeartBeatDirective } from "@/app/shared/animations/heart-beat.directive
         CommonModule,
         RouterModule,
         SvgIconComponent,
-        PrimaryButtonComponent,
         MenuComponent,
         CopyButtonComponent,
         SocialsButtonComponent,
@@ -46,32 +57,34 @@ import { HeartBeatDirective } from "@/app/shared/animations/heart-beat.directive
         FormatNumberPipe,
         LoadImgPathDirective,
         FlatButtonDirective,
-        OpenGetAppPopupDirective,
-        HeartBeatDirective,
+        PulseButtonComponent,
     ],
 })
 export class PulsePageComponent implements OnInit {
-    public pulse: IPulse | null = null;
-    public isReadMore: boolean = false;
-    public isLoading: boolean = true;
-    public suggestions: IPulse[] = [];
-    public pulseUrl: string = "";
-    public shortPulseDescription: string = "";
-    public isArchived: boolean = false;
-
     @ViewChild("description", { static: false })
-    public description: ElementRef<HTMLDivElement>;
-
     private dialog: MatDialog = inject(MatDialog);
-    private readonly router: Router = inject(Router);
-    private readonly route: ActivatedRoute = inject(ActivatedRoute);
-    private readonly pulseService: PulseService = inject(PulseService);
-    private readonly metadataService: MetadataService = inject(MetadataService);
-    private readonly settingsService: SettingsService = inject(SettingsService);
+    private readonly router = inject(Router);
+    private readonly route = inject(ActivatedRoute);
+    private readonly pulseService = inject(PulseService);
+    private readonly metadataService = inject(MetadataService);
+    private readonly settingsService = inject(SettingsService);
+    private readonly voteService = inject(VoteService);
+    private readonly notificationService = inject(NotificationService);
     private mutationObserver: MutationObserver | null = null;
+    private lastVote$ = new BehaviorSubject<IVote | null>(null);
+
+    topic: ITopic | null = null;
+    isReadMore: boolean = false;
+    isLoading: boolean = true;
+    suggestions: ITopic[] = [];
+    topicUrl: string = "";
+    shortPulseDescription: string = "";
+    isArchived: boolean = false;
+    description: ElementRef<HTMLDivElement>;
+    vote: IVote | null = null;
 
     ngOnInit(): void {
-        this.initPulseUrlIdListener();
+        this.getInitialData();
         this.openJustCtreatedTipicPopup();
     }
 
@@ -91,51 +104,84 @@ export class PulsePageComponent implements OnInit {
         event.stopPropagation();
     }
 
-    private initPulseUrlIdListener(): void {
-        this.route.paramMap.pipe(take(1)).subscribe(this.handlePulseUrlIdListener.bind(this));
+    private getInitialData(): void {
+        this.route.paramMap
+            .pipe(
+                take(1),
+                map((params: ParamMap) => +params.get("id")!),
+                tap(() => {
+                    this.topic = null;
+                    this.isLoading = true;
+                }),
+                switchMap((id) =>
+                    forkJoin({
+                        topic: this.getTopicById(id),
+                        vote: this.getTopicVote(id),
+                    }),
+                ),
+                tap(({ topic, vote }) => {
+                    this.isLoading = true;
+                    this.createLink(topic);
+                    this.updateSuggestions();
+                    this.updateTopicData(topic);
+                    this.updateMetadata(topic);
+                    this.lastVote$.next(null);
+                    if (!vote) {
+                        this.notificationService.error(
+                            "Failed to fetch your vote. Please try again.",
+                        );
+                    } else if (vote[0]) {
+                        this.vote = vote[0];
+                    }
+                }),
+            )
+            .subscribe();
     }
 
-    private handlePulseUrlIdListener(data: ParamMap): void {
-        const id = data.get("id")!;
-        this.pulse = null;
-        this.isLoading = true;
-        const pulse = this.getPulseById(id);
-        pulse.pipe(take(1)).subscribe((pulse) => {
-            this.shortPulseDescription = pulse.description.replace(/\n/g, " ");
-            this.pulse = pulse;
-            this.isLoading = false;
-            this.createLink(pulse.description);
-            this.updateSuggestions();
-            this.pulseUrl = this.settingsService.shareTopicBaseUrl + pulse.shareKey;
-            this.isArchived = pulse.state === PulseState.Archived;
-            this.metadataService.setTitle(`${pulse.title} | Support What Matters – Pulse Up`);
-            this.metadataService.setMetaTag(
-                "description",
-                `Support '${pulse.title}' anonymously and see how it’s trending in real time across the map. Track public sentiment and join the pulse.`,
-            );
-        });
+    private getTopicVote(topicId: number) {
+        return this.voteService.getMyVotes({ topicId }).pipe(
+            first(),
+            catchError((error) => {
+                this.notificationService.error("Failed to fetch your vote. Please try again.");
+                return of(null);
+            }),
+        );
     }
 
-    private getPulseById(id: string | number) {
+    private getTopicById(id: string | number) {
         return this.pulseService.getById(id).pipe(
             first(),
             catchError((error) => {
                 this.router.navigateByUrl("/" + AppRoutes.Community.INVALID_LINK);
                 return of(error);
             }),
-        ) as Observable<IPulse>;
+        ) as Observable<ITopic>;
     }
 
+    private updateTopicData(topic: ITopic): void {
+        this.topic = topic;
+        this.shortPulseDescription = topic.description.replace(/\n/g, " ");
+        this.topicUrl = this.settingsService.shareTopicBaseUrl + topic.shareKey;
+        this.isArchived = topic.state === TopicState.Archived;
+    }
+
+    private updateMetadata(topic: ITopic): void {
+        this.metadataService.setTitle(`${topic.title} | Support What Matters – Pulse Up`);
+        this.metadataService.setMetaTag(
+            "description",
+            `Support '${topic.title}' anonymously and see how it’s trending in real time across the map. Track public sentiment and join the pulse.`,
+        );
+    }
 
     private updateSuggestions(): void {
         this.pulseService
             .get()
             .pipe(first())
             .subscribe((pulses) => {
-                const category = this.pulse?.category;
+                const category = this.topic?.category;
                 const sameCategoryTopics = pulses
                     .filter((pulse) => pulse.category === category)
-                    .filter((pulse) => pulse.id !== this.pulse?.id);
+                    .filter((pulse) => pulse.id !== this.topic?.id);
                 this.suggestions =
                     category && sameCategoryTopics.length
                         ? sameCategoryTopics.slice(0, 3)
@@ -143,15 +189,15 @@ export class PulsePageComponent implements OnInit {
             });
     }
 
-    private createLink(value: string): void {
-        let link = this.extractUrl(value);
+    private createLink(topic: ITopic): void {
+        let link = this.extractUrl(topic.description);
 
-        if (!link || !this.pulse) return;
+        if (!link || !this.topic) return;
 
-        this.pulse.description = value.replace(link, "");
+        this.topic.description = topic.description.replace(link, "");
 
-        this.pulse.description =
-            this.pulse.description + `<a href="${link}" rel="nofollow" target="_blank">${link}</a>`;
+        this.topic.description =
+            this.topic.description + `<a href="${link}" rel="nofollow" target="_blank">${link}</a>`;
     }
 
     private extractUrl(value: string): string | null {
@@ -171,7 +217,7 @@ export class PulsePageComponent implements OnInit {
                     panelClass: "custom-dialog-container",
                     backdropClass: "custom-dialog-backdrop",
                     data: {
-                        shareKey: this.pulse?.shareKey,
+                        shareKey: this.topic?.shareKey,
                     },
                 });
             }, 1000);

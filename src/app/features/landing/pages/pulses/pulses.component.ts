@@ -4,7 +4,7 @@ import { RouterModule } from "@angular/router";
 import { SvgIconComponent } from "angular-svg-icon";
 import { BehaviorSubject, first, map, Observable } from "rxjs";
 import { InfiniteScrollDirective } from "ngx-infinite-scroll";
-import { IPaginator, IPulse } from "@/app/shared/interfaces";
+import { IPaginator, ITopic } from "@/app/shared/interfaces";
 import { PulseService } from "@/app/shared/services/api/pulse.service";
 import { InputSearchComponent } from "./components/input-search/input-search.component";
 import { LargePulseComponent } from "@/app/shared/components/pulses/large-pulse/large-pulse.component";
@@ -35,11 +35,11 @@ export class PulsesComponent implements OnInit {
     private readonly pulseService = inject(PulseService);
     private readonly infiniteLoaderService = inject(InfiniteLoaderService);
 
-    public pulses: IPulse[] = [];
+    public pulses: ITopic[] = [];
     public isLoading: boolean = true;
     public addTopicRoute = "/" + AppRoutes.User.Topic.SUGGEST;
     public loading$ = new BehaviorSubject(true);
-    public paginator$: Observable<IPaginator<IPulse>>;
+    public paginator$: Observable<IPaginator<ITopic>>;
 
     public ngOnInit(): void {
         this.getTrendingPulses();
@@ -69,7 +69,7 @@ export class PulsesComponent implements OnInit {
                                     page,
                                     items: pulses,
                                     hasMorePages: pulses.length !== 0 && pulses.length === take,
-                                } as IPaginator<IPulse>),
+                                } as IPaginator<ITopic>),
                         ),
                     ),
         });

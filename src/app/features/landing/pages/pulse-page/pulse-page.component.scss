@@ -108,43 +108,15 @@
             color: var(--dark-grey-color);
             font-weight: 600;
         }
-
-        &-button {
-            ::ng-deep button {
-                display: flex;
-                align-items: center;
-                justify-content: space-between;
-                height: 48px;
-                gap: 75px;
-
-                padding: 0 20px;
-
-                svg-icon:first-child {
-                    opacity: 0;
-                }
-
-                svg-icon {
-                    height: 26px;
-                }
-            }
-
-            &.pulse__stats-button--archived {
-                ::ng-deep button {
-                    cursor: not-allowed;
-
-                    svg-icon {
-                        opacity: 0;
-                    }
-                }
-            }
-        }
     }
 
     &__buttons {
         width: 100%;
+        max-width: 390px;
+        margin: 0 auto;
         display: flex;
-        gap: 10px;
         justify-content: center;
+        gap: 10px;
     }
 
     .divider {

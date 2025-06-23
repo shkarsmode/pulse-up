@@ -1,7 +1,7 @@
 import { HttpClient } from "@angular/common/http";
 import { inject, Injectable } from "@angular/core";
 import { catchError, first, map, Observable, of, tap } from "rxjs";
-import { IPulse, PulseState } from "../../interfaces";
+import { ITopic, TopicState } from "../../interfaces";
 import { API_URL } from "../../tokens/tokens";
 import { ITopPulse } from "../../interfaces/top-pulse.interface";
 import { IValidateTopicTitleResponse } from "../../interfaces/validate-topic-title.response";
@@ -33,9 +33,9 @@ export class PulseService {
             skip?: number;
             take?: number;
         } = {},
-    ): Observable<IPulse[]> {
+    ): Observable<ITopic[]> {
         params["topicState"] = "All";
-        return this.http.get<IPulse[]>(`${this.apiUrl}/topics`, { params }).pipe(
+        return this.http.get<ITopic[]>(`${this.apiUrl}/topics`, { params }).pipe(
             tap((pulses) =>
                 pulses.forEach((pulse) => {
                     this.actualTopicsImageKeyMap[pulse.id] = pulse.icon;
@@ -44,12 +44,12 @@ export class PulseService {
         );
     }
 
-    public getById(id: string | number): Observable<IPulse> {
-        return this.http.get<IPulse>(`${this.apiUrl}/topics/${id}`);
+    public getById(id: string | number): Observable<ITopic> {
+        return this.http.get<ITopic>(`${this.apiUrl}/topics/${id}`);
     }
 
-    public getMyTopics(params: { skip?: number; take?: number, state?: PulseState[] } = {}) {
-        return this.http.get<IPulse[]>(`${this.apiUrl}/topics/my`, { params });
+    public getMyTopics(params: { skip?: number; take?: number, state?: TopicState[] } = {}) {
+        return this.http.get<ITopic[]>(`${this.apiUrl}/topics/my`, { params });
     }
 
     public create(params: {
@@ -64,7 +64,7 @@ export class PulseService {
             state?: string;
             city?: string;
         };
-    }): Observable<IPulse> {
+    }): Observable<ITopic> {
         const formData = new FormData();
 
         if (params.location.country) {
@@ -87,7 +87,7 @@ export class PulseService {
             formData.append(`Keywords[${index}]`, keyword);
         });
 
-        return this.http.post<IPulse>(`${this.apiUrl}/topics/create`, formData);
+        return this.http.post<ITopic>(`${this.apiUrl}/topics/create`, formData);
     }
 
     public getMapVotes(
