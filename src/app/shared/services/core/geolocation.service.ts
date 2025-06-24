@@ -46,10 +46,24 @@ export class GeolocationService {
                     observer.next(position);
                     observer.complete();
                 },
-                (error) => {
+                (error: GeolocationPositionError) => {
                     console.log("Geolocation service error:", error);
                     this.statusSubject.next("error");
-                    observer.error(error);
+                    switch (error.code) {
+                        case 1:
+                            observer.error(new Error("Geolocation permission denied"));
+                            break;
+                        case 2:
+                            observer.error(new Error("Geolocation position unavailable"));
+                            break;
+                        case 3:
+                            observer.error(new Error("Retrieving position timed out"));
+                            break;
+
+                        default:
+                            observer.error(new Error("Unknown geolocation error"));
+                            break;
+                    }
                 },
                 {
                     enableHighAccuracy: true,

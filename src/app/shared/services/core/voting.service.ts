@@ -4,6 +4,7 @@ import { GeolocationService } from "./geolocation.service";
 import { AuthenticationService } from "../api/authentication.service";
 import { VotingError, VotingErrorCode } from "../../helpers/errors/voting-error";
 import { VoteService } from "../api/vote.service";
+import { isErrorWithMessage } from "../../helpers/errors/is-error-with-message";
 
 @Injectable({
     providedIn: "root",
@@ -13,7 +14,7 @@ export class VotingService {
     private authService = inject(AuthenticationService);
     private voteService = inject(VoteService);
     private isVotingSubject = new BehaviorSubject<boolean>(false);
-    
+
     isVoting$ = this.isVotingSubject.asObservable();
 
     vote({ topicId }: { topicId: number }) {
@@ -30,15 +31,13 @@ export class VotingService {
 
         return this.geolocationService.getCurrentGeolocation().pipe(
             catchError((error) => {
-                console.log("Geolocation error:", error);
-                
                 this.isVotingSubject.next(false);
+                let message = "You need to allow geolocation access to vote";
+                if (isErrorWithMessage(error)) {
+                    message = error.message;
+                }
                 return throwError(
-                    () =>
-                        new VotingError(
-                            "You need to allow geolocation access to vote",
-                            VotingErrorCode.GEOLOCATION_NOT_GRANTED,
-                        ),
+                    () => new VotingError(message, VotingErrorCode.GEOLOCATION_NOT_GRANTED),
                 );
             }),
             switchMap((geolocation) => {
