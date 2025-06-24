@@ -37,7 +37,7 @@ export class GeolocationService {
             navigator.geolocation.getCurrentPosition(
                 (position) => {
                     const accuracy = position.coords.accuracy;
-                    console.log({ accuracy });
+                    console.log({ accuracy, position });
                     if (accuracy > 100) {
                         this.statusSubject.next("error");
                         observer.error(new Error("Geolocation accuracy is too low"));
