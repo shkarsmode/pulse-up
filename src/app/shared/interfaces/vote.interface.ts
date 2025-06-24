@@ -1,5 +1,5 @@
 export interface IVote {
-    id: number;
+    id: string;
     topicId: number;
     location: string;
     updatedAt: string;

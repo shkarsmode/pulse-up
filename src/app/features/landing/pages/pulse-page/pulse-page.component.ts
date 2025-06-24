@@ -36,6 +36,8 @@ import { PulseButtonComponent } from "../../ui/pulse-button/pulse-button.compone
 import { VoteService } from "@/app/shared/services/api/vote.service";
 import { NotificationService } from "@/app/shared/services/core/notification.service";
 import { IVote } from "@/app/shared/interfaces/vote.interface";
+import { VoteUtils } from "@/app/shared/helpers/vote-utils";
+import { AuthenticationService } from "@/app/shared/services/api/authentication.service";
 
 @Component({
     selector: "app-pulse-page",
@@ -70,8 +72,8 @@ export class PulsePageComponent implements OnInit {
     private readonly settingsService = inject(SettingsService);
     private readonly voteService = inject(VoteService);
     private readonly notificationService = inject(NotificationService);
+    private readonly authService = inject(AuthenticationService);
     private mutationObserver: MutationObserver | null = null;
-    private lastVote$ = new BehaviorSubject<IVote | null>(null);
 
     topic: ITopic | null = null;
     isReadMore: boolean = false;
@@ -82,6 +84,9 @@ export class PulsePageComponent implements OnInit {
     isArchived: boolean = false;
     description: ElementRef<HTMLDivElement>;
     vote: IVote | null = null;
+    isActiveVote: boolean = false;
+    lastVoteInfo: string = "";
+    isAnonymousUser = this.authService.anonymousUserValue;
 
     ngOnInit(): void {
         this.getInitialData();
@@ -104,6 +109,10 @@ export class PulsePageComponent implements OnInit {
         event.stopPropagation();
     }
 
+    public onVoteExpired() {
+        this.isActiveVote = false;
+    }
+
     private getInitialData(): void {
         this.route.paramMap
             .pipe(
@@ -116,33 +125,31 @@ export class PulsePageComponent implements OnInit {
                 switchMap((id) =>
                     forkJoin({
                         topic: this.getTopicById(id),
-                        vote: this.getTopicVote(id),
+                        votes: this.getTopicVote(id),
                     }),
                 ),
-                tap(({ topic, vote }) => {
-                    this.isLoading = true;
+                tap(({ topic, votes }) => {
                     this.createLink(topic);
                     this.updateSuggestions();
                     this.updateTopicData(topic);
                     this.updateMetadata(topic);
-                    this.lastVote$.next(null);
-                    if (!vote) {
-                        this.notificationService.error(
-                            "Failed to fetch your vote. Please try again.",
-                        );
-                    } else if (vote[0]) {
-                        this.vote = vote[0];
+                     if (votes && votes[0]) {
+                        this.updateVoteData(votes[0]);
                     }
+                    this.isLoading = true;
                 }),
             )
             .subscribe();
     }
 
     private getTopicVote(topicId: number) {
+        if (this.isAnonymousUser) {
+            return of(null);
+        }
         return this.voteService.getMyVotes({ topicId }).pipe(
             first(),
             catchError((error) => {
-                this.notificationService.error("Failed to fetch your vote. Please try again.");
+                this.notificationService.error("Failed to fetch your vote. Please reload the page.");
                 return of(null);
             }),
         );
@@ -163,6 +170,12 @@ export class PulsePageComponent implements OnInit {
         this.shortPulseDescription = topic.description.replace(/\n/g, " ");
         this.topicUrl = this.settingsService.shareTopicBaseUrl + topic.shareKey;
         this.isArchived = topic.state === TopicState.Archived;
+    }
+
+    private updateVoteData(vote: IVote): void {
+        this.vote = vote;
+        this.isActiveVote = VoteUtils.isActiveVote(vote, this.settingsService.minVoteInterval);
+        this.lastVoteInfo = VoteUtils.parseVoteInfo(vote);
     }
 
     private updateMetadata(topic: ITopic): void {

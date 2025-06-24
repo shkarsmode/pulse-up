@@ -110,13 +110,40 @@
         }
     }
 
-    &__buttons {
+    &__vote {
         width: 100%;
         max-width: 390px;
         margin: 0 auto;
+    }
+
+    &__last-vote {
+        @include text-14px;
+        display: flex;
+        align-items: center;
+        column-gap: 8px;
+        margin-bottom: 16px;
+        color: var(--dark-grey-color);
+    }
+
+    &__buttons {
+        width: 100%;
         display: flex;
         justify-content: center;
         gap: 10px;
+    }
+
+    &__share-button {
+        transition: background-color 0.15s linear;
+        svg-icon::ng-deep svg path {
+            transition: fill 0.15s linear;
+        }
+    }
+
+    &__share-button--dark {
+        background-color: var(--accent-color);
+        svg-icon::ng-deep svg path {
+            fill: var(--white-color);
+        }
     }
 
     .divider {

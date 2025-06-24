@@ -1,15 +1,15 @@
 import { IVote } from "../interfaces/vote.interface";
 
 export class VoteUtils {
-    public static isActiveVote(vote: IVote) {
+    public static isActiveVote(vote: IVote, activeVoteInterval: number) {
         if (!vote.updatedAt) return false;
 
         const updatedAt = new Date(vote.updatedAt).getTime();
         const now = Date.now();
         const diffInMs = now - updatedAt;
 
-        const twentyFourHoursInMs = 24 * 60 * 60 * 1000;
-        return diffInMs < twentyFourHoursInMs;
+        const activeVoteIntervalMs = activeVoteInterval * 60 * 1000;
+        return diffInMs < activeVoteIntervalMs;
     }
 
     public static parseVoteInfo(vote: IVote) {
@@ -39,5 +39,36 @@ export class VoteUtils {
         hours = hours % 12 || 12;
 
         return `${month}/${day}/${year}, ${hours}:${minutes} ${ampm}`;
+    }
+
+    public static calculateTimeLeft(vote: IVote, interval: number) {
+        const now = new Date();
+        const updatedAt = new Date(vote.updatedAt);
+
+        // Time passed in ms
+        const timePassedMs = now.getTime() - updatedAt.getTime();
+
+        // Minimum interval in ms
+        const minVoteIntervalMs = interval * 60 * 1000;
+
+        // Time left
+        const timeLeftMs = Math.max(minVoteIntervalMs - timePassedMs, 0);
+
+        return timeLeftMs;
+    }
+
+    public static isVoteExpired(vote: IVote, interval: number) {
+        const timeLeft = this.calculateTimeLeft(vote, interval);
+        return timeLeft <= 0;
+    }
+
+    public static formatDuration(ms: number) {
+        const totalSeconds = Math.floor(ms / 1000);
+        const hours = Math.floor(totalSeconds / 3600);
+        const minutes = Math.floor((totalSeconds % 3600) / 60);
+        const seconds = totalSeconds % 60;
+        return `${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}:${String(
+            seconds,
+        ).padStart(2, "0")}`;
     }
 }
