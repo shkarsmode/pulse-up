@@ -4,12 +4,13 @@
         [fullWidth]="true"
         class="pulse-button"
         [class.pulse-button--voting]="isVoting"
-        [class.pulse-button--success]="isSuccess"
+        [class.pulse-button--success]="isActiveVote"
+        [disabled]="isVoting || isActiveVote"
         (handleClick)="onPulse()">
         <span class="pulse-button__inner">
             <span class="pulse-button__text"> Tap to Pulse </span>
             <span class="pulse-button__icon">
-                @if (isSuccess) {
+                @if (isActiveVote) {
                 <svg-icon
                     src="assets/svg/logo/logo-v2.svg"
                     heartBeatAnimation />
@@ -19,9 +20,23 @@
             </span>
         </span>
     </app-primary-button>
+    @if (vote && isActiveVote) {
     <div
         class="active-pulse-info"
-        [class.active-pulse-info--visible]="isSuccess">
-        <div class="pulse-button__location">{{ location }}</div>
+        [class.active-pulse-info--visible]="isActiveVote">
+        <div class="active-pulse-info__icon">
+            <svg-icon src="assets/svg/checked-circle.svg" />
+        </div>
+        <div class="active-pulse-info__text">
+            Pulse active for
+            <app-vote-time-left
+                [vote]="vote"
+                (expired)="onVoteExpired()" />
+        </div>
+        <div class="active-pulse-info__icon">
+            <svg-icon src="assets/svg/pin.svg" />
+        </div>
+        <div class="active-pulse-info__text active-pulse-info__text--grey">{{ lastVoteInfo }}</div>
     </div>
+    }
 </div>

@@ -20,7 +20,7 @@ export class VotingService {
         const isAnonymous = !!this.authService.anonymousUserValue;
 
         if (isAnonymous) {
-            throwError(
+            return throwError(
                 () =>
                     new VotingError("You need to sign in to pulse", VotingErrorCode.NOT_AUTHORIZED),
             );
@@ -30,8 +30,6 @@ export class VotingService {
 
         return this.geolocationService.getCurrentGeolocation().pipe(
             catchError((error) => {
-                console.log("Geolocation error:", error);
-                
                 this.isVotingSubject.next(false);
                 return throwError(
                     () =>
