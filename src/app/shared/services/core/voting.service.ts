@@ -30,6 +30,8 @@ export class VotingService {
 
         return this.geolocationService.getCurrentGeolocation().pipe(
             catchError((error) => {
+                console.log("Geolocation error:", error);
+                
                 this.isVotingSubject.next(false);
                 return throwError(
                     () =>

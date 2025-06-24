@@ -47,12 +47,12 @@ export class GeolocationService {
                     observer.complete();
                 },
                 (error) => {
-                    console.log("Geolocation error:", error);
+                    console.log("Geolocation service error:", error);
                     this.statusSubject.next("error");
                     observer.error(error);
                 },
                 {
-                    enableHighAccuracy: false,
+                    enableHighAccuracy: true,
                     timeout: 15000,
                     maximumAge: 0,
                 },
