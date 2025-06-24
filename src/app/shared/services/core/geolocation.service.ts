@@ -52,7 +52,7 @@ export class GeolocationService {
                     observer.error(error);
                 },
                 {
-                    enableHighAccuracy: true,
+                    enableHighAccuracy: false,
                     timeout: 15000,
                     maximumAge: 0,
                 },
