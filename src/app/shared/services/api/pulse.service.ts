@@ -1,6 +1,6 @@
 import { HttpClient } from "@angular/common/http";
 import { inject, Injectable } from "@angular/core";
-import { catchError, first, map, Observable, of, tap } from "rxjs";
+import { catchError, first, map, Observable, of, shareReplay, tap } from "rxjs";
 import { ITopic, TopicState } from "../../interfaces";
 import { API_URL } from "../../tokens/tokens";
 import { ITopPulse } from "../../interfaces/top-pulse.interface";
@@ -18,6 +18,7 @@ export class PulseService {
 
     private readonly apiUrl: string = inject(API_URL);
     private readonly http: HttpClient = inject(HttpClient);
+    private categories$?: Observable<ICategory[]>;
 
     constructor() {
         this.get().pipe(first()).subscribe();
@@ -48,7 +49,7 @@ export class PulseService {
         return this.http.get<ITopic>(`${this.apiUrl}/topics/${id}`);
     }
 
-    public getMyTopics(params: { skip?: number; take?: number, state?: TopicState[] } = {}) {
+    public getMyTopics(params: { skip?: number; take?: number; state?: TopicState[] } = {}) {
         return this.http.get<ITopic[]>(`${this.apiUrl}/topics/my`, { params });
     }
 
@@ -246,7 +247,12 @@ export class PulseService {
     }
 
     public getCategories(): Observable<ICategory[]> {
-        return this.http.get<ICategory[]>(`${this.apiUrl}/topics/categories`);
+        if (!this.categories$) {
+            this.categories$ = this.http
+                .get<ICategory[]>(`${this.apiUrl}/topics/categories`)
+                .pipe(shareReplay(1));
+        }
+        return this.categories$;
     }
 
     public getShareKeyFromTitle(title: string): Observable<string> {
