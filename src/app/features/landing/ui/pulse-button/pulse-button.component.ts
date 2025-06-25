@@ -40,6 +40,7 @@ export class PulseButtonComponent {
     @Input() topicId: number | null = null;
     @Input() vote: IVote | null = null;
     @Output() voteExpired = new EventEmitter<void>();
+    @Output() voted = new EventEmitter<IVote>();
 
     isVoting = false;
     isActiveVote = false;
@@ -78,6 +79,7 @@ export class PulseButtonComponent {
                     this.isActiveVote = true;
                     this.lastVoteInfo = VoteUtils.parseVoteInfo(vote);
                     this.notificationService.success("Thank you for your vote!");
+                    this.voted.emit(vote);
                 },
                 error: (error) => {
                     if (error instanceof VotingError) {

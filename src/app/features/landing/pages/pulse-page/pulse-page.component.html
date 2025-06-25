@@ -57,6 +57,7 @@
                 <app-pulse-button
                     [topicId]="topic.id"
                     [vote]="vote"
+                    (voted)="onVoted()"
                     (voteExpired)="onVoteExpired()" />
                 <app-menu [content]="menuContent">
                     <button
