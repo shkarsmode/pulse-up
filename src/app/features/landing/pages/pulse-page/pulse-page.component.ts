@@ -113,6 +113,11 @@ export class PulsePageComponent implements OnInit {
         this.isActiveVote = false;
     }
 
+    public onVoted() {
+        if (!this.topic) return;
+        this.loadTopicData(this.topic.id).pipe(first()).subscribe();
+    }
+
     private getInitialData(): void {
         this.route.paramMap
             .pipe(
@@ -122,40 +127,45 @@ export class PulsePageComponent implements OnInit {
                     this.topic = null;
                     this.isLoading = true;
                 }),
-                switchMap((id) =>
-                    forkJoin({
-                        topic: this.getTopicById(id),
-                        votes: this.getTopicVote(id),
-                    }),
-                ),
-                tap(({ topic, votes }) => {
-                    this.createLink(topic);
-                    this.updateSuggestions();
-                    this.updateTopicData(topic);
-                    this.updateMetadata(topic);
-                     if (votes && votes[0]) {
-                        this.updateVoteData(votes[0]);
-                    }
-                    this.isLoading = true;
-                }),
+                switchMap(this.loadTopicData.bind(this)),
+                tap(() => (this.isLoading = false)),
             )
             .subscribe();
     }
 
-    private getTopicVote(topicId: number) {
+    private loadTopicData(topicId: number) {
+        return forkJoin({
+            topic: this.getTopic(topicId),
+            votes: this.getVote(topicId),
+        }).pipe(
+            tap(({ topic, votes }) => {
+                this.createLink(topic);
+                this.updateSuggestions();
+                this.updateTopicData(topic);
+                this.updateMetadata(topic);
+                if (votes && votes[0]) {
+                    this.updateVoteData(votes[0]);
+                }
+            }),
+        );
+    }
+
+    private getVote(topicId: number) {
         if (this.isAnonymousUser) {
             return of(null);
         }
         return this.voteService.getMyVotes({ topicId }).pipe(
             first(),
             catchError((error) => {
-                this.notificationService.error("Failed to fetch your vote. Please reload the page.");
+                this.notificationService.error(
+                    "Failed to fetch your vote. Please reload the page.",
+                );
                 return of(null);
             }),
         );
     }
 
-    private getTopicById(id: string | number) {
+    private getTopic(id: string | number) {
         return this.pulseService.getById(id).pipe(
             first(),
             catchError((error) => {
