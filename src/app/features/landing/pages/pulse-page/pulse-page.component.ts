@@ -38,6 +38,7 @@ import { NotificationService } from "@/app/shared/services/core/notification.ser
 import { IVote } from "@/app/shared/interfaces/vote.interface";
 import { VoteUtils } from "@/app/shared/helpers/vote-utils";
 import { AuthenticationService } from "@/app/shared/services/api/authentication.service";
+import { PendingTopicsService } from "@/app/shared/services/topic/pending-topics.service";
 
 @Component({
     selector: "app-pulse-page",
@@ -73,6 +74,7 @@ export class PulsePageComponent implements OnInit {
     private readonly voteService = inject(VoteService);
     private readonly notificationService = inject(NotificationService);
     private readonly authService = inject(AuthenticationService);
+    private readonly pendingTopicsService = inject(PendingTopicsService);
     private mutationObserver: MutationObserver | null = null;
 
     topic: ITopic | null = null;
@@ -115,6 +117,14 @@ export class PulsePageComponent implements OnInit {
 
     public onVoted() {
         if (!this.topic) return;
+        this.pendingTopicsService.add({
+            ...this.topic,
+            stats: {
+                totalVotes: (this.topic.stats?.totalVotes || 0) + 1,
+                lastDayVotes: (this.topic.stats?.lastDayVotes || 0) + 1,
+                totalUniqueUsers: this.topic.stats?.totalUniqueUsers || 0,
+            },
+        })
         this.loadTopicData(this.topic.id).pipe(first()).subscribe();
     }
 

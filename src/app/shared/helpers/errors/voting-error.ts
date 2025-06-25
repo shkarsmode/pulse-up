@@ -1,6 +1,6 @@
 export enum VotingErrorCode {
     NOT_AUTHORIZED = "voting/not-authorized",
-    GEOLOCATION_NOT_GRANTED = "voting/geolocation-not-granted",
+    GEOLOCATION_UNAVAILABLE = "voting/geolocation-unavailable",
     UNKNOWN_ERROR = "voting/unknown-error",
 }
 
