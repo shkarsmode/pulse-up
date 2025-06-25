@@ -1,3 +1,17 @@
+export const LOCAL_STORAGE_KEYS = {
+    changeEmail: "change_email",
+    verifyEmail: "verify_email",
+    phoneNumberForChanging: "phone_number_for_changing",
+    personalInfoPopupShown: "personal_info_popup_shown",
+    personalInfoPopupShownForProfiles: "personal_info_popup_shown_for_profiles",
+    verificationId: "verification_id",
+    isAnonymous: "isAnonymous",
+    anonymousToken: "anonymous",
+    userToken: "userToken",
+} as const;
+
+type Key = typeof LOCAL_STORAGE_KEYS[keyof typeof LOCAL_STORAGE_KEYS];
+
 export class LocalStorageService {
     /**
      * Save a value to localStorage
@@ -58,15 +72,3 @@ export class LocalStorageService {
         return localStorage.getItem(key) !== null;
     }
 }
-
-export const LOCAL_STORAGE_KEYS = {
-    changeEmail: "change_email",
-    verifyEmail: "verify_email",
-    phoneNumberForChanging: "phone_number_for_changing",
-    personalInfoPopupShown: "personal_info_popup_shown",
-    personalInfoPopupShownForProfiles: "personal_info_popup_shown_for_profiles",
-    verificationId: "verification_id",
-    isAnonymous: "isAnonymous",
-    anonymousToken: "anonymous",
-    userToken: "userToken",
-};
