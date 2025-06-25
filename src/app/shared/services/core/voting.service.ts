@@ -29,41 +29,43 @@ export class VotingService {
 
         this.isVotingSubject.next(true);
 
-        return this.geolocationService.getCurrentGeolocation({
-            enableHighAccuracy: false,
-        }).pipe(
-            catchError((error) => {
-                this.isVotingSubject.next(false);
-                let message = "You need to allow geolocation access to vote";
-                if (isErrorWithMessage(error)) {
-                    message = error.message;
-                }
-                return throwError(
-                    () => new VotingError(message, VotingErrorCode.GEOLOCATION_NOT_GRANTED),
-                );
-            }),
-            switchMap((geolocation) => {
-                return this.voteService.sendVote({
-                    topicId,
-                    location: {
-                        latitude: geolocation.geolocationPosition.coords.latitude,
-                        longitude: geolocation.geolocationPosition.coords.longitude,
-                    },
-                    locationName: geolocation.details.fullname,
-                });
-            }),
-            catchError((error) => {
-                this.isVotingSubject.next(false);
-                if (error instanceof VotingError) {
-                    return throwError(() => error);
-                }
-                return throwError(
-                    () => new VotingError("Failed to vote", VotingErrorCode.UNKNOWN_ERROR),
-                );
-            }),
-            finalize(() => {
-                this.isVotingSubject.next(false);
-            }),
-        );
+        return this.geolocationService
+            .getCurrentGeolocation({
+                enableHighAccuracy: false,
+            })
+            .pipe(
+                catchError(() => {
+                    this.isVotingSubject.next(false);
+                    return throwError(
+                        () =>
+                            new VotingError(
+                                "Failed to retrieve geolocation. Location access may be disabled or unavailable.",
+                                VotingErrorCode.GEOLOCATION_UNAVAILABLE,
+                            ),
+                    );
+                }),
+                switchMap((geolocation) => {
+                    return this.voteService.sendVote({
+                        topicId,
+                        location: {
+                            latitude: geolocation.geolocationPosition.coords.latitude,
+                            longitude: geolocation.geolocationPosition.coords.longitude,
+                        },
+                        locationName: geolocation.details.fullname,
+                    });
+                }),
+                catchError((error) => {
+                    this.isVotingSubject.next(false);
+                    if (error instanceof VotingError) {
+                        return throwError(() => error);
+                    }
+                    return throwError(
+                        () => new VotingError("Failed to vote", VotingErrorCode.UNKNOWN_ERROR),
+                    );
+                }),
+                finalize(() => {
+                    this.isVotingSubject.next(false);
+                }),
+            );
     }
 }

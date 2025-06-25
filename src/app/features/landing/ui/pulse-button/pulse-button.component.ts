@@ -15,6 +15,7 @@ import { VoteTimeLeftComponent } from "../vote-time-left/vote-time-left.componen
 import { AuthenticationService } from "@/app/shared/services/api/authentication.service";
 import { VotingError, VotingErrorCode } from "@/app/shared/helpers/errors/voting-error";
 import { SignInRequiredPopupComponent } from "../sign-in-required-popup/sign-in-required-popup.component";
+import { DownloadAppPopupComponent } from "../download-app-popup/download-app-popup.component";
 
 @Component({
     selector: "app-pulse-button",
@@ -85,6 +86,14 @@ export class PulseButtonComponent {
                     if (error instanceof VotingError) {
                         if (error.code === VotingErrorCode.NOT_AUTHORIZED) {
                             this.dialog.open(SignInRequiredPopupComponent, {
+                                width: "500px",
+                                panelClass: "custom-dialog-container",
+                                backdropClass: "custom-dialog-backdrop",
+                            });
+                            return;
+                        }
+                        if (error.code === VotingErrorCode.GEOLOCATION_UNAVAILABLE) {
+                            this.dialog.open(DownloadAppPopupComponent, {
                                 width: "500px",
                                 panelClass: "custom-dialog-container",
                                 backdropClass: "custom-dialog-backdrop",

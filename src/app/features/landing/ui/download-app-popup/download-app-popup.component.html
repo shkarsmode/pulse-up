@@ -1,0 +1,16 @@
+<app-popup>
+    <app-popup-close-button (close)="onCloseDialog()" />
+    <app-popup-title>Pulse failed</app-popup-title>
+    <app-popup-text>
+        We couldn't access your location. This may happen if location services are disabled or your
+        device doesn't support geolocation in the browser.
+    </app-popup-text>
+    <app-popup-text>
+        For a smoother experience, you can download Pulse Up mobile app and vote more easily.
+    </app-popup-text>
+    <app-popup-footer>
+        <app-get-app-button
+            [design]="'new'"
+            [isOnePlatform]="true" />
+    </app-popup-footer>
+</app-popup>
