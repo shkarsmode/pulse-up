@@ -85,7 +85,7 @@ export class ErrorInterceptor implements HttpInterceptor {
                     }),
                     catchError((err) => {
                         this.isRefreshing = false;
-                        console.log('log out');
+                        console.log('log out, reason: ', err);
                         this.authenticationService.logout();
                         this.router.navigateByUrl(this.appRoutes.Auth.SIGN_IN);
                         return throwError(() => err);
