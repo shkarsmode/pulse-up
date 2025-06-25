@@ -6,6 +6,7 @@ import { API_URL } from "../../tokens/tokens";
 import { ITopPulse } from "../../interfaces/top-pulse.interface";
 import { IValidateTopicTitleResponse } from "../../interfaces/validate-topic-title.response";
 import { ICategory } from "../../interfaces/category.interface";
+import { PendingTopicsService } from "../topic/pending-topics.service";
 
 @Injectable({
     providedIn: "root",
@@ -18,6 +19,7 @@ export class PulseService {
 
     private readonly apiUrl: string = inject(API_URL);
     private readonly http: HttpClient = inject(HttpClient);
+    private readonly pendingTopicsService = inject(PendingTopicsService);
 
     constructor() {
         this.get().pipe(first()).subscribe();
@@ -41,11 +43,14 @@ export class PulseService {
                     this.actualTopicsImageKeyMap[pulse.id] = pulse.icon;
                 }),
             ),
+            map((pulses) => pulses.map((pulse) => this.syncPendingTopics(pulse))),
         );
     }
 
     public getById(id: string | number): Observable<ITopic> {
-        return this.http.get<ITopic>(`${this.apiUrl}/topics/${id}`);
+        return this.http.get<ITopic>(`${this.apiUrl}/topics/${id}`).pipe(
+            map((topic) => this.syncPendingTopics(topic)),
+        );
     }
 
     public getMyTopics(params: { skip?: number; take?: number, state?: TopicState[] } = {}) {
@@ -260,5 +265,34 @@ export class PulseService {
                     return of("");
                 }),
             );
+    }
+
+    private syncPendingTopics(topic: ITopic): ITopic {
+        const pendingTopic = this.pendingTopicsService.get(topic.id);
+        if (!pendingTopic) {
+            return {
+                ...topic,
+                stats: topic.stats || {
+                    totalVotes: 0,
+                    totalUniqueUsers: 0,
+                    lastDayVotes: 0,
+                },
+            };
+        }
+
+        const isUpdated = topic.stats?.totalVotes && topic.stats.totalVotes >= pendingTopic.stats.totalVotes;
+
+        if (isUpdated) {
+            return topic;
+        } else {
+            return {
+                ...topic,
+                stats: {
+                    totalVotes: pendingTopic.stats.totalVotes,
+                    totalUniqueUsers: pendingTopic.stats.totalUniqueUsers,
+                    lastDayVotes: pendingTopic.stats.lastDayVotes,
+                },
+            }
+        }
     }
 }

@@ -12,7 +12,7 @@ export interface ITopic {
     startsAt: string;
     endsAt: string;
     location: Location;
-    stats?: Stats;
+    stats?: ITopicStats;
     picture: string;
     shareKey: string;
     category: string;
@@ -29,7 +29,7 @@ interface Location {
     country: string;
 }
 
-interface Stats {
+export interface ITopicStats {
     totalVotes: number;
     totalUniqueUsers: number;
     lastDayVotes: number;
