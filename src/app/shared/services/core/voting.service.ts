@@ -29,7 +29,9 @@ export class VotingService {
 
         this.isVotingSubject.next(true);
 
-        return this.geolocationService.getCurrentGeolocation().pipe(
+        return this.geolocationService.getCurrentGeolocation({
+            enableHighAccuracy: false,
+        }).pipe(
             catchError((error) => {
                 this.isVotingSubject.next(false);
                 let message = "You need to allow geolocation access to vote";

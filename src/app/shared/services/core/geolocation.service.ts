@@ -5,6 +5,10 @@ import { IGeolocation } from "../../interfaces";
 
 type GeolocationStatus = "initial" | "pending" | "success" | "error";
 
+interface GetCurrentGeolocationOptions {
+    enableHighAccuracy?: boolean;
+}
+
 @Injectable({
     providedIn: "root",
 })
@@ -16,7 +20,9 @@ export class GeolocationService {
     public isSupported = "geolocation" in navigator;
     public geolocation: IGeolocation | null = null;
 
-    getCurrentGeolocation(): Observable<IGeolocation> {
+    getCurrentGeolocation(options?: GetCurrentGeolocationOptions): Observable<IGeolocation> {
+        const { enableHighAccuracy = true } = options || {};
+
         if (!this.isSupported) {
             this.statusSubject.next("error");
             return new Observable((observer) => {
@@ -38,7 +44,7 @@ export class GeolocationService {
                 (position) => {
                     const accuracy = position.coords.accuracy;
                     console.log({ accuracy, position });
-                    if (accuracy > 100) {
+                    if (enableHighAccuracy && accuracy > 100) {
                         this.statusSubject.next("error");
                         observer.error(new Error("Geolocation accuracy is too low"));
                         return;
@@ -66,7 +72,7 @@ export class GeolocationService {
                     }
                 },
                 {
-                    enableHighAccuracy: true,
+                    enableHighAccuracy,
                     timeout: 60000,
                     maximumAge: 60 * 1000,
                 },

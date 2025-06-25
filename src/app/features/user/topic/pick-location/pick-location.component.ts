@@ -98,7 +98,7 @@ export class PickLocationComponent implements OnInit, OnDestroy {
     getMyPosition = () => {
         this.isGeolocationRequestInProgress.next(true);
         this.geolocationService
-            .getCurrentGeolocation()
+            .getCurrentGeolocation({ enableHighAccuracy: false })
             .pipe(
                 takeUntil(this.destroy$),
                 catchError((error) => {
