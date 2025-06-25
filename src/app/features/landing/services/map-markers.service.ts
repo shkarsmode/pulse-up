@@ -1,6 +1,6 @@
 import { inject, Injectable } from "@angular/core";
 import * as h3 from "h3-js";
-import { debounceTime, first, Subject } from "rxjs";
+import { debounceTime, first, Subject, tap } from "rxjs";
 import { IMapMarker, IMapMarkerAnimated } from "@/app/shared/interfaces/map-marker.interface";
 import { IH3Pulses } from "../interfaces/h3-pulses.interface";
 import { ITopic } from "@/app/shared/interfaces";
@@ -16,13 +16,25 @@ export class MapMarkersService {
     public markers: IMapMarkerAnimated[] = [];
     public tooltipData: (ITopic & { markerId: number }) | null = null;
     public readonly markerHover$ = new Subject<IMapMarker>();
+    private pulseCache = new Map<number, ITopic>();
 
     constructor() {
         this.markerHover$.pipe(debounceTime(300), takeUntilDestroyed()).subscribe((marker) => {
             this.tooltipData = null;
+            const cached = this.pulseCache.get(marker.topicId);
+            if (cached) {
+                this.tooltipData = {
+                    ...cached,
+                    markerId: marker.id,
+                }
+                return;
+            }
             this.pulseService
                 .getById(marker.topicId)
-                .pipe(first())
+                .pipe(
+                    first(),
+                    tap((pulse) => this.pulseCache.set(pulse.id, pulse)), 
+                )
                 .subscribe((pulse) => {
                     this.tooltipData = {
                         ...pulse,
@@ -42,7 +54,7 @@ export class MapMarkersService {
                 lat,
                 icon: data[h3Index].icon,
                 h3Index,
-                topicId: data[h3Index].topicId.toString(),
+                topicId: data[h3Index].topicId,
                 delay: this.randomInteger(100, 2000),
             });
         });

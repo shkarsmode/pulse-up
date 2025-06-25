@@ -28,10 +28,12 @@ export class TopicPreviewComponent {
     isReadMore: boolean = false;
     isReadyForPreview = this.sendTopicService.isTopicReadyForPreview;
     isSubmitting = this.sendTopicService.submitting.asObservable();
-    customLocationCoordinates = this.sendTopicService.customLocation ? {
-        lng: this.sendTopicService.customLocation.lng,
-        lat: this.sendTopicService.customLocation.lat,
-    } : null;
+    customLocationCoordinates = this.sendTopicService.customLocation
+        ? {
+              lng: this.sendTopicService.customLocation.lng,
+              lat: this.sendTopicService.customLocation.lat,
+          }
+        : null;
     customLocationName = this.sendTopicService.customLocation?.fullname || "";
 
     constructor() {
@@ -51,6 +53,10 @@ export class TopicPreviewComponent {
 
     onPublish() {
         this.sendTopicService.createTopic();
+    }
+
+    onEdit() {
+        this.location.back();
     }
 
     private readFiles(): void {

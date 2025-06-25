@@ -1,6 +1,6 @@
 export interface IMapMarker {
   id: number;
-  topicId: string;
+  topicId: number;
   h3Index: string;
   lng: number;
   lat: number;
