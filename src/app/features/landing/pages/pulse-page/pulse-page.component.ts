@@ -149,9 +149,9 @@ export class PulsePageComponent implements OnInit {
             votes: this.getVote(topicId),
         }).pipe(
             tap(({ topic, votes }) => {
+                this.updateTopicData(topic);
                 this.createLink(topic);
                 this.updateSuggestions();
-                this.updateTopicData(topic);
                 this.updateMetadata(topic);
                 if (votes && votes[0]) {
                     this.updateVoteData(votes[0]);

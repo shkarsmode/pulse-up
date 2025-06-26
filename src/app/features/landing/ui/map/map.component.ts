@@ -371,9 +371,6 @@ export class MapComponent implements OnInit {
             resolutionLevelsByZoom: this.zoomResolutionMap,
         });
 
-        console.log({resolution, zoom: this.map.getZoom()});
-        
-
         const bounds = this.getMapBounds({
             global: this.shouldFetchGlobalMapData(),
         });
