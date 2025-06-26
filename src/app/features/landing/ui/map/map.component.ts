@@ -93,7 +93,7 @@ export class MapComponent implements OnInit {
     @Input() public fog: Fog | null = null;
     @Input() public zoomResolutionMap: { [key: number]: number } = {
         0: 0,
-        1: 0,
+        1: 1,
         2: 1,
         3: 1,
         3.3: 2,

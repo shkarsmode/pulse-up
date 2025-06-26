@@ -1,6 +1,6 @@
 import { HttpEvent, HttpHandler, HttpInterceptor, HttpRequest } from "@angular/common/http";
 import { inject, Injectable } from "@angular/core";
-import { from, Observable, switchMap } from "rxjs";
+import { from, Observable, switchMap, take } from "rxjs";
 import { AuthenticationService } from "../../services/api/authentication.service";
 
 @Injectable()
@@ -19,25 +19,27 @@ export class JwtInterceptor implements HttpInterceptor {
                 request,
                 token,
                 withCredentials: !!userToken,
-            })
+            });
             return next.handle(clonedRequest);
         }
 
-        const currentUser = this.authenticationService.firebaseAuth.currentUser;
-
-        if (!currentUser) {
-            return next.handle(request);
-        }
-
-        return from(currentUser.getIdToken()).pipe(
-            switchMap((token) => {
-                const cloned = request.clone({
-                    setHeaders: {
-                        Authorization: `Bearer ${token}`,
-                    },
-                    withCredentials: !currentUser.isAnonymous,
-                });
-                return next.handle(cloned);
+        return this.authenticationService.user$.pipe(
+            take(1),
+            switchMap((user) => {
+                if (!user) {
+                    return next.handle(request);
+                }
+                return from(user.getIdToken()).pipe(
+                    switchMap((token) => {
+                        const cloned = request.clone({
+                            setHeaders: {
+                                Authorization: `Bearer ${token}`,
+                            },
+                            withCredentials: !user.isAnonymous,
+                        });
+                        return next.handle(cloned);
+                    }),
+                );
             }),
         );
     }

@@ -1,7 +1,7 @@
 import { inject, Injectable } from "@angular/core";
 import { CanActivate, Router } from "@angular/router";
 import { AppRoutes } from "@/app/shared/enums/app-routes.enum";
-import { LocalStorageService } from "@/app/shared/services/core/local-storage.service";
+import { LOCAL_STORAGE_KEYS, LocalStorageService } from "@/app/shared/services/core/local-storage.service";
 
 @Injectable({
     providedIn: "root",
@@ -23,6 +23,6 @@ export class SuggestGuard implements CanActivate {
 
     private isAllowed(): boolean {
         this.isUserBeenHere = false;
-        return LocalStorageService.get<boolean>("how_it_works_page_visited") || false;
+        return LocalStorageService.get<boolean>(LOCAL_STORAGE_KEYS.howItWorksPageVisited) || false;
     }
 }
