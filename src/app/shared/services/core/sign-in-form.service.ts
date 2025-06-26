@@ -51,7 +51,7 @@ export class SignInFormService {
 
     private resetInput() {
         const code = this.iti.getSelectedCountryData().dialCode;
-        this.form.get("phone")?.setValue("+" + code);
+        this.form.get("phone")?.reset("")
         this.validateNumber({ isEmptyValid: true });
     }
 
@@ -140,7 +140,7 @@ export class SignInFormService {
             this.submit();
         } else if (!this.validateChar(event)) {
             event.preventDefault();
-        } else if (!this.validateMinValueLength(event) || !this.validateMaxValueLength(event)) {
+        } else if (!this.validateMaxValueLength(event)) {
             event.preventDefault();
         }
     };
@@ -155,6 +155,7 @@ export class SignInFormService {
             formatOnDisplay: true,
             initialCountry: "US",
             showFlags: true,
+            separateDialCode: true,
         });
         this.subscriptions.push(
             fromEvent(inputElement, "blur").pipe(delay(100), map(this.onBlur)).subscribe(),
@@ -178,28 +179,29 @@ export class SignInFormService {
     public validateNumber({ isEmptyValid = false }: { isEmptyValid?: boolean } = {}) {
         if (!this.iti) return;
         const value = this.form.get("phone")?.value;
-        const iso2Code = this.iti.getSelectedCountryData().iso2?.toUpperCase();
         const dialCode = this.iti.getSelectedCountryData().dialCode;
-        if (!iso2Code) return;
-
-        const isEmpty = value === "+" + dialCode;
+        const iso2Code = this.iti.getSelectedCountryData().iso2?.toUpperCase();
+        if (!iso2Code || !dialCode) return;
+        
+        const isEmpty = value === "";
         if (isEmpty && isEmptyValid) {
             this.isValid = true;
             return;
         }
 
-        const valid = isValidPhoneNumber(value, iso2Code as CountryCode);
+        const valid = isValidPhoneNumber(dialCode + value, iso2Code as CountryCode);
         this.isValid = valid;
     }
 
     public submit = () => {
+        const dialCode = this.iti.getSelectedCountryData().dialCode;
         this.validateNumber();
-        if (!this.isValid) return;
-        const phone = this.form.value.phone;
+        if (!this.isValid || !dialCode) return;
+        const phoneNumber = `+${dialCode}${this.form.value.phone}`;
 
         if (this.mode === "signIn") {
             this.authenticationService
-                .loginWithPhoneNumber(phone)
+                .loginWithPhoneNumber(phoneNumber)
                 .pipe(take(1))
                 .subscribe({
                     next: () => {
@@ -213,7 +215,7 @@ export class SignInFormService {
                 });
         } else {
             this.authenticationService
-                .changePhoneNumber(phone)
+                .changePhoneNumber(phoneNumber)
                 .pipe(take(1))
                 .subscribe({
                     next: () => {

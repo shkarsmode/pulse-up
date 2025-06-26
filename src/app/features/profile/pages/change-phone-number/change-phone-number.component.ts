@@ -1,6 +1,7 @@
 import { Component, inject, ViewChild } from "@angular/core";
 import { FormGroup, ReactiveFormsModule } from "@angular/forms";
 import { Router } from "@angular/router";
+import { map, take, tap } from "rxjs";
 import { ErrorStateMatcher } from "@angular/material/core";
 import { MatInputModule } from "@angular/material/input";
 import { MatFormFieldModule } from "@angular/material/form-field";
@@ -16,14 +17,14 @@ import { SecondaryButtonComponent } from "@/app/shared/components/ui-kit/buttons
     selector: "app-change-phone-number",
     standalone: true,
     imports: [
-    CommonModule,
-    ReactiveFormsModule,
-    MatInputModule,
-    MatFormFieldModule,
-    ProfileLayoutComponent,
-    PrimaryButtonComponent,
-    SecondaryButtonComponent
-],
+        CommonModule,
+        ReactiveFormsModule,
+        MatInputModule,
+        MatFormFieldModule,
+        ProfileLayoutComponent,
+        PrimaryButtonComponent,
+        SecondaryButtonComponent,
+    ],
     providers: [SignInFormService],
     templateUrl: "./change-phone-number.component.html",
     styleUrl: "./change-phone-number.component.scss",
@@ -33,17 +34,26 @@ export class ChangePhoneNumberComponent {
     private signInFormService: SignInFormService = inject(SignInFormService);
     private authenticationService: AuthenticationService = inject(AuthenticationService);
     private appRotes = AppRoutes;
-    private initialValue = this.authenticationService.firebaseAuth.currentUser?.phoneNumber || "";
 
     public isLoading$ = this.signInFormService.isChangingPhoneNumberInProgress.asObservable();
+    public initialValue: string = "";
 
     @ViewChild("telInput") telInput: { nativeElement: HTMLInputElement };
 
     constructor() {
         this.signInFormService.initialize({
-            initialValue: this.initialValue,
+            initialValue: "",
             mode: "changePhoneNumber",
         });
+
+        this.authenticationService.user$.pipe(
+            take(1),
+            map((user) => user?.phoneNumber || ""),
+            tap((value) => {
+                this.signInForm.setValue({ phone: value });
+                this.initialValue = value;
+            }),
+        ).subscribe();
     }
 
     public get signInForm(): FormGroup {
