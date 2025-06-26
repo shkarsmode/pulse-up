@@ -140,7 +140,7 @@ export class AuthenticationService {
     }
 
     public resendVerificationCode() {
-        const phoneNumber = LocalStorageService.get<string>("phoneNumberForSignin");
+        const phoneNumber = LocalStorageService.get<string>(LOCAL_STORAGE_KEYS.phoneNumberForSigning);
         if (!phoneNumber) {
             return throwError(
                 () =>
@@ -497,7 +497,7 @@ export class AuthenticationService {
                 this.windowRef.confirmationResult = confirmationResult;
             }),
             tap(() => {
-                LocalStorageService.set("phoneNumberForSignin", phoneNumber);
+                LocalStorageService.set(LOCAL_STORAGE_KEYS.phoneNumberForSigning, phoneNumber);
             }),
         );
     };
@@ -544,7 +544,7 @@ export class AuthenticationService {
             tap(({ token }) => {
                 LocalStorageService.set(LOCAL_STORAGE_KEYS.userToken, token);
                 LocalStorageService.set(LOCAL_STORAGE_KEYS.isAnonymous, false);
-                LocalStorageService.remove("phoneNumberForSignin");
+                LocalStorageService.remove(LOCAL_STORAGE_KEYS.phoneNumberForSigning);
                 LocalStorageService.remove(LOCAL_STORAGE_KEYS.anonymousToken);
                 this.userToken$.next(token);
                 this.anonymousUser$.next(null);
@@ -574,7 +574,7 @@ export class AuthenticationService {
 
     private handleLoginWithPhoneNumberError = (error: any) => {
         console.log("Error sending verification code", error);
-        LocalStorageService.remove("phoneNumberForSignin");
+        LocalStorageService.remove(LOCAL_STORAGE_KEYS.phoneNumberForSigning);
 
         if (error instanceof AuthenticationError) return throwError(() => error);
 

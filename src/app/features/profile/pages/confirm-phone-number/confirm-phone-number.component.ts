@@ -12,7 +12,7 @@ import { ReactiveFormsModule } from "@angular/forms";
 import { Subscription } from "rxjs";
 import { NgOtpInputComponent, NgOtpInputModule } from "ng-otp-input";
 import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
-import { LocalStorageService } from "@/app/shared/services/core/local-storage.service";
+import { LOCAL_STORAGE_KEYS, LocalStorageService } from "@/app/shared/services/core/local-storage.service";
 import { ConfirmPhoneNumberService } from "@/app/shared/services/core/confirm-phone-number.service";
 import { LinkButtonComponent } from "../../../../shared/components/ui-kit/buttons/link-button/link-button.component";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
@@ -43,7 +43,7 @@ export class ConfirmPhoneNumberComponent implements OnInit, AfterViewInit, OnDes
     public config = this.confirmPhoneNumberService.otpInputConfig;
     public isVerifyingCode = this.confirmPhoneNumberService.isVerifyingCode;
     public isResendingCode = this.confirmPhoneNumberService.isResendingCode$.asObservable();
-    private savedPhoneNumber: string = LocalStorageService.get("phoneNumberForSignin") || "";
+    private savedPhoneNumber: string = LocalStorageService.get(LOCAL_STORAGE_KEYS.phoneNumberForSigning) || "";
     private cooldownSub?: Subscription;
 
     public get phoneNumber(): string {
