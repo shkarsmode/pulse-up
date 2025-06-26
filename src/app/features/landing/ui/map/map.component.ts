@@ -93,7 +93,7 @@ export class MapComponent implements OnInit {
     @Input() public fog: Fog | null = null;
     @Input() public zoomResolutionMap: { [key: number]: number } = {
         0: 0,
-        1: 0,
+        1: 1,
         2: 1,
         3: 1,
         3.3: 2,
@@ -370,6 +370,9 @@ export class MapComponent implements OnInit {
             map: this.map,
             resolutionLevelsByZoom: this.zoomResolutionMap,
         });
+
+        console.log({resolution, zoom: this.map.getZoom()});
+        
 
         const bounds = this.getMapBounds({
             global: this.shouldFetchGlobalMapData(),
