@@ -1,4 +1,4 @@
-import { HttpClient, HttpHeaders, HttpParams } from "@angular/common/http";
+import { HttpHeaders } from "@angular/common/http";
 import { inject, Inject, Injectable } from "@angular/core";
 import { FirebaseApp, FirebaseError, initializeApp } from "firebase/app";
 import {
@@ -20,7 +20,7 @@ import {
 } from "firebase/auth";
 import { jwtDecode, JwtPayload } from "jwt-decode";
 import { BehaviorSubject, from, Observable, of, throwError } from "rxjs";
-import { catchError, map, switchMap, tap } from "rxjs/operators";
+import { catchError, map, switchMap, take, tap } from "rxjs/operators";
 import { IFirebaseConfig, IProfile } from "../../interfaces";
 import { API_URL, FIREBASE_CONFIG } from "../../tokens/tokens";
 import { IdentityService } from "./identity.service";
@@ -38,11 +38,15 @@ import {
     providedIn: "root",
 })
 export class AuthenticationService {
-    private readonly apiUrl: string = inject(API_URL);
-    private readonly http: HttpClient = inject(HttpClient);
     private readonly windowService: WindowService = inject(WindowService);
     private readonly userService: UserService = inject(UserService);
     private readonly identityService: IdentityService = inject(IdentityService);
+
+    private anonymousUser$: BehaviorSubject<string | null>;
+    private userToken$: BehaviorSubject<string | null>;
+    private windowRef: Window;
+    private firebaseApp: FirebaseApp;
+    private userSubject = new BehaviorSubject<User | null>(null);
 
     public anonymousUser: Observable<string | null>;
     public userToken: Observable<string | null>;
@@ -51,23 +55,27 @@ export class AuthenticationService {
     public isConfirmInProgress$: BehaviorSubject<boolean>;
     public isChangePhoneNumberInProgress$: BehaviorSubject<boolean>;
     public isResendInProgress$: BehaviorSubject<boolean>;
-
-    private anonymousUser$: BehaviorSubject<string | null>;
-    private userToken$: BehaviorSubject<string | null>;
-    private windowRef: Window;
-    private firebaseApp: FirebaseApp;
+    public user$ = this.userSubject.asObservable();
 
     constructor(@Inject(FIREBASE_CONFIG) private readonly firebaseConfig: IFirebaseConfig) {
         this.firebaseApp = this.initFirebaseAppWithConfig();
-        this.anonymousUser$ = new BehaviorSubject(LocalStorageService.get<string>(LOCAL_STORAGE_KEYS.anonymousToken));
+        this.anonymousUser$ = new BehaviorSubject(
+            LocalStorageService.get<string>(LOCAL_STORAGE_KEYS.anonymousToken),
+        );
         this.anonymousUser = this.anonymousUser$.asObservable();
-        this.userToken$ = new BehaviorSubject(LocalStorageService.get<string>(LOCAL_STORAGE_KEYS.userToken));
+        this.userToken$ = new BehaviorSubject(
+            LocalStorageService.get<string>(LOCAL_STORAGE_KEYS.userToken),
+        );
         this.userToken = this.userToken$.asObservable();
         this.isSigninInProgress$ = new BehaviorSubject<boolean>(false);
         this.isConfirmInProgress$ = new BehaviorSubject<boolean>(false);
         this.isResendInProgress$ = new BehaviorSubject<boolean>(false);
         this.isChangePhoneNumberInProgress$ = new BehaviorSubject<boolean>(false);
         this.windowRef = this.windowService.windowRef;
+
+        getAuth(this.firebaseApp).onAuthStateChanged((user) => {
+            this.userSubject.next(user);
+        });
     }
 
     public get firebaseAuth(): Auth {
@@ -135,7 +143,11 @@ export class AuthenticationService {
         const phoneNumber = LocalStorageService.get<string>("phoneNumberForSignin");
         if (!phoneNumber) {
             return throwError(
-                () => new AuthenticationError("Failed to resend verification code. Please try again.", AuthenticationErrorCode.INVALID_CREDENTIALS),
+                () =>
+                    new AuthenticationError(
+                        "Failed to resend verification code. Please try again.",
+                        AuthenticationErrorCode.INVALID_CREDENTIALS,
+                    ),
             );
         }
         return of(null).pipe(
@@ -189,12 +201,24 @@ export class AuthenticationService {
 
         const email = LocalStorageService.get<string>(LOCAL_STORAGE_KEYS.verifyEmail);
         if (!email) {
-            return throwError(() => new AuthenticationError("Email not found.", AuthenticationErrorCode.INVALID_CREDENTIALS));
+            return throwError(
+                () =>
+                    new AuthenticationError(
+                        "Email not found.",
+                        AuthenticationErrorCode.INVALID_CREDENTIALS,
+                    ),
+            );
         }
 
         const user = this.firebaseAuth.currentUser;
         if (!user) {
-            return throwError(() => new AuthenticationError("No authenticated user found.", AuthenticationErrorCode.INVALID_CREDENTIALS));
+            return throwError(
+                () =>
+                    new AuthenticationError(
+                        "No authenticated user found.",
+                        AuthenticationErrorCode.INVALID_CREDENTIALS,
+                    ),
+            );
         }
 
         const credential = EmailAuthProvider.credentialWithLink(email, continueUrl);
@@ -205,7 +229,11 @@ export class AuthenticationService {
                 const updatedUser = this.firebaseAuth.currentUser;
                 if (!updatedUser) {
                     return throwError(
-                        () => new AuthenticationError("Failed to update user after linking email.", AuthenticationErrorCode.INVALID_CREDENTIALS),
+                        () =>
+                            new AuthenticationError(
+                                "Failed to update user after linking email.",
+                                AuthenticationErrorCode.INVALID_CREDENTIALS,
+                            ),
                     );
                 }
                 return of(updatedUser);
@@ -219,7 +247,13 @@ export class AuthenticationService {
     public changeEmail = ({ email, continueUrl }: { email: string; continueUrl: string }) => {
         const user = this.firebaseAuth.currentUser;
         if (!user) {
-            return throwError(() => new AuthenticationError("No authenticated user found.", AuthenticationErrorCode.INVALID_CREDENTIALS));
+            return throwError(
+                () =>
+                    new AuthenticationError(
+                        "No authenticated user found.",
+                        AuthenticationErrorCode.INVALID_CREDENTIALS,
+                    ),
+            );
         }
         return from(
             verifyBeforeUpdateEmail(user, email, {
@@ -325,28 +359,44 @@ export class AuthenticationService {
         );
     };
 
-    public updateToken = () => {
-        const user = this.firebaseAuth.currentUser;
-        if (!user) {
-            return throwError(() => new AuthenticationError("No authenticated user found.", AuthenticationErrorCode.INVALID_CREDENTIALS));
-        }
-        const isAnonymous = LocalStorageService.get<boolean>(LOCAL_STORAGE_KEYS.isAnonymous);
-        return from(user.getIdToken(true)).pipe(
-            map((newToken: string) => {
-                if (isAnonymous) {
-                    LocalStorageService.set(LOCAL_STORAGE_KEYS.anonymousToken, newToken);
-                    this.anonymousUser$.next(newToken);
-                } else {
-                    LocalStorageService.set(LOCAL_STORAGE_KEYS.userToken, newToken);
-                    this.userToken$.next(newToken);
+    public updateToken = (): Observable<string> => {
+        return this.user$.pipe(
+            take(1),
+            switchMap((user) => {
+                if (!user) {
+                    return throwError(
+                        () =>
+                            new AuthenticationError(
+                                "No authenticated user found.",
+                                AuthenticationErrorCode.INVALID_CREDENTIALS,
+                            ),
+                    );
                 }
-                return newToken;
+
+                return from(user.getIdToken(true)).pipe(
+                    map((newToken: string) => {
+                        if (user.isAnonymous) {
+                            LocalStorageService.set(LOCAL_STORAGE_KEYS.anonymousToken, newToken);
+                            this.anonymousUser$.next(newToken);
+                        } else {
+                            LocalStorageService.set(LOCAL_STORAGE_KEYS.userToken, newToken);
+                            this.userToken$.next(newToken);
+                        }
+                        return newToken;
+                    }),
+                );
             }),
             catchError((error: any) => {
-                return throwError(() => new AuthenticationError(error.message, AuthenticationErrorCode.UNKNOWN_ERROR));
+                return throwError(
+                    () =>
+                        new AuthenticationError(
+                            error.message,
+                            AuthenticationErrorCode.UNKNOWN_ERROR,
+                        ),
+                );
             }),
-        )
-    }
+        );
+    };
 
     public isTokenExpired(token: string): boolean {
         if (!token) {
@@ -365,7 +415,7 @@ export class AuthenticationService {
 
     public stopSignInProgress = () => {
         this.isSigninInProgress$.next(false);
-    }
+    };
 
     private decodeToken(token: string): JwtPayload | null {
         try {
@@ -689,5 +739,5 @@ export class AuthenticationService {
             );
         }
         return of(isValid);
-    }
+    };
 }
