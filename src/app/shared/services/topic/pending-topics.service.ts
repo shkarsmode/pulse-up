@@ -14,7 +14,7 @@ interface IPendingTopic {
 export class PendingTopicsService {
     private pendingTopics: IPendingTopic[] = [];
     private expirationTime = 2 * 60 * 1000; // 2 minutes
-    private readonly STORAGE_KEY = 'pending_topics';
+    private readonly STORAGE_KEY = LOCAL_STORAGE_KEYS.pendingTopics;
 
     constructor() {
         this.loadFromStorage();
