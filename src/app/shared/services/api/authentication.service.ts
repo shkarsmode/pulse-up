@@ -72,8 +72,9 @@ export class AuthenticationService {
         this.isResendInProgress$ = new BehaviorSubject<boolean>(false);
         this.isChangePhoneNumberInProgress$ = new BehaviorSubject<boolean>(false);
         this.windowRef = this.windowService.windowRef;
-
+        
         getAuth(this.firebaseApp).onAuthStateChanged((user) => {
+            console.log("user state changed", user);
             this.userSubject.next(user);
         });
     }
