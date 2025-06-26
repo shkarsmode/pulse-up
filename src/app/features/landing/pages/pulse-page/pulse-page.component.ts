@@ -1,4 +1,4 @@
-import { Component, ElementRef, inject, OnInit, ViewChild } from "@angular/core";
+import { Component, DestroyRef, ElementRef, inject, OnInit, ViewChild } from "@angular/core";
 import { ActivatedRoute, ParamMap, Router, RouterModule } from "@angular/router";
 import { CommonModule } from "@angular/common";
 import {
@@ -13,6 +13,7 @@ import {
     take,
     tap,
 } from "rxjs";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { SvgIconComponent } from "angular-svg-icon";
 import { AppRoutes } from "@/app/shared/enums/app-routes.enum";
 import { MatDialog } from "@angular/material/dialog";
@@ -75,6 +76,7 @@ export class PulsePageComponent implements OnInit {
     private readonly notificationService = inject(NotificationService);
     private readonly authService = inject(AuthenticationService);
     private readonly pendingTopicsService = inject(PendingTopicsService);
+    private readonly destroyRef = inject(DestroyRef)
     private mutationObserver: MutationObserver | null = null;
 
     topic: ITopic | null = null;
@@ -131,7 +133,7 @@ export class PulsePageComponent implements OnInit {
     private getInitialData(): void {
         this.route.paramMap
             .pipe(
-                take(1),
+                takeUntilDestroyed(this.destroyRef),
                 map((params: ParamMap) => +params.get("id")!),
                 tap(() => {
                     this.topic = null;

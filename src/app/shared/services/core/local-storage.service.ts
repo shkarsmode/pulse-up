@@ -10,6 +10,7 @@ export const LOCAL_STORAGE_KEYS = {
     anonymousToken: "anonymous",
     userToken: "userToken",
     howItWorksPageVisited: "how_it_works_page_visited",
+    pendingTopics: "pending_topics",
 } as const;
 
 type LocalStorageKey = typeof LOCAL_STORAGE_KEYS[keyof typeof LOCAL_STORAGE_KEYS];
