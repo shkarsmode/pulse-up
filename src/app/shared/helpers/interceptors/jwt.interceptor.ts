@@ -26,12 +26,9 @@ export class JwtInterceptor implements HttpInterceptor {
         return this.authenticationService.user$.pipe(
             take(1),
             switchMap((user) => {
-                console.log({user});
-                
                 if (!user) {
                     return next.handle(request);
                 }
-
                 return from(user.getIdToken()).pipe(
                     switchMap((token) => {
                         const cloned = request.clone({
