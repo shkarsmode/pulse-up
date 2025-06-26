@@ -24,8 +24,7 @@ export class UserService {
 
     public getOwnProfile(): Observable<Nullable<IProfile>> {
         return this.http.get<IProfile>(`${this.apiUrl}/users/self`).pipe(
-            catchError((error) => {
-                console.log("Failed to fetch my profile:", error);
+            catchError(() => {
                 return of(null);
             })  
         );

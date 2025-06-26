@@ -36,7 +36,6 @@ export class ErrorInterceptor implements HttpInterceptor {
         
         return next.handle(authReq).pipe(
             catchError((error) => {
-                console.log(error);
                 if (error.status === 504) {
                     // this.snackBar.open(
                     //     'To use this admin panel fully, please, check your connection and try again.',
