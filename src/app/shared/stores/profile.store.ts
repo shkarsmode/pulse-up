@@ -19,26 +19,15 @@ export class ProfileStore {
         map((profile) => !!(profile.name && profile.username)),
     );
 
-    constructor() {
-        this.authService.userToken
-            .pipe(
-                takeUntilDestroyed(this.destroyRef),
-                switchMap((token) => {
-                    if (token) {
-                        return this.fetchProfile();
-                    } else {
-                        return of(null);
-                    }
-                }),
-                tap((profile) => this.profileSubject.next(profile)),
-            )
-            .subscribe();
-    }
-
     refreshProfile() {
-        console.log("Refreshing profile");
-        
-        return this.fetchProfile().pipe(tap((profile) => this.profileSubject.next(profile)));
+        return this.authService.user$.pipe(
+            filter((user) => user !== undefined),
+            switchMap((user) => {
+                console.log("User in profile store:", user);
+                return this.fetchProfile();
+            }),
+            tap((profile) => this.profileSubject.next(profile)),
+        )
     }
 
     updateProfile(data: IProfile) {
