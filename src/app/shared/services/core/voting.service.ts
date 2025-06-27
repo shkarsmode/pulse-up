@@ -1,10 +1,9 @@
 import { inject, Injectable } from "@angular/core";
-import { BehaviorSubject, catchError, finalize, switchMap, throwError } from "rxjs";
+import { BehaviorSubject, catchError, switchMap, tap, throwError } from "rxjs";
 import { GeolocationService } from "./geolocation.service";
 import { AuthenticationService } from "../api/authentication.service";
 import { VotingError, VotingErrorCode } from "../../helpers/errors/voting-error";
 import { VoteService } from "../api/vote.service";
-import { isErrorWithMessage } from "../../helpers/errors/is-error-with-message";
 
 @Injectable({
     providedIn: "root",
@@ -54,6 +53,7 @@ export class VotingService {
                         locationName: geolocation.details.fullname,
                     });
                 }),
+                tap(() => this.isVotingSubject.next(false)),
                 catchError((error) => {
                     this.isVotingSubject.next(false);
                     if (error instanceof VotingError) {
@@ -62,9 +62,6 @@ export class VotingService {
                     return throwError(
                         () => new VotingError("Failed to vote", VotingErrorCode.UNKNOWN_ERROR),
                     );
-                }),
-                finalize(() => {
-                    this.isVotingSubject.next(false);
                 }),
             );
     }

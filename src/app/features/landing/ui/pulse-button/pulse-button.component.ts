@@ -3,7 +3,18 @@ import { CommonModule } from "@angular/common";
 import { SvgIconComponent } from "angular-svg-icon";
 import { VotingService } from "@/app/shared/services/core/voting.service";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
-import { auditTime, first } from "rxjs";
+import {
+    BehaviorSubject,
+    combineLatest,
+    delay,
+    filter,
+    first,
+    mergeMap,
+    Observable,
+    of,
+    switchMap,
+    tap,
+} from "rxjs";
 import { MatDialog } from "@angular/material/dialog";
 import { IVote } from "@/app/shared/interfaces/vote.interface";
 import { HeartBeatDirective } from "@/app/shared/animations/heart-beat.directive";
@@ -16,6 +27,21 @@ import { AuthenticationService } from "@/app/shared/services/api/authentication.
 import { VotingError, VotingErrorCode } from "@/app/shared/helpers/errors/voting-error";
 import { SignInRequiredPopupComponent } from "../sign-in-required-popup/sign-in-required-popup.component";
 import { DownloadAppPopupComponent } from "../download-app-popup/download-app-popup.component";
+
+function delayBetween<T>(delayMs: number, first = false) {
+    let past = Date.now();
+
+    return (source: Observable<T>) =>
+        source.pipe(
+            mergeMap((value, index) => {
+                const now = Date.now();
+                const delayFor = Math.max(index === 0 && !first ? 0 : past + delayMs - now, 0);
+                past = now + delayFor;
+
+                return of(value).pipe(delay(delayFor));
+            }),
+        );
+}
 
 @Component({
     selector: "app-pulse-button",
@@ -43,17 +69,23 @@ export class PulseButtonComponent {
     @Output() voteExpired = new EventEmitter<void>();
     @Output() voted = new EventEmitter<IVote>();
 
-    isVoting = false;
+    private isVotingSubject = new BehaviorSubject(false);
+
+    isVoting$ = this.isVotingSubject.asObservable();
     isActiveVote = false;
     lastVoteInfo = "";
     isAnonymousUser = this.authService.anonymousUserValue;
 
     ngOnInit() {
         this.votingService.isVoting$
-            .pipe(auditTime(750), takeUntilDestroyed(this.destroyRef))
-            .subscribe((isVoting) => {
-                this.isVoting = isVoting;
-            });
+            .pipe(
+                delayBetween(800),
+                tap((isVoting) => {
+                    this.isVotingSubject.next(isVoting);
+                }),
+                takeUntilDestroyed(this.destroyRef),
+            )
+            .subscribe();
 
         if (!this.vote) return;
 
@@ -65,7 +97,7 @@ export class PulseButtonComponent {
     }
 
     onPulse() {
-        if (this.isVoting || this.isActiveVote || !this.topicId) return;
+        if (this.isVotingSubject.value || this.isActiveVote || !this.topicId) return;
 
         this.votingService
             .vote({
@@ -73,13 +105,18 @@ export class PulseButtonComponent {
             })
             .pipe(
                 first((vote) => !!vote),
-                takeUntilDestroyed(this.destroyRef),
+                switchMap((vote) => {
+                    // wait for both the vote and isVoting$ to emit
+                    return combineLatest([
+                        of(vote),
+                        this.isVoting$.pipe(filter((value) => value === false)),
+                    ]).pipe(first());
+                }),
             )
             .subscribe({
-                next: (vote) => {
+                next: ([vote]) => {
                     this.isActiveVote = true;
                     this.lastVoteInfo = VoteUtils.parseVoteInfo(vote);
-                    this.notificationService.success("Thank you for your vote!");
                     this.voted.emit(vote);
                 },
                 error: (error) => {
