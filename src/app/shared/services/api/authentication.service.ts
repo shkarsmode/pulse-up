@@ -33,6 +33,7 @@ import {
     AuthenticationErrorCode,
     AuthenticationError,
 } from "../../helpers/errors/authentication-error";
+import { Nullable } from "../../types";
 
 @Injectable({
     providedIn: "root",
@@ -46,7 +47,7 @@ export class AuthenticationService {
     private userToken$: BehaviorSubject<string | null>;
     private windowRef: Window;
     private firebaseApp: FirebaseApp;
-    private userSubject = new BehaviorSubject<User | null>(null);
+    private userSubject = new BehaviorSubject<Nullable<User> | undefined>(undefined);
 
     public anonymousUser: Observable<string | null>;
     public userToken: Observable<string | null>;
@@ -364,6 +365,8 @@ export class AuthenticationService {
         return this.user$.pipe(
             take(1),
             switchMap((user) => {
+                console.log("Updating token for user:", user);
+                
                 if (!user) {
                     return throwError(
                         () =>
