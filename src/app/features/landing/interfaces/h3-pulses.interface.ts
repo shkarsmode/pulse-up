@@ -1,5 +1,5 @@
-import { ITopPulse } from "@/app/shared/interfaces";
+import { TopCellTopic } from "@/app/shared/interfaces";
 
-export interface IH3Pulses {
-    [h3Index: string]: ITopPulse
+export interface TopCellTopicsByH3Index  {
+    [h3Index: string]: TopCellTopic;
 }

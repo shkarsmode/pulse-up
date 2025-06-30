@@ -1,39 +1,30 @@
+import { Component, EventEmitter, Input, Output } from "@angular/core";
 import { CommonModule } from "@angular/common";
-import { RouterModule } from "@angular/router";
-import { Component, EventEmitter, Input, OnInit, Output } from "@angular/core";
 import { NgxMapboxGLModule } from "ngx-mapbox-gl";
-import mapboxgl from "mapbox-gl";
+import { ITopic } from "@/app/shared/interfaces";
 import {
     IMapMarkerAnimated,
     IMapMarkerVisibilityEventData,
 } from "@/app/shared/interfaces/map-marker.interface";
-import { MarkerIconComponent } from "../../map-marker-icon/marker-icon.component";
-import { TopPulseCardComponent } from "@/app/shared/components/pulses/top-pulse/top-pulse-card.component";
-import { ITopic } from "@/app/shared/interfaces";
-import { SpinnerComponent } from "@/app/shared/components/ui-kit/spinner/spinner.component";
-import { MapPopoverComponent } from "../../map-popover/map-popover.component";
+import { MapPopoverComponent } from "../map-popover/map-popover.component";
+import { MapMarkerIconComponent } from "../map-marker-icon/map-marker-icon.component";
+import { RouterModule } from "@angular/router";
+import { TopPulseCardComponent } from "../../pulses/top-pulse/top-pulse-card.component";
+import { SpinnerComponent } from "../../ui-kit/spinner/spinner.component";
 
 @Component({
     selector: "app-map-marker",
+    standalone: true,
+    imports: [CommonModule, NgxMapboxGLModule, MapPopoverComponent, MapMarkerIconComponent, RouterModule, TopPulseCardComponent, SpinnerComponent],
     templateUrl: "./map-marker.component.html",
     styleUrl: "./map-marker.component.scss",
-    standalone: true,
-    imports: [
-    CommonModule,
-    RouterModule,
-    NgxMapboxGLModule,
-    MarkerIconComponent,
-    TopPulseCardComponent,
-    SpinnerComponent,
-    MapPopoverComponent
-],
 })
-export class MapMarkerComponent implements OnInit {
+export class MapMarkerComponent {
+    @Input() map: mapboxgl.Map | null = null;
     @Input() marker: IMapMarkerAnimated;
     @Input() tooltipData: ITopic | null;
     @Input() showTooltipOnHover: boolean = true;
     @Input() isAnimated: boolean = false;
-    @Input() map: mapboxgl.Map | null = null;
 
     @Output() tooltipHideEnd: EventEmitter<void> = new EventEmitter<void>();
     @Output() markerClick: EventEmitter<IMapMarkerAnimated> =
@@ -76,7 +67,7 @@ export class MapMarkerComponent implements OnInit {
                 ...this.marker,
                 isVisible,
             });
-        };
+        }
     }
 
     public opacity: number = 0;

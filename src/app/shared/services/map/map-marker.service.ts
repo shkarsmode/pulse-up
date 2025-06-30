@@ -1,11 +1,15 @@
 import { inject, Injectable } from "@angular/core";
 import * as h3 from "h3-js";
-import { debounceTime, first, Subject, tap } from "rxjs";
+import { BehaviorSubject, debounceTime, first, Subject, tap } from "rxjs";
 import { IMapMarker, IMapMarkerAnimated } from "@/app/shared/interfaces/map-marker.interface";
-import { TopCellTopicsByH3Index } from "../interfaces/h3-pulses.interface";
 import { ITopic } from "@/app/shared/interfaces";
 import { PulseService } from "@/app/shared/services/api/pulse.service";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
+import { TopCellTopicsByH3Index } from "@/app/features/landing/interfaces/h3-pulses.interface";
+
+interface TooltipData extends ITopic {
+    markerId: number;
+}
 
 @Injectable({
     providedIn: "root",
@@ -14,41 +18,46 @@ export class MapMarkersService {
     private readonly pulseService: PulseService = inject(PulseService);
 
     private readonly markerHover$ = new Subject<IMapMarker>();
-    public markers: IMapMarkerAnimated[] = [];
-    public tooltipData: (ITopic & { markerId: number }) | null = null;
+    private markers = new BehaviorSubject<IMapMarkerAnimated[]>([]);
+    private tooltipData = new BehaviorSubject<TooltipData | null>(null);
     private pulseCache = new Map<number, ITopic>();
+    markers$ = this.markers.asObservable();
+    tooltipData$ = this.tooltipData.asObservable();
+    get tooltipDataValue() {
+        return this.tooltipData.getValue();
+    }
 
     constructor() {
         this.markerHover$.pipe(debounceTime(300), takeUntilDestroyed()).subscribe((marker) => {
-            this.tooltipData = null;
+            this.tooltipData.next(null);
             const cached = this.pulseCache.get(marker.topicId);
             if (cached) {
-                this.tooltipData = {
+                this.tooltipData.next({
                     ...cached,
                     markerId: marker.id,
-                }
+                });
                 return;
             }
             this.pulseService
                 .getById(marker.topicId)
                 .pipe(
                     first(),
-                    tap((pulse) => this.pulseCache.set(pulse.id, pulse)), 
+                    tap((pulse) => this.pulseCache.set(pulse.id, pulse)),
                 )
                 .subscribe((pulse) => {
-                    this.tooltipData = {
+                    this.tooltipData.next({
                         ...pulse,
                         markerId: marker.id,
-                    };
+                    });
                 });
         });
     }
 
     public updateMarkers(data: TopCellTopicsByH3Index): void {
-        this.markers = [];
+        const markers: IMapMarkerAnimated[] = [];
         Object.keys(data).forEach((h3Index: any, index: number) => {
             const [lat, lng] = h3.h3ToGeo(h3Index);
-            this.markers.push({
+            markers.push({
                 id: index,
                 lng,
                 lat,
@@ -58,11 +67,12 @@ export class MapMarkersService {
                 delay: this.randomInteger(100, 2000),
             });
         });
-        console.log({markers: this.markers});
+        console.log({ markers: this.markers });
+        this.markers.next(markers);
     }
 
     public hideTooltip(): void {
-        this.tooltipData = null;
+        this.tooltipData.next(null);
     }
 
     public handleMarkerHover(marker: IMapMarker): void {

@@ -3,10 +3,10 @@ import { inject, Injectable } from "@angular/core";
 import { catchError, first, map, Observable, of, shareReplay, tap } from "rxjs";
 import { ITopic, TopicState } from "../../interfaces";
 import { API_URL } from "../../tokens/tokens";
-import { ITopPulse } from "../../interfaces/top-pulse.interface";
 import { IValidateTopicTitleResponse } from "../../interfaces/validate-topic-title.response";
 import { ICategory } from "../../interfaces/category.interface";
 import { PendingTopicsService } from "../topic/pending-topics.service";
+import { TopCellTopicsByH3Index } from "@/app/features/landing/interfaces/h3-pulses.interface";
 
 @Injectable({
     providedIn: "root",
@@ -215,7 +215,7 @@ export class PulseService {
         SWlatitude: number,
         SWlongitude: number,
         resolution: number = 1,
-    ): Observable<Record<string, ITopPulse>> {
+    ): Observable<TopCellTopicsByH3Index> {
         if (resolution >= 8) resolution = 7;
         const searchParams = new URLSearchParams({
             "NE.latitude": NElatitude.toString(),
@@ -225,7 +225,7 @@ export class PulseService {
             resolution: resolution.toString(),
         });
         return this.http
-            .get<Record<string, ITopPulse>>(`${this.apiUrl}/map/top?${searchParams.toString()}`)
+            .get<TopCellTopicsByH3Index>(`${this.apiUrl}/map/top?${searchParams.toString()}`)
             .pipe(
                 map((response) => {
                     if (resolution > 0) return response;
@@ -235,7 +235,7 @@ export class PulseService {
                             prev[h3Index] = value;
                         }
                         return prev;
-                    }, {} as Record<string, ITopPulse>);
+                    }, {} as TopCellTopicsByH3Index);
                 }),
             );
     }

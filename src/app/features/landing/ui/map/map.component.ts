@@ -26,7 +26,7 @@ import { FormatNumberPipe } from "@/app/shared/pipes/format-number.pipe";
 import { InputComponent } from "@/app/shared/components/ui-kit/input/input.component";
 import { SecondaryButtonComponent } from "@/app/shared/components/ui-kit/buttons/secondary-button/secondary-button.component";
 import { H3LayerService } from "../../services/h3-layer.service";
-import { IH3Pulses } from "../../interfaces/h3-pulses.interface";
+import { TopCellTopicsByH3Index } from "../../interfaces/h3-pulses.interface";
 import { MapMarkersService } from "../../services/map-markers.service";
 import { HeatmapLayerService } from "../../services/heatmap-layer.service";
 import { MediaUtilsService } from "../../services/media-utils.service";
@@ -129,7 +129,7 @@ export class MapComponent implements OnInit {
     public isSpinButtonVisible = this.isSpinEnabled;
     private globalMapDataUpdated: boolean = false;
 
-    private readonly h3Pulses$: Subject<IH3Pulses> = new Subject();
+    private readonly h3Pulses$: Subject<TopCellTopicsByH3Index> = new Subject();
     private readonly heatMapData$: Subject<{ [key: string]: number }> = new Subject();
 
     public ngOnInit(): void {
@@ -308,7 +308,7 @@ export class MapComponent implements OnInit {
         this.heatmapLayerService.addHeatmapToMap(this.map);
     }
 
-    private addMarkersAndUpdateH3Polygons(h3PulsesData: IH3Pulses): void {
+    private addMarkersAndUpdateH3Polygons(h3PulsesData: TopCellTopicsByH3Index): void {
         if (!this.map) return;
         if (this.isToShowMarkers) {
             this.h3LayerService.updateH3PolygonSource({ map: this.map, data: h3PulsesData });

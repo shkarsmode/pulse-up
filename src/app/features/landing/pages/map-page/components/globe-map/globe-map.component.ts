@@ -3,15 +3,16 @@ import { toSignal } from "@angular/core/rxjs-interop";
 import mapboxgl from "mapbox-gl";
 import { IMapMarker } from "@/app/shared/interfaces/map-marker.interface";
 import { MediaQueryService } from "@/app/shared/services/core/media-query.service";
-import { MapComponent } from "@/app/features/landing/ui/map/map.component";
 import { MapEventListenerService } from "@/app/features/landing/services/map-event-listener.service";
+import { MapComponent } from "@/app/shared/components/map/map.component";
+import { MapHexagonsLayerComponent } from "../../../../../../shared/components/map/map-hexagons-layer/map-hexagons-layer.component";
 
 @Component({
     selector: "app-globe-map",
     templateUrl: "./globe-map.component.html",
     styleUrl: "./globe-map.component.scss",
     standalone: true,
-    imports: [MapComponent],
+    imports: [MapComponent, MapHexagonsLayerComponent],
 })
 export class GlobeMapComponent {
     private readonly mediaService = inject(MediaQueryService);
@@ -73,7 +74,7 @@ export class GlobeMapComponent {
     private is1400Desctop = toSignal(this.mediaService.mediaQuery("max", "XXL"));
     private is1600Desctop = toSignal(this.mediaService.mediaQuery("max", "XXXL"));
     private is1920Desctop = toSignal(this.mediaService.mediaQuery("max", "XXXXL"));
-    private map: mapboxgl.Map | null = null;
+    map: mapboxgl.Map | null = null;
 
     @Output() zoomEnd: EventEmitter<number> = new EventEmitter<number>();
     @Output() markerClick: EventEmitter<IMapMarker> = new EventEmitter<IMapMarker>();

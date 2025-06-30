@@ -1,5 +1,5 @@
 export interface ITopicMarker {
-    id: string;
+    id: number;
     lng: number;
     lat: number;
     icon: string;

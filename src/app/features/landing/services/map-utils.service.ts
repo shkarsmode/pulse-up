@@ -1,7 +1,9 @@
 import mapboxgl from "mapbox-gl";
 import * as h3 from "h3-js";
+import { MapBounds } from "../interfaces/map-bounds.interface";
 
 export class MapUtils {
+    // TODO: Remove method
     public static addGeoJsonSource({
         map,
         id,
@@ -17,6 +19,7 @@ export class MapUtils {
         });
     }
 
+    // TODO: Remove method
     public static addFillLayer({
         map,
         layerId,
@@ -37,6 +40,7 @@ export class MapUtils {
         });
     }
 
+    // TODO: Remove method
     public static addLineLayer({
         map,
         layerId,
@@ -76,6 +80,7 @@ export class MapUtils {
         });
     }
 
+    // TODO: Remove method
     public static updatePaintProperty({
         map,
         layerId,
@@ -90,6 +95,7 @@ export class MapUtils {
         map.setPaintProperty(layerId, property, value);
     }
 
+    // TODO: Remove method
     public static setSourceData({
         map,
         sourceId,
@@ -145,5 +151,23 @@ export class MapUtils {
         }
 
         return crosses;
+    }
+
+    public static getMapBounds({ map, global = false }: { map: mapboxgl.Map, global?: boolean }): MapBounds {
+        if (!map || global) return {
+            ne: { lat: 90, lng: 180 },
+            sw: { lat: -90, lng: -180 },
+        };
+        const bounds = map.getBounds();
+        return {
+            ne: {
+                lat: Math.min(bounds.getNorthEast().lat, 90),
+                lng: Math.min(bounds.getNorthEast().lng, 180),
+            },
+            sw: {
+                lat: Math.max(bounds.getSouthWest().lat, -90),
+                lng: Math.max(bounds.getSouthWest().lng, -180),
+            },
+        };
     }
 }

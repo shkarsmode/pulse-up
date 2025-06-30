@@ -1,4 +1,4 @@
-<app-map
+<!-- <app-map
     [isHideDebugger]="true"
     [isSearch]="false"
     [isLocationName]="false"
@@ -11,6 +11,23 @@
     [isMapStatic]="false"
     [isSpinEnabled]="true"
     [fog]="fog"
-    (markerClick)="onMarkerClick($event)" 
+    (markerClick)="onMarkerClick($event)"
     (zoomEnd)="onZoomEnd($event)"
-    (mapLoaded)="onMapLoaded($event)"/>
+    (mapLoaded)="onMapLoaded($event)" /> -->
+
+<app-map
+    projection="globe"
+    [markers]="{
+        enabled: true,
+        showTooltip: true,
+    }"
+    [zoom]="[zoom]"
+    [minZoom]="0.35"
+    [maxBounds]="undefined"
+    (mapLoaded)="onMapLoaded($event)"
+    (markerClick)="onMarkerClick($event)"
+    (zoomEnd)="onZoomEnd($event)">
+    @if (map) {
+    <app-map-hexagons-layer [map]="map" />
+    }
+</app-map>
