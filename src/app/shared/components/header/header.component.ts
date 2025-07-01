@@ -3,8 +3,8 @@ import { Component, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { SvgIconComponent } from 'angular-svg-icon';
+import { map, Observable, take } from 'rxjs';
 import { AppRoutes } from '../../enums/app-routes.enum';
-import { ComingSoonPopupDirective } from '../popups/comming-soon-popup/coming-soon-popup.directive';
 import { BurgerButtonComponent } from '../ui-kit/buttons/burger-button/burger-button.component';
 import { PrimaryButtonComponent } from '../ui-kit/buttons/primary-button/primary-button.component';
 import { SecondaryButtonComponent } from "../ui-kit/buttons/secondary-button/secondary-button.component";
@@ -43,8 +43,11 @@ export class HeaderComponent {
         this.getCurrentVersionOfApplication();
     }
 
-    public get isAuthenticated() {
-        return this.authService.userToken 
+    public get isAuthenticated(): Observable<boolean> {
+        return this.authService.user$.pipe(
+            take(1),
+            map((user) => !!user && !user.isAnonymous),
+        ) 
     }
 
     public toggleDropdown(): void {

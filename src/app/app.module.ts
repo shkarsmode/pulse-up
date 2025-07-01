@@ -32,7 +32,7 @@ import { JwtInterceptor } from "./shared/helpers/interceptors/jwt.interceptor";
 import { ProfileStore } from "./shared/stores/profile.store";
 
 export function initProfileStore(profileStore: ProfileStore) {
-    return () => profileStore.init(); // must return a function that returns a Promise
+    return () => profileStore.init();
 }
 
 @NgModule({

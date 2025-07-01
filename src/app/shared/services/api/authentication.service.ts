@@ -73,7 +73,7 @@ export class AuthenticationService {
         this.isResendInProgress$ = new BehaviorSubject<boolean>(false);
         this.isChangePhoneNumberInProgress$ = new BehaviorSubject<boolean>(false);
         this.windowRef = this.windowService.windowRef;
-        
+
         getAuth(this.firebaseApp).onAuthStateChanged((user) => {
             console.log("user state changed", user);
             this.userSubject.next(user);
@@ -142,7 +142,9 @@ export class AuthenticationService {
     }
 
     public resendVerificationCode() {
-        const phoneNumber = LocalStorageService.get<string>(LOCAL_STORAGE_KEYS.phoneNumberForSigning);
+        const phoneNumber = LocalStorageService.get<string>(
+            LOCAL_STORAGE_KEYS.phoneNumberForSigning,
+        );
         if (!phoneNumber) {
             return throwError(
                 () =>
@@ -165,12 +167,17 @@ export class AuthenticationService {
     }
 
     public loginAsAnonymousThroughTheFirebase = (): Observable<UserCredential> => {
+        console.log("Logging in as anonymous user through Firebase");
+
         return from(signInAnonymously(this.firebaseAuth)).pipe(
             map((response: UserCredential | any) => {
                 const accessToken = response.user.accessToken;
                 LocalStorageService.set(LOCAL_STORAGE_KEYS.anonymousToken, accessToken);
                 LocalStorageService.set(LOCAL_STORAGE_KEYS.isAnonymous, true);
                 this.anonymousUser$.next(accessToken);
+
+                LocalStorageService.remove(LOCAL_STORAGE_KEYS.userToken);
+                this.userToken$.next(null);
 
                 return response;
             }),
@@ -362,23 +369,22 @@ export class AuthenticationService {
     };
 
     public updateToken = (): Observable<string> => {
+        console.log("Updating token for user...");
+
         return this.user$.pipe(
             take(1),
             switchMap((user) => {
                 console.log("Updating token for user:", user);
-                
+
                 if (!user) {
-                    return throwError(
-                        () =>
-                            new AuthenticationError(
-                                "No authenticated user found.",
-                                AuthenticationErrorCode.INVALID_CREDENTIALS,
-                            ),
+                    console.log("updateToken: No authenticated user found. Signing in anonymously.", {user});
+                    return this.loginAsAnonymousThroughTheFirebase().pipe(
+                        switchMap((userCredential) => from(userCredential.user.getIdToken(true))),
                     );
                 }
 
                 return from(user.getIdToken(true)).pipe(
-                    map((newToken: string) => {
+                    map((newToken) => {
                         if (user.isAnonymous) {
                             LocalStorageService.set(LOCAL_STORAGE_KEYS.anonymousToken, newToken);
                             this.anonymousUser$.next(newToken);
@@ -408,7 +414,7 @@ export class AuthenticationService {
         }
 
         const decodedToken = this.decodeToken(token);
-        
+
         if (!decodedToken || !decodedToken.exp) {
             return true;
         }

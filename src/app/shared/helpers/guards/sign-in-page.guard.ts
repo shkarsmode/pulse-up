@@ -9,14 +9,9 @@ import { AuthenticationService } from "../../services/api/authentication.service
 export class SignInPageGuard implements CanActivate {
     private readonly authenticationService: AuthenticationService = inject(AuthenticationService);
     canActivate(): Observable<boolean> {
-        return this.authenticationService.user$.pipe(
-            switchMap((user) => {
-                if (user) {
-                    return this.authenticationService.logout()
-                }
-                return of(user);
-            }),
-            catchError(() => {
+        return this.authenticationService.logout().pipe(
+            catchError((error) => {
+                console.log("SignInPageGuard error:", error);
                 return of(false);
             }),
             map(() => true),

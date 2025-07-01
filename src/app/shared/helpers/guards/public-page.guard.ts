@@ -6,7 +6,7 @@ import {
     MaybeAsync,
     RouterStateSnapshot,
 } from "@angular/router";
-import { map, switchMap } from "rxjs";
+import { catchError, map, of, switchMap } from "rxjs";
 import { AuthenticationService } from "../../services/api/authentication.service";
 import { LoadingService } from "../../services/core/loading.service";
 import { AppInitializerService } from "../../services/core/app-initializer.service";
@@ -23,17 +23,24 @@ export class PublicPageGuard implements CanActivate {
         route: ActivatedRouteSnapshot,
         state: RouterStateSnapshot,
     ): MaybeAsync<GuardResult> {
-        const userToken = this.authenticationService.userTokenValue;
-        const anonymousToken = this.authenticationService.anonymousUserValue;
-
-        if (userToken || anonymousToken) {
-            return this.loadInitialData().pipe(map(() => true));
-        }
-
-        return this.authenticationService.loginAsAnonymousThroughTheFirebase().pipe(
-            switchMap(() => this.loadInitialData()),
+         return this.loadInitialData().pipe(
             map(() => true),
+            catchError((error) => {
+                console.error("PublicPageGuard error:", error);
+                return of(false);
+            }),
         );
+        // const userToken = this.authenticationService.userTokenValue;
+        // const anonymousToken = this.authenticationService.anonymousUserValue;
+
+        // if (userToken || anonymousToken) {
+        //     return this.loadInitialData().pipe(map(() => true));
+        // }
+
+        // return this.authenticationService.loginAsAnonymousThroughTheFirebase().pipe(
+        //     switchMap(() => this.loadInitialData()),
+        //     map(() => true),
+        // );
     }
 
     private loadInitialData = () => {
