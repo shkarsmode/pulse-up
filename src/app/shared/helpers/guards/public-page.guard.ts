@@ -23,24 +23,21 @@ export class PublicPageGuard implements CanActivate {
         route: ActivatedRouteSnapshot,
         state: RouterStateSnapshot,
     ): MaybeAsync<GuardResult> {
-         return this.loadInitialData().pipe(
-            map(() => true),
+        const userToken = this.authenticationService.userTokenValue;
+        const anonymousToken = this.authenticationService.anonymousUserValue;
+
+        if (userToken || anonymousToken) {
+            return this.loadInitialData().pipe(map(() => true));
+        }
+
+        return this.authenticationService.loginAsAnonymousThroughTheFirebase().pipe(
             catchError((error) => {
-                console.error("PublicPageGuard error:", error);
+                console.log("PublicPageGuard error:", error);
                 return of(false);
             }),
+            switchMap(() => this.loadInitialData()),
+            map(() => true),
         );
-        // const userToken = this.authenticationService.userTokenValue;
-        // const anonymousToken = this.authenticationService.anonymousUserValue;
-
-        // if (userToken || anonymousToken) {
-        //     return this.loadInitialData().pipe(map(() => true));
-        // }
-
-        // return this.authenticationService.loginAsAnonymousThroughTheFirebase().pipe(
-        //     switchMap(() => this.loadInitialData()),
-        //     map(() => true),
-        // );
     }
 
     private loadInitialData = () => {
@@ -48,6 +45,6 @@ export class PublicPageGuard implements CanActivate {
             return this.appInitializerService.initialData$;
         }
         this.loadingService.isLoading = true;
-        return this.appInitializerService.loadInitialData()
+        return this.appInitializerService.loadInitialData();
     };
 }

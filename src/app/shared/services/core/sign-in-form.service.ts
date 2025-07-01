@@ -5,7 +5,7 @@ import { ErrorStateMatcher } from "@angular/material/core";
 import { Router } from "@angular/router";
 import intlTelInput, { Iti } from "intl-tel-input";
 import { CountryCode, isValidPhoneNumber, validatePhoneNumberLength } from "libphonenumber-js";
-import { delay, fromEvent, map, Subscription, take } from "rxjs";
+import { delay, fromEvent, map, Observable, of, Subscription, take } from "rxjs";
 import { AppRoutes } from "@/app/shared/enums/app-routes.enum";
 import { AuthenticationService } from "@/app/shared/services/api/authentication.service";
 import { NotificationService } from "./notification.service";
@@ -51,7 +51,7 @@ export class SignInFormService {
 
     private resetInput() {
         const code = this.iti.getSelectedCountryData().dialCode;
-        this.form.get("phone")?.reset("")
+        this.form.get("phone")?.reset("");
         this.validateNumber({ isEmptyValid: true });
     }
 
@@ -156,6 +156,7 @@ export class SignInFormService {
             initialCountry: "US",
             showFlags: true,
             separateDialCode: true,
+            dropdownContainer: document.body,
         });
         this.subscriptions.push(
             fromEvent(inputElement, "blur").pipe(delay(100), map(this.onBlur)).subscribe(),
@@ -182,7 +183,7 @@ export class SignInFormService {
         const dialCode = this.iti.getSelectedCountryData().dialCode;
         const iso2Code = this.iti.getSelectedCountryData().iso2?.toUpperCase();
         if (!iso2Code || !dialCode) return;
-        
+
         const isEmpty = value === "";
         if (isEmpty && isEmptyValid) {
             this.isValid = true;
@@ -193,40 +194,22 @@ export class SignInFormService {
         this.isValid = valid;
     }
 
-    public submit = () => {
+    public submit = (): Observable<null | boolean> => {
         const dialCode = this.iti.getSelectedCountryData().dialCode;
         this.validateNumber();
-        if (!this.isValid || !dialCode) return;
+        if (!this.isValid || !dialCode) return of(null);
         const phoneNumber = `+${dialCode}${this.form.value.phone}`;
 
         if (this.mode === "signIn") {
-            this.authenticationService
-                .loginWithPhoneNumber(phoneNumber)
-                .pipe(take(1))
-                .subscribe({
-                    next: () => {
-                        console.log("Verification code sent successfully");
-                        this.navigateToConfirmPage();
-                    },
-                    error: (error) => {
-                        console.log("Error sending verification code:", error);
-                        this.notificationService.error(error.message);
-                    },
-                });
+            return this.authenticationService.loginWithPhoneNumber(phoneNumber).pipe(
+                take(1),
+                map(() => true),
+            );
         } else {
-            this.authenticationService
-                .changePhoneNumber(phoneNumber)
-                .pipe(take(1))
-                .subscribe({
-                    next: () => {
-                        console.log("Verification code sent successfully");
-                        this.navigateToConfirmPage();
-                    },
-                    error: (error) => {
-                        console.log("Error sending verification code:", error);
-                        this.notificationService.error(error.message);
-                    },
-                });
+            return this.authenticationService.changePhoneNumber(phoneNumber).pipe(
+                take(1),
+                map(() => true),
+            );
         }
     };
 

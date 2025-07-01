@@ -377,7 +377,10 @@ export class AuthenticationService {
                 console.log("Updating token for user:", user);
 
                 if (!user) {
-                    console.log("updateToken: No authenticated user found. Signing in anonymously.", {user});
+                    console.log(
+                        "updateToken: No authenticated user found. Signing in anonymously.",
+                        { user },
+                    );
                     return this.loginAsAnonymousThroughTheFirebase().pipe(
                         switchMap((userCredential) => from(userCredential.user.getIdToken(true))),
                     );

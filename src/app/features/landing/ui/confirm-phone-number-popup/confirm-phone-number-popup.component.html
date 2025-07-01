@@ -1,0 +1,6 @@
+<app-popup>
+    <app-popup-close-button (close)="closeDialog()" />
+    <app-confirm-phone-number-form
+        (codeConfiramSuccess)="onCodeConfirm()"
+        (codeConfiramError)="onError($event)" />
+</app-popup>
