@@ -1,0 +1,41 @@
+<form
+    class="auth-form phone-number-form"
+    [formGroup]="signInForm"
+    (ngSubmit)="onSubmit()">
+    <label
+        for="phone"
+        class="auth-form__label">
+        Phone
+    </label>
+    <mat-form-field
+        appearance="outline"
+        class="auth-form__field">
+        <input
+            matInput
+            #telInput
+            required
+            type="tel"
+            id="phone"
+            name="phone"
+            inputmode="tel"
+            autocomplete="tel-national"
+            formControlName="phone"
+            [errorStateMatcher]="errorStateMatcher"
+            (focus)="onFocus()" />
+        <mat-error>Invalid phone number</mat-error>
+    </mat-form-field>
+    <app-primary-button
+        [fullWidth]="true"
+        size="large"
+        type="submit"
+        [loading]="isLoading() || false"
+        [disabled]="isLoading() || false">
+        Continue
+    </app-primary-button>
+</form>
+<small class="auth-form__small">
+    By creating an account, you agree to our
+    <a [routerLink]="termsRoute">Terms</a>
+    and have read and acknowledge the
+    <a [routerLink]="privacyRoute">Privacy Policy</a>
+</small>

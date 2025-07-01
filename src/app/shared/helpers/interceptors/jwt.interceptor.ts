@@ -2,6 +2,7 @@ import { HttpEvent, HttpHandler, HttpInterceptor, HttpRequest } from "@angular/c
 import { inject, Injectable } from "@angular/core";
 import { from, Observable, switchMap, take } from "rxjs";
 import { AuthenticationService } from "../../services/api/authentication.service";
+import { LOCAL_STORAGE_KEYS, LocalStorageService } from "../../services/core/local-storage.service";
 
 @Injectable()
 export class JwtInterceptor implements HttpInterceptor {
@@ -26,17 +27,28 @@ export class JwtInterceptor implements HttpInterceptor {
         return this.authenticationService.user$.pipe(
             take(1),
             switchMap((user) => {
+                // console.log({user});
+                
                 if (!user) {
                     return next.handle(request);
                 }
                 return from(user.getIdToken()).pipe(
                     switchMap((token) => {
+                        console.log("User token retrieved:");
+                        
                         const cloned = request.clone({
                             setHeaders: {
                                 Authorization: `Bearer ${token}`,
                             },
                             withCredentials: !user.isAnonymous,
                         });
+
+                        if (user.isAnonymous) {
+                            LocalStorageService.set(LOCAL_STORAGE_KEYS.anonymousToken, token);
+                        } else {
+                            LocalStorageService.set(LOCAL_STORAGE_KEYS.userToken, token);
+                        }
+
                         return next.handle(cloned);
                     }),
                 );

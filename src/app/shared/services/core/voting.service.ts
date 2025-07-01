@@ -15,11 +15,15 @@ export class VotingService {
     private isVotingSubject = new BehaviorSubject<boolean>(false);
 
     isVoting$ = this.isVotingSubject.asObservable();
+    get anonymousUserValue() {
+        return this.authService.anonymousUserValue
+    };
+    get userTokeenValue() {
+        return this.authService.userTokenValue;
+    }
 
     vote({ topicId }: { topicId: number }) {
-        const isAnonymous = !!this.authService.anonymousUserValue;
-
-        if (isAnonymous) {
+        if (this.anonymousUserValue || (!this.anonymousUserValue && !this.userTokeenValue)) {
             return throwError(
                 () =>
                     new VotingError("You need to sign in to pulse", VotingErrorCode.NOT_AUTHORIZED),

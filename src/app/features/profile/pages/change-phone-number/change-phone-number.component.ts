@@ -1,7 +1,7 @@
 import { Component, inject, ViewChild } from "@angular/core";
 import { FormGroup, ReactiveFormsModule } from "@angular/forms";
 import { Router } from "@angular/router";
-import { map, take, tap } from "rxjs";
+import { map, take, tap, throwError } from "rxjs";
 import { ErrorStateMatcher } from "@angular/material/core";
 import { MatInputModule } from "@angular/material/input";
 import { MatFormFieldModule } from "@angular/material/form-field";
@@ -12,6 +12,7 @@ import { ProfileLayoutComponent } from "../../ui/profile-layout/profile-layout.c
 import { PrimaryButtonComponent } from "@/app/shared/components/ui-kit/buttons/primary-button/primary-button.component";
 import { AuthenticationService } from "@/app/shared/services/api/authentication.service";
 import { SecondaryButtonComponent } from "@/app/shared/components/ui-kit/buttons/secondary-button/secondary-button.component";
+import { NotificationService } from "@/app/shared/services/core/notification.service";
 
 @Component({
     selector: "app-change-phone-number",
@@ -31,6 +32,7 @@ import { SecondaryButtonComponent } from "@/app/shared/components/ui-kit/buttons
 })
 export class ChangePhoneNumberComponent {
     private router: Router = inject(Router);
+    private readonly notificationService = inject(NotificationService);
     private signInFormService: SignInFormService = inject(SignInFormService);
     private authenticationService: AuthenticationService = inject(AuthenticationService);
     private appRotes = AppRoutes;
@@ -46,14 +48,16 @@ export class ChangePhoneNumberComponent {
             mode: "changePhoneNumber",
         });
 
-        this.authenticationService.user$.pipe(
-            take(1),
-            map((user) => user?.phoneNumber || ""),
-            tap((value) => {
-                this.signInForm.setValue({ phone: value });
-                this.initialValue = value;
-            }),
-        ).subscribe();
+        this.authenticationService.user$
+            .pipe(
+                take(1),
+                map((user) => user?.phoneNumber || ""),
+                tap((value) => {
+                    this.signInForm.setValue({ phone: value });
+                    this.initialValue = value;
+                }),
+            )
+            .subscribe();
     }
 
     public get signInForm(): FormGroup {
@@ -85,10 +89,36 @@ export class ChangePhoneNumberComponent {
     }
 
     public onSubmit() {
-        return this.signInFormService.submit();
+        return this.signInFormService.submit().subscribe({
+            error: (error: any) => {
+                console.log("Error sending verification code:", error);
+                this.notificationService.error(error.message);
+                return throwError(() => error);
+            },
+            next: (result) => {
+                if (result) {
+                    console.log("Verification code sent successfully");
+                    this.navigateToConfirmPage();
+                }
+            },
+        });
     }
 
     public onCancel(): void {
         this.router.navigateByUrl(`/${AppRoutes.Profile.EDIT}`);
+    }
+
+    private navigateToConfirmPage() {
+        const redirectUrl = this.getRedirectUrl();
+        const params = new URLSearchParams({
+            ...(redirectUrl && { redirect: redirectUrl }),
+            mode: "changePhoneNumber",
+        }).toString();
+        this.router.navigateByUrl(`${AppRoutes.Profile.CONFIRM_PHONE_NUMBER}?${params}`);
+    }
+
+    private getRedirectUrl(): string | null {
+        const tree = this.router.parseUrl(this.router.url);
+        return tree.queryParams["redirect"] || null;
     }
 }

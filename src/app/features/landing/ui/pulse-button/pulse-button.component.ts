@@ -27,6 +27,7 @@ import { AuthenticationService } from "@/app/shared/services/api/authentication.
 import { VotingError, VotingErrorCode } from "@/app/shared/helpers/errors/voting-error";
 import { SignInRequiredPopupComponent } from "../sign-in-required-popup/sign-in-required-popup.component";
 import { DownloadAppPopupComponent } from "../download-app-popup/download-app-popup.component";
+import { WelcomePopupComponent } from "../welcome-popup/welcome-popup.component";
 
 function delayBetween<T>(delayMs: number, first = false) {
     let past = Date.now();
@@ -122,7 +123,7 @@ export class PulseButtonComponent {
                 error: (error) => {
                     if (error instanceof VotingError) {
                         if (error.code === VotingErrorCode.NOT_AUTHORIZED) {
-                            this.dialog.open(SignInRequiredPopupComponent, {
+                            this.dialog.open(WelcomePopupComponent, {
                                 width: "500px",
                                 panelClass: "custom-dialog-container",
                                 backdropClass: "custom-dialog-backdrop",
