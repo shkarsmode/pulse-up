@@ -4,33 +4,49 @@ import { GeolocationService } from "./geolocation.service";
 import { AuthenticationService } from "../api/authentication.service";
 import { VotingError, VotingErrorCode } from "../../helpers/errors/voting-error";
 import { VoteService } from "../api/vote.service";
+import { WelcomePopupComponent } from "@/app/features/landing/ui/welcome-popup/welcome-popup.component";
+import { DownloadAppPopupComponent } from "@/app/features/landing/ui/download-app-popup/download-app-popup.component";
+import { SuccessfulVotePopupComponent } from "@/app/features/landing/ui/successful-vote-popup/successful-vote-popup.component";
+import { AcceptRulesPopupComponent } from "@/app/features/landing/ui/accept-rules-popup/accept-rules-popup.component";
+import { ConfirmPhoneNumberPopupComponent } from "@/app/features/landing/ui/confirm-phone-number-popup/confirm-phone-number-popup.component";
+import { SigninRequiredPopupComponent } from "../../components/popups/signin-required-popup/signin-required-popup.component";
+import { DialogService } from "./dialog.service";
 
 @Injectable({
     providedIn: "root",
 })
 export class VotingService {
+    private dialogService = inject(DialogService);
     private geolocationService = inject(GeolocationService);
     private authService = inject(AuthenticationService);
     private voteService = inject(VoteService);
-    private isVotingSubject = new BehaviorSubject<boolean>(false);
+    private isVoting = new BehaviorSubject<boolean>(false);
+    private isAnonymousUserSignedIn = new BehaviorSubject(false);
 
-    isVoting$ = this.isVotingSubject.asObservable();
+    isVoting$ = this.isVoting.asObservable();
+    isAnonymousUserSignedIn$ = this.isAnonymousUserSignedIn.asObservable();
     get anonymousUserValue() {
-        return this.authService.anonymousUserValue
-    };
-    get userTokeenValue() {
+        return this.authService.anonymousUserValue;
+    }
+    get userTokenValue() {
         return this.authService.userTokenValue;
     }
 
+    setIsAnonymousUserSignedIn(value: boolean) {
+        console.log("Setting isAnonymousUserSignedIn to", value);
+        
+        this.isAnonymousUserSignedIn.next(value);
+    }
+
     vote({ topicId }: { topicId: number }) {
-        if (this.anonymousUserValue || (!this.anonymousUserValue && !this.userTokeenValue)) {
+        if (this.anonymousUserValue || (!this.anonymousUserValue && !this.userTokenValue)) {
             return throwError(
                 () =>
                     new VotingError("You need to sign in to pulse", VotingErrorCode.NOT_AUTHORIZED),
             );
         }
 
-        this.isVotingSubject.next(true);
+        this.isVoting.next(true);
 
         return this.geolocationService
             .getCurrentGeolocation({
@@ -38,7 +54,7 @@ export class VotingService {
             })
             .pipe(
                 catchError(() => {
-                    this.isVotingSubject.next(false);
+                    this.isVoting.next(false);
                     return throwError(
                         () =>
                             new VotingError(
@@ -57,9 +73,9 @@ export class VotingService {
                         locationName: geolocation.details.fullname,
                     });
                 }),
-                tap(() => this.isVotingSubject.next(false)),
+                tap(() => this.isVoting.next(false)),
                 catchError((error) => {
-                    this.isVotingSubject.next(false);
+                    this.isVoting.next(false);
                     if (error instanceof VotingError) {
                         return throwError(() => error);
                     }
@@ -68,5 +84,33 @@ export class VotingService {
                     );
                 }),
             );
+    }
+
+    showAcceptRulesPopup() {
+        this.dialogService.open(AcceptRulesPopupComponent)
+    }
+
+    showWelcomePopupForAnonymousUser() {
+        this.dialogService.open(WelcomePopupComponent, {
+            autoFocus: true,
+        });
+    }
+
+    showConfirmPhoneNumberPopup() {
+        this.dialogService.open(ConfirmPhoneNumberPopupComponent)
+    }
+
+    showDownloadAppPopup() {
+        console.log("showDownloadAppPopup");
+        
+        this.dialogService.open(DownloadAppPopupComponent);
+    }
+
+    showSuccessfulVotePopupForJustSignedInUser() {
+        this.dialogService.open(SuccessfulVotePopupComponent);
+    }
+
+    showRecentSignInRequiredPopup() {
+        this.dialogService.open(SigninRequiredPopupComponent);
     }
 }

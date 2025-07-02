@@ -1,5 +1,5 @@
 import { Component, inject } from "@angular/core";
-import { MatDialog, MatDialogRef } from "@angular/material/dialog";
+import { MatDialogRef } from "@angular/material/dialog";
 import { ConfirmPhoneNumberService } from "@/app/shared/services/core/confirm-phone-number.service";
 import { ConfirmPhoneNumberFormComponent } from "@/app/shared/components/confirm-phone-number-form/confirm-phone-number-form.component";
 import { PopupLayoutComponent } from "@/app/shared/components/ui-kit/popup/popup.component";
@@ -9,8 +9,8 @@ import {
     AuthenticationErrorCode,
 } from "@/app/shared/helpers/errors/authentication-error";
 import { NotificationService } from "@/app/shared/services/core/notification.service";
-import { SigninRequiredPopupComponent } from "@/app/shared/components/popups/signin-required-popup/signin-required-popup.component";
 import { isErrorWithMessage } from "@/app/shared/helpers/errors/is-error-with-message";
+import { VotingService } from "@/app/shared/services/core/voting.service";
 
 @Component({
     selector: "app-confirm-phone-number-popup",
@@ -21,9 +21,9 @@ import { isErrorWithMessage } from "@/app/shared/helpers/errors/is-error-with-me
     styleUrl: "./confirm-phone-number-popup.component.scss",
 })
 export class ConfirmPhoneNumberPopupComponent {
-    private readonly dialog = inject(MatDialog);
     private readonly dialogRef = inject(MatDialogRef<ConfirmPhoneNumberPopupComponent>);
     private readonly notificationService = inject(NotificationService);
+    private readonly votingService = inject(VotingService);
 
     closeDialog() {
         this.dialogRef.close();
@@ -32,10 +32,8 @@ export class ConfirmPhoneNumberPopupComponent {
     onCodeConfirm() {
         this.closeDialog();
         this.notificationService.success("You have successfully logged in.");
-        const recaptchaContainer = document.getElementById("recaptcha-container");
-        if (recaptchaContainer) {
-            recaptchaContainer.innerHTML = "";
-        }
+        this.votingService.setIsAnonymousUserSignedIn(true);
+        this.hideRecaptcha();
     }
 
     onError = (error: unknown) => {
@@ -48,11 +46,7 @@ export class ConfirmPhoneNumberPopupComponent {
                 this.closeDialog();
                 return;
             } else if (error.code === AuthenticationErrorCode.REAUTHENTICATE) {
-                this.dialog.open(SigninRequiredPopupComponent, {
-                    width: "500px",
-                    panelClass: "custom-dialog-container",
-                    backdropClass: "custom-dialog-backdrop",
-                });
+                this.votingService.showRecentSignInRequiredPopup();
                 return;
             }
         }
@@ -61,4 +55,11 @@ export class ConfirmPhoneNumberPopupComponent {
             : "Failed to confirm phone number. Please try again.";
         this.notificationService.error(message);
     };
+
+    private hideRecaptcha() {
+        const recaptchaContainer = document.getElementById("recaptcha-container");
+        if (recaptchaContainer) {
+            recaptchaContainer.style.display = "none";
+        }
+    }
 }

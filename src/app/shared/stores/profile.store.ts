@@ -20,6 +20,8 @@ export class ProfileStore {
     );
 
     refreshProfile() {
+        console.log("Refreshing profile...");
+        
         return this.authService.user$.pipe(
             filter((user) => user !== undefined),
             switchMap((user) => {
@@ -37,6 +39,8 @@ export class ProfileStore {
     }
 
     async init(): Promise<void> {
+        console.log("Initializing profile store...");
+        
         await firstValueFrom(this.refreshProfile());
     }
 

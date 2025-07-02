@@ -118,6 +118,8 @@ export class PulsePageComponent implements OnInit {
     }
 
     public onVoted() {
+        console.log("onVoted", {topic: this.topic});
+        
         if (!this.topic) return;
         this.pendingTopicsService.add({
             ...this.topic,
@@ -151,6 +153,8 @@ export class PulsePageComponent implements OnInit {
             votes: this.getVote(topicId),
         }).pipe(
             tap(({ topic, votes }) => {
+                console.log("Loaded topic data", { topic, votes });
+                
                 this.updateTopicData(topic);
                 this.createLink(topic);
                 this.updateSuggestions();

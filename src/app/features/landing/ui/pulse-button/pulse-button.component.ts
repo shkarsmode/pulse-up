@@ -15,7 +15,6 @@ import {
     switchMap,
     tap,
 } from "rxjs";
-import { MatDialog } from "@angular/material/dialog";
 import { IVote } from "@/app/shared/interfaces/vote.interface";
 import { HeartBeatDirective } from "@/app/shared/animations/heart-beat.directive";
 import { PrimaryButtonComponent } from "@/app/shared/components/ui-kit/buttons/primary-button/primary-button.component";
@@ -25,9 +24,6 @@ import { NotificationService } from "@/app/shared/services/core/notification.ser
 import { VoteTimeLeftComponent } from "../vote-time-left/vote-time-left.component";
 import { AuthenticationService } from "@/app/shared/services/api/authentication.service";
 import { VotingError, VotingErrorCode } from "@/app/shared/helpers/errors/voting-error";
-import { SignInRequiredPopupComponent } from "../sign-in-required-popup/sign-in-required-popup.component";
-import { DownloadAppPopupComponent } from "../download-app-popup/download-app-popup.component";
-import { WelcomePopupComponent } from "../welcome-popup/welcome-popup.component";
 
 function delayBetween<T>(delayMs: number, first = false) {
     let past = Date.now();
@@ -59,7 +55,6 @@ function delayBetween<T>(delayMs: number, first = false) {
 })
 export class PulseButtonComponent {
     private destroyRef = inject(DestroyRef);
-    private dialog: MatDialog = inject(MatDialog);
     private votingService = inject(VotingService);
     private settingsService = inject(SettingsService);
     private notificationService = inject(NotificationService);
@@ -70,21 +65,29 @@ export class PulseButtonComponent {
     @Output() voteExpired = new EventEmitter<void>();
     @Output() voted = new EventEmitter<IVote>();
 
-    private isVotingSubject = new BehaviorSubject(false);
+    private isVoting = new BehaviorSubject(false);
 
-    isVoting$ = this.isVotingSubject.asObservable();
+    isVoting$ = this.isVoting.asObservable();
     isActiveVote = false;
     lastVoteInfo = "";
     isAnonymousUser = this.authService.anonymousUserValue;
+    isInProgress = false;
 
     ngOnInit() {
         this.votingService.isVoting$
             .pipe(
                 delayBetween(800),
                 tap((isVoting) => {
-                    this.isVotingSubject.next(isVoting);
+                    this.isVoting.next(isVoting);
                 }),
                 takeUntilDestroyed(this.destroyRef),
+            )
+            .subscribe();
+
+        this.votingService.isAnonymousUserSignedIn$
+            .pipe(
+                first((isAnonymousUserSignedIn) => isAnonymousUserSignedIn),
+                tap(() => this.onPulse({ justSignedIn: true })),
             )
             .subscribe();
 
@@ -97,8 +100,12 @@ export class PulseButtonComponent {
         }
     }
 
-    onPulse() {
-        if (this.isVotingSubject.value || this.isActiveVote || !this.topicId) return;
+    onPulse({ justSignedIn }: { justSignedIn?: boolean } = {}) {
+        console.log("onPulse", { justSignedIn });
+
+        if (this.isVoting.value || this.isActiveVote || !this.topicId || this.isInProgress) return;
+
+        this.isInProgress = true;
 
         this.votingService
             .vote({
@@ -116,30 +123,30 @@ export class PulseButtonComponent {
             )
             .subscribe({
                 next: ([vote]) => {
+                    console.log("onPulse Vote received", { vote });
+                    
                     this.isActiveVote = true;
                     this.lastVoteInfo = VoteUtils.parseVoteInfo(vote);
                     this.voted.emit(vote);
+                    this.isInProgress = false;
+
+                    if (justSignedIn) {
+                        this.votingService.showSuccessfulVotePopupForJustSignedInUser();
+                    }
                 },
                 error: (error) => {
                     if (error instanceof VotingError) {
                         if (error.code === VotingErrorCode.NOT_AUTHORIZED) {
-                            this.dialog.open(WelcomePopupComponent, {
-                                width: "500px",
-                                panelClass: "custom-dialog-container",
-                                backdropClass: "custom-dialog-backdrop",
-                            });
+                            this.votingService.showAcceptRulesPopup();
                             return;
                         }
                         if (error.code === VotingErrorCode.GEOLOCATION_UNAVAILABLE) {
-                            this.dialog.open(DownloadAppPopupComponent, {
-                                width: "500px",
-                                panelClass: "custom-dialog-container",
-                                backdropClass: "custom-dialog-backdrop",
-                            });
+                            this.votingService.showDownloadAppPopup();
                             return;
                         }
                     }
                     this.notificationService.error(error.message || "Failed to vote");
+                    this.isInProgress = false;
                 },
             });
     }
