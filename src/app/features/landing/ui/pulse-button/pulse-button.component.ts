@@ -64,6 +64,7 @@ export class PulseButtonComponent {
     @Input() vote: IVote | null = null;
     @Output() voteExpired = new EventEmitter<void>();
     @Output() voted = new EventEmitter<IVote>();
+    @Output() pulse = new EventEmitter<{ justSignedIn?: boolean }>();
 
     private isVoting = new BehaviorSubject(false);
 
@@ -84,12 +85,7 @@ export class PulseButtonComponent {
             )
             .subscribe();
 
-        this.votingService.isAnonymousUserSignedIn$
-            .pipe(
-                first((isAnonymousUserSignedIn) => isAnonymousUserSignedIn),
-                tap(() => this.onPulse({ justSignedIn: true })),
-            )
-            .subscribe();
+        this.listenToUserSignedIn();
 
         if (!this.vote) return;
 
@@ -101,7 +97,13 @@ export class PulseButtonComponent {
     }
 
     onPulse({ justSignedIn }: { justSignedIn?: boolean } = {}) {
-        console.log("onPulse", { justSignedIn });
+        console.log("onPulse", {
+            justSignedIn,
+            topicId: this.topicId,
+            isVoting: this.isVoting.value,
+            isActiveVote: this.isActiveVote,
+            isInProgress: this.isInProgress,
+        });
 
         if (this.isVoting.value || this.isActiveVote || !this.topicId || this.isInProgress) return;
 
@@ -124,7 +126,7 @@ export class PulseButtonComponent {
             .subscribe({
                 next: ([vote]) => {
                     console.log("onPulse Vote received", { vote });
-                    
+
                     this.isActiveVote = true;
                     this.lastVoteInfo = VoteUtils.parseVoteInfo(vote);
                     this.voted.emit(vote);
@@ -135,6 +137,7 @@ export class PulseButtonComponent {
                     }
                 },
                 error: (error) => {
+                    this.isInProgress = false;
                     if (error instanceof VotingError) {
                         if (error.code === VotingErrorCode.NOT_AUTHORIZED) {
                             this.votingService.showAcceptRulesPopup();
@@ -146,7 +149,6 @@ export class PulseButtonComponent {
                         }
                     }
                     this.notificationService.error(error.message || "Failed to vote");
-                    this.isInProgress = false;
                 },
             });
     }
@@ -155,5 +157,16 @@ export class PulseButtonComponent {
         this.isActiveVote = false;
         this.lastVoteInfo = "";
         this.voteExpired.emit();
+    }
+
+    private listenToUserSignedIn() {
+        return combineLatest([
+            this.authService.user$,
+            this.votingService.isAnonymousUserSignedIn$,
+        ]).pipe(
+            filter(([user, signedIn]) => !!user && signedIn === true),
+            first(),
+            tap(() => this.onPulse({ justSignedIn: true })),
+        ).subscribe();
     }
 }

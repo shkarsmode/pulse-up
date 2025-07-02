@@ -90,10 +90,13 @@ export class PulsePageComponent implements OnInit {
     vote: IVote | null = null;
     isActiveVote: boolean = false;
     lastVoteInfo: string = "";
-    isAnonymousUser = this.authService.anonymousUserValue;
+    get isAnonymousUser() {
+        return this.authService.anonymousUserValue;
+    }
 
     ngOnInit(): void {
         this.getInitialData();
+        this.listenToUserChanges();
         this.openJustCtreatedTipicPopup();
     }
 
@@ -118,8 +121,6 @@ export class PulsePageComponent implements OnInit {
     }
 
     public onVoted() {
-        console.log("onVoted", {topic: this.topic});
-        
         if (!this.topic) return;
         this.pendingTopicsService.add({
             ...this.topic,
@@ -154,7 +155,7 @@ export class PulsePageComponent implements OnInit {
         }).pipe(
             tap(({ topic, votes }) => {
                 console.log("Loaded topic data", { topic, votes });
-                
+
                 this.updateTopicData(topic);
                 this.createLink(topic);
                 this.updateSuggestions();
@@ -288,5 +289,12 @@ export class PulsePageComponent implements OnInit {
         const isTruncated = heightDiff > 19;
 
         this.isReadMore = !isTruncated;
+    }
+
+    private listenToUserChanges() {
+        this.authService.user$.pipe(
+            first((user) => !!user),
+            tap(() => this.getInitialData()),
+        );
     }
 }

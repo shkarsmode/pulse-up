@@ -12,7 +12,6 @@ export class DialogService {
         component: ComponentType<TComponent>,
         config?: MatDialogConfig<TConfig>,
     ): MatDialogRef<TComponent, TResult> {
-        console.log({ dialogInside: this.dialog });
         return this.dialog.open(component, {
             width: "500px",
             panelClass: "custom-dialog-container",

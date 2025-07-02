@@ -1,6 +1,5 @@
 import { inject, Injectable, DestroyRef } from "@angular/core";
 import { BehaviorSubject, switchMap, of, tap, map, filter, firstValueFrom } from "rxjs";
-import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { IProfile } from "../interfaces";
 import { AuthenticationService } from "../services/api/authentication.service";
 import { UserService } from "../services/api/user.service";
@@ -20,12 +19,9 @@ export class ProfileStore {
     );
 
     refreshProfile() {
-        console.log("Refreshing profile...");
-        
         return this.authService.user$.pipe(
             filter((user) => user !== undefined),
             switchMap((user) => {
-                console.log("User in profile store:", user);
                 return this.fetchProfile();
             }),
             tap((profile) => this.profileSubject.next(profile)),
@@ -39,8 +35,6 @@ export class ProfileStore {
     }
 
     async init(): Promise<void> {
-        console.log("Initializing profile store...");
-        
         await firstValueFrom(this.refreshProfile());
     }
 
