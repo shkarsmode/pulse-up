@@ -1,5 +1,7 @@
 <app-profile-layout
     heading="Profile"
     [isLoading]="isLoading">
-    <app-profile-form [initialValues]="profileFormvalues" />
+    <app-profile-form
+        [initialValues]="profileFormvalues"
+        *ngIf="profileStore.profile$ | async" />
 </app-profile-layout>

@@ -125,7 +125,6 @@ export class ConfirmPhoneNumberService {
             .pipe(take(1))
             .subscribe({
                 next: () => {
-                    console.log("Verification code resent successfully");
                     this.resendCodeAttemptsLeft--;
                     this.isResendingCode$.next(false);
                     this.startCooldown(60);

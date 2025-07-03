@@ -51,7 +51,6 @@ export class HeaderComponent {
     }
 
     public toggleDropdown(): void {
-        console.log('toggleDropdown')
         this.isMobileDropdown = !this.isMobileDropdown;
         if (this.isMobileDropdown) {
             this.scrollToTop();

@@ -72,8 +72,6 @@ export class ErrorInterceptor implements HttpInterceptor {
         console.log('handle401Error', this.isRefreshing);
         
         if (!this.isRefreshing) {
-            console.log('Refreshing token...');
-            
             this.isRefreshing = true;
             this.refreshTokenSubject.next(null);
 
@@ -95,7 +93,6 @@ export class ErrorInterceptor implements HttpInterceptor {
                 );
         }
         return this.refreshTokenSubject.pipe(
-            tap((token) => console.log({token})),
             filter((token) => token !== null),
             take(1),
             switchMap((token) => next.handle(this.addTokenHeader(request)))

@@ -1,5 +1,7 @@
 <app-popup>
     <app-popup-close-button (close)="onClose()" />
     <app-popup-subtitle>Welcome</app-popup-subtitle>
-    <app-auth-form (submitForm)="onSubmit()"/>
+    <div class="welcome-auth-form">
+        <app-auth-form (submitForm)="onSubmit()"/>
+    </div>
 </app-popup>

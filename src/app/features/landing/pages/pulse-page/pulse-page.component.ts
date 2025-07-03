@@ -76,7 +76,7 @@ export class PulsePageComponent implements OnInit {
     private readonly notificationService = inject(NotificationService);
     private readonly authService = inject(AuthenticationService);
     private readonly pendingTopicsService = inject(PendingTopicsService);
-    private readonly destroyRef = inject(DestroyRef)
+    private readonly destroyRef = inject(DestroyRef);
     private mutationObserver: MutationObserver | null = null;
 
     topic: ITopic | null = null;
@@ -90,10 +90,13 @@ export class PulsePageComponent implements OnInit {
     vote: IVote | null = null;
     isActiveVote: boolean = false;
     lastVoteInfo: string = "";
-    isAnonymousUser = this.authService.anonymousUserValue;
+    get isAnonymousUser() {
+        return this.authService.anonymousUserValue;
+    }
 
     ngOnInit(): void {
         this.getInitialData();
+        this.listenToUserChanges();
         this.openJustCtreatedTipicPopup();
     }
 
@@ -126,7 +129,7 @@ export class PulsePageComponent implements OnInit {
                 lastDayVotes: (this.topic.stats?.lastDayVotes || 0) + 1,
                 totalUniqueUsers: this.topic.stats?.totalUniqueUsers || 0,
             },
-        })
+        });
         this.loadTopicData(this.topic.id).pipe(first()).subscribe();
     }
 
@@ -245,9 +248,10 @@ export class PulsePageComponent implements OnInit {
     }
 
     private openJustCtreatedTipicPopup(): void {
+        const matDialog = this.dialog;
         if (this.pulseService.isJustCreatedTopic) {
             setTimeout(() => {
-                this.dialog.open(TopicPublishedComponent, {
+                matDialog.open(TopicPublishedComponent, {
                     width: "500px",
                     panelClass: "custom-dialog-container",
                     backdropClass: "custom-dialog-backdrop",
@@ -283,5 +287,12 @@ export class PulsePageComponent implements OnInit {
         const isTruncated = heightDiff > 19;
 
         this.isReadMore = !isTruncated;
+    }
+
+    private listenToUserChanges() {
+        this.authService.user$.pipe(
+            first((user) => !!user),
+            tap(() => this.getInitialData()),
+        );
     }
 }

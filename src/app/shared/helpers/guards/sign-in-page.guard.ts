@@ -11,7 +11,6 @@ export class SignInPageGuard implements CanActivate {
     canActivate(): Observable<boolean> {
         return this.authenticationService.logout().pipe(
             catchError((error) => {
-                console.log("SignInPageGuard error:", error);
                 return of(false);
             }),
             map(() => true),

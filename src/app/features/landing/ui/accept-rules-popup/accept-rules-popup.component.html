@@ -1,0 +1,9 @@
+<app-popup>
+    <app-popup-close-button (close)="onClose()" />
+    <app-popup-title>Rules</app-popup-title>
+    <app-popup-text> Texct here </app-popup-text>
+    <app-popup-footer>
+        <app-primary-button (click)="onAccept()">Accept</app-primary-button>
+        <app-secondary-button (click)="onClose()">Close</app-secondary-button>
+    </app-popup-footer>
+</app-popup>

@@ -79,7 +79,6 @@ export class DeleteAccountPopupComponent {
                         );
                     }
                 }),
-                switchMap(() => this.profileStore.refreshProfile()),
                 switchMap(() => this.authenticationService.logout()),
                 catchError(() => {
                     return throwError(

@@ -32,7 +32,6 @@ export class PublicPageGuard implements CanActivate {
 
         return this.authenticationService.loginAsAnonymousThroughTheFirebase().pipe(
             catchError((error) => {
-                console.log("PublicPageGuard error:", error);
                 return of(false);
             }),
             switchMap(() => this.loadInitialData()),
