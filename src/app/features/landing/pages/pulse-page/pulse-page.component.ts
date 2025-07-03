@@ -154,8 +154,6 @@ export class PulsePageComponent implements OnInit {
             votes: this.getVote(topicId),
         }).pipe(
             tap(({ topic, votes }) => {
-                console.log("Loaded topic data", { topic, votes });
-
                 this.updateTopicData(topic);
                 this.createLink(topic);
                 this.updateSuggestions();

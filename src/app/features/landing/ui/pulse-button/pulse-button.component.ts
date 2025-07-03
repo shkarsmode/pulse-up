@@ -97,14 +97,6 @@ export class PulseButtonComponent {
     }
 
     onPulse({ justSignedIn }: { justSignedIn?: boolean } = {}) {
-        console.log("onPulse", {
-            justSignedIn,
-            topicId: this.topicId,
-            isVoting: this.isVoting.value,
-            isActiveVote: this.isActiveVote,
-            isInProgress: this.isInProgress,
-        });
-
         if (this.isVoting.value || this.isActiveVote || !this.topicId || this.isInProgress) return;
 
         this.isInProgress = true;
@@ -125,8 +117,6 @@ export class PulseButtonComponent {
             )
             .subscribe({
                 next: ([vote]) => {
-                    console.log("onPulse Vote received", { vote });
-
                     this.isActiveVote = true;
                     this.lastVoteInfo = VoteUtils.parseVoteInfo(vote);
                     this.voted.emit(vote);

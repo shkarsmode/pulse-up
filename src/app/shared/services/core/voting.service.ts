@@ -34,7 +34,6 @@ export class VotingService {
 
     setIsAnonymousUserSignedIn(value: boolean) {
         if (value === this.isAnonymousUserSignedIn.value) return;
-        console.log("Setting isAnonymousUserSignedIn to", value);
         this.isAnonymousUserSignedIn.next(value);
     }
 

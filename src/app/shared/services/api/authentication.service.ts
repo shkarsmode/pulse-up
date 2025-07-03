@@ -166,8 +166,6 @@ export class AuthenticationService {
     }
 
     public loginAsAnonymousThroughTheFirebase = (): Observable<UserCredential> => {
-        console.log("Logging in as anonymous user through Firebase");
-
         return from(signInAnonymously(this.firebaseAuth)).pipe(
             map((response: UserCredential | any) => {
                 const accessToken = response.user.accessToken;
@@ -368,8 +366,6 @@ export class AuthenticationService {
     };
 
     public updateToken = (): Observable<string> => {
-        console.log("Updating token for user...");
-
         return this.user$.pipe(
             take(1),
             switchMap((user) => {
