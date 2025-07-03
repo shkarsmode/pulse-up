@@ -1,9 +1,10 @@
 import { inject, Injectable, DestroyRef } from "@angular/core";
-import { BehaviorSubject, switchMap, of, tap, map, filter, firstValueFrom } from "rxjs";
+import { BehaviorSubject, tap, map, filter, take } from "rxjs";
 import { IProfile } from "../interfaces";
 import { AuthenticationService } from "../services/api/authentication.service";
 import { UserService } from "../services/api/user.service";
 import { Nullable } from "../types";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 
 @Injectable({ providedIn: "root" })
 export class ProfileStore {
@@ -18,14 +19,20 @@ export class ProfileStore {
         map((profile) => !!(profile.name && profile.username)),
     );
 
-    refreshProfile() {
-        return this.authService.user$.pipe(
-            filter((user) => user !== undefined),
-            switchMap((user) => {
-                return this.fetchProfile();
-            }),
-            tap((profile) => this.profileSubject.next(profile)),
-        )
+    constructor() {
+        this.authService.user$
+            .pipe(
+                tap((user) => {
+                    if (user) {
+                        this.refreshProfile();
+                    } else {
+                        this.profileSubject.next(null);
+                    }
+                }),
+                takeUntilDestroyed(this.destroyRef),
+            )
+            .subscribe();
+        this.refreshProfile().subscribe();
     }
 
     updateProfile(data: IProfile) {
@@ -34,11 +41,10 @@ export class ProfileStore {
             .pipe(tap((profile) => this.profileSubject.next(profile)));
     }
 
-    async init(): Promise<void> {
-        await firstValueFrom(this.refreshProfile());
-    }
-
-    private fetchProfile() {
-        return this.userService.getOwnProfile();
+    public refreshProfile() {
+        return this.userService.getOwnProfile().pipe(
+            take(1),
+            tap((profile) => this.profileSubject.next(profile)),
+        );
     }
 }
