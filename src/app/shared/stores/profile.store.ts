@@ -20,20 +20,20 @@ export class ProfileStore {
     );
 
     constructor() {
-        this.authService.user$
-            .pipe(
-                tap((user) => {
-                    if (user) {
-                        console.log("refreshProfile for user", user);
-                        this.refreshProfile();
-                    } else {
-                        this.profileSubject.next(null);
-                    }
-                }),
-                takeUntilDestroyed(this.destroyRef),
-            )
-            .subscribe();
-        this.refreshProfile().subscribe();
+        // this.authService.user$
+        //     .pipe(
+        //         tap((user) => {
+        //             if (user && !user.isAnonymous) {
+        //                 console.log("refreshProfile for user", user);
+        //                 this.refreshProfile();
+        //             } else {
+        //                 this.profileSubject.next(null);
+        //             }
+        //         }),
+        //         takeUntilDestroyed(this.destroyRef),
+        //     )
+        //     .subscribe();
+        // this.refreshProfile().subscribe();
     }
 
     updateProfile(data: IProfile) {

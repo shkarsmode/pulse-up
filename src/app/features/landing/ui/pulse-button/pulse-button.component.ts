@@ -150,7 +150,7 @@ export class PulseButtonComponent {
     }
 
     private listenToUserSignedIn() {
-        return combineLatest([this.authService.user$, this.votingService.isAnonymousUserSignedIn$])
+        return combineLatest([this.authService.firebaseUser$, this.votingService.isAnonymousUserSignedIn$])
             .pipe(
                 filter(([user, signedIn]) => !!user && signedIn === true),
                 first(),

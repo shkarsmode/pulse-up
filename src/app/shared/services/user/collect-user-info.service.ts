@@ -4,7 +4,7 @@ import { Router } from "@angular/router";
 import { first, take } from "rxjs";
 import { PersonalInfoPopupComponent } from "../../components/popups/personal-info-popup/personal-info-popup.component";
 import { LOCAL_STORAGE_KEYS, LocalStorageService } from "../core/local-storage.service";
-import { ProfileStore } from "../../stores/profile.store";
+import { ProfileService } from "../profile/profile.service";
 
 @Injectable({
     providedIn: "root",
@@ -12,7 +12,7 @@ import { ProfileStore } from "../../stores/profile.store";
 export class CollectUserInfoService {
     private readonly router = inject(Router);
     private readonly dialog = inject(MatDialog);
-    private readonly profileStore = inject(ProfileStore);
+    private readonly profileService = inject(ProfileService);
 
     private isOpened = false;
 
@@ -20,7 +20,7 @@ export class CollectUserInfoService {
         const currentUrl = this.router.url;
         const accountsIds =
             LocalStorageService.get<string[]>(LOCAL_STORAGE_KEYS.personalInfoPopupShownForProfiles) || [];
-        this.profileStore.profile$.pipe(first((profile) => !!profile)).subscribe((profile) => {
+        this.profileService.profile$.pipe(first((profile) => !!profile)).subscribe((profile) => {
             if (!profile?.id) return;
             const alreadyShown = accountsIds && accountsIds.includes(profile.id);
             if (

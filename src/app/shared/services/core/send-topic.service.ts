@@ -10,8 +10,7 @@ import { noConsecutiveNewlinesValidator } from "../../helpers/validators/no-cons
 import { arrayLengthValidator } from "../../helpers/validators/array-length-validator";
 import { TopicLocation } from "@/app/features/user/interfaces/topic-location.interface";
 import { NotificationService } from "./notification.service";
-import { UserService } from "../api/user.service";
-import { ProfileStore } from "../../stores/profile.store";
+import { ProfileService } from "../profile/profile.service";
 
 interface TopicFormValues {
     icon: File;
@@ -42,9 +41,8 @@ export class SendTopicService {
     private readonly router = inject(Router);
     private readonly formBuilder = inject(FormBuilder);
     private readonly pulseService = inject(PulseService);
-    private readonly userService = inject(UserService);
     private readonly notificationService = inject(NotificationService);
-    private readonly profileStore = inject(ProfileStore);
+    private readonly profileService = inject(ProfileService);
 
     constructor() {
         this.currentTopic = this.formBuilder.group({
@@ -131,7 +129,7 @@ export class SendTopicService {
                 }),
                 switchMap(() => this.pulseService.create(params)),
                 switchMap((topic) => {
-                    return this.profileStore.refreshProfile().pipe(
+                    return this.profileService.refreshProfile().pipe(
                         map(() => topic)
                     )
                 })

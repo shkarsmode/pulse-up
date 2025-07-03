@@ -81,10 +81,17 @@ export class ProfileFormComponent {
             bio: "",
             profilePicture: null,
         });
-        this.phoneNumber = this.authenticationService.firebaseAuth.currentUser?.phoneNumber || null;
-        this.email =
-            this.authenticationService.firebaseAuth.currentUser?.email || this.emailPlaceholder;
+        
         this.profilePicture = this.form.get("profilePicture")?.value || null;
+
+        this.authenticationService.firebaseUser$.pipe(takeUntilDestroyed(this.destroyed)).subscribe((user) => {
+            if (user && user.email) {
+                this.email = user.email;
+            }
+            if (user && user.phoneNumber) {
+                this.phoneNumber = user.phoneNumber;
+            }
+        })
     }
 
     ngOnInit() {

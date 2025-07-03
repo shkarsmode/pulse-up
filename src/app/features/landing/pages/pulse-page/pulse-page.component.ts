@@ -292,7 +292,7 @@ export class PulsePageComponent implements OnInit {
     }
 
     private listenToUserChanges() {
-        this.authService.user$.pipe(
+        this.authService.firebaseUser$.pipe(
             first((user) => !!user),
             tap(() => this.getInitialData()),
         );

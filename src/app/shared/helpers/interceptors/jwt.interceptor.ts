@@ -16,17 +16,18 @@ export class JwtInterceptor implements HttpInterceptor {
         token = userToken || anonymousToken;
 
         if (token) {
-            console.log({token: token.slice(-4)});
+            // console.log({token: token.slice(-4), url: request.url});
             
             const clonedRequest = this.setAuthorizationHeader({
                 request,
                 token,
                 withCredentials: !!userToken,
             });
+            
             return next.handle(clonedRequest);
         }
 
-        console.log({token: ""});
+        // console.log({token: "", url: request.url});
         return next.handle(request);
 
         // return this.authenticationService.user$.pipe(

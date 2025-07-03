@@ -6,21 +6,23 @@ import { SignInFormService } from "@/app/shared/services/core/sign-in-form.servi
 import { LinkButtonComponent } from "@/app/shared/components/ui-kit/buttons/link-button/link-button.component";
 import { AuthFormComponent } from "@/app/shared/components/auth-form/auth-form.component";
 import { AuthLayoutComponent } from "../../ui/auth-layout/auth-layout.component";
+import { AuthenticationService } from "@/app/shared/services/api/authentication.service";
+import { AnonymousSigninService } from "../../services/anonymous-signin.service";
 
 @Component({
     selector: "app-sign-in",
     standalone: true,
     imports: [SvgIconComponent, AuthLayoutComponent, LinkButtonComponent, AuthFormComponent],
-    providers: [SignInFormService],
+    providers: [SignInFormService, AnonymousSigninService],
     templateUrl: "./sign-in.component.html",
     styleUrl: "./sign-in.component.scss",
 })
 export class SignInComponent {
-    private router: Router = inject(Router);
-    private readonly appRotes = AppRoutes;
+    private router = inject(Router);
+    private anonymousSigninService = inject(AnonymousSigninService);
 
     public onClickGuest() {
-        this.navigateToHomePage();
+        this.anonymousSigninService.loginAsAnonymous();
     }
 
     public navigateToConfirmPage() {
@@ -35,9 +37,5 @@ export class SignInComponent {
     private getRedirectUrl(): string | null {
         const tree = this.router.parseUrl(this.router.url);
         return tree.queryParams["redirect"] || null;
-    }
-
-    private navigateToHomePage() {
-        this.router.navigate([this.appRotes.Landing.HOME]);
     }
 }

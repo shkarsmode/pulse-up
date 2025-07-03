@@ -2,7 +2,7 @@ import { Component, DestroyRef, inject } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { MatDialogRef } from "@angular/material/dialog";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
-import { map, take } from "rxjs";
+import { delay, map, take } from "rxjs";
 import { VotingService } from "@/app/shared/services/core/voting.service";
 import { GeolocationService } from "@/app/shared/services/core/geolocation.service";
 import { PopupLayoutComponent } from "@/app/shared/components/ui-kit/popup/popup.component";
@@ -42,12 +42,14 @@ export class GetLocationPopupComponent {
     ngOnInit() {
         this.geolocationService
             .getCurrentGeolocation({ enableHighAccuracy: false })
-            .pipe(take(1))
+            .pipe(take(1), delay(750)) // Adding a delay to simulate loading time
             .subscribe({
                 next: () => {
                     this.isError = false;
-                    this.votingService.signInWithGeolocation();
                     this.dialogRef.close();
+                    setTimeout(() => {
+                        this.votingService.signInWithGeolocation();
+                    }, 250)
                 },
                 error: () => {
                     this.isError = true;
@@ -56,8 +58,10 @@ export class GetLocationPopupComponent {
     }
 
     proceed() {
-        this.votingService.signInWithoutGeolocation();
         this.dialogRef.close();
+        setTimeout(() => {
+            this.votingService.signInWithoutGeolocation();
+        }, 250);
     }
 
     closeDialog() {

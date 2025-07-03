@@ -7,17 +7,17 @@ import {
     Router,
     RouterStateSnapshot,
 } from "@angular/router";
-import { map } from "rxjs";
+import { map, tap } from "rxjs";
 import { AppRoutes } from "@/app/shared/enums/app-routes.enum";
-import { ProfileStore } from "@/app/shared/stores/profile.store";
+import { ProfileService } from "@/app/shared/services/profile/profile.service";
 
 @Injectable({
     providedIn: "root",
 })
 export class RequiredPersonalInformationGuard implements CanActivate {
     private readonly router = inject(Router);
-    private readonly profileStore = inject(ProfileStore);
-    private readonly hasPublicInformation$ = this.profileStore.hasPublicInformation$;
+    private readonly profileService = inject(ProfileService);
+    private readonly hasPublicInformation$ = this.profileService.hasPublicInformation$;
 
     canActivate(
         route: ActivatedRouteSnapshot,

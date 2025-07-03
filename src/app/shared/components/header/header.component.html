@@ -29,7 +29,7 @@
                     About
                 </a>
             </li>
-            @if (isAuthenticated | async) {
+            @if (isAuthenticated) {
                 <li>
                     <a
                         [routerLink]="'/' + AppRoutes.Profile.REVIEW"
@@ -42,7 +42,7 @@
                 <a
                     [routerLink]="'/' + AppRoutes.Auth.SIGN_IN"
                     routerLinkActive="active">
-                    {{ (isAuthenticated | async) ? "Sign Out" : "Sign In" }}
+                    {{ isAuthenticated ? "Sign Out" : "Sign In" }}
                 </a>
             </li>
             <!-- <li>
@@ -130,10 +130,10 @@
                         <a
                             [routerLink]="'/' + AppRoutes.Auth.SIGN_IN"
                             routerLinkActive="active">
-                            {{ (isAuthenticated | async) ? "Sign Out" : "Sign In" }}
+                            {{ isAuthenticated ? "Sign Out" : "Sign In" }}
                         </a>
                     </li>
-                    @if (isAuthenticated | async) {
+                    @if (isAuthenticated) {
                         <li>
                             <a
                                 [routerLink]="'/' + AppRoutes.Profile.REVIEW"

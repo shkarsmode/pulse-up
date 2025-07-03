@@ -34,6 +34,7 @@ import {
     AuthenticationError,
 } from "../../helpers/errors/authentication-error";
 import { Nullable } from "../../types";
+import { ProfileService } from "../profile/profile.service";
 
 @Injectable({
     providedIn: "root",
@@ -41,13 +42,15 @@ import { Nullable } from "../../types";
 export class AuthenticationService {
     private readonly windowService: WindowService = inject(WindowService);
     private readonly userService: UserService = inject(UserService);
+    private readonly profileService: ProfileService = inject(ProfileService);
     private readonly identityService: IdentityService = inject(IdentityService);
 
     private anonymousUser$: BehaviorSubject<string | null>;
     private userToken$: BehaviorSubject<string | null>;
     private windowRef: Window;
     private firebaseApp: FirebaseApp;
-    private userSubject = new BehaviorSubject<Nullable<User> | undefined>(undefined);
+    private userSubject: BehaviorSubject<Nullable<User>> = new BehaviorSubject<Nullable<User>>(null);
+    private firebaseUserSubject: BehaviorSubject<Nullable<User>> = new BehaviorSubject<Nullable<User>>(null);
 
     public anonymousUser: Observable<string | null>;
     public userToken: Observable<string | null>;
@@ -57,6 +60,7 @@ export class AuthenticationService {
     public isChangePhoneNumberInProgress$: BehaviorSubject<boolean>;
     public isResendInProgress$: BehaviorSubject<boolean>;
     public user$ = this.userSubject.asObservable();
+    public firebaseUser$ = this.firebaseUserSubject.asObservable();
 
     constructor(@Inject(FIREBASE_CONFIG) private readonly firebaseConfig: IFirebaseConfig) {
         this.firebaseApp = this.initFirebaseAppWithConfig();
@@ -73,13 +77,12 @@ export class AuthenticationService {
         this.isResendInProgress$ = new BehaviorSubject<boolean>(false);
         this.isChangePhoneNumberInProgress$ = new BehaviorSubject<boolean>(false);
         this.windowRef = this.windowService.windowRef;
-
-        console.log("assign onAuthStateChanged listener");
         
         getAuth(this.firebaseApp).onAuthStateChanged((user) => {
             // if (user?.isAnonymous === this.userSubject.value?.isAnonymous) return;
             console.log("Auth state changed:", user);
-            this.userSubject.next(user);
+            this.firebaseUserSubject.next(user);
+            // this.userSubject.next(user);
         });
     }
 
@@ -176,6 +179,8 @@ export class AuthenticationService {
             take(1),
             map((response: UserCredential | any) => {
                 const accessToken = response.user.accessToken;
+                console.log("Anonymous user logged in with access token:", accessToken);
+                
                 LocalStorageService.set(LOCAL_STORAGE_KEYS.anonymousToken, accessToken);
                 LocalStorageService.set(LOCAL_STORAGE_KEYS.isAnonymous, true);
                 this.anonymousUser$.next(accessToken);
@@ -183,6 +188,7 @@ export class AuthenticationService {
                 LocalStorageService.remove(LOCAL_STORAGE_KEYS.userToken);
                 this.userToken$.next(null);
 
+                console.log("Anonymous user logged in successfully:", response.user);
                 return response;
             }),
         );
@@ -373,7 +379,7 @@ export class AuthenticationService {
     };
 
     public updateToken = (): Observable<string> => {
-        return this.user$.pipe(
+        return this.firebaseUser$.pipe(
             take(1),
             switchMap((user) => {
                 console.log("Updating token for user:", user);
@@ -385,7 +391,14 @@ export class AuthenticationService {
                     );
                     return this.loginAsAnonymousThroughTheFirebase().pipe(
                         take(1),
-                        switchMap((userCredential) => from(userCredential.user.getIdToken(true))),
+                        switchMap((userCredential) => {
+                            return this.getIdToken(userCredential).pipe(
+                                tap((newToken) => {
+                                    console.log({newToken});
+                                    
+                                })
+                            )
+                        }),
                     );
                 }
 
@@ -579,12 +592,16 @@ export class AuthenticationService {
                 LocalStorageService.set(LOCAL_STORAGE_KEYS.isAnonymous, false);
                 LocalStorageService.remove(LOCAL_STORAGE_KEYS.phoneNumberForSigning);
                 LocalStorageService.remove(LOCAL_STORAGE_KEYS.anonymousToken);
+                LocalStorageService.remove(LOCAL_STORAGE_KEYS.isAnonymous);
                 this.userToken$.next(token);
                 this.anonymousUser$.next(null);
                 this.isConfirmInProgress$.next(false);
                 this.windowRef.recaptchaVerifier?.clear();
                 delete this.windowRef.recaptchaVerifier;
                 delete this.windowRef.confirmationResult;
+                this.profileService.refreshProfile().pipe(
+                    take(1)
+                ).subscribe()
             }),
             map(({ token, ...profile }) => profile),
         );

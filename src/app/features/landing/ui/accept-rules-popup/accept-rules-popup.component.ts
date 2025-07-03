@@ -31,7 +31,9 @@ export class AcceptRulesPopupComponent {
     }
 
     onAccept() {
-        this.votingService.askForGeolocation();
         this.dialogRef.close(true);
+        setTimeout(() => {
+            this.votingService.askForGeolocation();
+        }, 250)
     }
 }

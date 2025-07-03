@@ -32,6 +32,8 @@ export class WelcomePopupComponent {
 
     onSubmit() {
         this.dialogRef.close();
-        this.votingService.confirmPhoneNumber();
+        setTimeout(() => {
+            this.votingService.confirmPhoneNumber();
+        }, 250);
     }
 }
