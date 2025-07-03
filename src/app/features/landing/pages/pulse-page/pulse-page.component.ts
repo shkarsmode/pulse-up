@@ -40,6 +40,7 @@ import { IVote } from "@/app/shared/interfaces/vote.interface";
 import { VoteUtils } from "@/app/shared/helpers/vote-utils";
 import { AuthenticationService } from "@/app/shared/services/api/authentication.service";
 import { PendingTopicsService } from "@/app/shared/services/topic/pending-topics.service";
+import { VotingService } from "@/app/shared/services/core/voting.service";
 
 @Component({
     selector: "app-pulse-page",
@@ -73,6 +74,7 @@ export class PulsePageComponent implements OnInit {
     private readonly metadataService = inject(MetadataService);
     private readonly settingsService = inject(SettingsService);
     private readonly voteService = inject(VoteService);
+    private readonly votingService = inject(VotingService);
     private readonly notificationService = inject(NotificationService);
     private readonly authService = inject(AuthenticationService);
     private readonly pendingTopicsService = inject(PendingTopicsService);

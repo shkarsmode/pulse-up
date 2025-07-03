@@ -11,6 +11,7 @@ import { AcceptRulesPopupComponent } from "@/app/features/landing/ui/accept-rule
 import { ConfirmPhoneNumberPopupComponent } from "@/app/features/landing/ui/confirm-phone-number-popup/confirm-phone-number-popup.component";
 import { SigninRequiredPopupComponent } from "../../components/popups/signin-required-popup/signin-required-popup.component";
 import { DialogService } from "./dialog.service";
+import { GetLocationPopupComponent } from "@/app/features/landing/ui/get-location-popup/get-location-popup.component";
 
 @Injectable({
     providedIn: "root",
@@ -25,6 +26,7 @@ export class VotingService {
 
     isVoting$ = this.isVoting.asObservable();
     isAnonymousUserSignedIn$ = this.isAnonymousUserSignedIn.asObservable();
+    isGeolocationRetrieved = false;
     get anonymousUserValue() {
         return this.authService.anonymousUserValue;
     }
@@ -47,67 +49,108 @@ export class VotingService {
 
         this.isVoting.next(true);
 
-        return this.geolocationService
-            .getCurrentGeolocation({
-                enableHighAccuracy: true,
-            })
-            .pipe(
-                catchError(() => {
-                    this.isVoting.next(false);
-                    return throwError(
-                        () =>
-                            new VotingError(
-                                "Failed to retrieve geolocation. Location access may be disabled or unavailable.",
-                                VotingErrorCode.GEOLOCATION_UNAVAILABLE,
-                            ),
-                    );
-                }),
-                switchMap((geolocation) => {
-                    return this.voteService.sendVote({
-                        topicId,
-                        location: {
-                            latitude: geolocation.geolocationPosition.coords.latitude,
-                            longitude: geolocation.geolocationPosition.coords.longitude,
-                        },
-                        locationName: geolocation.details.fullname,
-                    });
-                }),
-                tap(() => this.isVoting.next(false)),
-                catchError((error) => {
-                    this.isVoting.next(false);
-                    if (error instanceof VotingError) {
-                        return throwError(() => error);
-                    }
-                    return throwError(
-                        () => new VotingError("Failed to vote", VotingErrorCode.UNKNOWN_ERROR),
-                    );
-                }),
-            );
+        return this.geolocationService.getCurrentGeolocation({ enableHighAccuracy: false }).pipe(
+            catchError(() => {
+                this.isVoting.next(false);
+                return throwError(
+                    () =>
+                        new VotingError(
+                            "Failed to retrieve geolocation. Location access may be disabled or unavailable.",
+                            VotingErrorCode.GEOLOCATION_UNAVAILABLE,
+                        ),
+                );
+            }),
+            switchMap((geolocation) => {
+                return this.voteService.sendVote({
+                    topicId,
+                    location: {
+                        latitude: geolocation.geolocationPosition.coords.latitude,
+                        longitude: geolocation.geolocationPosition.coords.longitude,
+                    },
+                    locationName: geolocation.details.fullname,
+                });
+            }),
+            tap(() => this.isVoting.next(false)),
+            catchError((error) => {
+                this.isVoting.next(false);
+                if (error instanceof VotingError) {
+                    return throwError(() => error);
+                }
+                return throwError(
+                    () => new VotingError("Failed to vote", VotingErrorCode.UNKNOWN_ERROR),
+                );
+            }),
+        );
     }
 
-    showAcceptRulesPopup() {
-        this.dialogService.open(AcceptRulesPopupComponent)
+    startVotingForAnonymousUser() {
+        this.showAcceptRulesPopup();
     }
 
-    showWelcomePopupForAnonymousUser() {
-        this.dialogService.open(WelcomePopupComponent, {
-            autoFocus: true,
-        });
+    askForGeolocation() {
+        this.showGetGeolocationPopup();
     }
 
-    showConfirmPhoneNumberPopup() {
-        this.dialogService.open(ConfirmPhoneNumberPopupComponent)
+    signInWithGeolocation() {
+        this.isGeolocationRetrieved = true;
+        this.showWelcomePopup();
+    }
+
+    signInWithoutGeolocation() {
+        this.isGeolocationRetrieved = false;
+        this.showWelcomePopup();
+    }
+
+    confirmPhoneNumber() {
+        this.showConfirmPhoneNumberPopup();
+    }
+
+    reauthenticate() {
+        this.showRecentSignInRequiredPopup();
+    }
+
+    congratulate() {
+        this.showSuccessfulVotePopupForJustSignedInUser();
     }
 
     showDownloadAppPopup() {
         this.dialogService.open(DownloadAppPopupComponent);
     }
 
-    showSuccessfulVotePopupForJustSignedInUser() {
+    private showAcceptRulesPopup() {
+        this.dialogService.open(AcceptRulesPopupComponent);
+    }
+
+    private showGetGeolocationPopup() {
+        this.dialogService.open(GetLocationPopupComponent, {
+            disableClose: true,
+        });
+    }
+
+    private showWelcomePopup() {
+        const dialogRef = this.dialogService.open(WelcomePopupComponent);
+        dialogRef.afterClosed().subscribe((result) => {
+            if (result?.stopSignInProcess) {
+                this.isGeolocationRetrieved = false;
+            }
+        });
+    }
+
+    private showConfirmPhoneNumberPopup() {
+        const dialogRef = this.dialogService.open(ConfirmPhoneNumberPopupComponent);
+         dialogRef.afterClosed().subscribe((result) => {
+            if (result?.stopSignInprocess) {
+                this.authService.stopSignInProcess();
+                this.isGeolocationRetrieved = false;
+            }
+        });
+    }
+
+    private showSuccessfulVotePopupForJustSignedInUser() {
         this.dialogService.open(SuccessfulVotePopupComponent);
     }
 
-    showRecentSignInRequiredPopup() {
+    private showRecentSignInRequiredPopup() {
         this.dialogService.open(SigninRequiredPopupComponent);
     }
 }

@@ -26,6 +26,7 @@ export class ConfirmPhoneNumberPopupComponent {
     private readonly votingService = inject(VotingService);
 
     closeDialog() {
+        this.hideRecaptcha();
         this.dialogRef.close();
     }
 
@@ -33,7 +34,6 @@ export class ConfirmPhoneNumberPopupComponent {
         this.closeDialog();
         this.notificationService.success("You have successfully logged in.");
         this.votingService.setIsAnonymousUserSignedIn(true);
-        this.hideRecaptcha();
     }
 
     onError = (error: unknown) => {
@@ -46,7 +46,7 @@ export class ConfirmPhoneNumberPopupComponent {
                 this.closeDialog();
                 return;
             } else if (error.code === AuthenticationErrorCode.REAUTHENTICATE) {
-                this.votingService.showRecentSignInRequiredPopup();
+                this.votingService.reauthenticate();
                 return;
             }
         }
@@ -59,7 +59,7 @@ export class ConfirmPhoneNumberPopupComponent {
     private hideRecaptcha() {
         const recaptchaContainer = document.getElementById("recaptcha-container");
         if (recaptchaContainer) {
-            recaptchaContainer.style.display = "none";
+            recaptchaContainer.innerHTML = "";
         }
     }
 }

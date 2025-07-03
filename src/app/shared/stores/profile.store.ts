@@ -24,6 +24,7 @@ export class ProfileStore {
             .pipe(
                 tap((user) => {
                     if (user) {
+                        console.log("refreshProfile for user", user);
                         this.refreshProfile();
                     } else {
                         this.profileSubject.next(null);

@@ -123,14 +123,14 @@ export class PulseButtonComponent {
                     this.isInProgress = false;
 
                     if (justSignedIn) {
-                        this.votingService.showSuccessfulVotePopupForJustSignedInUser();
+                        this.votingService.congratulate();
                     }
                 },
                 error: (error) => {
                     this.isInProgress = false;
                     if (error instanceof VotingError) {
                         if (error.code === VotingErrorCode.NOT_AUTHORIZED) {
-                            this.votingService.showAcceptRulesPopup();
+                            this.votingService.startVotingForAnonymousUser();
                             return;
                         }
                         if (error.code === VotingErrorCode.GEOLOCATION_UNAVAILABLE) {
@@ -150,16 +150,18 @@ export class PulseButtonComponent {
     }
 
     private listenToUserSignedIn() {
-        return combineLatest([
-            this.authService.user$,
-            this.votingService.isAnonymousUserSignedIn$,
-        ]).pipe(
-            filter(([user, signedIn]) => !!user && signedIn === true),
-            first(),
-            tap(() => {
-                this.votingService.setIsAnonymousUserSignedIn(false);
-                this.onPulse({ justSignedIn: true });
-            }),
-        ).subscribe();
+        return combineLatest([this.authService.user$, this.votingService.isAnonymousUserSignedIn$])
+            .pipe(
+                filter(([user, signedIn]) => !!user && signedIn === true),
+                first(),
+                tap(() => {
+                    this.votingService.setIsAnonymousUserSignedIn(false);
+
+                    if (this.votingService.isGeolocationRetrieved) {
+                        this.onPulse({ justSignedIn: true });
+                    }
+                }),
+            )
+            .subscribe();
     }
 }

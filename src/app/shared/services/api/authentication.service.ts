@@ -74,7 +74,11 @@ export class AuthenticationService {
         this.isChangePhoneNumberInProgress$ = new BehaviorSubject<boolean>(false);
         this.windowRef = this.windowService.windowRef;
 
+        console.log("assign onAuthStateChanged listener");
+        
         getAuth(this.firebaseApp).onAuthStateChanged((user) => {
+            // if (user?.isAnonymous === this.userSubject.value?.isAnonymous) return;
+            console.log("Auth state changed:", user);
             this.userSubject.next(user);
         });
     }
@@ -166,7 +170,10 @@ export class AuthenticationService {
     }
 
     public loginAsAnonymousThroughTheFirebase = (): Observable<UserCredential> => {
+        console.log("Logging in as anonymous user...");
+        
         return from(signInAnonymously(this.firebaseAuth)).pipe(
+            take(1),
             map((response: UserCredential | any) => {
                 const accessToken = response.user.accessToken;
                 LocalStorageService.set(LOCAL_STORAGE_KEYS.anonymousToken, accessToken);
@@ -377,6 +384,7 @@ export class AuthenticationService {
                         { user },
                     );
                     return this.loginAsAnonymousThroughTheFirebase().pipe(
+                        take(1),
                         switchMap((userCredential) => from(userCredential.user.getIdToken(true))),
                     );
                 }
@@ -424,6 +432,17 @@ export class AuthenticationService {
     public stopSignInProgress = () => {
         this.isSigninInProgress$.next(false);
     };
+
+    public stopSignInProcess = () => {
+        this.windowRef.recaptchaVerifier?.clear();
+        const recaptchaContainer = document.getElementById("recaptcha-container");
+        if (recaptchaContainer) {
+            recaptchaContainer.innerHTML = "";
+        }
+        LocalStorageService.remove(LOCAL_STORAGE_KEYS.verificationId);
+        LocalStorageService.remove(LOCAL_STORAGE_KEYS.phoneNumberForSigning);
+        this.isSigninInProgress$.next(false);
+    }
 
     private decodeToken(token: string): JwtPayload | null {
         try {

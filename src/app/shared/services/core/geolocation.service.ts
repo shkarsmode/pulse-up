@@ -26,7 +26,7 @@ export class GeolocationService {
         if (!this.isSupported) {
             this.statusSubject.next("error");
             return new Observable((observer) => {
-                observer.error(new Error("Geolocation not supported"));
+                observer.error(new Error("Your browser doesn’t support geolocation"));
             });
         }
 
@@ -92,6 +92,8 @@ export class GeolocationService {
                         return result;
                     }),
                     catchError((error) => {
+                        console.log("Geolocation service error:", error);
+                        
                         this.statusSubject.next("error");
                         return throwError(() => new Error("Failed to retrieve location details."));
                     }),
