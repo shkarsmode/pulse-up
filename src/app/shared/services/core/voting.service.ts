@@ -50,7 +50,7 @@ export class VotingService {
 
         return this.geolocationService
             .getCurrentGeolocation({
-                enableHighAccuracy: false,
+                enableHighAccuracy: true,
             })
             .pipe(
                 catchError(() => {
