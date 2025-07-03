@@ -132,14 +132,21 @@ export class PulsePageComponent implements OnInit {
                 totalUniqueUsers: this.topic.stats?.totalUniqueUsers || 0,
             },
         });
-        this.loadTopicData(this.topic.id).pipe(first()).subscribe();
+        this.loadTopicData({ topicId: this.topic.id }).pipe(first()).subscribe();
     }
 
     private getInitialData(): void {
         this.route.paramMap
             .pipe(
                 takeUntilDestroyed(this.destroyRef),
-                map((params: ParamMap) => +params.get("id")!),
+                map((params: ParamMap) => {
+                    const idParam = params.get("id") || "";
+                    const topicId = parseInt(idParam);
+                    return ({
+                        topicId: Number.isNaN(topicId) ? undefined : topicId,
+                        shareKey: Number.isNaN(topicId) ? idParam : undefined,
+                    })
+                }),
                 tap(() => {
                     this.topic = null;
                     this.isLoading = true;
@@ -150,25 +157,45 @@ export class PulsePageComponent implements OnInit {
             .subscribe();
     }
 
-    private loadTopicData(topicId: number) {
-        console.log(`Loading topic data for ID: ${topicId}`);
-        
-        return forkJoin({
-            topic: this.getTopic(topicId),
-            votes: this.getVote(topicId),
-        }).pipe(
-            tap(({ topic, votes }) => {
-                console.log({ topic, votes });
-                
-                this.updateTopicData(topic);
-                this.createLink(topic);
-                this.updateSuggestions();
-                this.updateMetadata(topic);
-                if (votes && votes[0]) {
-                    this.updateVoteData(votes[0]);
-                }
-            }),
-        );
+    private loadTopicData({ topicId, shareKey = "" }: { topicId?: number; shareKey?: string }) {
+        if (topicId) {
+            return forkJoin({
+                topic: this.getTopic(topicId),
+                votes: this.getVote(topicId),
+            }).pipe(
+                tap(({ topic, votes }) => {
+                    console.log({ topic, votes });
+
+                    this.updateTopicData(topic);
+                    this.createLink(topic);
+                    this.updateSuggestions();
+                    this.updateMetadata(topic);
+                    if (votes && votes[0]) {
+                        this.updateVoteData(votes[0]);
+                    }
+                }),
+            );
+        } else {
+            return this.getTopic(shareKey).pipe(
+                switchMap((topic) => {
+                    this.updateTopicData(topic);
+                    this.createLink(topic);
+                    this.updateSuggestions();
+                    this.updateMetadata(topic);
+                    return this.getVote(topic.id).pipe(
+                        tap((vote) => {
+                            if (vote && vote[0]) {
+                                this.updateVoteData(vote[0]);
+                            }
+                        }),
+                        map((votes) => ({
+                            topic,
+                            votes,
+                        })),
+                    );
+                }),
+            )
+        }
     }
 
     private getVote(topicId: number) {
