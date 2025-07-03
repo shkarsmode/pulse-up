@@ -25,11 +25,15 @@ export class WelcomePopupComponent {
     private readonly votingService = inject(VotingService);
 
     onClose() {
-        this.dialogRef.close();
+        this.dialogRef.close({
+            stopSignInProcess: true,
+        });
     }
 
     onSubmit() {
         this.dialogRef.close();
-        this.votingService.showConfirmPhoneNumberPopup();
+        setTimeout(() => {
+            this.votingService.confirmPhoneNumber();
+        }, 250);
     }
 }

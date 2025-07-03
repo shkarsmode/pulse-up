@@ -18,7 +18,7 @@ import { LoadingIndicatorComponent } from "@/app/shared/components/loading-indic
 import { SpinnerComponent } from "@/app/shared/components/ui-kit/spinner/spinner.component";
 import { PulseService } from "@/app/shared/services/api/pulse.service";
 import { LinkButtonComponent } from "@/app/shared/components/ui-kit/buttons/link-button/link-button.component";
-import { ProfileStore } from "@/app/shared/stores/profile.store";
+import { ProfileService } from "@/app/shared/services/profile/profile.service";
 
 @Component({
     selector: "app-review-profile",
@@ -42,7 +42,7 @@ import { ProfileStore } from "@/app/shared/stores/profile.store";
     providers: [InfiniteLoaderService],
 })
 export class ReviewProfileComponent implements OnInit {
-    private readonly profileStore = inject(ProfileStore);
+    private readonly profileService = inject(ProfileService);
     private readonly destroyed = inject(DestroyRef);
     private readonly pulseService = inject(PulseService);
     private readonly infiniteLoaderService = inject(InfiniteLoaderService<ITopic>);
@@ -51,7 +51,7 @@ export class ReviewProfileComponent implements OnInit {
     initialLoading$ = this.initialLoading.asObservable();
     paginator$: Observable<IPaginator<ITopic>>;
     loading$ = new BehaviorSubject(true);
-    profile$ = this.profileStore.profile$.pipe(filter((profile) => !!profile));
+    profile$ = this.profileService.profile$.pipe(filter((profile) => !!profile));
     bio$ = this.profile$.pipe(map((profile) => profile.bio));
     name$ = this.profile$.pipe(map((profile) => profile.name));
     username$ = this.profile$.pipe(map((profile) => profile.username));

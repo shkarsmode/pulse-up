@@ -43,11 +43,8 @@ export class HeaderComponent {
         this.getCurrentVersionOfApplication();
     }
 
-    public get isAuthenticated(): Observable<boolean> {
-        return this.authService.user$.pipe(
-            take(1),
-            map((user) => !!user && !user.isAnonymous),
-        ) 
+    public get isAuthenticated() {
+        return !!this.authService.userTokenValue
     }
 
     public toggleDropdown(): void {

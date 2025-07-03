@@ -1,0 +1,33 @@
+<app-popup>
+    <!-- <app-popup-close-button (close)="onClose()" /> -->
+    @if (isError) {
+    <div class="get-location-popup-error">
+        <app-popup-text>
+            We couldn’t determine your device’s location or the accuracy is too low — a valid
+            location is required to send a pulse for this topic.
+        </app-popup-text>
+        <app-popup-text>
+            If your browser is unable to grant location, you can use the PulseUp mobile app
+        </app-popup-text>
+        <app-popup-footer>
+            <app-primary-button
+                [fullWidth]="true"
+                class="get-location-popup-error__button"
+                (handleClick)="proceed()">
+                Proceed to sign in
+            </app-primary-button>
+            <app-secondary-button
+                [fullWidth]="true"
+                class="get-location-popup-error__button"
+                (handleClick)="closeDialog()">
+                Back
+            </app-secondary-button>
+        </app-popup-footer>
+    </div>
+    } @else {
+    <div class="get-location-popup-loading">
+        <app-popup-text> Getting your location... </app-popup-text>
+        <app-spinner></app-spinner>
+    </div>
+    }
+</app-popup>

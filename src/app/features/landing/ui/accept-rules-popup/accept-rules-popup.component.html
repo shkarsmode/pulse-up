@@ -1,7 +1,17 @@
 <app-popup>
     <app-popup-close-button (close)="onClose()" />
-    <app-popup-title>Rules</app-popup-title>
-    <app-popup-text> Texct here </app-popup-text>
+    <app-popup-text>
+        To enable pulsing on a topic, we need you to sign in. We are using phone based
+        authentication to prevent spam, bots and avoid using passwords.
+    </app-popup-text>
+    <app-popup-text>
+        Additionally, we require access to user locations which we will send with the pulse. We use
+        location to update global map of public support.
+    </app-popup-text>
+    <app-popup-text>
+        Please, allow access to this device location on this site. If location is not available, we
+        will not be able to register the pulse.
+    </app-popup-text>
     <app-popup-footer>
         <app-primary-button (click)="onAccept()">Accept</app-primary-button>
         <app-secondary-button (click)="onClose()">Close</app-secondary-button>

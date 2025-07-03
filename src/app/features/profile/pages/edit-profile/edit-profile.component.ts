@@ -3,7 +3,7 @@ import { CommonModule } from "@angular/common";
 import { ProfileFormComponent } from "../../ui/profile-form/profile-form.component";
 import { ProfileLayoutComponent } from "../../ui/profile-layout/profile-layout.component";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
-import { ProfileStore } from "@/app/shared/stores/profile.store";
+import { ProfileService } from "@/app/shared/services/profile/profile.service";
 
 @Component({
     selector: "app-edit-profile",
@@ -14,7 +14,7 @@ import { ProfileStore } from "@/app/shared/stores/profile.store";
 })
 export class EditProfileComponent {
     private readonly destroyed = inject(DestroyRef);
-    public readonly profileStore = inject(ProfileStore);
+    public readonly profileService = inject(ProfileService);
     public isLoading: boolean = true;
 
     public profileFormvalues = {
@@ -25,7 +25,7 @@ export class EditProfileComponent {
     };
 
     ngOnInit() {
-        this.profileStore.profile$.pipe(takeUntilDestroyed(this.destroyed)).subscribe((profile) => {
+        this.profileService.profile$.pipe(takeUntilDestroyed(this.destroyed)).subscribe((profile) => {
             if (profile) {
                 this.profileFormvalues.name = profile.name || "";
                 this.profileFormvalues.username = profile.username || "";

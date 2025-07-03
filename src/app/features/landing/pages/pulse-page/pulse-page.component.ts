@@ -40,6 +40,7 @@ import { IVote } from "@/app/shared/interfaces/vote.interface";
 import { VoteUtils } from "@/app/shared/helpers/vote-utils";
 import { AuthenticationService } from "@/app/shared/services/api/authentication.service";
 import { PendingTopicsService } from "@/app/shared/services/topic/pending-topics.service";
+import { VotingService } from "@/app/shared/services/core/voting.service";
 
 @Component({
     selector: "app-pulse-page",
@@ -73,6 +74,7 @@ export class PulsePageComponent implements OnInit {
     private readonly metadataService = inject(MetadataService);
     private readonly settingsService = inject(SettingsService);
     private readonly voteService = inject(VoteService);
+    private readonly votingService = inject(VotingService);
     private readonly notificationService = inject(NotificationService);
     private readonly authService = inject(AuthenticationService);
     private readonly pendingTopicsService = inject(PendingTopicsService);
@@ -91,7 +93,7 @@ export class PulsePageComponent implements OnInit {
     isActiveVote: boolean = false;
     lastVoteInfo: string = "";
     get isAnonymousUser() {
-        return this.authService.anonymousUserValue;
+        return !!this.authService.anonymousUserValue;
     }
 
     ngOnInit(): void {
@@ -130,14 +132,21 @@ export class PulsePageComponent implements OnInit {
                 totalUniqueUsers: this.topic.stats?.totalUniqueUsers || 0,
             },
         });
-        this.loadTopicData(this.topic.id).pipe(first()).subscribe();
+        this.loadTopicData({ topicId: this.topic.id }).pipe(first()).subscribe();
     }
 
     private getInitialData(): void {
         this.route.paramMap
             .pipe(
                 takeUntilDestroyed(this.destroyRef),
-                map((params: ParamMap) => +params.get("id")!),
+                map((params: ParamMap) => {
+                    const idParam = params.get("id") || "";
+                    const topicId = parseInt(idParam);
+                    return ({
+                        topicId: Number.isNaN(topicId) ? undefined : topicId,
+                        shareKey: Number.isNaN(topicId) ? idParam : undefined,
+                    })
+                }),
                 tap(() => {
                     this.topic = null;
                     this.isLoading = true;
@@ -148,21 +157,45 @@ export class PulsePageComponent implements OnInit {
             .subscribe();
     }
 
-    private loadTopicData(topicId: number) {
-        return forkJoin({
-            topic: this.getTopic(topicId),
-            votes: this.getVote(topicId),
-        }).pipe(
-            tap(({ topic, votes }) => {
-                this.updateTopicData(topic);
-                this.createLink(topic);
-                this.updateSuggestions();
-                this.updateMetadata(topic);
-                if (votes && votes[0]) {
-                    this.updateVoteData(votes[0]);
-                }
-            }),
-        );
+    private loadTopicData({ topicId, shareKey = "" }: { topicId?: number; shareKey?: string }) {
+        if (topicId) {
+            return forkJoin({
+                topic: this.getTopic(topicId),
+                votes: this.getVote(topicId),
+            }).pipe(
+                tap(({ topic, votes }) => {
+                    console.log({ topic, votes });
+
+                    this.updateTopicData(topic);
+                    this.createLink(topic);
+                    this.updateSuggestions();
+                    this.updateMetadata(topic);
+                    if (votes && votes[0]) {
+                        this.updateVoteData(votes[0]);
+                    }
+                }),
+            );
+        } else {
+            return this.getTopic(shareKey).pipe(
+                switchMap((topic) => {
+                    this.updateTopicData(topic);
+                    this.createLink(topic);
+                    this.updateSuggestions();
+                    this.updateMetadata(topic);
+                    return this.getVote(topic.id).pipe(
+                        tap((vote) => {
+                            if (vote && vote[0]) {
+                                this.updateVoteData(vote[0]);
+                            }
+                        }),
+                        map((votes) => ({
+                            topic,
+                            votes,
+                        })),
+                    );
+                }),
+            )
+        }
     }
 
     private getVote(topicId: number) {
@@ -290,7 +323,7 @@ export class PulsePageComponent implements OnInit {
     }
 
     private listenToUserChanges() {
-        this.authService.user$.pipe(
+        this.authService.firebaseUser$.pipe(
             first((user) => !!user),
             tap(() => this.getInitialData()),
         );

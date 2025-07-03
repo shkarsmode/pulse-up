@@ -48,7 +48,7 @@ export class ChangePhoneNumberComponent {
             mode: "changePhoneNumber",
         });
 
-        this.authenticationService.user$
+        this.authenticationService.firebaseUser$
             .pipe(
                 take(1),
                 map((user) => user?.phoneNumber || ""),

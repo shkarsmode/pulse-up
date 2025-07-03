@@ -25,13 +25,14 @@ export class PublicPageGuard implements CanActivate {
     ): MaybeAsync<GuardResult> {
         const userToken = this.authenticationService.userTokenValue;
         const anonymousToken = this.authenticationService.anonymousUserValue;
-
+        
         if (userToken || anonymousToken) {
             return this.loadInitialData().pipe(map(() => true));
         }
 
         return this.authenticationService.loginAsAnonymousThroughTheFirebase().pipe(
             catchError((error) => {
+                console.log("PublicPageGuard error:", error);
                 return of(false);
             }),
             switchMap(() => this.loadInitialData()),

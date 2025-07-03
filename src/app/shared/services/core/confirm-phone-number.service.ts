@@ -12,13 +12,11 @@ import {
     tap,
     throwError,
 } from "rxjs";
-import { Router } from "@angular/router";
 import { FormControl } from "@angular/forms";
 import { toSignal } from "@angular/core/rxjs-interop";
 import { MatDialog } from "@angular/material/dialog";
 import { NgOtpInputComponent, NgOtpInputConfig } from "ng-otp-input";
 import { AuthenticationService } from "@/app/shared/services/api/authentication.service";
-import { AppRoutes } from "@/app/shared/enums/app-routes.enum";
 import { NotificationService } from "./notification.service";
 import {
     AuthenticationError,
@@ -27,19 +25,15 @@ import {
 import { Location } from "@angular/common";
 import { isErrorWithMessage } from "../../helpers/errors/is-error-with-message";
 import { SigninRequiredPopupComponent } from "../../components/popups/signin-required-popup/signin-required-popup.component";
-import { ProfileStore } from "../../stores/profile.store";
 
 type ServiceWorkMode = "signIn" | "changePhoneNumber";
 
 export class ConfirmPhoneNumberService {
     private dialog = inject(MatDialog);
-    private readonly router = inject(Router);
     private readonly location = inject(Location);
-    private readonly profileStore = inject(ProfileStore);
     private readonly notificationService = inject(NotificationService);
     private readonly authenticationService = inject(AuthenticationService);
 
-    private appRoutes = AppRoutes;
     private ngOtpInput: NgOtpInputComponent;
     private countdown$ = new BehaviorSubject<number>(0);
     private timerSub: Subscription;
@@ -75,7 +69,6 @@ export class ConfirmPhoneNumberService {
         if (this.mode === "signIn") {
             return this.authenticationService.confirmVerificationCode(value).pipe(
                 take(1),
-                switchMap(() => this.profileStore.refreshProfile()),
                 catchError((error) => {
                     this.resetInput();
                     return throwError(() => error);
