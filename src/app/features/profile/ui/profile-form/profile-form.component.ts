@@ -25,7 +25,7 @@ import { NotificationService } from "@/app/shared/services/core/notification.ser
 import { ErrorMessageBuilder } from "../../helpers/error-message-builder";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { SecondaryButtonComponent } from "@/app/shared/components/ui-kit/buttons/secondary-button/secondary-button.component";
-import { ProfileStore } from "@/app/shared/stores/profile.store";
+import { ProfileService } from "@/app/shared/services/profile/profile.service";
 
 @Component({
     selector: "app-profile-form",
@@ -55,7 +55,7 @@ export class ProfileFormComponent {
     private router = inject(Router);
     private dialog = inject(MatDialog);
     private fb: FormBuilder = inject(FormBuilder);
-    private profileStore: ProfileStore = inject(ProfileStore);
+    private profileService: ProfileService = inject(ProfileService);
     private userService: UserService = inject(UserService);
     private settingsService: SettingsService = inject(SettingsService);
     private notificationService: NotificationService = inject(NotificationService);
@@ -197,7 +197,7 @@ export class ProfileFormComponent {
         if (this.form.valid) {
             this.trimBioValue();
             this.submitting = true;
-            this.profileStore
+            this.profileService
                 .updateProfile(this.form.value)
                 .pipe(take(1))
                 .subscribe({

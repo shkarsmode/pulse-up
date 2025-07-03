@@ -93,7 +93,7 @@ export class PulsePageComponent implements OnInit {
     isActiveVote: boolean = false;
     lastVoteInfo: string = "";
     get isAnonymousUser() {
-        return this.authService.anonymousUserValue;
+        return !!this.authService.anonymousUserValue;
     }
 
     ngOnInit(): void {
@@ -151,11 +151,15 @@ export class PulsePageComponent implements OnInit {
     }
 
     private loadTopicData(topicId: number) {
+        console.log(`Loading topic data for ID: ${topicId}`);
+        
         return forkJoin({
             topic: this.getTopic(topicId),
             votes: this.getVote(topicId),
         }).pipe(
             tap(({ topic, votes }) => {
+                console.log({ topic, votes });
+                
                 this.updateTopicData(topic);
                 this.createLink(topic);
                 this.updateSuggestions();

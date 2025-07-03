@@ -22,7 +22,7 @@ import { jwtDecode, JwtPayload } from "jwt-decode";
 import { BehaviorSubject, from, Observable, of, throwError } from "rxjs";
 import { catchError, map, switchMap, take, tap } from "rxjs/operators";
 import { IFirebaseConfig, IProfile } from "../../interfaces";
-import { API_URL, FIREBASE_CONFIG } from "../../tokens/tokens";
+import { FIREBASE_CONFIG } from "../../tokens/tokens";
 import { IdentityService } from "./identity.service";
 import { UserService } from "./user.service";
 import { AppConstants } from "../../constants";
@@ -79,10 +79,7 @@ export class AuthenticationService {
         this.windowRef = this.windowService.windowRef;
         
         getAuth(this.firebaseApp).onAuthStateChanged((user) => {
-            // if (user?.isAnonymous === this.userSubject.value?.isAnonymous) return;
-            console.log("Auth state changed:", user);
             this.firebaseUserSubject.next(user);
-            // this.userSubject.next(user);
         });
     }
 

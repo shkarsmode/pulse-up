@@ -1,8 +1,7 @@
 import { HttpEvent, HttpHandler, HttpInterceptor, HttpRequest } from "@angular/common/http";
 import { inject, Injectable } from "@angular/core";
-import { from, Observable, switchMap, take } from "rxjs";
+import { Observable } from "rxjs";
 import { AuthenticationService } from "../../services/api/authentication.service";
-import { LOCAL_STORAGE_KEYS, LocalStorageService } from "../../services/core/local-storage.service";
 
 @Injectable()
 export class JwtInterceptor implements HttpInterceptor {
@@ -16,7 +15,6 @@ export class JwtInterceptor implements HttpInterceptor {
         token = userToken || anonymousToken;
 
         if (token) {
-            // console.log({token: token.slice(-4), url: request.url});
             
             const clonedRequest = this.setAuthorizationHeader({
                 request,
@@ -27,35 +25,7 @@ export class JwtInterceptor implements HttpInterceptor {
             return next.handle(clonedRequest);
         }
 
-        // console.log({token: "", url: request.url});
         return next.handle(request);
-
-        // return this.authenticationService.user$.pipe(
-        //     take(1),
-        //     switchMap((user) => {
-        //         if (!user) {
-        //             return next.handle(request);
-        //         }
-        //         return from(user.getIdToken()).pipe(
-        //             switchMap((token) => {
-        //                 const cloned = request.clone({
-        //                     setHeaders: {
-        //                         Authorization: `Bearer ${token}`,
-        //                     },
-        //                     withCredentials: !user.isAnonymous,
-        //                 });
-
-        //                 if (user.isAnonymous) {
-        //                     LocalStorageService.set(LOCAL_STORAGE_KEYS.anonymousToken, token);
-        //                 } else {
-        //                     LocalStorageService.set(LOCAL_STORAGE_KEYS.userToken, token);
-        //                 }
-
-        //                 return next.handle(cloned);
-        //             }),
-        //         );
-        //     }),
-        // );
     }
 
     private setAuthorizationHeader({

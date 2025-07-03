@@ -40,4 +40,12 @@ export class ProfileService {
             }),
         );
     }
+    updateProfile(data: IProfile): Observable<IProfile> {
+        return this.userService.updateOwnProfile(data).pipe(
+            tap(() => {
+                this.cachedProfile = null;
+                this.loadTrigger$.next();
+            }),
+        );
+    }
 }
