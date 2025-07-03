@@ -166,7 +166,10 @@ export class PulseButtonComponent {
         ]).pipe(
             filter(([user, signedIn]) => !!user && signedIn === true),
             first(),
-            tap(() => this.onPulse({ justSignedIn: true })),
+            tap(() => {
+                this.votingService.setIsAnonymousUserSignedIn(false);
+                this.onPulse({ justSignedIn: true });
+            }),
         ).subscribe();
     }
 }
