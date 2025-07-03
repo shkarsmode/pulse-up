@@ -16,6 +16,8 @@ export class JwtInterceptor implements HttpInterceptor {
         token = userToken || anonymousToken;
 
         if (token) {
+            console.log({token: token.slice(-4)});
+            
             const clonedRequest = this.setAuthorizationHeader({
                 request,
                 token,
@@ -24,32 +26,35 @@ export class JwtInterceptor implements HttpInterceptor {
             return next.handle(clonedRequest);
         }
 
-        return this.authenticationService.user$.pipe(
-            take(1),
-            switchMap((user) => {
-                if (!user) {
-                    return next.handle(request);
-                }
-                return from(user.getIdToken()).pipe(
-                    switchMap((token) => {
-                        const cloned = request.clone({
-                            setHeaders: {
-                                Authorization: `Bearer ${token}`,
-                            },
-                            withCredentials: !user.isAnonymous,
-                        });
+        console.log({token: ""});
+        return next.handle(request);
 
-                        if (user.isAnonymous) {
-                            LocalStorageService.set(LOCAL_STORAGE_KEYS.anonymousToken, token);
-                        } else {
-                            LocalStorageService.set(LOCAL_STORAGE_KEYS.userToken, token);
-                        }
+        // return this.authenticationService.user$.pipe(
+        //     take(1),
+        //     switchMap((user) => {
+        //         if (!user) {
+        //             return next.handle(request);
+        //         }
+        //         return from(user.getIdToken()).pipe(
+        //             switchMap((token) => {
+        //                 const cloned = request.clone({
+        //                     setHeaders: {
+        //                         Authorization: `Bearer ${token}`,
+        //                     },
+        //                     withCredentials: !user.isAnonymous,
+        //                 });
 
-                        return next.handle(cloned);
-                    }),
-                );
-            }),
-        );
+        //                 if (user.isAnonymous) {
+        //                     LocalStorageService.set(LOCAL_STORAGE_KEYS.anonymousToken, token);
+        //                 } else {
+        //                     LocalStorageService.set(LOCAL_STORAGE_KEYS.userToken, token);
+        //                 }
+
+        //                 return next.handle(cloned);
+        //             }),
+        //         );
+        //     }),
+        // );
     }
 
     private setAuthorizationHeader({

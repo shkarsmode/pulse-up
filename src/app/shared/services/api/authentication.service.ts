@@ -392,11 +392,17 @@ export class AuthenticationService {
                 return from(user.getIdToken(true)).pipe(
                     map((newToken) => {
                         if (user.isAnonymous) {
+                            LocalStorageService.set(LOCAL_STORAGE_KEYS.isAnonymous, true);
                             LocalStorageService.set(LOCAL_STORAGE_KEYS.anonymousToken, newToken);
                             this.anonymousUser$.next(newToken);
+                            LocalStorageService.remove(LOCAL_STORAGE_KEYS.userToken);
+                            this.userToken$.next(null);
                         } else {
                             LocalStorageService.set(LOCAL_STORAGE_KEYS.userToken, newToken);
                             this.userToken$.next(newToken);
+                            LocalStorageService.remove(LOCAL_STORAGE_KEYS.isAnonymous);
+                            LocalStorageService.remove(LOCAL_STORAGE_KEYS.anonymousToken);
+                            this.anonymousUser$.next(null);
                         }
                         return newToken;
                     }),
