@@ -1,4 +1,4 @@
-@use '../../../../../styles/mixins'as *;
+@use "../../../../../styles/mixins" as *;
 
 :host {
     display: flex;
@@ -8,10 +8,9 @@
     padding: 18px 20px 48px;
 }
 
-
 .pulse__info-description-text::ng-deep a {
     &:hover {
-        opacity: .7;
+        opacity: 0.7;
     }
 
     &:active {
@@ -19,7 +18,7 @@
     }
 
     cursor: pointer;
-    transition: all .2s;
+    transition: all 0.2s;
 }
 
 .pulse {
@@ -37,7 +36,6 @@
         row-gap: 24px;
 
         &-logo {
-
             max-width: 160px;
             max-height: 160px;
             width: 100%;
@@ -70,7 +68,6 @@
         }
     }
 
-
     &__stats {
         display: flex;
         align-items: center;
@@ -86,7 +83,7 @@
                 gap: 16px;
             }
 
-            >div {
+            > div {
                 display: flex;
                 flex-direction: column;
                 align-items: center;
@@ -94,7 +91,6 @@
                 @include text-14px;
                 color: var(--dark-grey-color);
             }
-
         }
 
         &-title {
@@ -155,11 +151,8 @@
     }
 
     &__info {
-
-
         &-description {
             &-text {
-
                 @include text-16px;
                 color: black;
                 overflow: hidden;
@@ -182,7 +175,6 @@
                 margin-top: 4px;
                 font-weight: 600;
                 cursor: pointer;
-
             }
 
             margin-bottom: 10px;
@@ -195,14 +187,13 @@
             margin-bottom: 11px;
 
             div {
-                background: rgb(from var(--accent-color) r g b / .1);
+                background: rgb(from var(--accent-color) r g b / 0.1);
                 padding: 2px 8px 2px 8px;
                 border-radius: 20px;
 
                 @include text-16px;
                 color: var(--accent-color);
                 font-weight: 400;
-
             }
         }
 
@@ -227,7 +218,6 @@
         }
 
         &-media {
-
             display: flex;
             justify-content: center;
             flex: 1 1 auto;
@@ -250,13 +240,13 @@
                 cursor: pointer;
 
                 &::before {
-                    content: '';
+                    content: "";
                     position: absolute;
                     top: 0;
                     left: 0;
                     width: 100%;
                     height: 100%;
-                    background-color: rgba(#131420, .2);
+                    background-color: rgba(#131420, 0.2);
                     border-radius: 10px;
                     z-index: 1;
                 }
@@ -277,7 +267,7 @@
                         color: var(--white-color);
                         font-weight: 600;
                         text-align: center;
-                        text-shadow: #0000004D 5px 5px 10px;
+                        text-shadow: #0000004d 5px 5px 10px;
                     }
                 }
 
@@ -294,12 +284,7 @@
                     }
                 }
             }
-
-
         }
-
-
-
     }
 
     &__slider-title {
@@ -317,12 +302,32 @@
         display: flex;
         column-gap: 12px;
     }
-
 }
 
+.pulse__qr-button {
+    width: 42px;
+    height: 42px;
+    padding: 6px;
+    flex-shrink: 0;
+    background-color: var(--accent-color-hover);
+    border-radius: 4px;
+
+    svg-icon {
+        width: 100%;
+        height: 100%;
+
+        &::ng-deep svg {
+            width: 100%;
+            height: 100%;
+
+            path {
+                fill: #fff;
+            }
+        }
+    }
+}
 
 @media screen and (max-width: 650px) {
-
     :host {
         padding: 24px 20px 48px;
     }
@@ -353,9 +358,6 @@
 }
 
 @media screen and (max-width: 500px) {
-
-
-
     app-primary-button {
         svg-icon svg {
             transform: translateY(-1.5px);
@@ -369,5 +371,4 @@
         width: 100% !important;
         gap: unset !important;
     }
-
 }

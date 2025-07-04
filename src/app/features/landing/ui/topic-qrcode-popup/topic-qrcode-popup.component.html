@@ -1,0 +1,11 @@
+<app-popup>
+    <app-popup-close-button (close)="onClose()" />
+    <app-popup-subtitle> Scan QR code </app-popup-subtitle>
+    <app-popup-text> Open the topic on your phone by scanning the QR code below. </app-popup-text>
+    <app-popup-footer>
+        <app-qrcode
+            [data]="data.link"
+            [rounded]="true"
+            accessibleLabel="QR code to open this topic on your phone" />
+    </app-popup-footer>
+</app-popup>
