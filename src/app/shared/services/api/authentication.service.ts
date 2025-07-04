@@ -19,7 +19,7 @@ import {
     updatePhoneNumber,
 } from "firebase/auth";
 import { jwtDecode, JwtPayload } from "jwt-decode";
-import { BehaviorSubject, from, Observable, of, throwError } from "rxjs";
+import { BehaviorSubject, forkJoin, from, Observable, of, throwError } from "rxjs";
 import { catchError, map, switchMap, take, tap } from "rxjs/operators";
 import { IFirebaseConfig, IProfile } from "../../interfaces";
 import { FIREBASE_CONFIG } from "../../tokens/tokens";
@@ -49,8 +49,12 @@ export class AuthenticationService {
     private userToken$: BehaviorSubject<string | null>;
     private windowRef: Window;
     private firebaseApp: FirebaseApp;
-    private userSubject: BehaviorSubject<Nullable<User>> = new BehaviorSubject<Nullable<User>>(null);
-    private firebaseUserSubject: BehaviorSubject<Nullable<User>> = new BehaviorSubject<Nullable<User>>(null);
+    private userSubject: BehaviorSubject<Nullable<User>> = new BehaviorSubject<Nullable<User>>(
+        null,
+    );
+    private firebaseUserSubject: BehaviorSubject<Nullable<User>> = new BehaviorSubject<
+        Nullable<User>
+    >(null);
 
     public anonymousUser: Observable<string | null>;
     public userToken: Observable<string | null>;
@@ -77,7 +81,7 @@ export class AuthenticationService {
         this.isResendInProgress$ = new BehaviorSubject<boolean>(false);
         this.isChangePhoneNumberInProgress$ = new BehaviorSubject<boolean>(false);
         this.windowRef = this.windowService.windowRef;
-        
+
         getAuth(this.firebaseApp).onAuthStateChanged((user) => {
             this.firebaseUserSubject.next(user);
         });
@@ -103,10 +107,16 @@ export class AuthenticationService {
         return of(null).pipe(
             tap(() => this.isSigninInProgress$.next(true)),
             switchMap(this.loginAsAnonymousThroughTheFirebase),
-            switchMap(() => this.identityService.checkByPhoneNumber(phoneNumber)),
-            switchMap(this.handleIdentityCheckByPhoneNumber),
-            switchMap(() => this.validatePhoneNumberOnVoip(phoneNumber)),
-            switchMap(this.handlePhoneNumberVoipValidation),
+            switchMap(() =>
+                forkJoin({
+                    identityCheckResult: this.identityService
+                        .checkByPhoneNumber(phoneNumber)
+                        .pipe(switchMap(this.handleIdentityCheckByPhoneNumber)),
+                    voipValidationResult: this.validatePhoneNumberOnVoip(phoneNumber).pipe(
+                        switchMap(this.handlePhoneNumberVoipValidation),
+                    ),
+                }),
+            ),
             switchMap(this.logout),
             switchMap(this.prepareRecaptcha),
             switchMap(() => this.sendVerificationCode(phoneNumber)),
@@ -174,7 +184,7 @@ export class AuthenticationService {
             take(1),
             map((response: UserCredential | any) => {
                 const accessToken = response.user.accessToken;
-                
+
                 LocalStorageService.set(LOCAL_STORAGE_KEYS.anonymousToken, accessToken);
                 LocalStorageService.set(LOCAL_STORAGE_KEYS.isAnonymous, true);
                 this.anonymousUser$.next(accessToken);
@@ -383,7 +393,7 @@ export class AuthenticationService {
                     return this.loginAsAnonymousThroughTheFirebase().pipe(
                         take(1),
                         switchMap((userCredential) => {
-                            return this.getIdToken(userCredential)
+                            return this.getIdToken(userCredential);
                         }),
                     );
                 }
@@ -447,7 +457,7 @@ export class AuthenticationService {
         LocalStorageService.remove(LOCAL_STORAGE_KEYS.verificationId);
         LocalStorageService.remove(LOCAL_STORAGE_KEYS.phoneNumberForSigning);
         this.isSigninInProgress$.next(false);
-    }
+    };
 
     private decodeToken(token: string): JwtPayload | null {
         try {
@@ -585,9 +595,7 @@ export class AuthenticationService {
                 this.windowRef.recaptchaVerifier?.clear();
                 delete this.windowRef.recaptchaVerifier;
                 delete this.windowRef.confirmationResult;
-                this.profileService.refreshProfile().pipe(
-                    take(1)
-                ).subscribe()
+                this.profileService.refreshProfile().pipe(take(1)).subscribe();
             }),
             map(({ token, ...profile }) => profile),
         );
