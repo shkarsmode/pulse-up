@@ -170,13 +170,10 @@ export class AuthenticationService {
     }
 
     public loginAsAnonymousThroughTheFirebase = (): Observable<UserCredential> => {
-        console.log("Logging in as anonymous user...");
-        
         return from(signInAnonymously(this.firebaseAuth)).pipe(
             take(1),
             map((response: UserCredential | any) => {
                 const accessToken = response.user.accessToken;
-                console.log("Anonymous user logged in with access token:", accessToken);
                 
                 LocalStorageService.set(LOCAL_STORAGE_KEYS.anonymousToken, accessToken);
                 LocalStorageService.set(LOCAL_STORAGE_KEYS.isAnonymous, true);
@@ -185,7 +182,6 @@ export class AuthenticationService {
                 LocalStorageService.remove(LOCAL_STORAGE_KEYS.userToken);
                 this.userToken$.next(null);
 
-                console.log("Anonymous user logged in successfully:", response.user);
                 return response;
             }),
         );
@@ -379,8 +375,6 @@ export class AuthenticationService {
         return this.firebaseUser$.pipe(
             take(1),
             switchMap((user) => {
-                console.log("Updating token for user:", user);
-
                 if (!user) {
                     console.log(
                         "updateToken: No authenticated user found. Signing in anonymously.",
@@ -389,12 +383,7 @@ export class AuthenticationService {
                     return this.loginAsAnonymousThroughTheFirebase().pipe(
                         take(1),
                         switchMap((userCredential) => {
-                            return this.getIdToken(userCredential).pipe(
-                                tap((newToken) => {
-                                    console.log({newToken});
-                                    
-                                })
-                            )
+                            return this.getIdToken(userCredential)
                         }),
                     );
                 }
