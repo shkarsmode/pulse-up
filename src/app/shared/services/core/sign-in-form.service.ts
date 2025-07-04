@@ -5,17 +5,15 @@ import { ErrorStateMatcher } from "@angular/material/core";
 import { Router } from "@angular/router";
 import intlTelInput, { Iti } from "intl-tel-input";
 import { CountryCode, isValidPhoneNumber, validatePhoneNumberLength } from "libphonenumber-js";
-import { delay, fromEvent, map, Observable, of, Subscription, take } from "rxjs";
+import { BehaviorSubject, delay, fromEvent, map, Subscription, take, tap } from "rxjs";
 import { AppRoutes } from "@/app/shared/enums/app-routes.enum";
 import { AuthenticationService } from "@/app/shared/services/api/authentication.service";
-import { NotificationService } from "./notification.service";
 
 type ServiceWorkMode = "signIn" | "changePhoneNumber";
 
 export class SignInFormService {
     private readonly router: Router = inject(Router);
     private readonly formBuilder: FormBuilder = inject(FormBuilder);
-    private readonly notificationService: NotificationService = inject(NotificationService);
     private readonly authenticationService: AuthenticationService = inject(AuthenticationService);
     private iti: Iti;
     private mode: ServiceWorkMode = "signIn";
@@ -25,6 +23,8 @@ export class SignInFormService {
     };
     private confirmPageUrl: string = this.confirmPageUrls[this.mode];
     private subscriptions: Subscription[] = [];
+    private submitSubject = new BehaviorSubject<boolean | null>(null);
+
     public isValid = true;
     public countryCodeChanged = false;
     public countryCode: string = "US";
@@ -34,6 +34,7 @@ export class SignInFormService {
     public isSigninInProgress = this.authenticationService.isSigninInProgress$;
     public isChangingPhoneNumberInProgress =
         this.authenticationService.isChangePhoneNumberInProgress$;
+    public submit$ = this.submitSubject.asObservable()
 
     constructor() {
         this.errorStateMatcher = new CustomErrorStateMatcher(() => this.isValid);
@@ -194,22 +195,26 @@ export class SignInFormService {
         this.isValid = valid;
     }
 
-    public submit = (): Observable<null | boolean> => {
+    public submit = () => {
         const dialCode = this.iti.getSelectedCountryData().dialCode;
         this.validateNumber();
-        if (!this.isValid || !dialCode) return of(null);
+        if (!this.isValid || !dialCode) {
+            this.submitSubject.next(null);
+            return;
+        };
+        
         const phoneNumber = `+${dialCode}${this.form.value.phone}`;
 
         if (this.mode === "signIn") {
-            return this.authenticationService.loginWithPhoneNumber(phoneNumber).pipe(
+            this.authenticationService.loginWithPhoneNumber(phoneNumber).pipe(
                 take(1),
-                map(() => true),
-            );
+                tap(() => this.submitSubject.next(true)),
+            ).subscribe();
         } else {
-            return this.authenticationService.changePhoneNumber(phoneNumber).pipe(
+            this.authenticationService.changePhoneNumber(phoneNumber).pipe(
                 take(1),
-                map(() => true),
-            );
+                tap(() => this.submitSubject.next(true)),
+            ).subscribe();
         }
     };
 

@@ -21,13 +21,11 @@ export class RequiredPersonalInformationGuard implements CanActivate {
     private profileService = inject(ProfileService);
     private dialog: MatDialog = inject(MatDialog);
 
-    private hasPublicInformation$ = this.profileService.hasPublicInformation$;
-
     canActivate(
         route: ActivatedRouteSnapshot,
         state: RouterStateSnapshot,
     ): MaybeAsync<GuardResult> {
-        return this.hasPublicInformation$.pipe(
+        return this.profileService.hasPublicInformation$.pipe(
             map((hasPublicInformation) => {
                 if (!hasPublicInformation) {
                     this.openPopup();
