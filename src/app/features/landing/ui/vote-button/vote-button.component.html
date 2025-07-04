@@ -3,14 +3,14 @@
         size="large"
         [fullWidth]="true"
         class="pulse-button"
-        [class.pulse-button--voting]="animationService.isInProgress$  | async"
+        [class.pulse-button--voting]="isVoting$  | async"
         [class.pulse-button--success]="isActiveVote"
-        [disabled]="!!((animationService.isInProgress$ | async) || isActiveVote)"
+        [disabled]="(isVoting$ | async) || isActiveVote"
         (handleClick)="onPulse()">
         <span class="pulse-button__inner">
             <span class="pulse-button__text"> Tap to Pulse </span>
             <span class="pulse-button__icon">
-                @if (isActiveVote || (animationService.isInProgress$ | async)) {
+                @if (isActiveVote || (isVoting$ | async)) {
                 <svg-icon
                     src="assets/svg/logo/logo-v2.svg"
                     heartBeatAnimation />
