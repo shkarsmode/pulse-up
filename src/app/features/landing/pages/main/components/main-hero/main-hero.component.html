@@ -7,25 +7,24 @@
                 <span class="hero__description--bold">Start a Topic  Support What Matters</span>
             </p>
             <div class="hero__actions">
-                <div class="hero__button">
-                    <app-primary-button
-                        [fullWidth]="true"
-                        [contrast]="true"
-                        size="large"
-                        openGetAppPopup>
-                        Get Pulse Up
-                    </app-primary-button>
-                </div>
-                <div class="hero__button">
-                    <app-secondary-button
-                        [routerLink]="'/' + AppRoutes.Landing.MAP"
-                        routerLinkActive="active"
-                        [fullWidth]="true"
-                        [contrast]="true"
-                        size="large">
-                        Explore Map
-                    </app-secondary-button>
-                </div>
+                <app-primary-button
+                    [fullWidth]="true"
+                    [contrast]="true"
+                    size="large"
+                    [routerLink]="'/' + AppRoutes.Landing.TOPICS"
+                    class="hero__button">
+                    Support what matters
+                </app-primary-button>
+                <app-secondary-button
+                    [routerLink]="'/' + AppRoutes.User.Topic.SUGGEST"
+                    routerLinkActive="active"
+                    [fullWidth]="true"
+                    [fullHeight]="true"
+                    [contrast]="true"
+                    size="large"
+                    class="hero__button">
+                    Start a topic
+                </app-secondary-button>
             </div>
         </div>
         <div class="hero__map" #mapWrapper>
