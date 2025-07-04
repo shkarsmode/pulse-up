@@ -4,16 +4,16 @@ import { SvgIconComponent } from "angular-svg-icon";
 import { VotingService } from "@/app/shared/services/core/voting.service";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import {
-    BehaviorSubject,
+    catchError,
     combineLatest,
-    delay,
     filter,
     first,
-    mergeMap,
+    map,
     Observable,
     of,
     switchMap,
     tap,
+    throwError,
 } from "rxjs";
 import { IVote } from "@/app/shared/interfaces/vote.interface";
 import { HeartBeatDirective } from "@/app/shared/animations/heart-beat.directive";
@@ -24,21 +24,9 @@ import { NotificationService } from "@/app/shared/services/core/notification.ser
 import { VoteTimeLeftComponent } from "../vote-time-left/vote-time-left.component";
 import { AuthenticationService } from "@/app/shared/services/api/authentication.service";
 import { VotingError, VotingErrorCode } from "@/app/shared/helpers/errors/voting-error";
-
-function delayBetween<T>(delayMs: number, first = false) {
-    let past = Date.now();
-
-    return (source: Observable<T>) =>
-        source.pipe(
-            mergeMap((value, index) => {
-                const now = Date.now();
-                const delayFor = Math.max(index === 0 && !first ? 0 : past + delayMs - now, 0);
-                past = now + delayFor;
-
-                return of(value).pipe(delay(delayFor));
-            }),
-        );
-}
+import { VoteButtonAnimationService } from "../../services/vote-button-animation.service";
+import { isErrorWithMessage } from "@/app/shared/helpers/errors/is-error-with-message";
+import { PulseService } from "@/app/shared/services/api/pulse.service";
 
 @Component({
     selector: "app-vote-button",
@@ -50,15 +38,18 @@ function delayBetween<T>(delayMs: number, first = false) {
         HeartBeatDirective,
         VoteTimeLeftComponent,
     ],
+    providers: [VoteButtonAnimationService],
     templateUrl: "./vote-button.component.html",
     styleUrl: "./vote-button.component.scss",
 })
 export class VoteButtonComponent {
-    private destroyRef = inject(DestroyRef);
-    private votingService = inject(VotingService);
-    private settingsService = inject(SettingsService);
-    private notificationService = inject(NotificationService);
-    private authService = inject(AuthenticationService);
+    private readonly destroyRef = inject(DestroyRef);
+    private readonly votingService = inject(VotingService);
+    private readonly settingsService = inject(SettingsService);
+    private readonly notificationService = inject(NotificationService);
+    private readonly authService = inject(AuthenticationService);
+    private readonly pulseService = inject(PulseService);
+    public readonly animationService = inject(VoteButtonAnimationService);
 
     @Input() topicId: number | null = null;
     @Input() vote: IVote | null = null;
@@ -66,26 +57,19 @@ export class VoteButtonComponent {
     @Output() voted = new EventEmitter<IVote>();
     @Output() pulse = new EventEmitter<{ justSignedIn?: boolean }>();
 
-    private isVoting = new BehaviorSubject(false);
-
-    isVoting$ = this.isVoting.asObservable();
     isActiveVote = false;
     lastVoteInfo = "";
     isAnonymousUser = this.authService.anonymousUserValue;
     isInProgress = false;
 
     ngOnInit() {
-        this.votingService.isVoting$
-            .pipe(
-                delayBetween(800),
-                tap((isVoting) => {
-                    this.isVoting.next(isVoting);
-                }),
-                takeUntilDestroyed(this.destroyRef),
-            )
+        this.animationService
+            .listenToVotingState()
+            .pipe(takeUntilDestroyed(this.destroyRef))
             .subscribe();
 
         this.listenToUserSignedIn();
+        this.voteOnJustCreatedTopic();
 
         if (!this.vote) return;
 
@@ -97,7 +81,14 @@ export class VoteButtonComponent {
     }
 
     onPulse({ justSignedIn }: { justSignedIn?: boolean } = {}) {
-        if (this.isVoting.value || this.isActiveVote || !this.topicId || this.isInProgress) return;
+        if (
+            this.animationService.isInProgressValue ||
+            this.isActiveVote ||
+            !this.topicId ||
+            this.isInProgress
+        ) {
+            return;
+        }
 
         this.isInProgress = true;
 
@@ -105,42 +96,51 @@ export class VoteButtonComponent {
             .vote({
                 topicId: this.topicId,
             })
+            .pipe(this.waitForVoteAndAnimationFinish)
             .pipe(
-                first((vote) => !!vote),
-                switchMap((vote) => {
-                    // wait for both the vote and isVoting$ to emit
-                    return combineLatest([
-                        of(vote),
-                        this.isVoting$.pipe(filter((value) => value === false)),
-                    ]).pipe(first());
-                }),
-            )
-            .subscribe({
-                next: ([vote]) => {
-                    this.isActiveVote = true;
-                    this.lastVoteInfo = VoteUtils.parseVoteInfo(vote);
+                catchError((error) => this.handleVotingError(error)),
+                map(([vote]) => vote),
+                tap(this.updateVoteInfo),
+                tap((vote) => {
                     this.voted.emit(vote);
                     this.isInProgress = false;
-
+                }),
+                tap(() => {
                     if (justSignedIn) {
-                        this.votingService.congratulate();
+                        this.congratulateJustSignedInUser();
                     }
-                },
-                error: (error) => {
+                }),
+            )
+            .subscribe();
+    }
+
+    private voteOnJustCreatedTopic() {
+        if (
+            !this.pulseService.isJustCreatedTopic ||
+            this.animationService.isInProgressValue ||
+            this.isActiveVote ||
+            !this.topicId ||
+            this.isInProgress
+        ) {
+            return;
+        }
+
+        this.isInProgress = true;
+
+        this.votingService
+            .vote({
+                topicId: this.topicId,
+            })
+            .pipe(this.waitForVoteAndAnimationFinish)
+            .pipe(
+                map(([vote]) => vote),
+                tap(this.updateVoteInfo),
+                tap((vote) => {
+                    this.voted.emit(vote);
                     this.isInProgress = false;
-                    if (error instanceof VotingError) {
-                        if (error.code === VotingErrorCode.NOT_AUTHORIZED) {
-                            this.votingService.startVotingForAnonymousUser();
-                            return;
-                        }
-                        if (error.code === VotingErrorCode.GEOLOCATION_UNAVAILABLE) {
-                            this.votingService.showDownloadAppPopup();
-                            return;
-                        }
-                    }
-                    this.notificationService.error(error.message || "Failed to vote");
-                },
-            });
+                }),
+            )
+            .subscribe();
     }
 
     onVoteExpired() {
@@ -149,8 +149,35 @@ export class VoteButtonComponent {
         this.voteExpired.emit();
     }
 
+    private waitForVoteAndAnimationFinish = (vote$: Observable<IVote>) => {
+        // wait for both the vote and isButtonAnimationInProgress$ to emit
+        return vote$.pipe(
+            first((vote) => !!vote),
+            switchMap((vote) => {
+                return combineLatest([
+                    of(vote),
+                    this.animationService.isInProgress$.pipe(filter((value) => value === false)),
+                ]).pipe(first());
+            }),
+        );
+    };
+
+    private updateVoteInfo = (vote: IVote) => {
+        this.isActiveVote = true;
+        this.lastVoteInfo = VoteUtils.parseVoteInfo(vote);
+        this.voted.emit(vote);
+        this.isInProgress = false;
+    };
+
+    private congratulateJustSignedInUser() {
+        this.votingService.congratulate();
+    }
+
     private listenToUserSignedIn() {
-        return combineLatest([this.authService.firebaseUser$, this.votingService.isAnonymousUserSignedIn$])
+        return combineLatest([
+            this.authService.firebaseUser$,
+            this.votingService.isAnonymousUserSignedIn$,
+        ])
             .pipe(
                 filter(([user, signedIn]) => !!user && signedIn === true),
                 first(),
@@ -163,5 +190,18 @@ export class VoteButtonComponent {
                 }),
             )
             .subscribe();
+    }
+
+    private handleVotingError(error: unknown) {
+        if (error instanceof VotingError) {
+            if (error.code === VotingErrorCode.NOT_AUTHORIZED) {
+                this.votingService.startVotingForAnonymousUser();
+            } else if (error.code === VotingErrorCode.GEOLOCATION_UNAVAILABLE) {
+                this.votingService.showDownloadAppPopup();
+            }
+        } else if (isErrorWithMessage(error)) {
+            this.notificationService.error(error.message || "Failed to vote");
+        }
+        return throwError(() => error);
     }
 }
