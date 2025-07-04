@@ -38,13 +38,19 @@
                     </a>
                 </li>
             }
-            <li>
-                <a
-                    [routerLink]="'/' + AppRoutes.Auth.SIGN_IN"
-                    routerLinkActive="active">
-                    {{ isAuthenticated ? "Sign Out" : "Sign In" }}
-                </a>
-            </li>
+            @if (isAuthenticated) {
+                <li>
+                    <button (click)="onSignOut()">Sign Out</button>
+                </li>
+            } @else {
+                <li>
+                    <a
+                        [routerLink]="'/' + AppRoutes.Auth.SIGN_IN"
+                        routerLinkActive="active">
+                        Sign In
+                    </a>
+                </li>
+            }
             <!-- <li>
                 <a 
                     routerLink="/login"
