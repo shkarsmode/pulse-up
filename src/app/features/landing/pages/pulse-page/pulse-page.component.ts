@@ -40,7 +40,8 @@ import { IVote } from "@/app/shared/interfaces/vote.interface";
 import { VoteUtils } from "@/app/shared/helpers/vote-utils";
 import { AuthenticationService } from "@/app/shared/services/api/authentication.service";
 import { PendingTopicsService } from "@/app/shared/services/topic/pending-topics.service";
-import { VotingService } from "@/app/shared/services/core/voting.service";
+import { TopicQrcodePopupComponent } from "../../ui/topic-qrcode-popup/topic-qrcode-popup.component";
+import { DialogService } from "@/app/shared/services/core/dialog.service";
 
 @Component({
     selector: "app-pulse-page",
@@ -48,33 +49,33 @@ import { VotingService } from "@/app/shared/services/core/voting.service";
     styleUrl: "./pulse-page.component.scss",
     standalone: true,
     imports: [
-        CommonModule,
-        RouterModule,
-        SvgIconComponent,
-        MenuComponent,
-        CopyButtonComponent,
-        SocialsButtonComponent,
-        MapComponent,
-        SliderComponent,
-        TopPulseCardComponent,
-        SpinnerComponent,
-        FadeInDirective,
-        FormatNumberPipe,
-        LoadImgPathDirective,
-        FlatButtonDirective,
-        PulseButtonComponent,
-    ],
+    CommonModule,
+    RouterModule,
+    SvgIconComponent,
+    MenuComponent,
+    CopyButtonComponent,
+    SocialsButtonComponent,
+    MapComponent,
+    SliderComponent,
+    TopPulseCardComponent,
+    SpinnerComponent,
+    FadeInDirective,
+    FormatNumberPipe,
+    LoadImgPathDirective,
+    FlatButtonDirective,
+    PulseButtonComponent,
+],
 })
 export class PulsePageComponent implements OnInit {
     @ViewChild("description", { static: false })
-    private dialog: MatDialog = inject(MatDialog);
+    private readonly dialog = inject(MatDialog);
+    private readonly dialogService = inject(DialogService);
     private readonly router = inject(Router);
     private readonly route = inject(ActivatedRoute);
     private readonly pulseService = inject(PulseService);
     private readonly metadataService = inject(MetadataService);
     private readonly settingsService = inject(SettingsService);
     private readonly voteService = inject(VoteService);
-    private readonly votingService = inject(VotingService);
     private readonly notificationService = inject(NotificationService);
     private readonly authService = inject(AuthenticationService);
     private readonly pendingTopicsService = inject(PendingTopicsService);
@@ -120,6 +121,15 @@ export class PulsePageComponent implements OnInit {
 
     public onVoteExpired() {
         this.isActiveVote = false;
+    }
+
+    public openQrCodePopup(): void {
+        this.dialogService.open(TopicQrcodePopupComponent, {
+            width: "400px",
+            data: {
+                link: this.topicUrl,
+            },
+        });
     }
 
     public onVoted() {

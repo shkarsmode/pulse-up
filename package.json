@@ -30,6 +30,7 @@
     "@splidejs/splide": "^4.1.4",
     "@types/intl-tel-input": "^18.1.4",
     "angular-svg-icon": "^18.0.2",
+    "angularx-qrcode": "^18.0.2",
     "firebase": "^10.14.0",
     "h3-js": "^3.3.0",
     "jwt-decode": "^4.0.0",
