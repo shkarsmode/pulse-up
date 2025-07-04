@@ -20,6 +20,10 @@ import { AppConstants } from "@/app/shared/constants/app.constants";
 import { InfiniteLoaderService } from "../../services/infinite-loader.service";
 import { LoadingIndicatorComponent } from "@/app/shared/components/loading-indicator/loading-indicator.component";
 import { FlatButtonDirective } from "@/app/shared/components/ui-kit/buttons/flat-button/flat-button.directive";
+import { QrcodeButtonComponent } from "@/app/shared/components/ui-kit/buttons/qrcode-button/qrcode-button.component";
+import { DialogService } from "@/app/shared/services/core/dialog.service";
+import { TopicQrcodePopupComponent } from "../../ui/topic-qrcode-popup/topic-qrcode-popup.component";
+import { TopicQRCodePopupData } from "../../interfaces/topic-qrcode-popup-data.interface";
 
 @Component({
     selector: "app-author",
@@ -41,17 +45,18 @@ import { FlatButtonDirective } from "@/app/shared/components/ui-kit/buttons/flat
         FadeInDirective,
         FlatButtonDirective,
         FormatNumberPipe,
+        QrcodeButtonComponent,
     ],
     providers: [InfiniteLoaderService],
 })
 export class UserComponent {
-    private readonly router: Router = inject(Router);
-    private readonly location: Location = inject(Location);
-    private readonly route: ActivatedRoute = inject(ActivatedRoute);
-    private readonly userService: UserService = inject(UserService);
-    private readonly settingsService: SettingsService = inject(SettingsService);
-    private readonly infiniteLoaderService: InfiniteLoaderService<ITopic> =
-        inject(InfiniteLoaderService);
+    private readonly router = inject(Router);
+    private readonly location = inject(Location);
+    private readonly route = inject(ActivatedRoute);
+    private readonly userService = inject(UserService);
+    private readonly dialogService = inject(DialogService);
+    private readonly settingsService = inject(SettingsService);
+    private readonly infiniteLoaderService = inject(InfiniteLoaderService<ITopic>);
 
     public user: IAuthor | null = null;
     public topics: ITopic[] = [];
@@ -143,5 +148,18 @@ export class UserComponent {
 
     public onCopyLink(event: MouseEvent) {
         event.stopPropagation();
+    }
+
+    openQrCodePopup(): void {
+        this.dialogService.open<TopicQrcodePopupComponent, TopicQRCodePopupData>(
+            TopicQrcodePopupComponent,
+            {
+                width: "400px",
+                data: {
+                    link: this.shareProfileUrl,
+                    type: "profile",
+                },
+            },
+        );
     }
 }

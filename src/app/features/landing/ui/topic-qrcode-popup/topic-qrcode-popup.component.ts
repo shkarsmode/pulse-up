@@ -6,28 +6,39 @@ import { PopupSubtitleComponent } from "@/app/shared/components/ui-kit/popup/pop
 import { PopupTextComponent } from "@/app/shared/components/ui-kit/popup/popup-text/popup-text.component";
 import { PopupFooterComponent } from "@/app/shared/components/ui-kit/popup/popup-footer/popup-footer.component";
 import { SharedModule } from "@/app/shared/modules/shared.module";
+import { TopicQRCodePopupData, TopicQrcodePopupType } from "../../interfaces/topic-qrcode-popup-data.interface";
 
-interface TopicQrcodePopupData {
-    link: string;
-}
+const dialogDescription: Record<TopicQrcodePopupType, string> = {
+    topic: "Open the topic on your phone by scanning the QR code below.",
+    profile: "Open the profile on your phone by scanning the QR code below.",
+};
+
+const dialogLabel: Record<TopicQrcodePopupType, string> = {
+    topic: "Topic QR Code",
+    profile: "Profile QR Code",
+};
+
 
 @Component({
     selector: "app-topic-qrcode-popup",
     standalone: true,
     imports: [
-    PopupLayoutComponent,
-    PopupCloseButtonComponent,
-    PopupSubtitleComponent,
-    PopupTextComponent,
-    SharedModule,
-    PopupFooterComponent
-],
+        PopupLayoutComponent,
+        PopupCloseButtonComponent,
+        PopupSubtitleComponent,
+        PopupTextComponent,
+        SharedModule,
+        PopupFooterComponent,
+    ],
     templateUrl: "./topic-qrcode-popup.component.html",
     styleUrl: "./topic-qrcode-popup.component.scss",
 })
 export class TopicQrcodePopupComponent {
     private readonly dialogRef = inject(MatDialogRef<TopicQrcodePopupComponent>);
-    readonly data: TopicQrcodePopupData = inject(MAT_DIALOG_DATA);
+    readonly data: TopicQRCodePopupData = inject(MAT_DIALOG_DATA);
+
+    dialogText = dialogDescription[this.data.type];
+    dialogAccessibleLabel = dialogLabel[this.data.type];
 
     onClose() {
         this.dialogRef.close();

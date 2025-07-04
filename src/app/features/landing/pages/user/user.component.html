@@ -82,5 +82,6 @@
         <app-socials-button
             [variant]="'email'"
             [url]="shareProfileUrl" />
+        <app-qrcode-button (handleClick)="openQrCodePopup()" />
     </div>
 </ng-template>

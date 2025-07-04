@@ -155,11 +155,7 @@
         <app-socials-button
             [variant]="'email'"
             [url]="topicUrl" />
-        <button
-            class="pulse__qr-button"
-            (click)="openQrCodePopup()">
-            <svg-icon src="assets/svg/qr-code.svg" />
-        </button>
+        <app-qrcode-button (handleClick)="openQrCodePopup()" />
     </div>
 </ng-template>
 
