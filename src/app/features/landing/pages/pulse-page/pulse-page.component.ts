@@ -33,7 +33,7 @@ import { SpinnerComponent } from "@/app/shared/components/ui-kit/spinner/spinner
 import { LoadImgPathDirective } from "@/app/shared/directives/load-img-path/load-img-path.directive";
 import { FlatButtonDirective } from "@/app/shared/components/ui-kit/buttons/flat-button/flat-button.directive";
 import { TopicPublishedComponent } from "@/app/features/landing/ui/topic-published/topic-published.component";
-import { PulseButtonComponent } from "../../ui/pulse-button/pulse-button.component";
+import { VoteButtonComponent } from "../../ui/vote-button/vote-button.component";
 import { VoteService } from "@/app/shared/services/api/vote.service";
 import { NotificationService } from "@/app/shared/services/core/notification.service";
 import { IVote } from "@/app/shared/interfaces/vote.interface";
@@ -65,7 +65,7 @@ import { TopicQrcodePopupComponent } from "../../ui/topic-qrcode-popup/topic-qrc
         FormatNumberPipe,
         LoadImgPathDirective,
         FlatButtonDirective,
-        PulseButtonComponent,
+        VoteButtonComponent,
         QrcodeButtonComponent,
     ],
 })

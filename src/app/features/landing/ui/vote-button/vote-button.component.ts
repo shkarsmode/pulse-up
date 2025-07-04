@@ -41,7 +41,7 @@ function delayBetween<T>(delayMs: number, first = false) {
 }
 
 @Component({
-    selector: "app-pulse-button",
+    selector: "app-vote-button",
     standalone: true,
     imports: [
         CommonModule,
@@ -50,10 +50,10 @@ function delayBetween<T>(delayMs: number, first = false) {
         HeartBeatDirective,
         VoteTimeLeftComponent,
     ],
-    templateUrl: "./pulse-button.component.html",
-    styleUrl: "./pulse-button.component.scss",
+    templateUrl: "./vote-button.component.html",
+    styleUrl: "./vote-button.component.scss",
 })
-export class PulseButtonComponent {
+export class VoteButtonComponent {
     private destroyRef = inject(DestroyRef);
     private votingService = inject(VotingService);
     private settingsService = inject(SettingsService);
