@@ -32,7 +32,7 @@ import { TopPulseCardComponent } from "@/app/shared/components/pulses/top-pulse/
 import { SpinnerComponent } from "@/app/shared/components/ui-kit/spinner/spinner.component";
 import { LoadImgPathDirective } from "@/app/shared/directives/load-img-path/load-img-path.directive";
 import { FlatButtonDirective } from "@/app/shared/components/ui-kit/buttons/flat-button/flat-button.directive";
-import { TopicPublishedComponent } from "@/app/shared/components/popups/topic-published/topic-published.component";
+import { TopicPublishedComponent } from "@/app/features/landing/ui/topic-published/topic-published.component";
 import { PulseButtonComponent } from "../../ui/pulse-button/pulse-button.component";
 import { VoteService } from "@/app/shared/services/api/vote.service";
 import { NotificationService } from "@/app/shared/services/core/notification.service";
@@ -40,8 +40,10 @@ import { IVote } from "@/app/shared/interfaces/vote.interface";
 import { VoteUtils } from "@/app/shared/helpers/vote-utils";
 import { AuthenticationService } from "@/app/shared/services/api/authentication.service";
 import { PendingTopicsService } from "@/app/shared/services/topic/pending-topics.service";
-import { TopicQrcodePopupComponent } from "../../ui/topic-qrcode-popup/topic-qrcode-popup.component";
 import { DialogService } from "@/app/shared/services/core/dialog.service";
+import { QrcodeButtonComponent } from "@/app/shared/components/ui-kit/buttons/qrcode-button/qrcode-button.component";
+import { TopicQRCodePopupData } from "../../interfaces/topic-qrcode-popup-data.interface";
+import { TopicQrcodePopupComponent } from "../../ui/topic-qrcode-popup/topic-qrcode-popup.component";
 
 @Component({
     selector: "app-pulse-page",
@@ -49,26 +51,25 @@ import { DialogService } from "@/app/shared/services/core/dialog.service";
     styleUrl: "./pulse-page.component.scss",
     standalone: true,
     imports: [
-    CommonModule,
-    RouterModule,
-    SvgIconComponent,
-    MenuComponent,
-    CopyButtonComponent,
-    SocialsButtonComponent,
-    MapComponent,
-    SliderComponent,
-    TopPulseCardComponent,
-    SpinnerComponent,
-    FadeInDirective,
-    FormatNumberPipe,
-    LoadImgPathDirective,
-    FlatButtonDirective,
-    PulseButtonComponent,
-],
+        CommonModule,
+        RouterModule,
+        SvgIconComponent,
+        MenuComponent,
+        CopyButtonComponent,
+        SocialsButtonComponent,
+        MapComponent,
+        SliderComponent,
+        TopPulseCardComponent,
+        SpinnerComponent,
+        FadeInDirective,
+        FormatNumberPipe,
+        LoadImgPathDirective,
+        FlatButtonDirective,
+        PulseButtonComponent,
+        QrcodeButtonComponent,
+    ],
 })
 export class PulsePageComponent implements OnInit {
-    @ViewChild("description", { static: false })
-    private readonly dialog = inject(MatDialog);
     private readonly dialogService = inject(DialogService);
     private readonly router = inject(Router);
     private readonly route = inject(ActivatedRoute);
@@ -82,6 +83,8 @@ export class PulsePageComponent implements OnInit {
     private readonly destroyRef = inject(DestroyRef);
     private mutationObserver: MutationObserver | null = null;
 
+    @ViewChild("description", { static: false }) description!: ElementRef<HTMLDivElement>;
+
     topic: ITopic | null = null;
     isReadMore: boolean = false;
     isLoading: boolean = true;
@@ -89,7 +92,6 @@ export class PulsePageComponent implements OnInit {
     topicUrl: string = "";
     shortPulseDescription: string = "";
     isArchived: boolean = false;
-    description: ElementRef<HTMLDivElement>;
     vote: IVote | null = null;
     isActiveVote: boolean = false;
     lastVoteInfo: string = "";
@@ -123,14 +125,18 @@ export class PulsePageComponent implements OnInit {
         this.isActiveVote = false;
     }
 
-    public openQrCodePopup(): void {
-        this.dialogService.open(TopicQrcodePopupComponent, {
-            width: "400px",
-            data: {
-                link: this.topicUrl,
+    public openQrCodePopup = (): void => {
+        this.dialogService.open<TopicQrcodePopupComponent, TopicQRCodePopupData>(
+            TopicQrcodePopupComponent,
+            {
+                width: "400px",
+                data: {
+                    link: this.topicUrl,
+                    type: "topic",
+                },
             },
-        });
-    }
+        );
+    };
 
     public onVoted() {
         if (!this.topic) return;
@@ -152,10 +158,10 @@ export class PulsePageComponent implements OnInit {
                 map((params: ParamMap) => {
                     const idParam = params.get("id") || "";
                     const topicId = parseInt(idParam);
-                    return ({
+                    return {
                         topicId: Number.isNaN(topicId) ? undefined : topicId,
                         shareKey: Number.isNaN(topicId) ? idParam : undefined,
-                    })
+                    };
                 }),
                 tap(() => {
                     this.topic = null;
@@ -202,7 +208,7 @@ export class PulsePageComponent implements OnInit {
                         })),
                     );
                 }),
-            )
+            );
         }
     }
 
@@ -289,13 +295,9 @@ export class PulsePageComponent implements OnInit {
     }
 
     private openJustCtreatedTipicPopup(): void {
-        const matDialog = this.dialog;
         if (this.pulseService.isJustCreatedTopic) {
             setTimeout(() => {
-                matDialog.open(TopicPublishedComponent, {
-                    width: "500px",
-                    panelClass: "custom-dialog-container",
-                    backdropClass: "custom-dialog-backdrop",
+                this.dialogService.open(TopicPublishedComponent, {
                     data: {
                         shareKey: this.topic?.shareKey,
                     },
