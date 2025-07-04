@@ -32,8 +32,8 @@ const routes: Routes = [
                 canActivate: [
                     PrivatePageGuard,
                     SuggestGuard,
-                    ActiveTopicsLimitGuard,
                     RequiredPersonalInformationGuard,
+                    ActiveTopicsLimitGuard,
                     CreateTopicGuard,
                 ],
             },

@@ -17,13 +17,12 @@ import { ProfileService } from "@/app/shared/services/profile/profile.service";
 export class RequiredPersonalInformationGuard implements CanActivate {
     private readonly router = inject(Router);
     private readonly profileService = inject(ProfileService);
-    private readonly hasPublicInformation$ = this.profileService.hasPublicInformation$;
 
     canActivate(
         route: ActivatedRouteSnapshot,
         state: RouterStateSnapshot,
     ): MaybeAsync<GuardResult> {
-        return this.hasPublicInformation$.pipe(
+        return this.profileService.hasPublicInformation$.pipe(
             map((hasPublicInformation) => {
                 if (!hasPublicInformation) {
                     this.router.navigateByUrl("/" + AppRoutes.Profile.EDIT);
