@@ -1,5 +1,5 @@
 import { Component, inject, signal } from "@angular/core";
-import { FormBuilder, ReactiveFormsModule } from "@angular/forms";
+import { FormBuilder, FormGroup, ReactiveFormsModule } from "@angular/forms";
 import { CommonModule } from "@angular/common";
 import { MatExpansionModule } from "@angular/material/expansion";
 import { MatButtonModule } from "@angular/material/button";
@@ -9,7 +9,13 @@ import { MaterialModule } from "../../modules/material.module";
 @Component({
     selector: "app-dev-menu",
     standalone: true,
-    imports: [CommonModule, ReactiveFormsModule, MatExpansionModule, MatButtonModule, MaterialModule],
+    imports: [
+        CommonModule,
+        ReactiveFormsModule,
+        MatExpansionModule,
+        MatButtonModule,
+        MaterialModule,
+    ],
     templateUrl: "./dev-menu.component.html",
     styleUrls: ["./dev-menu.component.scss"],
 })
@@ -17,16 +23,21 @@ export class DevMenuComponent {
     private readonly formBuilder = inject(FormBuilder);
     private readonly devSettings = inject(DevSettingsService);
 
+    public locationForm: FormGroup;
     readonly isOpen = signal(false);
 
-    readonly locationForm = this.formBuilder.group({
-        lat: [""],
-        lng: [""],
-        accuracy: [""],
-    });
+    constructor() {
+        const lat = 35.167406;
+        const lng = 33.435499;
+        this.locationForm = this.formBuilder.group({
+            lat: [lat],
+            lng: [lng],
+            accuracy: ["100"],
+        });
+    }
 
     toggleMenu() {
-        this.isOpen.update(v => !v);
+        this.isOpen.update((value) => !value);
     }
 
     save() {
