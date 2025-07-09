@@ -66,9 +66,9 @@ export class VoteButtonComponent {
     @Output() voted = new EventEmitter<IVote>();
     @Output() pulse = new EventEmitter<{ justSignedIn?: boolean }>();
 
-    private isVoting = new BehaviorSubject(false);
+    private isAnimating = new BehaviorSubject(false);
 
-    isVoting$ = this.isVoting.asObservable();
+    isAnimating$ = this.isAnimating.asObservable();
     isActiveVote = false;
     lastVoteInfo = "";
     isAnonymousUser = this.authService.anonymousUserValue;
@@ -79,7 +79,7 @@ export class VoteButtonComponent {
             .pipe(
                 delayBetween(800),
                 tap((isVoting) => {
-                    this.isVoting.next(isVoting);
+                    this.isAnimating.next(isVoting);
                 }),
                 takeUntilDestroyed(this.destroyRef),
             )
@@ -97,7 +97,7 @@ export class VoteButtonComponent {
     }
 
     onPulse({ justSignedIn }: { justSignedIn?: boolean } = {}) {
-        if (this.isVoting.value || this.isActiveVote || !this.topicId || this.isInProgress) return;
+        if (this.isAnimating.value || this.isActiveVote || !this.topicId || this.isInProgress) return;
 
         this.isInProgress = true;
 
@@ -111,7 +111,7 @@ export class VoteButtonComponent {
                     // wait for both the vote and isVoting$ to emit
                     return combineLatest([
                         of(vote),
-                        this.isVoting$.pipe(filter((value) => value === false)),
+                        this.isAnimating$.pipe(filter((value) => value === false)),
                     ]).pipe(first());
                 }),
             )
