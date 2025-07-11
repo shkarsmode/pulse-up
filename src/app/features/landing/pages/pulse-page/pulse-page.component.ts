@@ -1,8 +1,33 @@
-import { Component, DestroyRef, ElementRef, inject, OnInit, ViewChild } from "@angular/core";
-import { ActivatedRoute, ParamMap, Router, RouterModule } from "@angular/router";
+import { TopicPublishedComponent } from "@/app/features/landing/ui/topic-published/topic-published.component";
+import { FadeInDirective } from "@/app/shared/animations/fade-in.directive";
+import { TopPulseCardComponent } from "@/app/shared/components/pulses/top-pulse/top-pulse-card.component";
+import { SliderComponent } from "@/app/shared/components/slider/slider.component";
+import { CopyButtonComponent } from "@/app/shared/components/ui-kit/buttons/copy-button/copy-button.component";
+import { FlatButtonDirective } from "@/app/shared/components/ui-kit/buttons/flat-button/flat-button.directive";
+import { QrcodeButtonComponent } from "@/app/shared/components/ui-kit/buttons/qrcode-button/qrcode-button.component";
+import { SocialsButtonComponent } from "@/app/shared/components/ui-kit/buttons/socials-button/socials-button.component";
+import { MenuComponent } from "@/app/shared/components/ui-kit/menu/menu.component";
+import { SpinnerComponent } from "@/app/shared/components/ui-kit/spinner/spinner.component";
+import { LoadImgPathDirective } from "@/app/shared/directives/load-img-path/load-img-path.directive";
+import { AppRoutes } from "@/app/shared/enums/app-routes.enum";
+import { VoteUtils } from "@/app/shared/helpers/vote-utils";
+import { ITopic, TopicState } from "@/app/shared/interfaces";
+import { IVote } from "@/app/shared/interfaces/vote.interface";
+import { FormatNumberPipe } from "@/app/shared/pipes/format-number.pipe";
+import { AuthenticationService } from "@/app/shared/services/api/authentication.service";
+import { PulseService } from "@/app/shared/services/api/pulse.service";
+import { SettingsService } from "@/app/shared/services/api/settings.service";
+import { VoteService } from "@/app/shared/services/api/vote.service";
+import { DialogService } from "@/app/shared/services/core/dialog.service";
+import { MetadataService } from "@/app/shared/services/core/metadata.service";
+import { NotificationService } from "@/app/shared/services/core/notification.service";
+import { PendingTopicsService } from "@/app/shared/services/topic/pending-topics.service";
 import { CommonModule } from "@angular/common";
+import { Component, DestroyRef, ElementRef, inject, OnInit, ViewChild } from "@angular/core";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
+import { ActivatedRoute, ParamMap, Router, RouterModule } from "@angular/router";
+import { SvgIconComponent } from "angular-svg-icon";
 import {
-    BehaviorSubject,
     catchError,
     first,
     forkJoin,
@@ -10,40 +35,12 @@ import {
     Observable,
     of,
     switchMap,
-    take,
-    tap,
+    tap
 } from "rxjs";
-import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
-import { SvgIconComponent } from "angular-svg-icon";
-import { AppRoutes } from "@/app/shared/enums/app-routes.enum";
-import { MatDialog } from "@angular/material/dialog";
-import { ITopic, TopicState } from "@/app/shared/interfaces";
-import { PulseService } from "@/app/shared/services/api/pulse.service";
-import { MetadataService } from "@/app/shared/services/core/metadata.service";
-import { SettingsService } from "@/app/shared/services/api/settings.service";
-import { FadeInDirective } from "@/app/shared/animations/fade-in.directive";
-import { FormatNumberPipe } from "@/app/shared/pipes/format-number.pipe";
-import { MenuComponent } from "@/app/shared/components/ui-kit/menu/menu.component";
-import { CopyButtonComponent } from "@/app/shared/components/ui-kit/buttons/copy-button/copy-button.component";
-import { SocialsButtonComponent } from "@/app/shared/components/ui-kit/buttons/socials-button/socials-button.component";
-import { MapComponent } from "../../ui/map/map.component";
-import { SliderComponent } from "@/app/shared/components/slider/slider.component";
-import { TopPulseCardComponent } from "@/app/shared/components/pulses/top-pulse/top-pulse-card.component";
-import { SpinnerComponent } from "@/app/shared/components/ui-kit/spinner/spinner.component";
-import { LoadImgPathDirective } from "@/app/shared/directives/load-img-path/load-img-path.directive";
-import { FlatButtonDirective } from "@/app/shared/components/ui-kit/buttons/flat-button/flat-button.directive";
-import { TopicPublishedComponent } from "@/app/features/landing/ui/topic-published/topic-published.component";
-import { VoteButtonComponent } from "../../ui/vote-button/vote-button.component";
-import { VoteService } from "@/app/shared/services/api/vote.service";
-import { NotificationService } from "@/app/shared/services/core/notification.service";
-import { IVote } from "@/app/shared/interfaces/vote.interface";
-import { VoteUtils } from "@/app/shared/helpers/vote-utils";
-import { AuthenticationService } from "@/app/shared/services/api/authentication.service";
-import { PendingTopicsService } from "@/app/shared/services/topic/pending-topics.service";
-import { DialogService } from "@/app/shared/services/core/dialog.service";
-import { QrcodeButtonComponent } from "@/app/shared/components/ui-kit/buttons/qrcode-button/qrcode-button.component";
 import { TopicQRCodePopupData } from "../../interfaces/topic-qrcode-popup-data.interface";
+import { MapComponent } from "../../ui/map/map.component";
 import { TopicQrcodePopupComponent } from "../../ui/topic-qrcode-popup/topic-qrcode-popup.component";
+import { VoteButtonComponent } from "../../ui/vote-button/vote-button.component";
 
 @Component({
     selector: "app-pulse-page",
@@ -123,6 +120,48 @@ export class PulsePageComponent implements OnInit {
 
     public onVoteExpired() {
         this.isActiveVote = false;
+    }
+
+    public get currentGoal(): number {
+        if (!this.topic?.campaign || !this.topic.campaign.goals.length) {
+            return 0;
+        }
+        const currentGoalObj = this.topic.campaign.goals[
+            this.topic.campaign.accomplishedGoals.length
+        ];
+
+        return currentGoalObj?.supporters ?? 
+            currentGoalObj?.lifetimeVotes ?? 
+            currentGoalObj?.dailyVotes ?? 0;
+    }
+
+    public get isCampaignStarted(): boolean {
+        return this.topic?.campaign?.startsAt ?
+            (new Date(this.topic.campaign.startsAt) <= new Date()) && 
+            new Date(this.topic.campaign.endsAt) > new Date() : false;
+    }
+
+    public get currentGoalInPercent(): number {
+        if (!this.topic?.campaign || !this.topic.campaign.goals.length) {
+            return 0;
+        }
+
+        const currentGoalObj = this.topic.campaign.goals[
+            this.topic.campaign.accomplishedGoals.length
+        ];
+
+        const { totalUniqueUsers, lastDayVotes, totalVotes } = this.topic.stats || {};
+        
+        switch (true) {
+            case !!currentGoalObj?.supporters:
+                return (+currentGoalObj.supporters / 100) * (totalUniqueUsers ?? 0);
+            case !!currentGoalObj?.dailyVotes:
+                return (+currentGoalObj.dailyVotes / 100) * (lastDayVotes ?? 0);
+            case !!currentGoalObj?.lifetimeVotes:
+                return (+currentGoalObj.lifetimeVotes / 100) * (totalVotes ?? 0);
+            default:
+                return 0;
+        }
     }
 
     public openQrCodePopup = (): void => {

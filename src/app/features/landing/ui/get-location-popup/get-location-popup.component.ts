@@ -1,16 +1,17 @@
-import { Component, DestroyRef, inject } from "@angular/core";
-import { CommonModule } from "@angular/common";
-import { MatDialogRef } from "@angular/material/dialog";
-import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
-import { delay, map, take } from "rxjs";
-import { VotingService } from "@/app/shared/services/core/voting.service";
-import { GeolocationService } from "@/app/shared/services/core/geolocation.service";
-import { PopupLayoutComponent } from "@/app/shared/components/ui-kit/popup/popup.component";
-import { PopupTextComponent } from "@/app/shared/components/ui-kit/popup/popup-text/popup-text.component";
-import { SpinnerComponent } from "@/app/shared/components/ui-kit/spinner/spinner.component";
-import { PopupFooterComponent } from "@/app/shared/components/ui-kit/popup/popup-footer/popup-footer.component";
+import { GetAppButtonComponent } from "@/app/shared/components/ui-kit/buttons/get-app-button/get-app-button.component";
 import { PrimaryButtonComponent } from "@/app/shared/components/ui-kit/buttons/primary-button/primary-button.component";
 import { SecondaryButtonComponent } from "@/app/shared/components/ui-kit/buttons/secondary-button/secondary-button.component";
+import { PopupFooterComponent } from "@/app/shared/components/ui-kit/popup/popup-footer/popup-footer.component";
+import { PopupTextComponent } from "@/app/shared/components/ui-kit/popup/popup-text/popup-text.component";
+import { PopupLayoutComponent } from "@/app/shared/components/ui-kit/popup/popup.component";
+import { SpinnerComponent } from "@/app/shared/components/ui-kit/spinner/spinner.component";
+import { GeolocationService } from "@/app/shared/services/core/geolocation.service";
+import { VotingService } from "@/app/shared/services/core/voting.service";
+import { CommonModule } from "@angular/common";
+import { Component, DestroyRef, inject } from "@angular/core";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
+import { MatDialogRef } from "@angular/material/dialog";
+import { delay, map, take } from "rxjs";
 
 @Component({
     selector: "app-get-location-popup",
@@ -23,6 +24,7 @@ import { SecondaryButtonComponent } from "@/app/shared/components/ui-kit/buttons
         PopupFooterComponent,
         PrimaryButtonComponent,
         SecondaryButtonComponent,
+        GetAppButtonComponent
     ],
     templateUrl: "./get-location-popup.component.html",
     styleUrl: "./get-location-popup.component.scss",

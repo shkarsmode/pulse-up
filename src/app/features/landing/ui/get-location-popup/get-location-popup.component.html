@@ -1,7 +1,7 @@
 <app-popup>
     <!-- <app-popup-close-button (close)="onClose()" /> -->
     @if (isError) {
-        <h2>Location Required</h2>
+        <h2>Location not Accessible</h2>
         <div class="get-location-popup-error">
             <app-popup-text>
                 We couldn’t determine your device’s location or the accuracy is too low — a valid
@@ -11,18 +11,9 @@
                 If your browser is unable to grant location, you can use the PulseUp mobile app
             </app-popup-text>
             <app-popup-footer>
-                <app-primary-button
-                    [fullWidth]="true"
-                    class="get-location-popup-error__button"
-                    (handleClick)="proceed()">
-                    Proceed to sign in
-                </app-primary-button>
-                <app-secondary-button
-                    [fullWidth]="true"
-                    class="get-location-popup-error__button"
-                    (handleClick)="closeDialog()">
-                    Back
-                </app-secondary-button>
+                <app-get-app-button
+                    [design]="'new'"
+                    [isOnePlatform]="true" />
             </app-popup-footer>
         </div>
     } @else {
