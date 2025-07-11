@@ -2,39 +2,39 @@ import { HttpHeaders } from "@angular/common/http";
 import { inject, Inject, Injectable } from "@angular/core";
 import { FirebaseApp, FirebaseError, initializeApp } from "firebase/app";
 import {
+    Auth,
+    EmailAuthProvider,
     getAuth,
+    isSignInWithEmailLink,
+    linkWithCredential,
+    PhoneAuthProvider,
+    RecaptchaVerifier,
+    sendSignInLinkToEmail,
     signInAnonymously,
     signInWithPhoneNumber,
-    sendSignInLinkToEmail,
-    UserCredential,
-    RecaptchaVerifier,
-    Auth,
     signOut,
-    isSignInWithEmailLink,
-    EmailAuthProvider,
-    linkWithCredential,
-    User,
-    verifyBeforeUpdateEmail,
-    PhoneAuthProvider,
     updatePhoneNumber,
+    User,
+    UserCredential,
+    verifyBeforeUpdateEmail,
 } from "firebase/auth";
 import { jwtDecode, JwtPayload } from "jwt-decode";
 import { BehaviorSubject, forkJoin, from, Observable, of, throwError } from "rxjs";
 import { catchError, map, switchMap, take, tap } from "rxjs/operators";
+import { AppConstants } from "../../constants";
+import {
+    AuthenticationError,
+    AuthenticationErrorCode,
+} from "../../helpers/errors/authentication-error";
+import { formatFirebaseError } from "../../helpers/formatFirebaseError";
 import { IFirebaseConfig, IProfile } from "../../interfaces";
 import { FIREBASE_CONFIG } from "../../tokens/tokens";
+import { Nullable } from "../../types";
+import { LOCAL_STORAGE_KEYS, LocalStorageService } from "../core/local-storage.service";
+import { WindowService } from "../core/window.service";
+import { ProfileService } from "../profile/profile.service";
 import { IdentityService } from "./identity.service";
 import { UserService } from "./user.service";
-import { AppConstants } from "../../constants";
-import { WindowService } from "../core/window.service";
-import { LOCAL_STORAGE_KEYS, LocalStorageService } from "../core/local-storage.service";
-import { formatFirebaseError } from "../../helpers/formatFirebaseError";
-import {
-    AuthenticationErrorCode,
-    AuthenticationError,
-} from "../../helpers/errors/authentication-error";
-import { Nullable } from "../../types";
-import { ProfileService } from "../profile/profile.service";
 
 @Injectable({
     providedIn: "root",
@@ -92,6 +92,7 @@ export class AuthenticationService {
     }
 
     private initFirebaseAppWithConfig() {
+        console.log(this.firebaseConfig)
         return initializeApp(this.firebaseConfig);
     }
 

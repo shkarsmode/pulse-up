@@ -143,6 +143,21 @@
     z-index: 1;
 }
 
+.active-pulse-info--visible {
+    ::ng-deep {
+        .active-pulse-info__icon:first-child path {
+            fill: #00C105;
+        }
+    }
+
+    .active-pulse-info__text {
+        &--active {
+            color: #00C105;
+            font-weight: 500;
+        }
+    }
+}
+
 .active-pulse-info {
     display: grid;
     grid-template-columns: 14px 1fr;

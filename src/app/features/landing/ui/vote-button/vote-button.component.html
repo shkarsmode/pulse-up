@@ -21,22 +21,22 @@
         </span>
     </app-primary-button>
     @if (vote && isActiveVote) {
-    <div
-        class="active-pulse-info"
-        [class.active-pulse-info--visible]="isActiveVote">
-        <div class="active-pulse-info__icon">
-            <svg-icon src="assets/svg/checked-circle.svg" />
+        <div
+            class="active-pulse-info"
+            [class.active-pulse-info--visible]="isActiveVote">
+            <div class="active-pulse-info__icon">
+                <svg-icon src="assets/svg/checked-circle.svg" />
+            </div>
+            <div class="active-pulse-info__text active-pulse-info__text--active">
+                Pulse active for
+                <app-vote-time-left
+                    [vote]="vote"
+                    (expired)="onVoteExpired()" />
+            </div>
+            <div class="active-pulse-info__icon">
+                <svg-icon src="assets/svg/pin.svg" />
+            </div>
+            <div class="active-pulse-info__text active-pulse-info__text--grey">{{ lastVoteInfo }}</div>
         </div>
-        <div class="active-pulse-info__text">
-            Pulse active for
-            <app-vote-time-left
-                [vote]="vote"
-                (expired)="onVoteExpired()" />
-        </div>
-        <div class="active-pulse-info__icon">
-            <svg-icon src="assets/svg/pin.svg" />
-        </div>
-        <div class="active-pulse-info__text active-pulse-info__text--grey">{{ lastVoteInfo }}</div>
-    </div>
     }
 </div>

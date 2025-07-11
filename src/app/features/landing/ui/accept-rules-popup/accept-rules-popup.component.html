@@ -1,5 +1,6 @@
 <app-popup>
     <app-popup-close-button (close)="onClose()" />
+    <h2>Sign In To Pulse</h2>
     <app-popup-text>
         To enable pulsing on a topic, we need you to sign in. We are using phone based
         authentication to prevent spam, bots and avoid using passwords.
@@ -13,7 +14,7 @@
         will not be able to register the pulse.
     </app-popup-text>
     <app-popup-footer>
-        <app-primary-button (click)="onAccept()">Accept</app-primary-button>
-        <app-secondary-button (click)="onClose()">Close</app-secondary-button>
+        <app-primary-button (click)="onAccept()">Continue</app-primary-button>
+        <!-- <app-secondary-button (click)="onClose()">Close</app-secondary-button> -->
     </app-popup-footer>
 </app-popup>
