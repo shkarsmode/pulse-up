@@ -1,11 +1,12 @@
-import { Component, inject } from "@angular/core";
-import { MatDialogRef } from "@angular/material/dialog";
-import { PopupLayoutComponent } from "@/app/shared/components/ui-kit/popup/popup.component";
+import { AuthFormComponent } from "@/app/shared/components/auth-form/auth-form.component";
 import { PopupCloseButtonComponent } from "@/app/shared/components/ui-kit/popup/popup-close-button/popup-close-button.component";
 import { PopupSubtitleComponent } from "@/app/shared/components/ui-kit/popup/popup-subtitle/popup-subtitle.component";
-import { AuthFormComponent } from "@/app/shared/components/auth-form/auth-form.component";
+import { PopupTextComponent } from "@/app/shared/components/ui-kit/popup/popup-text/popup-text.component";
+import { PopupLayoutComponent } from "@/app/shared/components/ui-kit/popup/popup.component";
 import { SignInFormService } from "@/app/shared/services/core/sign-in-form.service";
 import { VotingService } from "@/app/shared/services/core/voting.service";
+import { Component, inject } from "@angular/core";
+import { MatDialogRef } from "@angular/material/dialog";
 
 @Component({
     selector: "app-welcome-popup",
@@ -15,6 +16,7 @@ import { VotingService } from "@/app/shared/services/core/voting.service";
         PopupCloseButtonComponent,
         PopupSubtitleComponent,
         AuthFormComponent,
+        PopupTextComponent
     ],
     templateUrl: "./welcome-popup.component.html",
     styleUrl: "./welcome-popup.component.scss",
