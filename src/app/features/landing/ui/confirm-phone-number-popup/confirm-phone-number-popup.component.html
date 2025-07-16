@@ -1,4 +1,5 @@
 <app-popup>
+    <app-popup-back-button (back)="back()" />
     <app-popup-close-button (close)="closeDialog()" />
     <app-confirm-phone-number-form
         (codeConfiramSuccess)="onCodeConfirm()"
