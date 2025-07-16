@@ -6,6 +6,9 @@ import { PopupTitleComponent } from "@/app/shared/components/ui-kit/popup/popup-
 import { PopupTextComponent } from "@/app/shared/components/ui-kit/popup/popup-text/popup-text.component";
 import { PopupFooterComponent } from "@/app/shared/components/ui-kit/popup/popup-footer/popup-footer.component";
 import { SecondaryButtonComponent } from "@/app/shared/components/ui-kit/buttons/secondary-button/secondary-button.component";
+import { GetAppButtonComponent } from "@/app/shared/components/ui-kit/buttons/get-app-button/get-app-button.component";
+import { SvgIconComponent } from "angular-svg-icon";
+import { PopupSubtitleComponent } from "@/app/shared/components/ui-kit/popup/popup-subtitle/popup-subtitle.component";
 
 @Component({
     selector: "app-successful-vote-popup",
@@ -15,8 +18,9 @@ import { SecondaryButtonComponent } from "@/app/shared/components/ui-kit/buttons
         PopupCloseButtonComponent,
         PopupTitleComponent,
         PopupTextComponent,
-        PopupFooterComponent,
-        SecondaryButtonComponent,
+        GetAppButtonComponent,
+        SvgIconComponent,
+        PopupSubtitleComponent
     ],
     templateUrl: "./successful-vote-popup.component.html",
     styleUrl: "./successful-vote-popup.component.scss",
