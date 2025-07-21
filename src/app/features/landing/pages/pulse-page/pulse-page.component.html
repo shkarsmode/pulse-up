@@ -1,4 +1,6 @@
-@if (topic) {
+@if (isLoading || !topic) {
+<app-spinner />
+} @else {
 <div
     class="pulse"
     fadeIn
@@ -57,6 +59,8 @@
                 <app-vote-button
                     [topicId]="topic.id"
                     [vote]="vote"
+                    [isActiveVote]="isActiveVote"
+                    [lastVoteInfo]="lastVoteInfo"
                     (voted)="onVoted()"
                     (voteExpired)="onVoteExpired()" />
                 <app-menu [content]="menuContent">
@@ -137,8 +141,6 @@
         }
     </app-slider>
 </div>
-} @else {
-<app-spinner />
 }
 
 <ng-template #menuContent>

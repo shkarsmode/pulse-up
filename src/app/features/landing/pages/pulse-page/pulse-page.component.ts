@@ -2,7 +2,6 @@ import { Component, DestroyRef, ElementRef, inject, OnInit, ViewChild } from "@a
 import { ActivatedRoute, ParamMap, Router, RouterModule } from "@angular/router";
 import { CommonModule } from "@angular/common";
 import {
-    BehaviorSubject,
     catchError,
     first,
     forkJoin,
@@ -10,13 +9,11 @@ import {
     Observable,
     of,
     switchMap,
-    take,
     tap,
 } from "rxjs";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { SvgIconComponent } from "angular-svg-icon";
 import { AppRoutes } from "@/app/shared/enums/app-routes.enum";
-import { MatDialog } from "@angular/material/dialog";
 import { ITopic, TopicState } from "@/app/shared/interfaces";
 import { PulseService } from "@/app/shared/services/api/pulse.service";
 import { MetadataService } from "@/app/shared/services/core/metadata.service";
