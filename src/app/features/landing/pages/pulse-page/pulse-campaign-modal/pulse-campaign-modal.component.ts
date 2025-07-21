@@ -63,11 +63,11 @@ export class PulseCampaignModalComponent {
 
         switch (true) {
             case !!goal?.supporters:
-                return totalUniqueUsers + ' supporters' ?? 0;
+                return (totalUniqueUsers ?? 0) + ' supporters' ;
             case !!goal?.dailyVotes:
-                return lastDayVotes + ' daily pulses' ?? 0;
+                return (lastDayVotes ?? 0) + ' daily pulses';
             case !!goal?.lifetimeVotes:
-                return totalVotes + ' lifetime pulses' ?? 0;
+                return (totalVotes ?? 0) + ' lifetime pulses';
             default:
                 return 0;
         }
