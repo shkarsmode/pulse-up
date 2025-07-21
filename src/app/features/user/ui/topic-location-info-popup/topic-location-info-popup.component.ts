@@ -35,6 +35,6 @@ export class TopicLocationInfoPopupComponent {
     }
 
     public onCancel(): void {
-        this.dialogRef.close();
+        this.dialogRef.close(true);
     }
 }
