@@ -4,6 +4,7 @@ import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { filter } from "rxjs";
 import { LoadingService } from "./shared/services/core/loading.service";
 import { MetadataService } from "./shared/services/core/metadata.service";
+import { environment } from "@/environments/environment";
 
 @Component({
     selector: "app-root",
@@ -17,9 +18,12 @@ import { MetadataService } from "./shared/services/core/metadata.service";
                 [attr.aria-disabled]="isLoading$ | async"
                 class="height-full">
                 @if (!(isLoading$ | async)) {
-                <router-outlet></router-outlet>
+                    <router-outlet></router-outlet>
                 }
             </div>
+            @if (isDev) {
+                <app-dev-menu/>
+            }
         </div>
     `,
     styles: [
@@ -49,5 +53,9 @@ export class AppComponent {
             .subscribe(() => {
                 this.loadingService.isLoading = false;
             });
+    }
+
+    get isDev() {
+        return !environment.production;
     }
 }

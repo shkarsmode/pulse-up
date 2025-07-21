@@ -1,8 +1,12 @@
 import { Component, ElementRef, inject, ViewChild } from "@angular/core";
 import { Location } from "@angular/common";
-import { filter, map } from "rxjs";
+import { Router } from "@angular/router";
+import { filter, map, take } from "rxjs";
 import { SendTopicService } from "@/app/shared/services/core/send-topic.service";
 import { ProfileService } from "@/app/shared/services/profile/profile.service";
+import { NotificationService } from "@/app/shared/services/core/notification.service";
+import { isErrorWithMessage } from "@/app/shared/helpers/errors/is-error-with-message";
+import { VotingService } from "@/app/shared/services/core/voting.service";
 
 @Component({
     selector: "app-topic-preview",
@@ -10,9 +14,12 @@ import { ProfileService } from "@/app/shared/services/profile/profile.service";
     styleUrl: "./topic-preview.component.scss",
 })
 export class TopicPreviewComponent {
+    private readonly router = inject(Router);
     private readonly location = inject(Location);
-    private profileService = inject(ProfileService);
+    private readonly profileService = inject(ProfileService);
+    private readonly votingService = inject(VotingService);
     private readonly sendTopicService = inject(SendTopicService);
+    private readonly notificationService = inject(NotificationService);
 
     @ViewChild("description", { static: false }) descriptionRef: ElementRef<HTMLDivElement>;
 
@@ -52,7 +59,22 @@ export class TopicPreviewComponent {
     }
 
     onPublish() {
-        this.sendTopicService.createTopic();
+        this.sendTopicService.createTopic().pipe(
+            take(1),
+            filter((result) => !!result),
+        ).subscribe({
+            next: (topic) => {
+                this.votingService.shouldVoteAutomatically = true;
+                this.router.navigateByUrl(`/topic/${topic.id}`);
+            },
+            error: (error: unknown) => {
+                if (isErrorWithMessage(error)) {
+                    this.notificationService.error(error.message);
+                } else {
+                    this.notificationService.error("Failed to create topic. Please try again.");
+                }
+            },
+        });
     }
 
     onEdit() {

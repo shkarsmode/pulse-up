@@ -1,4 +1,4 @@
-import { Component, inject, Input, DestroyRef, Output, EventEmitter } from "@angular/core";
+import { Component, inject, Input, DestroyRef, Output, EventEmitter, OnInit } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { SvgIconComponent } from "angular-svg-icon";
 import { VotingService } from "@/app/shared/services/core/voting.service";
@@ -18,12 +18,11 @@ import {
 import { IVote } from "@/app/shared/interfaces/vote.interface";
 import { HeartBeatDirective } from "@/app/shared/animations/heart-beat.directive";
 import { PrimaryButtonComponent } from "@/app/shared/components/ui-kit/buttons/primary-button/primary-button.component";
-import { VoteUtils } from "@/app/shared/helpers/vote-utils";
-import { SettingsService } from "@/app/shared/services/api/settings.service";
 import { NotificationService } from "@/app/shared/services/core/notification.service";
 import { VoteTimeLeftComponent } from "../vote-time-left/vote-time-left.component";
 import { AuthenticationService } from "@/app/shared/services/api/authentication.service";
 import { VotingError, VotingErrorCode } from "@/app/shared/helpers/errors/voting-error";
+import { isErrorWithMessage } from "@/app/shared/helpers/errors/is-error-with-message";
 
 function delayBetween<T>(delayMs: number, first = false) {
     let past = Date.now();
@@ -53,51 +52,61 @@ function delayBetween<T>(delayMs: number, first = false) {
     templateUrl: "./vote-button.component.html",
     styleUrl: "./vote-button.component.scss",
 })
-export class VoteButtonComponent {
+export class VoteButtonComponent implements OnInit {
     private destroyRef = inject(DestroyRef);
     private votingService = inject(VotingService);
-    private settingsService = inject(SettingsService);
     private notificationService = inject(NotificationService);
     private authService = inject(AuthenticationService);
 
     @Input() topicId: number | null = null;
     @Input() vote: IVote | null = null;
+    @Input() isActiveVote: boolean | null = null;
+    @Input() lastVoteInfo: string = "";
     @Output() voteExpired = new EventEmitter<void>();
     @Output() voted = new EventEmitter<IVote>();
     @Output() pulse = new EventEmitter<{ justSignedIn?: boolean }>();
 
-    private isVoting = new BehaviorSubject(false);
+    private isAnimating = new BehaviorSubject(false);
 
-    isVoting$ = this.isVoting.asObservable();
-    isActiveVote = false;
-    lastVoteInfo = "";
+    isAnimating$ = this.isAnimating.asObservable();
     isAnonymousUser = this.authService.anonymousUserValue;
     isInProgress = false;
 
     ngOnInit() {
-        this.votingService.isVoting$
-            .pipe(
-                delayBetween(800),
-                tap((isVoting) => {
-                    this.isVoting.next(isVoting);
-                }),
-                takeUntilDestroyed(this.destroyRef),
-            )
-            .subscribe();
-
+        this.listenToVotingChanges();
         this.listenToUserSignedIn();
-
-        if (!this.vote) return;
-
-        this.isActiveVote =
-            !!this.vote && VoteUtils.isActiveVote(this.vote, this.settingsService.minVoteInterval);
-        if (this.isActiveVote) {
-            this.lastVoteInfo = VoteUtils.parseVoteInfo(this.vote);
-        }
+        this.checkShouldVoteAutomatically();
     }
 
-    onPulse({ justSignedIn }: { justSignedIn?: boolean } = {}) {
-        if (this.isVoting.value || this.isActiveVote || !this.topicId || this.isInProgress) return;
+    onClick() {
+        this.sendVote({
+            onError: this.handleError,
+        });
+    }
+
+    voteAfterSignIn() {
+        this.sendVote({
+            onSuccess: () => {
+                this.votingService.congratulate();
+            },
+            onError: this.handleError,
+        });
+    }
+
+    voteAfterTopicPublished() {
+        this.sendVote();
+    }
+
+    onVoteExpired() {
+        this.voteExpired.emit();
+    }
+
+    private sendVote({
+        onSuccess,
+        onError,
+    }: { onSuccess?: () => void; onError?: (error: unknown) => void } = {}) {
+        if (this.isAnimating.value || this.isActiveVote || !this.topicId || this.isInProgress)
+            return;
 
         this.isInProgress = true;
 
@@ -105,52 +114,25 @@ export class VoteButtonComponent {
             .vote({
                 topicId: this.topicId,
             })
-            .pipe(
-                first((vote) => !!vote),
-                switchMap((vote) => {
-                    // wait for both the vote and isVoting$ to emit
-                    return combineLatest([
-                        of(vote),
-                        this.isVoting$.pipe(filter((value) => value === false)),
-                    ]).pipe(first());
-                }),
-            )
+            .pipe(switchMap(this.waitForEndOfAnimation))
             .subscribe({
                 next: ([vote]) => {
-                    this.isActiveVote = true;
-                    this.lastVoteInfo = VoteUtils.parseVoteInfo(vote);
                     this.voted.emit(vote);
                     this.isInProgress = false;
-
-                    if (justSignedIn) {
-                        this.votingService.congratulate();
-                    }
+                    onSuccess?.();
                 },
-                error: (error) => {
+                error: (error: unknown) => {
                     this.isInProgress = false;
-                    if (error instanceof VotingError) {
-                        if (error.code === VotingErrorCode.NOT_AUTHORIZED) {
-                            this.votingService.startVotingForAnonymousUser();
-                            return;
-                        }
-                        if (error.code === VotingErrorCode.GEOLOCATION_UNAVAILABLE) {
-                            this.votingService.showDownloadAppPopup();
-                            return;
-                        }
-                    }
-                    this.notificationService.error(error.message || "Failed to vote");
+                    onError?.(error);
                 },
             });
     }
 
-    onVoteExpired() {
-        this.isActiveVote = false;
-        this.lastVoteInfo = "";
-        this.voteExpired.emit();
-    }
-
     private listenToUserSignedIn() {
-        return combineLatest([this.authService.firebaseUser$, this.votingService.isAnonymousUserSignedIn$])
+        return combineLatest([
+            this.authService.firebaseUser$,
+            this.votingService.isAnonymousUserSignedIn$,
+        ])
             .pipe(
                 filter(([user, signedIn]) => !!user && signedIn === true),
                 first(),
@@ -158,10 +140,53 @@ export class VoteButtonComponent {
                     this.votingService.setIsAnonymousUserSignedIn(false);
 
                     if (this.votingService.isGeolocationRetrieved) {
-                        this.onPulse({ justSignedIn: true });
+                        this.voteAfterSignIn();
                     }
                 }),
             )
             .subscribe();
     }
+
+    private checkShouldVoteAutomatically() {
+        if (this.votingService.shouldVoteAutomatically) {
+            this.votingService.shouldVoteAutomatically = false;
+            this.voteAfterTopicPublished();
+        }
+    }
+
+    private listenToVotingChanges() {
+        this.votingService.isVoting$
+            .pipe(
+                delayBetween(800),
+                tap((isVoting) => {
+                    this.isAnimating.next(isVoting);
+                }),
+                takeUntilDestroyed(this.destroyRef),
+            )
+            .subscribe();
+    }
+
+    private waitForEndOfAnimation = (vote: IVote) => {
+        // wait for both the vote and isVoting$ to emit
+        return combineLatest([
+            of(vote),
+            this.isAnimating$.pipe(filter((value) => value === false)),
+        ]).pipe(first());
+    };
+
+    private handleError = (error: unknown) => {
+        if (error instanceof VotingError) {
+            if (error.code === VotingErrorCode.NOT_AUTHORIZED) {
+                this.votingService.startVotingForAnonymousUser();
+                return;
+            }
+            if (error.code === VotingErrorCode.GEOLOCATION_UNAVAILABLE) {
+                this.votingService.showDownloadAppPopup();
+                return;
+            }
+        }
+        if (isErrorWithMessage(error)) {
+            this.notificationService.error(error.message || "Failed to vote");
+        }
+    };
 }

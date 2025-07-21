@@ -1,0 +1,56 @@
+<button
+    class="dev-toggle-btn"
+    (click)="toggleMenu()">
+    ⚙️ Dev
+</button>
+
+<div
+    class="dev-menu-panel"
+    *ngIf="isOpen()">
+    <mat-accordion>
+        <mat-expansion-panel>
+            <mat-expansion-panel-header>
+                <mat-panel-title>📍 Location</mat-panel-title>
+            </mat-expansion-panel-header>
+
+            <form
+                [formGroup]="locationForm"
+                (ngSubmit)="save()">
+                <mat-form-field
+                    appearance="outline"
+                    class="full-width">
+                    <mat-label>Latitude</mat-label>
+                    <input
+                        matInput
+                        formControlName="lat" />
+                </mat-form-field>
+
+                <mat-form-field
+                    appearance="outline"
+                    class="full-width">
+                    <mat-label>Longitude</mat-label>
+                    <input
+                        matInput
+                        formControlName="lng" />
+                </mat-form-field>
+
+                <mat-form-field
+                    appearance="outline"
+                    class="full-width">
+                    <mat-label>Accuracy</mat-label>
+                    <input
+                        matInput
+                        formControlName="accuracy" />
+                </mat-form-field>
+
+                <button
+                    mat-raised-button
+                    color="primary"
+                    type="submit">
+                    Save
+                </button>
+            </form>
+        </mat-expansion-panel>
+
+    </mat-accordion>
+</div>

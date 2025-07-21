@@ -29,6 +29,7 @@ import {
 } from "./shared/tokens/tokens";
 import { WindowService } from "./shared/services/core/window.service";
 import { JwtInterceptor } from "./shared/helpers/interceptors/jwt.interceptor";
+import { DevMenuComponent } from "./shared/components/dev-menu/dev-menu.component";
 
 @NgModule({
     declarations: [AppComponent],
@@ -41,6 +42,7 @@ import { JwtInterceptor } from "./shared/helpers/interceptors/jwt.interceptor";
         AngularSvgIconModule.forRoot(),
         HttpClientModule,
         LoadingPageComponent,
+        DevMenuComponent,
         NgxMapboxGLModule.withConfig({
             accessToken: environment.mapboxToken,
         }),
