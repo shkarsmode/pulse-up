@@ -1,3 +1,6 @@
+import { Component, inject } from "@angular/core";
+import { delay, take } from "rxjs";
+import { MatDialogRef } from "@angular/material/dialog";
 import { AuthFormComponent } from "@/app/shared/components/auth-form/auth-form.component";
 import { PopupCloseButtonComponent } from "@/app/shared/components/ui-kit/popup/popup-close-button/popup-close-button.component";
 import { PopupSubtitleComponent } from "@/app/shared/components/ui-kit/popup/popup-subtitle/popup-subtitle.component";
@@ -5,8 +8,6 @@ import { PopupTextComponent } from "@/app/shared/components/ui-kit/popup/popup-t
 import { PopupLayoutComponent } from "@/app/shared/components/ui-kit/popup/popup.component";
 import { SignInFormService } from "@/app/shared/services/core/sign-in-form.service";
 import { VotingService } from "@/app/shared/services/core/voting.service";
-import { Component, inject } from "@angular/core";
-import { MatDialogRef } from "@angular/material/dialog";
 
 @Component({
     selector: "app-welcome-popup",
@@ -16,7 +17,7 @@ import { MatDialogRef } from "@angular/material/dialog";
         PopupCloseButtonComponent,
         PopupSubtitleComponent,
         AuthFormComponent,
-        PopupTextComponent
+        PopupTextComponent,
     ],
     templateUrl: "./welcome-popup.component.html",
     styleUrl: "./welcome-popup.component.scss",
@@ -34,8 +35,11 @@ export class WelcomePopupComponent {
 
     onSubmit() {
         this.dialogRef.close();
-        setTimeout(() => {
-            this.votingService.confirmPhoneNumber();
-        }, 250);
+        this.dialogRef
+            .afterClosed()
+            .pipe(take(1), delay(250))
+            .subscribe(() => {
+                this.votingService.confirmPhoneNumber();
+            });
     }
 }
