@@ -118,6 +118,10 @@ export class VotingService {
         this.dialogService.open(DownloadAppPopupComponent);
     }
 
+    backToWelcomePopup() {
+        this.showWelcomePopup()
+    }
+
     private showAcceptRulesPopup() {
         this.dialogService.open(AcceptRulesPopupComponent);
     }

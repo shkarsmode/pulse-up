@@ -50,10 +50,10 @@
 
         <div class="pulse__vote">
             @if (vote && !isActiveVote) {
-            <div class="pulse__last-vote">
-                <svg-icon src="assets/svg/pin.svg"></svg-icon>
-                {{ lastVoteInfo }}
-            </div>
+                <div class="pulse__last-vote">
+                    <svg-icon src="assets/svg/pin.svg"></svg-icon>
+                    {{ lastVoteInfo }}
+                </div>
             }
             <div class="pulse__buttons">
                 <app-vote-button
@@ -72,6 +72,54 @@
                     </button>
                 </app-menu>
             </div>
+            @if (topic.campaign) {
+                <div class="pulse__campaign campaign">
+                    @if (isCampaignStarted) {
+                        <div class="campaign__title">
+                            🎯 Goal: {{ 
+                                topic.campaign.goals[
+                                    topic.campaign.accomplishedGoals.length
+                                ].reward 
+                            }}
+                        </div>
+                    } @else {
+                        <div class="campaign__title campaign__title--info">
+                            Raise $10k by getting 1000 pulses in a day
+                        </div>
+                    }
+                    @if (isCampaignStarted) {
+                        <div class="campaign__progress">
+                            <div class="campaign__progress-title">Progress</div>
+                            <div class="campaign__progress-bar">
+                                <div
+                                    class="campaign__progress-bar--line"
+                                    [style]="'width: ' + currentGoalInPercent + '%;'">
+                                </div>
+                            </div>
+                            <div class="campaign__progress-count">
+                                {{ currentGoal }}
+                            </div>
+                        </div>
+                    } @else {
+                        <div class="campaign__goal">
+                            Current Goal: Get {{ currentGoal }}
+                        </div>
+                    }
+                    <div class="campaign__sponsored">
+                        <a [href]="topic.campaign.sponsorLink" target="_blank">
+                            Sponsored by 
+                            @if (topic.campaign.sponsorLogo) {
+                                <img
+                                    [src]="topic.campaign.sponsorLogo"
+                                    style="max-height: 30px;"
+                                    alt="sponsor logo" />
+                            } @else {
+                                {{ topic.campaign.sponsoredBy }}
+                            }
+                        </a>
+                    </div>
+                </div>
+            }
         </div>
     </div>
 

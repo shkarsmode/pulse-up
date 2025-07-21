@@ -11,11 +11,17 @@ import {
 import { NotificationService } from "@/app/shared/services/core/notification.service";
 import { isErrorWithMessage } from "@/app/shared/helpers/errors/is-error-with-message";
 import { VotingService } from "@/app/shared/services/core/voting.service";
+import { PopupBackButtonComponent } from "@/app/shared/components/ui-kit/popup/popup-back-button/popup-back-button.component";
 
 @Component({
     selector: "app-confirm-phone-number-popup",
     standalone: true,
-    imports: [ConfirmPhoneNumberFormComponent, PopupLayoutComponent, PopupCloseButtonComponent],
+    imports: [
+        ConfirmPhoneNumberFormComponent,
+        PopupLayoutComponent,
+        PopupCloseButtonComponent,
+        PopupBackButtonComponent,
+    ],
     providers: [ConfirmPhoneNumberService],
     templateUrl: "./confirm-phone-number-popup.component.html",
     styleUrl: "./confirm-phone-number-popup.component.scss",
@@ -61,5 +67,10 @@ export class ConfirmPhoneNumberPopupComponent {
         if (recaptchaContainer) {
             recaptchaContainer.innerHTML = "";
         }
+    }
+
+    back() {
+        this.closeDialog();
+        this.votingService.backToWelcomePopup();
     }
 }

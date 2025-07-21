@@ -118,16 +118,8 @@
         display: none;
     }
 
-    span {
-        display: block;
-    }
-    .hero__description--bold {
-        font-weight: 600;
-        margin-top: 16px;
-
-        @include media-2xs {
-            margin-top: 8px;
-        }
+    i {
+        font-style: italic;
     }
 }
 .hero__actions {

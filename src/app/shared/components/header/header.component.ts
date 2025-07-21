@@ -12,6 +12,7 @@ import { SecondaryButtonComponent } from "../ui-kit/buttons/secondary-button/sec
 import { version } from '../../../../assets/data/version';
 import { OpenGetAppPopupDirective } from '../popups/get-app-popup/open-get-app-popup.directive';
 import { AuthenticationService } from '../../services/api/authentication.service';
+import { HeaderService } from './header.service';
 
 @Component({
     selector: 'app-header',
@@ -26,11 +27,13 @@ import { AuthenticationService } from '../../services/api/authentication.service
         SecondaryButtonComponent,
         OpenGetAppPopupDirective,
     ],
+    providers: [HeaderService],
     templateUrl: './header.component.html',
     styleUrl: './header.component.scss',
 })
 export class HeaderComponent {
-    private readonly authService: AuthenticationService = inject(AuthenticationService);
+    private readonly headerService = inject(HeaderService);
+    private readonly authService = inject(AuthenticationService);
 
     public isMobileDropdown: boolean = false;
     public AppRoutes = AppRoutes;
@@ -42,6 +45,10 @@ export class HeaderComponent {
         //Add 'implements OnInit' to the class.
         this.getCurrentVersionOfApplication();
     }
+
+    public onSignOut(): void {
+        this.headerService.signOut();
+    }   
 
     public get isAuthenticated() {
         return !!this.authService.userTokenValue

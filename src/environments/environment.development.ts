@@ -9,11 +9,12 @@ export const environment = {
     mapWithBackgroundStyleUrl:
         'mapbox://styles/naveengopulse/cmafp4osk00vy01r40rhx06yk?optimize=true',
     firebaseConfig: {
-        apiKey: 'AIzaSyD2qwEcQb9H_R5rohjC78H5CQGdaIvtaOI',
-        authDomain: 'pulseapp-d9cea.firebaseapp.com',
-        projectId: 'pulseapp-d9cea',
-        storageBucket: 'pulseapp-d9cea.appspot.com',
-        messagingSenderId: '301057533103',
-        appId: '1:301057533103:web:388935743e165e31bf205a',
+        apiKey: "AIzaSyD2qwEcQb9H_R5rohjC78H5CQGdaIvtaOI",
+        authDomain: "pulseapp-d9cea.firebaseapp.com",
+        projectId: "pulseapp-d9cea",
+        storageBucket: "pulseapp-d9cea.firebasestorage.app",
+        messagingSenderId: "301057533103",
+        appId: "1:301057533103:web:388935743e165e31bf205a",
+        measurementId: "G-W6FV6E25JL"
     },
 };

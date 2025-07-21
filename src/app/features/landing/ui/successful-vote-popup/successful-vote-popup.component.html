@@ -1,8 +1,7 @@
 <app-popup>
     <app-popup-close-button (close)="onClose()" />
-    <app-popup-title>Congratulations!</app-popup-title>
-    <app-popup-text>You just pulsed on this topic and your support will keep it active and visible on the map!</app-popup-text>
-    <app-popup-footer>
-        <app-secondary-button (click)="onClose()">Close</app-secondary-button>
-    </app-popup-footer>
+    <svg-icon class="popup-icon" src="assets/svg/checked-circle-lg.svg" />
+    <app-popup-subtitle>Thank you supporting this topic.</app-popup-subtitle>
+    <app-popup-text>Your pulse will be active for 24 hours. <br><br> To get notified and to keep the support active, you can download the mobile app</app-popup-text>
+    <app-get-app-button [design]="'new'" [isOnePlatform]="true" />
 </app-popup>
