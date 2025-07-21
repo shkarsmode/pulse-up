@@ -64,6 +64,7 @@ export class CropImagePopupComponent {
     minWidth = this.data.minWidth || 100;
     minHeight = this.data.minHeight || 100;
     maintainAspectRatio = this.data.maintainAspectRatio ?? true;
+    resizeToWidth = this.data.aspectRatio === 1 ? this.minWidth : undefined;
     classes = {
         cropper: {},
         spinner: {},
