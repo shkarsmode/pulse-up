@@ -56,8 +56,6 @@ export class AppComponent {
     }
 
     get isDev() {
-        console.log("Environment:", environment);
-        
         return !environment.production;
     }
 }
