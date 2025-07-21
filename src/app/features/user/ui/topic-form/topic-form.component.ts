@@ -100,8 +100,16 @@ export class TopicFormComponent {
         if (!this.topicForm.get("location")?.dirty && !this.popupShown) {
             this.popupShown = true;
             this.sendTopicService.startTopicLocatoinWarningShown = true;
-            return this.showLocatoinWarning();
+            return this.showLocatoinWarning({
+                onClose: () => {
+                    this.submitForm();
+                },
+            });
         }
+        this.submitForm();
+    }
+
+    public submitForm() {
         this.topicForm.markAllAsTouched();
         this.topicForm.updateValueAndValidity();
         if (this.topicForm.valid) {
@@ -119,12 +127,20 @@ export class TopicFormComponent {
         }
     };
 
-    private showLocatoinWarning(): void {
-        this.dialog.open(TopicLocationInfoPopupComponent, {
+    private showLocatoinWarning({ onClose }: { onClose: () => void }): void {
+        const dialogRef = this.dialog.open(TopicLocationInfoPopupComponent, {
             maxWidth: "630px",
             panelClass: "custom-dialog-container",
             backdropClass: "custom-dialog-backdrop",
         });
+        dialogRef
+            .afterClosed()
+            .pipe(take(1))
+            .subscribe((result) => {
+                if (result) {
+                    onClose();
+                }
+            });
     }
 }
 
