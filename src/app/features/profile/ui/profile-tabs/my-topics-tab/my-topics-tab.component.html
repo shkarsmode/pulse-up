@@ -1,0 +1,38 @@
+<div class="topics">
+    <div class="topics__count">
+        {{ topicsCount$ | async }}
+        {{ (topicsCount$ | async) === 1 ? "topic" : "topics" }} started
+    </div>
+    <app-link-button
+        class="topics__add-link"
+        [routerLink]="addTopicRoute"
+        *ngIf="!(hasTopics$ | async)">
+        Start a topic
+        <svg-icon src="assets/svg/arrow-right.svg" />
+    </app-link-button>
+    <app-spinner
+        *ngIf="initialLoading$ | async"
+        class="topics__loading" />
+    <div class="topics__list">
+        <div
+            class="user-topics"
+            *ngIf="paginator$ | async as paginator"
+            infiniteScroll
+            [infiniteScrollDistance]="2"
+            [infiniteScrollThrottle]="150"
+            (scrolled)="loadMore(paginator)">
+            <ul class="user-topics__list">
+                @for (topic of paginator.items; track topic.id) {
+                <li>
+                    <app-large-pulse [pulse]="topic" />
+                </li>
+                }
+            </ul>
+            <p
+                class="user-topics__loading"
+                *ngIf="loading$ | async">
+                <app-loading-indicator />
+            </p>
+        </div>
+    </div>
+</div>
