@@ -43,7 +43,7 @@ export class GetLocationPopupComponent {
 
     ngOnInit() {
         this.geolocationService
-            .getCurrentGeolocation({ enableHighAccuracy: false })
+            .getCurrentGeolocation()
             .pipe(take(1), delay(750)) // Adding a delay to simulate loading time
             .subscribe({
                 next: () => {
