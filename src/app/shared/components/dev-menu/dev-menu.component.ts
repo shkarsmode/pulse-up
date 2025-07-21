@@ -46,7 +46,6 @@ export class DevMenuComponent {
             longitude: parseFloat(this.locationForm.value.lng || "0"),
             accuracy: parseFloat(this.locationForm.value.accuracy || "100"),
         };
-        this.locationForm.reset();
         this.toggleMenu();
     }
 }
