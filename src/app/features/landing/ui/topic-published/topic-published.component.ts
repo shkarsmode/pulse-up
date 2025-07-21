@@ -1,18 +1,17 @@
-import { Component, inject } from "@angular/core";
-import { MatDialogRef } from "@angular/material/dialog";
-import { MAT_DIALOG_DATA } from "@angular/material/dialog";
 import { CloseButtonComponent } from "@/app/shared/components/ui-kit/buttons/close-button/close-button.component";
+import { CopyButtonComponent } from "@/app/shared/components/ui-kit/buttons/copy-button/copy-button.component";
 import { PrimaryButtonComponent } from "@/app/shared/components/ui-kit/buttons/primary-button/primary-button.component";
+import { QrcodeButtonComponent } from "@/app/shared/components/ui-kit/buttons/qrcode-button/qrcode-button.component";
+import { SocialsButtonComponent } from "@/app/shared/components/ui-kit/buttons/socials-button/socials-button.component";
+import { MenuComponent } from "@/app/shared/components/ui-kit/menu/menu.component";
 import { PulseService } from "@/app/shared/services/api/pulse.service";
 import { SettingsService } from "@/app/shared/services/api/settings.service";
-import { MenuComponent } from "@/app/shared/components/ui-kit/menu/menu.component";
-import { CopyButtonComponent } from "@/app/shared/components/ui-kit/buttons/copy-button/copy-button.component";
-import { SocialsButtonComponent } from "@/app/shared/components/ui-kit/buttons/socials-button/socials-button.component";
-import { QrcodeButtonComponent } from "@/app/shared/components/ui-kit/buttons/qrcode-button/qrcode-button.component";
 import { DialogService } from "@/app/shared/services/core/dialog.service";
-import { TopicQrcodePopupComponent } from "../topic-qrcode-popup/topic-qrcode-popup.component";
-import { TopicQRCodePopupData } from "../../interfaces/topic-qrcode-popup-data.interface";
+import { Component, inject } from "@angular/core";
+import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
 import { delay, take } from "rxjs";
+import { TopicQRCodePopupData } from "../../helpers/interfaces/topic-qrcode-popup-data.interface";
+import { TopicQrcodePopupComponent } from "../topic-qrcode-popup/topic-qrcode-popup.component";
 
 @Component({
     selector: "app-topic-published",

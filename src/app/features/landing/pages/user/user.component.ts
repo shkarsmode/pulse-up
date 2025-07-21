@@ -1,29 +1,29 @@
-import { Component, inject } from "@angular/core";
-import { CommonModule, Location } from "@angular/common";
-import { ActivatedRoute, ParamMap, Router } from "@angular/router";
-import { BehaviorSubject, map, Observable, take } from "rxjs";
-import { InfiniteScrollDirective } from "ngx-infinite-scroll";
-import { UserService } from "@/app/shared/services/api/user.service";
-import { IAuthor, IPaginator, ITopic } from "@/app/shared/interfaces";
-import { SettingsService } from "@/app/shared/services/api/settings.service";
-import { SpinnerComponent } from "@/app/shared/components/ui-kit/spinner/spinner.component";
-import { ContainerComponent } from "@/app/shared/components/ui-kit/container/container.component";
 import { FadeInDirective } from "@/app/shared/animations/fade-in.directive";
-import { SvgIconComponent } from "angular-svg-icon";
-import { UserAvatarComponent } from "./components/user-avatar/user-avatar.component";
-import { MenuComponent } from "@/app/shared/components/ui-kit/menu/menu.component";
-import { FormatNumberPipe } from "@/app/shared/pipes/format-number.pipe";
+import { LoadingIndicatorComponent } from "@/app/shared/components/loading-indicator/loading-indicator.component";
 import { LargePulseComponent } from "@/app/shared/components/pulses/large-pulse/large-pulse.component";
 import { CopyButtonComponent } from "@/app/shared/components/ui-kit/buttons/copy-button/copy-button.component";
-import { SocialsButtonComponent } from "@/app/shared/components/ui-kit/buttons/socials-button/socials-button.component";
-import { AppConstants } from "@/app/shared/constants/app.constants";
-import { InfiniteLoaderService } from "../../services/infinite-loader.service";
-import { LoadingIndicatorComponent } from "@/app/shared/components/loading-indicator/loading-indicator.component";
 import { FlatButtonDirective } from "@/app/shared/components/ui-kit/buttons/flat-button/flat-button.directive";
 import { QrcodeButtonComponent } from "@/app/shared/components/ui-kit/buttons/qrcode-button/qrcode-button.component";
+import { SocialsButtonComponent } from "@/app/shared/components/ui-kit/buttons/socials-button/socials-button.component";
+import { ContainerComponent } from "@/app/shared/components/ui-kit/container/container.component";
+import { MenuComponent } from "@/app/shared/components/ui-kit/menu/menu.component";
+import { SpinnerComponent } from "@/app/shared/components/ui-kit/spinner/spinner.component";
+import { AppConstants } from "@/app/shared/constants/app.constants";
+import { IAuthor, IPaginator, ITopic } from "@/app/shared/interfaces";
+import { FormatNumberPipe } from "@/app/shared/pipes/format-number.pipe";
+import { SettingsService } from "@/app/shared/services/api/settings.service";
+import { UserService } from "@/app/shared/services/api/user.service";
 import { DialogService } from "@/app/shared/services/core/dialog.service";
+import { CommonModule, Location } from "@angular/common";
+import { Component, inject } from "@angular/core";
+import { ActivatedRoute, ParamMap, Router } from "@angular/router";
+import { SvgIconComponent } from "angular-svg-icon";
+import { InfiniteScrollDirective } from "ngx-infinite-scroll";
+import { BehaviorSubject, map, Observable, take } from "rxjs";
+import { TopicQRCodePopupData } from "../../helpers/interfaces/topic-qrcode-popup-data.interface";
+import { InfiniteLoaderService } from "../../services/infinite-loader.service";
 import { TopicQrcodePopupComponent } from "../../ui/topic-qrcode-popup/topic-qrcode-popup.component";
-import { TopicQRCodePopupData } from "../../interfaces/topic-qrcode-popup-data.interface";
+import { UserAvatarComponent } from "./components/user-avatar/user-avatar.component";
 
 @Component({
     selector: "app-author",

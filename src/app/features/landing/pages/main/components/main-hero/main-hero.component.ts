@@ -1,15 +1,15 @@
-import { Component, effect, ElementRef, inject, ViewChild } from "@angular/core";
-import { Router, RouterModule } from "@angular/router";
-import { toSignal } from "@angular/core/rxjs-interop";
-import mapboxgl from "mapbox-gl";
-import { AppRoutes } from "@/app/shared/enums/app-routes.enum";
-import { MediaQueryService } from "@/app/shared/services/core/media-query.service";
-import { PrimaryButtonComponent } from "@/app/shared/components/ui-kit/buttons/primary-button/primary-button.component";
-import { SecondaryButtonComponent } from "@/app/shared/components/ui-kit/buttons/secondary-button/secondary-button.component";
+import { IMapClickEvent } from "@/app/features/landing/helpers/interfaces/map-click-event.interface";
+import { MapEventListenerService } from "@/app/features/landing/services/map-event-listener.service";
 import { MapComponent } from "@/app/features/landing/ui/map/map.component";
 import { OpenGetAppPopupDirective } from "@/app/shared/components/popups/get-app-popup/open-get-app-popup.directive";
-import { MapEventListenerService } from "@/app/features/landing/services/map-event-listener.service";
-import { IMapClickEvent } from "@/app/features/landing/interfaces/map-click-event.interface";
+import { PrimaryButtonComponent } from "@/app/shared/components/ui-kit/buttons/primary-button/primary-button.component";
+import { SecondaryButtonComponent } from "@/app/shared/components/ui-kit/buttons/secondary-button/secondary-button.component";
+import { AppRoutes } from "@/app/shared/enums/app-routes.enum";
+import { MediaQueryService } from "@/app/shared/services/core/media-query.service";
+import { Component, effect, ElementRef, inject, ViewChild } from "@angular/core";
+import { toSignal } from "@angular/core/rxjs-interop";
+import { Router, RouterModule } from "@angular/router";
+import mapboxgl from "mapbox-gl";
 
 @Component({
     selector: "app-main-hero",

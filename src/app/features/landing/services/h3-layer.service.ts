@@ -1,10 +1,10 @@
-import { inject, Injectable } from "@angular/core";
-import { Observable } from "rxjs";
-import * as h3 from "h3-js";
 import { PulseService } from "@/app/shared/services/api/pulse.service";
-import { IH3Pulses } from "../interfaces/h3-pulses.interface";
+import { inject, Injectable } from "@angular/core";
+import * as h3 from "h3-js";
+import { Observable } from "rxjs";
+import { IH3Pulses } from "../helpers/interfaces/h3-pulses.interface";
+import { MapBounds } from "../helpers/interfaces/map-bounds.interface";
 import { MapUtils } from "./map-utils.service";
-import { MapBounds } from "../interfaces/map-bounds.interface";
 
 @Injectable({
     providedIn: "root",
