@@ -80,6 +80,7 @@ export class TopicFormComponent {
                         minWidth: 128,
                         minHeight: 128,
                         aspectRatio: 1,
+                        maintainAspectRatio: true,
                     },
                 },
             );
