@@ -92,7 +92,6 @@ export class AuthenticationService {
     }
 
     private initFirebaseAppWithConfig() {
-        console.log(this.firebaseConfig)
         return initializeApp(this.firebaseConfig);
     }
 

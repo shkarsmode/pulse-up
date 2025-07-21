@@ -1,7 +1,6 @@
 import { inject, Injectable } from "@angular/core";
 import { FormBuilder, FormGroup, Validators } from "@angular/forms";
-import { Router } from "@angular/router";
-import { BehaviorSubject, map, switchMap, take, tap } from "rxjs";
+import { BehaviorSubject, catchError, map, Observable, of, switchMap, take, tap, throwError } from "rxjs";
 import { v4 as uuidv4 } from "uuid";
 import { PulseService } from "../api/pulse.service";
 import { pictureValidator } from "../../helpers/validators/picture.validator";
@@ -9,8 +8,8 @@ import { asyncValidator } from "../../helpers/validators/async.validator";
 import { noConsecutiveNewlinesValidator } from "../../helpers/validators/no-consecutive-new-lines.validator";
 import { arrayLengthValidator } from "../../helpers/validators/array-length-validator";
 import { TopicLocation } from "@/app/features/user/interfaces/topic-location.interface";
-import { NotificationService } from "./notification.service";
 import { ProfileService } from "../profile/profile.service";
+import { ITopic } from "../../interfaces";
 
 interface TopicFormValues {
     icon: File;
@@ -38,10 +37,8 @@ export class SendTopicService {
     public isTopicEditing: boolean = false;
     public startTopicLocatoinWarningShown = false;
 
-    private readonly router = inject(Router);
     private readonly formBuilder = inject(FormBuilder);
     private readonly pulseService = inject(PulseService);
-    private readonly notificationService = inject(NotificationService);
     private readonly profileService = inject(ProfileService);
 
     constructor() {
@@ -102,8 +99,8 @@ export class SendTopicService {
         };
     }
 
-    public createTopic(): void {
-        if (this.currentTopic.invalid) return;
+    public createTopic(): Observable<ITopic | null> {
+        if (this.currentTopic.invalid) return of(null);
         const values = this.getFormValues();
         const params = {
             icon: values.icon,
@@ -120,7 +117,7 @@ export class SendTopicService {
             shareKey: "",
         };
         this.submitting.next(true);
-        this.pulseService
+        return this.pulseService
             .getShareKeyFromTitle(values.headline)
             .pipe(
                 take(1),
@@ -132,42 +129,37 @@ export class SendTopicService {
                     return this.profileService.refreshProfile().pipe(
                         map(() => topic)
                     )
-                })
-            )
-            .subscribe({
-                next: (topic) => {
+                }),
+                tap(() => {
                     this.currentTopic.reset();
                     this.pulseService.isJustCreatedTopic = true;
-                    this.router.navigateByUrl(`/topic/${topic.id}`);
                     this.submitting.next(false);
                     this.startTopicLocatoinWarningShown = false;
-                },
-                error: (err) => {
-                    console.error(err);
+                }),
+                catchError((error) => {
+                    console.error(error);
                     this.submitting.next(false);
 
                     const fallbackMessage = "Failed to create topic.";
 
-                    if (err.status !== 400) {
-                        this.notificationService.error(fallbackMessage);
-                        return;
+                    if (error.status !== 400) {
+                        return throwError(() => new Error(fallbackMessage));
                     }
 
-                    const errors = err.error?.errors;
+                    const errors = error.error?.errors;
                     if (!errors || typeof errors !== "object") {
-                        this.notificationService.error(fallbackMessage);
-                        return;
+                        return throwError(() => new Error(fallbackMessage));
                     }
 
                     const firstFieldErrors = Object.values(errors)[0];
 
                     if (Array.isArray(firstFieldErrors) && firstFieldErrors.length > 0) {
-                        this.notificationService.error(firstFieldErrors[0]);
+                        return throwError(() => new Error(firstFieldErrors[0]));
                     } else {
-                        this.notificationService.error(fallbackMessage);
+                        return throwError(() => new Error(fallbackMessage));
                     }
-                },
-            });
+                })
+            );
     }
 
     public markAsReadyForPreview(): void {

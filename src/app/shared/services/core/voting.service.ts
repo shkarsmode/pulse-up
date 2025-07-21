@@ -21,19 +21,20 @@ export class VotingService {
     private geolocationService = inject(GeolocationService);
     private authService = inject(AuthenticationService);
     private voteService = inject(VoteService);
-    private isVoting = new BehaviorSubject<boolean>(false);
+    private isVoting = new BehaviorSubject(false);
     private isAnonymousUserSignedIn = new BehaviorSubject(false);
 
     isVoting$ = this.isVoting.asObservable();
     isAnonymousUserSignedIn$ = this.isAnonymousUserSignedIn.asObservable();
     isGeolocationRetrieved = false;
+    shouldVoteAutomatically = false;
+    
     get anonymousUserValue() {
         return this.authService.anonymousUserValue;
     }
     get userTokenValue() {
         return this.authService.userTokenValue;
     }
-
     setIsAnonymousUserSignedIn(value: boolean) {
         if (value === this.isAnonymousUserSignedIn.value) return;
         this.isAnonymousUserSignedIn.next(value);
@@ -49,7 +50,7 @@ export class VotingService {
 
         this.isVoting.next(true);
 
-        return this.geolocationService.getCurrentGeolocation({ enableHighAccuracy: false }).pipe(
+        return this.geolocationService.getCurrentGeolocation().pipe(
             catchError(() => {
                 this.isVoting.next(false);
                 return throwError(

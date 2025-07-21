@@ -24,7 +24,7 @@ import { delay, map, take } from "rxjs";
         PopupFooterComponent,
         PrimaryButtonComponent,
         SecondaryButtonComponent,
-        GetAppButtonComponent
+        GetAppButtonComponent,
     ],
     templateUrl: "./get-location-popup.component.html",
     styleUrl: "./get-location-popup.component.scss",
@@ -43,15 +43,18 @@ export class GetLocationPopupComponent {
 
     ngOnInit() {
         this.geolocationService
-            .getCurrentGeolocation({ enableHighAccuracy: false })
+            .getCurrentGeolocation()
             .pipe(take(1), delay(750)) // Adding a delay to simulate loading time
             .subscribe({
                 next: () => {
                     this.isError = false;
                     this.dialogRef.close();
-                    setTimeout(() => {
-                        this.votingService.signInWithGeolocation();
-                    }, 250)
+                    this.dialogRef
+                        .afterClosed()
+                        .pipe(take(1), delay(250))
+                        .subscribe(() => {
+                            this.votingService.signInWithGeolocation();
+                        });
                 },
                 error: () => {
                     this.isError = true;
@@ -61,9 +64,12 @@ export class GetLocationPopupComponent {
 
     proceed() {
         this.dialogRef.close();
-        setTimeout(() => {
-            this.votingService.signInWithoutGeolocation();
-        }, 250);
+        this.dialogRef
+            .afterClosed()
+            .pipe(take(1), delay(250))
+            .subscribe(() => {
+                this.votingService.signInWithoutGeolocation();
+            });
     }
 
     closeDialog() {

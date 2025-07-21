@@ -1,4 +1,5 @@
 import { Component, inject } from "@angular/core";
+import { delay, take } from "rxjs";
 import { MatDialogRef } from "@angular/material/dialog";
 import { PopupLayoutComponent } from "@/app/shared/components/ui-kit/popup/popup.component";
 import { PopupCloseButtonComponent } from "@/app/shared/components/ui-kit/popup/popup-close-button/popup-close-button.component";
@@ -32,8 +33,11 @@ export class AcceptRulesPopupComponent {
 
     onAccept() {
         this.dialogRef.close(true);
-        setTimeout(() => {
-            this.votingService.askForGeolocation();
-        }, 250)
+        this.dialogRef
+            .afterClosed()
+            .pipe(take(1), delay(250))
+            .subscribe(() => {
+                this.votingService.askForGeolocation();
+            });
     }
 }
