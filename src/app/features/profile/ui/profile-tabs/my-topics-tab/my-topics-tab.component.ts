@@ -1,4 +1,4 @@
-import { Component, DestroyRef, inject } from "@angular/core";
+import { Component, DestroyRef, inject, OnInit } from "@angular/core";
 import { BehaviorSubject, filter, map, Observable, tap } from "rxjs";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { InfiniteScrollDirective } from "ngx-infinite-scroll";
@@ -14,6 +14,10 @@ import { SvgIconComponent } from "angular-svg-icon";
 import { SpinnerComponent } from "@/app/shared/components/ui-kit/spinner/spinner.component";
 import { LargePulseComponent } from "@/app/shared/components/pulses/large-pulse/large-pulse.component";
 import { LoadingIndicatorComponent } from "@/app/shared/components/loading-indicator/loading-indicator.component";
+import { LargePulseFooterComponent } from "@/app/shared/components/pulses/large-pulse/large-pulse-footer/large-pulse-footer.component";
+import { LargePulseFooterRowComponent } from "@/app/shared/components/pulses/large-pulse/large-pulse-footer-row/large-pulse-footer-row.component";
+import { FormatNumberPipe } from "@/app/shared/pipes/format-number.pipe";
+import { TimeToEndPipe } from "@/app/shared/pipes/time-to-end.pipe";
 
 @Component({
     selector: "app-my-topics-tab",
@@ -27,11 +31,14 @@ import { LoadingIndicatorComponent } from "@/app/shared/components/loading-indic
         SpinnerComponent,
         LargePulseComponent,
         LoadingIndicatorComponent,
+        LargePulseFooterComponent,
+        LargePulseFooterRowComponent,
+        TimeToEndPipe,
     ],
     providers: [InfiniteLoaderService],
     standalone: true,
 })
-export class MyTopicsTabComponent {
+export class MyTopicsTabComponent implements OnInit {
     private readonly destroyed = inject(DestroyRef);
     private readonly pulseService = inject(PulseService);
     private readonly profileService = inject(ProfileService);
@@ -40,7 +47,7 @@ export class MyTopicsTabComponent {
     private initialLoading = new BehaviorSubject(false);
     initialLoading$ = this.initialLoading.asObservable();
     paginator$: Observable<IPaginator<ITopic>>;
-    loading$ = new BehaviorSubject(true);
+    loading$: Observable<boolean>;
     profile$ = this.profileService.profile$.pipe(filter((profile) => !!profile));
     topicsCount$ = this.profile$.pipe(map((profile) => profile.totalTopics || 0));
     hasTopics$ = this.topicsCount$.pipe(map((count) => !!count));
@@ -51,7 +58,6 @@ export class MyTopicsTabComponent {
     ngOnInit() {
         this.profile$
             .pipe(
-                filter((profile) => !!profile),
                 tap((profile) => {
                     if (profile.totalTopics) {
                         this.initialLoading.next(true);
@@ -61,6 +67,10 @@ export class MyTopicsTabComponent {
                 takeUntilDestroyed(this.destroyed),
             )
             .subscribe();
+    }
+
+    isNotExpired(date: string): boolean {
+        return new Date(date) > new Date();
     }
 
     private loadTopics(name: string) {

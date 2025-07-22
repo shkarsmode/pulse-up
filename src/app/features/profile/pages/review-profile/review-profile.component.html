@@ -1,38 +1,34 @@
-<app-container size="md">
-    <div class="review-profile">
-        <div class="header">
-            <app-user-avatar
-                [width]="160"
-                [height]="160"
-                [url]="(picture$ | async) || ''"
-                [name]="(name$ | async) || ''" />
-            <div class="header__text">
-                <h1 class="header__name">{{ name$ | async }}</h1>
-                <div class="header__username">&#64;{{ username$ | async }}</div>
-                <div class="header__bio">{{ bio$ | async }}</div>
+<div class="review-profile">
+    <div class="header">
+        <app-user-avatar
+            [width]="160"
+            [height]="160"
+            [url]="(picture$ | async) || ''"
+            [name]="(name$ | async) || ''" />
+        <div class="header__text">
+            <h1 class="header__name">{{ name$ | async }}</h1>
+            <div class="header__username">&#64;{{ username$ | async }}</div>
+            <div class="header__bio">{{ bio$ | async }}</div>
+        </div>
+        <div class="header__buttons">
+            <div class="header-button">
+                <app-primary-button
+                    size="large"
+                    [fullWidth]="true"
+                    [routerLink]="editRpofileRoute">
+                    Edit Profile
+                </app-primary-button>
             </div>
-            <div class="header__buttons">
-                <div class="header-button">
-                    <app-primary-button
-                        size="large"
-                        [fullWidth]="true"
-                        [routerLink]="editRpofileRoute">
-                        Edit Profile
-                    </app-primary-button>
-                </div>
-                <div class="header-button">
-                    <app-secondary-button
-                        size="large"
-                        [fullWidth]="true"
-                        [routerLink]="deleteAccountRoute">
-                        Delete Account
-                    </app-secondary-button>
-                </div>
+            <div class="header-button">
+                <app-secondary-button
+                    size="large"
+                    [fullWidth]="true"
+                    [routerLink]="deleteAccountRoute">
+                    Delete Account
+                </app-secondary-button>
             </div>
         </div>
-
-        <app-profile-tabs class="tabs"/>
-
-        
     </div>
-</app-container>
+
+    <app-profile-tabs class="tabs" />
+</div>

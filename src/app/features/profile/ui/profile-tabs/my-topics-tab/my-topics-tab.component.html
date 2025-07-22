@@ -24,7 +24,17 @@
             <ul class="user-topics__list">
                 @for (topic of paginator.items; track topic.id) {
                 <li>
-                    <app-large-pulse [pulse]="topic" />
+                    <app-large-pulse [pulse]="topic">
+                        <app-large-pulse-footer pulse-footer>
+                            <app-large-pulse-footer-row
+                                [text]="
+                                    'Created: ' + (topic.createdAt | date : 'MMM d, y') || ''
+                                " />
+                            @if (isNotExpired(topic.endsAt)) {
+                            <app-large-pulse-footer-row [text]="topic.endsAt | timeToEnd" />
+                            }
+                        </app-large-pulse-footer>
+                    </app-large-pulse>
                 </li>
                 }
             </ul>

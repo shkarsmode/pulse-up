@@ -1,0 +1,26 @@
+.votes {
+    margin-top: 20px;
+    margin-bottom: 40px;
+}
+
+.votes__loading {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    padding: 0 16px;
+}
+
+.user-votes__list {
+    display: flex;
+    flex-direction: column;
+    row-gap: 16px;
+    padding: 20px;
+}
+
+.user-votes__loading {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding-top: 48px;
+}

@@ -7,13 +7,14 @@
 
 .topics__count {
     @include title-20px;
-    margin-bottom: 16px;
+    padding: 0 20px;
 }
 
 .user-topics__list {
     display: flex;
     flex-direction: column;
     row-gap: 16px;
+    padding: 20px;
 }
 
 .topics__loading {

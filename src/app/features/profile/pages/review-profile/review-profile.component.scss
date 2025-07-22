@@ -1,6 +1,9 @@
 @use "../../../../../styles/mixins" as *;
 
 .review-profile {
+    width: 100%;
+    max-width: 570px;
+    margin: 0 auto;
     padding: 20px 0;
 }
 
@@ -9,6 +12,7 @@
     grid-template-columns: auto 1fr;
     grid-column-gap: 16px;
     grid-row-gap: 16px;
+    padding: 0 20px;
 
     app-user-avatar {
         width: 160px;
@@ -66,4 +70,10 @@
 .tabs {
     display: block;
     margin-top: 20px;
+
+    &::ng-deep {
+        .mat-mdc-tab-header {
+            padding: 0 20px;
+        }
+    }
 }

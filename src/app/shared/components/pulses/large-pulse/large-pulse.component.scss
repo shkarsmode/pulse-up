@@ -99,14 +99,8 @@
     h3 {
         @media screen and (max-width: 650px) {
             @include title-20px;
-            margin-bottom: 8px;
         }
     }
-}
-
-.bottom {
-    display: flex;
-    justify-content: space-between;
 }
 
 .description {
@@ -128,39 +122,6 @@
     }
 }
 
-.bottom {
-    @media screen and (max-width: 650px) {
-        flex-direction: column;
-        @include text-14px;
-        gap: 8px;
-    }
-
-    div {
-        display: flex;
-        align-items: center;
-        gap: 9px;
-        color: var(--dark-grey-color);
-
-        margin-top: 10px;
-
-        @media screen and (max-width: 650px) {
-            margin: 0 !important;
-        }
-    }
-
-    svg-icon {
-        width: 24px;
-        height: 24px;
-        @media screen and (max-width: 650px) {
-            width: 16.8px;
-            height: 14px;
-        }
-
-        svg {
-            @media screen and (max-width: 650px) {
-                width: 16.8px;
-                height: 14px;
-            }
-        }
-    }
+.footer {
+    margin-top: 10px;
 }
