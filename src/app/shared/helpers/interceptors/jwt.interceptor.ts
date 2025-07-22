@@ -19,7 +19,6 @@ export class JwtInterceptor implements HttpInterceptor {
             const clonedRequest = this.setAuthorizationHeader({
                 request,
                 token,
-                withCredentials: !!userToken,
             });
             
             return next.handle(clonedRequest);
@@ -41,7 +40,6 @@ export class JwtInterceptor implements HttpInterceptor {
             setHeaders: {
                 Authorization: `Bearer ${token}`,
             },
-            withCredentials: withCredentials || false,
         });
     }
 }
