@@ -5,14 +5,14 @@ import { AppRoutes } from "@/app/shared/enums/app-routes.enum";
 import { SignInFormService } from "@/app/shared/services/core/sign-in-form.service";
 import { LinkButtonComponent } from "@/app/shared/components/ui-kit/buttons/link-button/link-button.component";
 import { AuthFormComponent } from "@/app/shared/components/auth-form/auth-form.component";
+import { AuthDisclaimerComponent } from "@/app/shared/components/auth-disclaimer/auth-disclaimer.component";
 import { AuthLayoutComponent } from "../../ui/auth-layout/auth-layout.component";
-import { AuthenticationService } from "@/app/shared/services/api/authentication.service";
 import { AnonymousSigninService } from "../../services/anonymous-signin.service";
 
 @Component({
     selector: "app-sign-in",
     standalone: true,
-    imports: [SvgIconComponent, AuthLayoutComponent, LinkButtonComponent, AuthFormComponent],
+    imports: [SvgIconComponent, AuthLayoutComponent, LinkButtonComponent, AuthFormComponent, AuthDisclaimerComponent],
     providers: [SignInFormService, AnonymousSigninService],
     templateUrl: "./sign-in.component.html",
     styleUrl: "./sign-in.component.scss",

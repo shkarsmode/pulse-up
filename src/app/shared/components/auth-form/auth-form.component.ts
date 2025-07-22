@@ -8,7 +8,6 @@ import {
     Output,
     ViewChild,
 } from "@angular/core";
-import { RouterLink } from "@angular/router";
 import { FormGroup, ReactiveFormsModule } from "@angular/forms";
 import { MatInputModule } from "@angular/material/input";
 import { MatFormFieldModule } from "@angular/material/form-field";
@@ -18,13 +17,11 @@ import { throwError } from "rxjs";
 import { PrimaryButtonComponent } from "@/app/shared/components/ui-kit/buttons/primary-button/primary-button.component";
 import { NotificationService } from "@/app/shared/services/core/notification.service";
 import { SignInFormService } from "@/app/shared/services/core/sign-in-form.service";
-import { AppRoutes } from "@/app/shared/enums/app-routes.enum";
 
 @Component({
     selector: "app-auth-form",
     standalone: true,
     imports: [
-        RouterLink,
         MatInputModule,
         MatFormFieldModule,
         ReactiveFormsModule,
@@ -76,12 +73,6 @@ export class AuthFormComponent implements AfterViewInit, OnDestroy {
     }
     public get errorStateMatcher(): ErrorStateMatcher {
         return this.signInFormService.errorStateMatcher;
-    }
-    public get termsRoute(): string {
-        return `/${AppRoutes.Community.TERMS}`;
-    }
-    public get privacyRoute(): string {
-        return `/${AppRoutes.Community.PRIVACY}`;
     }
 
     public onSubmit() {
