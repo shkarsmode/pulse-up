@@ -1,12 +1,12 @@
-import { Component, inject } from "@angular/core";
-import { MatDialogRef, MAT_DIALOG_DATA } from "@angular/material/dialog";
-import { PopupLayoutComponent } from "@/app/shared/components/ui-kit/popup/popup.component";
 import { PopupCloseButtonComponent } from "@/app/shared/components/ui-kit/popup/popup-close-button/popup-close-button.component";
+import { PopupFooterComponent } from "@/app/shared/components/ui-kit/popup/popup-footer/popup-footer.component";
 import { PopupSubtitleComponent } from "@/app/shared/components/ui-kit/popup/popup-subtitle/popup-subtitle.component";
 import { PopupTextComponent } from "@/app/shared/components/ui-kit/popup/popup-text/popup-text.component";
-import { PopupFooterComponent } from "@/app/shared/components/ui-kit/popup/popup-footer/popup-footer.component";
+import { PopupLayoutComponent } from "@/app/shared/components/ui-kit/popup/popup.component";
 import { SharedModule } from "@/app/shared/modules/shared.module";
-import { TopicQRCodePopupData, TopicQrcodePopupType } from "../../interfaces/topic-qrcode-popup-data.interface";
+import { Component, inject } from "@angular/core";
+import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
+import { TopicQRCodePopupData, TopicQrcodePopupType } from "../../helpers/interfaces/topic-qrcode-popup-data.interface";
 
 const dialogDescription: Record<TopicQrcodePopupType, string> = {
     topic: "Open the topic on your phone by scanning the QR code below.",

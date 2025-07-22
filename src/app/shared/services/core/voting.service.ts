@@ -127,9 +127,7 @@ export class VotingService {
     }
 
     private showGetGeolocationPopup() {
-        this.dialogService.open(GetLocationPopupComponent, {
-            disableClose: true,
-        });
+        this.dialogService.open(GetLocationPopupComponent);
     }
 
     private showWelcomePopup() {

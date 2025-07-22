@@ -37,10 +37,12 @@ import {
     switchMap,
     tap
 } from "rxjs";
-import { TopicQRCodePopupData } from "../../interfaces/topic-qrcode-popup-data.interface";
+import { TopicQRCodePopupData } from "../../helpers/interfaces/topic-qrcode-popup-data.interface";
 import { MapComponent } from "../../ui/map/map.component";
 import { TopicQrcodePopupComponent } from "../../ui/topic-qrcode-popup/topic-qrcode-popup.component";
 import { VoteButtonComponent } from "../../ui/vote-button/vote-button.component";
+import { PulseCampaignComponent } from "./pulse-campaign/pulse-campaign.component";
+
 
 @Component({
     selector: "app-pulse-page",
@@ -64,6 +66,7 @@ import { VoteButtonComponent } from "../../ui/vote-button/vote-button.component"
         FlatButtonDirective,
         VoteButtonComponent,
         QrcodeButtonComponent,
+        PulseCampaignComponent
     ],
 })
 export class PulsePageComponent implements OnInit {
@@ -92,6 +95,9 @@ export class PulsePageComponent implements OnInit {
     vote: IVote | null = null;
     isActiveVote: boolean = false;
     lastVoteInfo: string = "";
+
+    
+
     get isAnonymousUser() {
         return !!this.authService.anonymousUserValue;
     }
@@ -99,7 +105,7 @@ export class PulsePageComponent implements OnInit {
     ngOnInit(): void {
         this.getInitialData();
         this.listenToUserChanges();
-        this.openJustCtreatedTipicPopup();
+        this.openJustCreatedTopicPopup();
     }
 
     ngAfterViewInit(): void {
@@ -120,48 +126,6 @@ export class PulsePageComponent implements OnInit {
 
     public onVoteExpired() {
         this.isActiveVote = false;
-    }
-
-    public get currentGoal(): number {
-        if (!this.topic?.campaign || !this.topic.campaign.goals.length) {
-            return 0;
-        }
-        const currentGoalObj = this.topic.campaign.goals[
-            this.topic.campaign.accomplishedGoals.length
-        ];
-
-        return currentGoalObj?.supporters ?? 
-            currentGoalObj?.lifetimeVotes ?? 
-            currentGoalObj?.dailyVotes ?? 0;
-    }
-
-    public get isCampaignStarted(): boolean {
-        return this.topic?.campaign?.startsAt ?
-            (new Date(this.topic.campaign.startsAt) <= new Date()) && 
-            new Date(this.topic.campaign.endsAt) > new Date() : false;
-    }
-
-    public get currentGoalInPercent(): number {
-        if (!this.topic?.campaign || !this.topic.campaign.goals.length) {
-            return 0;
-        }
-
-        const currentGoalObj = this.topic.campaign.goals[
-            this.topic.campaign.accomplishedGoals.length
-        ];
-
-        const { totalUniqueUsers, lastDayVotes, totalVotes } = this.topic.stats || {};
-        
-        switch (true) {
-            case !!currentGoalObj?.supporters:
-                return (+currentGoalObj.supporters / 100) * (totalUniqueUsers ?? 0);
-            case !!currentGoalObj?.dailyVotes:
-                return (+currentGoalObj.dailyVotes / 100) * (lastDayVotes ?? 0);
-            case !!currentGoalObj?.lifetimeVotes:
-                return (+currentGoalObj.lifetimeVotes / 100) * (totalVotes ?? 0);
-            default:
-                return 0;
-        }
     }
 
     public openQrCodePopup = (): void => {
@@ -276,6 +240,34 @@ export class PulsePageComponent implements OnInit {
         ) as Observable<ITopic>;
     }
 
+    TOPICS_TO_TEST = {
+        state: -1,
+        topics: [
+            topicActivePartialProgress,
+            topicActiveAllCompleted,
+            topicActiveEmpty,
+            topicArchived,
+            topicActiveOneGoalUnmet,
+            topicActiveLastGoalInProgress,
+            topicBlockedWithProgress
+        ]
+    }
+    public setAnotherData(): void {
+        if (this.TOPICS_TO_TEST.state < 0) {
+            this.TOPICS_TO_TEST.topics.push(this.topic);
+            this.TOPICS_TO_TEST.state = 0;
+        }
+        if (this.TOPICS_TO_TEST.state >= this.TOPICS_TO_TEST.topics.length) {
+            this.TOPICS_TO_TEST.state = 0;
+        }
+        this.updateTopicData({ 
+            ...(this.TOPICS_TO_TEST.topics[this.TOPICS_TO_TEST.topics.length - 1] as any), 
+            ...this.TOPICS_TO_TEST.topics[this.TOPICS_TO_TEST.state] 
+        });
+
+        this.TOPICS_TO_TEST.state++;
+    }
+
     private updateTopicData(topic: ITopic): void {
         this.topic = topic;
         this.shortPulseDescription = topic.description.replace(/\n/g, " ");
@@ -333,7 +325,7 @@ export class PulsePageComponent implements OnInit {
         return match ? match[0] : null;
     }
 
-    private openJustCtreatedTipicPopup(): void {
+    private openJustCreatedTopicPopup(): void {
         if (this.pulseService.isJustCreatedTopic) {
             setTimeout(() => {
                 this.dialogService.open(TopicPublishedComponent, {
@@ -378,3 +370,116 @@ export class PulsePageComponent implements OnInit {
         );
     }
 }
+
+export const topicActivePartialProgress: ITopic | any = {
+    id: 1,
+    title: 'Test 1',
+    endsAt: '2025-07-30T23:59:59.999Z',
+    location: { country: 'Ukraine' },
+    stats: {
+        totalVotes: 30,
+        lastDayVotes: 23,
+        totalUniqueUsers: 102
+    },
+    state: TopicState.Active,
+    campaign: {
+        id: '1',
+        endsAt: '2025-07-30T23:59:59.999Z',
+        sponsorLink: 'https://pulseup.com',
+        sponsorLogo: '',
+        sponsoredBy: 'pulseup.com',
+        startsAt: '2025-04-10T00:00:00.000Z',
+        accomplishedGoals: ['2025-04-11T00:00:00.000Z'],
+        goals: [
+            { reward: '$100 donation to U24', supporters: 100 },
+            { reward: '$200 donation to U24', dailyVotes: 50 },
+            { reward: '$500 donation', lifetimeVotes: 120 }
+        ]
+    }
+};
+
+export const topicActiveAllCompleted: ITopic = {
+    ...topicActivePartialProgress,
+    title: 'Test 2',
+    stats: {
+        totalVotes: 130,
+        lastDayVotes: 60,
+        totalUniqueUsers: 130
+    },
+    campaign: {
+        ...topicActivePartialProgress.campaign!,
+        accomplishedGoals: [
+            '2025-04-11T00:00:00.000Z',
+            '2025-04-12T00:00:00.000Z',
+            '2025-04-13T00:00:00.000Z'
+        ]
+    }
+};
+
+export const topicActiveEmpty: ITopic = {
+    ...topicActivePartialProgress,
+    title: 'Test 3',
+    stats: {
+        totalVotes: 0,
+        lastDayVotes: 0,
+        totalUniqueUsers: 0
+    },
+    campaign: {
+        ...topicActivePartialProgress.campaign!,
+        accomplishedGoals: []
+    }
+};
+
+export const topicArchived: ITopic = {
+    ...topicActivePartialProgress,
+    title: 'Test 4',
+    state: TopicState.Archived,
+    campaign: {
+        ...topicActivePartialProgress.campaign!,
+        endsAt: '2025-04-10T23:59:59.999Z'
+    }
+};
+
+export const topicActiveOneGoalUnmet: ITopic = {
+    ...topicActivePartialProgress,
+    title: 'Test 5',
+    stats: {
+        totalVotes: 0,
+        lastDayVotes: 0,
+        totalUniqueUsers: 23
+    },
+    campaign: {
+        ...topicActivePartialProgress.campaign!,
+        goals: [
+            { reward: '$50 donation to U24', supporters: 100 }
+        ],
+        accomplishedGoals: []
+    }
+};
+
+export const topicActiveLastGoalInProgress: ITopic = {
+    ...topicActivePartialProgress,
+    title: 'Test 6',
+    stats: {
+        totalVotes: 90,          // progress on lifetimeVotes (120 goal)
+        lastDayVotes: 50,
+        totalUniqueUsers: 130
+    },
+    campaign: {
+        ...topicActivePartialProgress.campaign!,
+        accomplishedGoals: [
+            '2025-04-11T00:00:00.000Z',
+            '2025-04-12T00:00:00.000Z'
+        ]
+    }
+};
+
+export const topicBlockedWithProgress: ITopic = {
+    ...topicActiveAllCompleted,
+    title: 'Test 7',
+    state: TopicState.Blocked,
+    campaign: {
+        ...topicActiveAllCompleted.campaign!,
+        endsAt: '2025-08-01T00:00:00.000Z'
+    }
+};

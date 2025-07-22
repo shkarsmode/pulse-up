@@ -1,17 +1,18 @@
 import { GetAppButtonComponent } from "@/app/shared/components/ui-kit/buttons/get-app-button/get-app-button.component";
-import { PrimaryButtonComponent } from "@/app/shared/components/ui-kit/buttons/primary-button/primary-button.component";
-import { SecondaryButtonComponent } from "@/app/shared/components/ui-kit/buttons/secondary-button/secondary-button.component";
 import { PopupFooterComponent } from "@/app/shared/components/ui-kit/popup/popup-footer/popup-footer.component";
 import { PopupTextComponent } from "@/app/shared/components/ui-kit/popup/popup-text/popup-text.component";
 import { PopupLayoutComponent } from "@/app/shared/components/ui-kit/popup/popup.component";
 import { SpinnerComponent } from "@/app/shared/components/ui-kit/spinner/spinner.component";
+import { PopupTitleComponent } from "@/app/shared/components/ui-kit/popup/popup-title/popup-title.component";
+import { PopupCloseButtonComponent } from "@/app/shared/components/ui-kit/popup/popup-close-button/popup-close-button.component";
 import { GeolocationService } from "@/app/shared/services/core/geolocation.service";
 import { VotingService } from "@/app/shared/services/core/voting.service";
 import { CommonModule } from "@angular/common";
 import { Component, DestroyRef, inject } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { MatDialogRef } from "@angular/material/dialog";
-import { delay, map, take } from "rxjs";
+import { delay, dematerialize, map, materialize, take } from "rxjs";
+import { PrimaryButtonComponent } from "@/app/shared/components/ui-kit/buttons/primary-button/primary-button.component";
 
 @Component({
     selector: "app-get-location-popup",
@@ -22,9 +23,10 @@ import { delay, map, take } from "rxjs";
         PopupTextComponent,
         SpinnerComponent,
         PopupFooterComponent,
-        PrimaryButtonComponent,
-        SecondaryButtonComponent,
         GetAppButtonComponent,
+        PopupTitleComponent,
+        PopupCloseButtonComponent,
+        PrimaryButtonComponent,
     ],
     templateUrl: "./get-location-popup.component.html",
     styleUrl: "./get-location-popup.component.scss",
@@ -42,24 +44,7 @@ export class GetLocationPopupComponent {
     isError = false;
 
     ngOnInit() {
-        this.geolocationService
-            .getCurrentGeolocation()
-            .pipe(take(1), delay(750)) // Adding a delay to simulate loading time
-            .subscribe({
-                next: () => {
-                    this.isError = false;
-                    this.dialogRef.close();
-                    this.dialogRef
-                        .afterClosed()
-                        .pipe(take(1), delay(250))
-                        .subscribe(() => {
-                            this.votingService.signInWithGeolocation();
-                        });
-                },
-                error: () => {
-                    this.isError = true;
-                },
-            });
+        this.getCurrentGeolocation();
     }
 
     proceed() {
@@ -74,5 +59,26 @@ export class GetLocationPopupComponent {
 
     closeDialog() {
         this.dialogRef.close();
+    }
+
+    getCurrentGeolocation() {
+        this.isError = false;
+        this.geolocationService
+            .getCurrentGeolocation()
+            .pipe(materialize(), take(1), delay(750), dematerialize()) // Adding a delay to simulate loading time
+            .subscribe({
+                next: () => {
+                    this.dialogRef.close();
+                    this.dialogRef
+                        .afterClosed()
+                        .pipe(take(1), delay(250))
+                        .subscribe(() => {
+                            this.votingService.signInWithGeolocation();
+                        });
+                },
+                error: () => {
+                    this.isError = true;
+                },
+            });
     }
 }

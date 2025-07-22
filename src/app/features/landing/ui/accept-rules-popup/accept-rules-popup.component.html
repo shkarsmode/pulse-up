@@ -1,18 +1,13 @@
 <app-popup>
     <app-popup-close-button (close)="onClose()" />
-    <h2>📍Let's Locate Your Pulse</h2>
+    <app-popup-title>📍Let's Locate Your Pulse</app-popup-title>
     <app-popup-text>
         To place your pulse on the map we need access to your location
     </app-popup-text>
     <app-popup-text>
         Your exact location is never shared
     </app-popup-text>
-    <!-- <app-popup-text>
-        Please, allow access to this device location on this site. If location is not available, we
-        will not be able to register the pulse.
-    </app-popup-text> -->
     <app-popup-footer>
         <app-primary-button (click)="onAccept()">Grant Location Access</app-primary-button>
-        <!-- <app-secondary-button (click)="onClose()">Close</app-secondary-button> -->
     </app-popup-footer>
 </app-popup>

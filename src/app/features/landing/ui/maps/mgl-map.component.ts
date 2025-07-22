@@ -1,13 +1,13 @@
-import { Component, EventEmitter, inject, Input, OnInit, Output } from "@angular/core";
-import { CommonModule } from "@angular/common";
-import { NgxMapboxGLModule } from "ngx-mapbox-gl";
-import { EventData, MapStyleDataEvent } from "mapbox-gl";
-import { MAPBOX_STYLE } from "@/app/shared/tokens/tokens";
-import { IMapOptions } from "../../interfaces/map-options.interface";
 import { throttle } from "@/app/shared/helpers/throttle";
-import { IMapClickEvent } from "../../interfaces/map-click-event.interface";
-import { IMapStyleDataEvent } from "../../interfaces/map-style-data-event.interface";
-import { IMapTouchEvent } from "../../interfaces/map-touch-event.interface";
+import { MAPBOX_STYLE } from "@/app/shared/tokens/tokens";
+import { CommonModule } from "@angular/common";
+import { Component, EventEmitter, inject, Input, OnInit, Output } from "@angular/core";
+import { EventData, MapStyleDataEvent } from "mapbox-gl";
+import { NgxMapboxGLModule } from "ngx-mapbox-gl";
+import { IMapClickEvent } from "../../helpers/interfaces/map-click-event.interface";
+import { IMapOptions } from "../../helpers/interfaces/map-options.interface";
+import { IMapStyleDataEvent } from "../../helpers/interfaces/map-style-data-event.interface";
+import { IMapTouchEvent } from "../../helpers/interfaces/map-touch-event.interface";
 
 @Component({
     selector: "app-mgl-map",

@@ -134,7 +134,7 @@ export class VoteButtonComponent implements OnInit {
             this.votingService.isAnonymousUserSignedIn$,
         ])
             .pipe(
-                filter(([user, signedIn]) => !!user && signedIn === true),
+                filter(([user, signedIn]) => !!user && !user.isAnonymous && signedIn === true),
                 first(),
                 tap(() => {
                     this.votingService.setIsAnonymousUserSignedIn(false);

@@ -1,9 +1,9 @@
-import { inject, Injectable } from "@angular/core";
 import { PulseService } from "@/app/shared/services/api/pulse.service";
-import { MapUtils } from "./map-utils.service";
+import { inject, Injectable } from "@angular/core";
 import mapboxgl from "mapbox-gl";
-import { IHeatmapData } from "../interfaces/heatmap-data.interface";
-import { MapBounds } from "../interfaces/map-bounds.interface";
+import { IHeatmapData } from "../helpers/interfaces/heatmap-data.interface";
+import { MapBounds } from "../helpers/interfaces/map-bounds.interface";
+import { MapUtils } from "./map-utils.service";
 
 @Injectable({
     providedIn: "root",

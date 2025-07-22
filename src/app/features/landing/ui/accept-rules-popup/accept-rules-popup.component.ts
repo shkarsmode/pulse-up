@@ -5,9 +5,9 @@ import { PopupLayoutComponent } from "@/app/shared/components/ui-kit/popup/popup
 import { PopupCloseButtonComponent } from "@/app/shared/components/ui-kit/popup/popup-close-button/popup-close-button.component";
 import { PopupTextComponent } from "@/app/shared/components/ui-kit/popup/popup-text/popup-text.component";
 import { PopupFooterComponent } from "@/app/shared/components/ui-kit/popup/popup-footer/popup-footer.component";
-import { SecondaryButtonComponent } from "@/app/shared/components/ui-kit/buttons/secondary-button/secondary-button.component";
 import { PrimaryButtonComponent } from "@/app/shared/components/ui-kit/buttons/primary-button/primary-button.component";
 import { VotingService } from "@/app/shared/services/core/voting.service";
+import { PopupTitleComponent } from "@/app/shared/components/ui-kit/popup/popup-title/popup-title.component";
 
 @Component({
     selector: "app-accept-rules-popup",
@@ -17,8 +17,8 @@ import { VotingService } from "@/app/shared/services/core/voting.service";
         PopupCloseButtonComponent,
         PopupTextComponent,
         PopupFooterComponent,
-        SecondaryButtonComponent,
         PrimaryButtonComponent,
+        PopupTitleComponent,
     ],
     templateUrl: "./accept-rules-popup.component.html",
     styleUrl: "./accept-rules-popup.component.scss",

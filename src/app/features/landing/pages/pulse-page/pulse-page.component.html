@@ -73,52 +73,13 @@
                 </app-menu>
             </div>
             @if (topic.campaign) {
-                <div class="pulse__campaign campaign">
-                    @if (isCampaignStarted) {
-                        <div class="campaign__title">
-                            🎯 Goal: {{ 
-                                topic.campaign.goals[
-                                    topic.campaign.accomplishedGoals.length
-                                ].reward 
-                            }}
-                        </div>
-                    } @else {
-                        <div class="campaign__title campaign__title--info">
-                            Raise $10k by getting 1000 pulses in a day
-                        </div>
-                    }
-                    @if (isCampaignStarted) {
-                        <div class="campaign__progress">
-                            <div class="campaign__progress-title">Progress</div>
-                            <div class="campaign__progress-bar">
-                                <div
-                                    class="campaign__progress-bar--line"
-                                    [style]="'width: ' + currentGoalInPercent + '%;'">
-                                </div>
-                            </div>
-                            <div class="campaign__progress-count">
-                                {{ currentGoal }}
-                            </div>
-                        </div>
-                    } @else {
-                        <div class="campaign__goal">
-                            Current Goal: Get {{ currentGoal }}
-                        </div>
-                    }
-                    <div class="campaign__sponsored">
-                        <a [href]="topic.campaign.sponsorLink" target="_blank">
-                            Sponsored by 
-                            @if (topic.campaign.sponsorLogo) {
-                                <img
-                                    [src]="topic.campaign.sponsorLogo"
-                                    style="max-height: 30px;"
-                                    alt="sponsor logo" />
-                            } @else {
-                                {{ topic.campaign.sponsoredBy }}
-                            }
-                        </a>
-                    </div>
-                </div>
+                <app-pulse-campaign
+                    [campaign]="topic.campaign"
+                    [stats]="topic.stats" />
+                <button style="background-color: #007bff; color: white; border: none; border-radius: 4px; padding: 10px 15px; cursor: pointer;"
+                    (click)="setAnotherData()">
+                    Set another data
+                </button>
             }
         </div>
     </div>
@@ -133,16 +94,16 @@
                 #description
                 [innerHTML]="isReadMore ? topic.description : shortPulseDescription"></div>
             @if (!isReadMore) {
-            <div
-                class="pulse__info-description-read-more"
-                (click)="onReadMore()">
-                Read More
-            </div>
+                <div
+                    class="pulse__info-description-read-more"
+                    (click)="onReadMore()">
+                    Read More
+                </div>
             }
         </div>
         <div class="pulse__info-keywords">
             @for (keyword of topic.keywords; track keyword) {
-            <div>{{ keyword }}</div>
+                <div>{{ keyword }}</div>
             }
         </div>
         <div class="pulse__info-activity">
@@ -183,9 +144,9 @@
     <h2 class="pulse__slider-title">You may also like</h2>
     <app-slider>
         @for (pulse of suggestions; track pulse.id; let i = $index) {
-        <li class="splide__slide">
-            <app-top-pulse-card [pulse]="pulse" />
-        </li>
+            <li class="splide__slide">
+                <app-top-pulse-card [pulse]="pulse" />
+            </li>
         }
     </app-slider>
 </div>

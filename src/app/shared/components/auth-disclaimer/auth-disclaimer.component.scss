@@ -1,0 +1,11 @@
+@use "../../../../styles/mixins" as *;
+
+.auth-form__small {
+    @include text-14px;
+    display: block;
+    color: var(--dark-grey-color);
+
+    a {
+        font-weight: 600;
+    }
+}
