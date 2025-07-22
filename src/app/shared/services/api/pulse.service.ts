@@ -1,12 +1,16 @@
 import { HttpClient } from "@angular/common/http";
 import { inject, Injectable } from "@angular/core";
-import { catchError, first, map, Observable, of, shareReplay, tap } from "rxjs";
+import { catchError, map, Observable, of, shareReplay, tap } from "rxjs";
 import { ITopic, TopicState } from "../../interfaces";
 import { API_URL } from "../../tokens/tokens";
 import { ITopPulse } from "../../interfaces/top-pulse.interface";
 import { IValidateTopicTitleResponse } from "../../interfaces/validate-topic-title.response";
 import { ICategory } from "../../interfaces/category.interface";
 import { PendingTopicsService } from "../topic/pending-topics.service";
+
+type RequestParams = {
+    [param: string]: string | number | boolean | ReadonlyArray<string | number | boolean>;
+}
 
 @Injectable({
     providedIn: "root",
@@ -22,10 +26,6 @@ export class PulseService {
     private categories$?: Observable<ICategory[]>;
     private readonly pendingTopicsService = inject(PendingTopicsService);
 
-    constructor() {
-        this.get().pipe(first()).subscribe();
-    }
-
     public get(
         params: {
             keyword?: string;
@@ -37,8 +37,9 @@ export class PulseService {
             take?: number;
         } = {},
     ): Observable<ITopic[]> {
-        params["topicState"] = "All";
-        return this.http.get<ITopic[]>(`${this.apiUrl}/topics`, { params }).pipe(
+        const requestParams = this.sanitizeRequestParams(params);
+        requestParams["topicState"] = "All";
+        return this.http.get<ITopic[]>(`${this.apiUrl}/topics`, { params: requestParams }).pipe(
             tap((pulses) =>
                 pulses.forEach((pulse) => {
                     this.actualTopicsImageKeyMap[pulse.id] = pulse.icon;
@@ -300,5 +301,18 @@ export class PulseService {
                 },
             }
         }
+    }
+
+    private sanitizeRequestParams(params: RequestParams): RequestParams {
+        const sanitized: RequestParams = {};
+        for (const key in params) {
+            const value = params[key];
+            if (Array.isArray(value)) {
+                sanitized[key] = value.filter((value) => value !== undefined && value !== null && value !== '');
+            } else if (value !== undefined && value !== null && value !== '') {
+                sanitized[key] = value;
+            }
+        }
+        return sanitized;
     }
 }
