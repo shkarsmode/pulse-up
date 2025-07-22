@@ -1,5 +1,5 @@
 import { Component, HostListener, inject, Input } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, ɵEmptyOutletComponent } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { SvgIconComponent } from 'angular-svg-icon';
 import { LoadImgPathDirective } from '../../../directives/load-img-path/load-img-path.directive';
@@ -11,7 +11,7 @@ import { FormatNumberPipe } from '../../../pipes/format-number.pipe';
     templateUrl: './large-pulse.component.html',
     styleUrl: './large-pulse.component.scss',
     standalone: true,
-    imports: [CommonModule, LoadImgPathDirective, SvgIconComponent, FormatNumberPipe],
+    imports: [CommonModule, LoadImgPathDirective],
 })
 export class LargePulseComponent {
     @Input() public pulse: ITopic;

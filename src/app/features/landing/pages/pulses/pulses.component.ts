@@ -13,6 +13,9 @@ import { InfiniteLoaderService } from "../../services/infinite-loader.service";
 import { AppConstants } from "@/app/shared/constants/app.constants";
 import { LoadingIndicatorComponent } from "@/app/shared/components/loading-indicator/loading-indicator.component";
 import { AppRoutes } from "@/app/shared/enums/app-routes.enum";
+import { LargePulseFooterComponent } from "@/app/shared/components/pulses/large-pulse/large-pulse-footer/large-pulse-footer.component";
+import { LargePulseFooterRowComponent } from "@/app/shared/components/pulses/large-pulse/large-pulse-footer-row/large-pulse-footer-row.component";
+import { FormatNumberPipe } from "@/app/shared/pipes/format-number.pipe";
 
 @Component({
     selector: "app-pulses",
@@ -28,6 +31,9 @@ import { AppRoutes } from "@/app/shared/enums/app-routes.enum";
         InputSearchComponent,
         LargePulseComponent,
         PromoteAdsComponent,
+        LargePulseFooterComponent,
+        LargePulseFooterRowComponent,
+        FormatNumberPipe,
     ],
     providers: [InfiniteLoaderService],
 })
@@ -38,7 +44,7 @@ export class PulsesComponent implements OnInit {
     public pulses: ITopic[] = [];
     public isLoading: boolean = true;
     public addTopicRoute = "/" + AppRoutes.User.Topic.SUGGEST;
-    public loading$ = new BehaviorSubject(true);
+    public loading$: Observable<boolean>;
     public paginator$: Observable<IPaginator<ITopic>>;
 
     public ngOnInit(): void {

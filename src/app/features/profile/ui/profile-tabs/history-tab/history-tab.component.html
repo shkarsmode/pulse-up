@@ -1,0 +1,34 @@
+<div class="user-votes">
+    <app-spinner
+        *ngIf="initialLoading$ | async"
+        class="votes__loading" />
+    <div
+        class="user-votes"
+        *ngIf="paginator$ | async as paginator"
+        infiniteScroll
+        [infiniteScrollDistance]="2"
+        [infiniteScrollThrottle]="150"
+        (scrolled)="loadMore(paginator)">
+        <ul class="user-votes__list">
+            @for (item of paginator.items; track item.vote.id) {
+            <li>
+                <app-large-pulse [pulse]="item.topic">
+                    <app-large-pulse-footer pulse-footer>
+                        <app-large-pulse-footer-row
+                            icon="assets/svg/pulse.svg"
+                            [text]="item.vote.updatedAt | timeFromNow" />
+                        <app-large-pulse-footer-row
+                            icon="assets/svg/pin.svg"
+                            [text]="item.vote.location" />
+                    </app-large-pulse-footer>
+                </app-large-pulse>
+            </li>
+            }
+        </ul>
+        <p
+            class="user-votes__loading"
+            *ngIf="loading$ | async">
+            <app-loading-indicator />
+        </p>
+    </div>
+</div>

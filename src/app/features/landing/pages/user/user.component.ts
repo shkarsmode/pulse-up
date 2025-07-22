@@ -24,6 +24,8 @@ import { TopicQRCodePopupData } from "../../helpers/interfaces/topic-qrcode-popu
 import { InfiniteLoaderService } from "../../services/infinite-loader.service";
 import { TopicQrcodePopupComponent } from "../../ui/topic-qrcode-popup/topic-qrcode-popup.component";
 import { UserAvatarComponent } from "./components/user-avatar/user-avatar.component";
+import { LargePulseFooterComponent } from "@/app/shared/components/pulses/large-pulse/large-pulse-footer/large-pulse-footer.component";
+import { LargePulseFooterRowComponent } from "@/app/shared/components/pulses/large-pulse/large-pulse-footer-row/large-pulse-footer-row.component";
 
 @Component({
     selector: "app-author",
@@ -46,6 +48,8 @@ import { UserAvatarComponent } from "./components/user-avatar/user-avatar.compon
         FlatButtonDirective,
         FormatNumberPipe,
         QrcodeButtonComponent,
+        LargePulseFooterComponent,
+        LargePulseFooterRowComponent,
     ],
     providers: [InfiniteLoaderService],
 })
@@ -63,7 +67,7 @@ export class UserComponent {
     public isLoading: boolean = true;
     public pulseId: string = "";
     public paginator$: Observable<IPaginator<ITopic>>;
-    public loading$ = new BehaviorSubject(true);
+    public loading$: Observable<boolean>;
     public loadMore = this.infiniteLoaderService.loadMore.bind(this.infiniteLoaderService);
 
     constructor() {

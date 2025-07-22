@@ -35,6 +35,8 @@ export class PulseService {
             topicState?: string;
             skip?: number;
             take?: number;
+            id?: number[];
+            fields?: string[];
         } = {},
     ): Observable<ITopic[]> {
         const requestParams = this.sanitizeRequestParams(params);
