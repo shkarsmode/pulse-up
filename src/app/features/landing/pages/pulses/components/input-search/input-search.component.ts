@@ -1,6 +1,12 @@
-import { Component, EventEmitter, Input, OnInit, Output } from "@angular/core";
+import { Component, EventEmitter, Input, Output } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
-import { asyncScheduler, Subject, ThrottleConfig, throttleTime } from "rxjs";
+import {
+    asyncScheduler,
+    debounceTime,
+    distinctUntilChanged,
+    Subject,
+    ThrottleConfig,
+} from "rxjs";
 import { InputComponent } from "@/app/shared/components/ui-kit/input/input.component";
 
 @Component({
@@ -34,7 +40,11 @@ export class InputSearchComponent {
     private initThrottleInputValueChange(): void {
         if (this.inputValueChanged$.observers.length === 0)
             this.inputValueChanged$
-                .pipe(throttleTime(800, asyncScheduler, this.throttleConfig), takeUntilDestroyed())
+                .pipe(
+                    debounceTime(400, asyncScheduler),
+                    distinctUntilChanged(),
+                    takeUntilDestroyed(),
+                )
                 .subscribe(this.handleInputValue.bind(this));
     }
 

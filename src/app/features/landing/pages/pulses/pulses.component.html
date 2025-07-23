@@ -4,9 +4,11 @@
     <div class="row">
         <div class="col">
             <div class="top-row">
-                <app-input-search
-                    [isLoading]="(loading$ | async) || false"
-                    (handleValueChange)="onSearchValueChange($event)" />
+                <ng-container *ngIf="loading$ as loading$">
+                    <app-input-search
+                        [isLoading]="(loading$ | async) || false"
+                        (handleValueChange)="onSearchValueChange($event)" />
+                </ng-container>
                 <a
                     [routerLink]="addTopicRoute"
                     class="add-topic-button">
@@ -24,16 +26,18 @@
                 [infiniteScrollThrottle]="150"
                 (scrolled)="loadMore(paginator)">
                 @for (topic of paginator.items; track topic.id) {
-                    <app-large-pulse [pulse]="topic">
-                        <app-large-pulse-footer pulse-footer>
-                            <div class="pulse-footer-item">
-                                <app-large-pulse-footer-row [text]="topic.author.name" />
-                                <app-large-pulse-footer-row 
-                                    icon="assets/svg/pulse.svg"
-                                    [text]="(topic.stats?.lastDayVotes || 0 | formatNumber) + ' in last 24h'" />
-                            </div>
-                        </app-large-pulse-footer>
-                    </app-large-pulse>
+                <app-large-pulse [pulse]="topic">
+                    <app-large-pulse-footer pulse-footer>
+                        <div class="pulse-footer-item">
+                            <app-large-pulse-footer-row [text]="topic.author.name" />
+                            <app-large-pulse-footer-row
+                                icon="assets/svg/pulse.svg"
+                                [text]="
+                                    (topic.stats?.lastDayVotes || 0 | formatNumber) + ' in last 24h'
+                                " />
+                        </div>
+                    </app-large-pulse-footer>
+                </app-large-pulse>
                 }
                 <p
                     class="wrap__loading"
