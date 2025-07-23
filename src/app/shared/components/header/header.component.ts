@@ -3,8 +3,8 @@ import { Component, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { SvgIconComponent } from 'angular-svg-icon';
+import { map, Observable, take } from 'rxjs';
 import { AppRoutes } from '../../enums/app-routes.enum';
-import { ComingSoonPopupDirective } from '../popups/comming-soon-popup/coming-soon-popup.directive';
 import { BurgerButtonComponent } from '../ui-kit/buttons/burger-button/burger-button.component';
 import { PrimaryButtonComponent } from '../ui-kit/buttons/primary-button/primary-button.component';
 import { SecondaryButtonComponent } from "../ui-kit/buttons/secondary-button/secondary-button.component";
@@ -12,6 +12,7 @@ import { SecondaryButtonComponent } from "../ui-kit/buttons/secondary-button/sec
 import { version } from '../../../../assets/data/version';
 import { OpenGetAppPopupDirective } from '../popups/get-app-popup/open-get-app-popup.directive';
 import { AuthenticationService } from '../../services/api/authentication.service';
+import { HeaderService } from './header.service';
 
 @Component({
     selector: 'app-header',
@@ -26,11 +27,13 @@ import { AuthenticationService } from '../../services/api/authentication.service
         SecondaryButtonComponent,
         OpenGetAppPopupDirective,
     ],
+    providers: [HeaderService],
     templateUrl: './header.component.html',
     styleUrl: './header.component.scss',
 })
 export class HeaderComponent {
-    private readonly authService: AuthenticationService = inject(AuthenticationService);
+    private readonly headerService = inject(HeaderService);
+    private readonly authService = inject(AuthenticationService);
 
     public isMobileDropdown: boolean = false;
     public AppRoutes = AppRoutes;
@@ -43,12 +46,15 @@ export class HeaderComponent {
         this.getCurrentVersionOfApplication();
     }
 
+    public onSignOut(): void {
+        this.headerService.signOut();
+    }   
+
     public get isAuthenticated() {
-        return this.authService.userToken 
+        return !!this.authService.userTokenValue
     }
 
     public toggleDropdown(): void {
-        console.log('toggleDropdown')
         this.isMobileDropdown = !this.isMobileDropdown;
         if (this.isMobileDropdown) {
             this.scrollToTop();

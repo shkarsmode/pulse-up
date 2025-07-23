@@ -1,7 +1,9 @@
 import { inject, Injectable } from "@angular/core";
 import { BehaviorSubject, catchError, map, Observable, switchMap, throwError } from "rxjs";
 import { GeocodeService } from "../api/geocode.service";
-import { IGeolocation } from "../../interfaces";
+import { IGeolocation, IGeolocationPosition } from "../../interfaces";
+import { DevSettingsService } from "./dev-settings.service";
+import { environment } from "@/environments/environment";
 
 type GeolocationStatus = "initial" | "pending" | "success" | "error";
 
@@ -14,11 +16,16 @@ interface GetCurrentGeolocationOptions {
 })
 export class GeolocationService {
     private geocodeService = inject(GeocodeService);
+    private devSettingsService = inject(DevSettingsService);
     private statusSubject = new BehaviorSubject<GeolocationStatus>("initial");
     public status$ = this.statusSubject.asObservable();
 
     public isSupported = "geolocation" in navigator;
     public geolocation: IGeolocation | null = null;
+
+    get isDev() {
+        return environment.production === false;
+    }
 
     getCurrentGeolocation(options?: GetCurrentGeolocationOptions): Observable<IGeolocation> {
         const { enableHighAccuracy = true } = options || {};
@@ -26,7 +33,7 @@ export class GeolocationService {
         if (!this.isSupported) {
             this.statusSubject.next("error");
             return new Observable((observer) => {
-                observer.error(new Error("Geolocation not supported"));
+                observer.error(new Error("Your browser doesn’t support geolocation"));
             });
         }
 
@@ -39,17 +46,35 @@ export class GeolocationService {
 
         this.statusSubject.next("pending");
 
-        const geolocationPosition$ = new Observable<GeolocationPosition>((observer) => {
+        const geolocationPosition$ = new Observable<IGeolocationPosition>((observer) => {
+
+            if (this.isDev) {
+                const mockLocation = this.devSettingsService.mockLocation
+                if (mockLocation) {
+                    const position: IGeolocationPosition = {
+                        coords: mockLocation,
+                    };
+                    observer.next(position);
+                    observer.complete();
+                    return;
+                }
+            }
+
             navigator.geolocation.getCurrentPosition(
                 (position) => {
                     const accuracy = position.coords.accuracy;
-                    console.log({ accuracy, position });
                     if (enableHighAccuracy && accuracy > 100) {
                         this.statusSubject.next("error");
                         observer.error(new Error("Geolocation accuracy is too low"));
                         return;
                     }
-                    observer.next(position);
+                    observer.next({
+                        coords: {
+                            accuracy: position.coords.accuracy,
+                            latitude: position.coords.latitude,
+                            longitude: position.coords.longitude,
+                        },
+                    });
                     observer.complete();
                 },
                 (error: GeolocationPositionError) => {
@@ -93,6 +118,8 @@ export class GeolocationService {
                         return result;
                     }),
                     catchError((error) => {
+                        console.log("Geolocation service error:", error);
+                        
                         this.statusSubject.next("error");
                         return throwError(() => new Error("Failed to retrieve location details."));
                     }),

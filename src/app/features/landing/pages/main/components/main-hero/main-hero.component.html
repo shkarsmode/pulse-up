@@ -1,30 +1,29 @@
 <section class="hero">
     <div class="hero__container">
         <div class="hero__content">
-            <h1 class="hero__title">People Should Decide What Matters – Not Algorithms</h1>
+            <h1 class="hero__title">Real-Time Map of Public Support</h1>
             <p class="hero__description">
-                Tap to support what matters, discover trending topics, and raise awareness — anonymously.
+                Each icon shows the top-supported topic in that region. <i>Tap the globe</i> to explore and support what matters.
             </p>
             <div class="hero__actions">
-                <div class="hero__button">
-                    <app-primary-button
-                        [fullWidth]="true"
-                        [contrast]="true"
-                        size="large"
-                        openGetAppPopup>
-                        Get Pulse Up
-                    </app-primary-button>
-                </div>
-                <div class="hero__button">
-                    <app-secondary-button
-                        [routerLink]="'/' + AppRoutes.Landing.MAP"
-                        routerLinkActive="active"
-                        [fullWidth]="true"
-                        [contrast]="true"
-                        size="large">
-                        Explore Map
-                    </app-secondary-button>
-                </div>
+                <app-primary-button
+                    [fullWidth]="true"
+                    [contrast]="true"
+                    size="large"
+                    [routerLink]="'/' + AppRoutes.Landing.TOPICS"
+                    class="hero__button">
+                    Browse topics
+                </app-primary-button>
+                <app-secondary-button
+                    [routerLink]="'/' + AppRoutes.User.Topic.SUGGEST"
+                    routerLinkActive="active"
+                    [fullWidth]="true"
+                    [fullHeight]="true"
+                    [contrast]="true"
+                    size="large"
+                    class="hero__button">
+                    Start a topic
+                </app-secondary-button>
             </div>
         </div>
         <div class="hero__map" #mapWrapper>

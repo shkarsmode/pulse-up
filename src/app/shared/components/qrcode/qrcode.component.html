@@ -1,0 +1,11 @@
+<div
+    class="qrcode-image"
+    [class.qrcode-image--rounded]="rounded">
+    <qrcode
+        [qrdata]="data"
+        [errorCorrectionLevel]="'M'"
+        [cssClass]="'center'"
+        [width]="size"
+        [scale]="1"
+        [ariaLabel]="accessibleLabel" />
+</div>

@@ -12,9 +12,6 @@ export class OpenGetAppPopupDirective {
 
     @HostListener('click') 
     openPopup(): void {
-
-        console.log('OPEN POPUP');
-        
         this.dialog.open(GetAppPopupComponent, {
             width: "630px",
             panelClass: "custom-dialog-container",

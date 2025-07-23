@@ -1,0 +1,14 @@
+.qrcode-image {
+  display: flex;
+  flex: 1;
+}
+.qrcode-image--rounded {
+  border-radius: 20px;
+  overflow: hidden;
+}
+
+.center {
+  display: flex;
+  flex: 1;
+  justify-content: center;
+}

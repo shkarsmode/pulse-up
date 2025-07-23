@@ -6,7 +6,7 @@ import {
 } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, throwError } from 'rxjs';
-import { catchError, filter, switchMap, take } from 'rxjs/operators';
+import { catchError, filter, switchMap, take, tap } from 'rxjs/operators';
 // import {MatSnackBar} from '@angular/material/snack-bar';
 import { AuthenticationService } from '../../services/api/authentication.service';
 import { Router } from '@angular/router';
@@ -57,6 +57,7 @@ export class ErrorInterceptor implements HttpInterceptor {
                     //     verticalPosition: 'bottom',
                     // });
 
+                    this.isRefreshing = false
                     return this.handle401Error(authReq, next);
                 }
                 return throwError(() => error);
@@ -85,7 +86,6 @@ export class ErrorInterceptor implements HttpInterceptor {
                     catchError((err) => {
                         this.isRefreshing = false;
                         console.log('log out, reason: ', err);
-                        this.authenticationService.logout();
                         this.router.navigateByUrl(this.appRoutes.Auth.SIGN_IN);
                         return throwError(() => err);
                     })
@@ -99,14 +99,13 @@ export class ErrorInterceptor implements HttpInterceptor {
     }
 
     private addTokenHeader(request: HttpRequest<any>) {
-        const isAnonymous = LocalStorageService.get<boolean>(LOCAL_STORAGE_KEYS.isAnonymous);
-        const userToken = LocalStorageService.get<boolean>(LOCAL_STORAGE_KEYS.userToken);
+        const anonymousToken = this.authenticationService.anonymousUserValue;
+        const userToken = this.authenticationService.userTokenValue;
         
-        if (isAnonymous) {
-            const token = LocalStorageService.get<string>(LOCAL_STORAGE_KEYS.anonymousToken);
+        if (anonymousToken) {
             request = request.clone({
                 setHeaders: {
-                    Authorization: `Bearer ${token}`,
+                    Authorization: `Bearer ${anonymousToken}`,
                 },
                 withCredentials: false,
             });

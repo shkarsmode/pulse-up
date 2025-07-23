@@ -1,0 +1,29 @@
+<div class="confirm">
+    <h1 class="confirm__title">Verify Phone Number</h1>
+    <p class="confirm__text">Enter the code that was sent on your phone number {{ phoneNumber }}</p>
+    <div class="confirm__resend">
+        <app-link-button
+            [disabled]="!isResendAvailable"
+            label="Resend Code"
+            [loading]="(isResendingCode | async) || false"
+            (click)="resendCode()">
+            Resend Code
+        </app-link-button>
+        @if (isResendCodeHintVisible) {
+        <div class="confirm__resend-text">
+            {{ resendCodeHint }}
+        </div>
+        }
+    </div>
+    <ng-otp-input
+        [formControl]="code"
+        [config]="config" />
+</div>
+@if (isVerifyingCode()) {
+<div class="consirm__loading-overlay">
+    <mat-spinner
+        color="white"
+        diameter="40"
+        class="consirm__spinner" />
+</div>
+}

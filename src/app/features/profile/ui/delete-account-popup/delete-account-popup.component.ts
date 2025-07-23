@@ -18,7 +18,7 @@ import {
     LOCAL_STORAGE_KEYS,
     LocalStorageService,
 } from "@/app/shared/services/core/local-storage.service";
-import { ProfileStore } from "@/app/shared/stores/profile.store";
+import { ProfileService } from "@/app/shared/services/profile/profile.service";
 
 @Component({
     selector: "app-delete-account-popup",
@@ -38,7 +38,7 @@ import { ProfileStore } from "@/app/shared/stores/profile.store";
 export class DeleteAccountPopupComponent {
     private readonly router = inject(Router);
     private readonly dialogRef = inject(MatDialogRef);
-    private readonly profileStore = inject(ProfileStore);
+    private readonly profileService = inject(ProfileService);
     private readonly identityService = inject(IdentityService);
     private readonly notificationService = inject(NotificationService);
     private readonly authenticationService = inject(AuthenticationService);
@@ -62,7 +62,7 @@ export class DeleteAccountPopupComponent {
                         () => new Error("Failed to delete account. Please try again."),
                     );
                 }),
-                switchMap(() => this.profileStore.profile$),
+                switchMap(() => this.profileService.profile$),
                 take(1),
                 tap((profile) => {
                     const accountsIds =
@@ -79,7 +79,6 @@ export class DeleteAccountPopupComponent {
                         );
                     }
                 }),
-                switchMap(() => this.profileStore.refreshProfile()),
                 switchMap(() => this.authenticationService.logout()),
                 catchError(() => {
                     return throwError(

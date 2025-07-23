@@ -1,0 +1,33 @@
+@use "../../../../../styles/mixins" as *;
+
+.get-location-popup-loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    row-gap: 24px;
+}
+
+.get-location-popup-error__button {
+    min-width: 175px;
+}
+
+.get-location-popup-footer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    row-gap: 12px;
+}
+.get-location-popup-footer__retry {
+    width: 170px;
+
+    @include media-sm {
+        width: 180px;
+    }
+    @include media-xs {
+        width: 160px;
+    }
+    @include media-2xs {
+        width: 154px;
+    }
+}

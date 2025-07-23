@@ -1,6 +1,7 @@
 <div
     class="app-container"
     [class.app-container--md]="size === 'md'"
-    [class.app-container--lg]="size === 'lg'">
+    [class.app-container--lg]="size === 'lg'"
+    [ngStyle]="maxWidth ? { 'max-width': maxWidth + 'px' } : {}">
     <ng-content></ng-content>
 </div>

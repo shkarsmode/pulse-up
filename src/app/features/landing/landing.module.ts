@@ -6,7 +6,7 @@ import { LandingComponent } from "./landing.component";
 import { LandingRoutingModule } from "./landing.routing";
 
 @NgModule({
-    declarations: [LandingComponent],
+    declarations: [LandingComponent, ],
     imports: [LandingRoutingModule, HeaderComponent, FooterComponent],
     schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })

@@ -11,21 +11,21 @@ import {
 } from "@angular/router";
 import { ActiveTopicsLimitPopupComponent } from "../ui/active-topics-limit-popup/active-topics-limit-popup.component";
 import { AppRoutes } from "@/app/shared/enums/app-routes.enum";
-import { ProfileStore } from "@/app/shared/stores/profile.store";
+import { ProfileService } from "@/app/shared/services/profile/profile.service";
 
 @Injectable({
     providedIn: "root",
 })
 export class ActiveTopicsLimitGuard implements CanActivate {
     private router = inject(Router);
-    private profileStore = inject(ProfileStore);
+    private profileService = inject(ProfileService);
     private dialog: MatDialog = inject(MatDialog);
 
     canActivate(
         route: ActivatedRouteSnapshot,
         state: RouterStateSnapshot,
     ): MaybeAsync<GuardResult> {
-        return this.profileStore.profile$.pipe(
+        return this.profileService.profile$.pipe(
             map((profile) => {
                 if (profile && profile.activeTopics >= profile.activeTopicsLimit) {
                     this.router.navigateByUrl("/" + AppRoutes.Landing.TOPICS);

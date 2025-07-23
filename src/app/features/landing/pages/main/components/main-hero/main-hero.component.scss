@@ -1,6 +1,5 @@
 @use "../../../../../../../styles/mixins" as *;
 
-
 :host-context(body) {
     --map-marker-size: 38px;
 }
@@ -117,6 +116,10 @@
     }
     @media screen and (max-height: 680px) {
         display: none;
+    }
+
+    i {
+        font-style: italic;
     }
 }
 .hero__actions {

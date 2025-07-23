@@ -1,8 +1,33 @@
-import { Component, DestroyRef, ElementRef, inject, OnInit, ViewChild } from "@angular/core";
-import { ActivatedRoute, ParamMap, Router, RouterModule } from "@angular/router";
+import { TopicPublishedComponent } from "@/app/features/landing/ui/topic-published/topic-published.component";
+import { FadeInDirective } from "@/app/shared/animations/fade-in.directive";
+import { TopPulseCardComponent } from "@/app/shared/components/pulses/top-pulse/top-pulse-card.component";
+import { SliderComponent } from "@/app/shared/components/slider/slider.component";
+import { CopyButtonComponent } from "@/app/shared/components/ui-kit/buttons/copy-button/copy-button.component";
+import { FlatButtonDirective } from "@/app/shared/components/ui-kit/buttons/flat-button/flat-button.directive";
+import { QrcodeButtonComponent } from "@/app/shared/components/ui-kit/buttons/qrcode-button/qrcode-button.component";
+import { SocialsButtonComponent } from "@/app/shared/components/ui-kit/buttons/socials-button/socials-button.component";
+import { MenuComponent } from "@/app/shared/components/ui-kit/menu/menu.component";
+import { SpinnerComponent } from "@/app/shared/components/ui-kit/spinner/spinner.component";
+import { LoadImgPathDirective } from "@/app/shared/directives/load-img-path/load-img-path.directive";
+import { AppRoutes } from "@/app/shared/enums/app-routes.enum";
+import { VoteUtils } from "@/app/shared/helpers/vote-utils";
+import { ITopic, TopicState } from "@/app/shared/interfaces";
+import { IVote } from "@/app/shared/interfaces/vote.interface";
+import { FormatNumberPipe } from "@/app/shared/pipes/format-number.pipe";
+import { AuthenticationService } from "@/app/shared/services/api/authentication.service";
+import { PulseService } from "@/app/shared/services/api/pulse.service";
+import { SettingsService } from "@/app/shared/services/api/settings.service";
+import { VoteService } from "@/app/shared/services/api/vote.service";
+import { DialogService } from "@/app/shared/services/core/dialog.service";
+import { MetadataService } from "@/app/shared/services/core/metadata.service";
+import { NotificationService } from "@/app/shared/services/core/notification.service";
+import { PendingTopicsService } from "@/app/shared/services/topic/pending-topics.service";
 import { CommonModule } from "@angular/common";
+import { Component, DestroyRef, ElementRef, inject, OnInit, ViewChild } from "@angular/core";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
+import { ActivatedRoute, ParamMap, Router, RouterModule } from "@angular/router";
+import { SvgIconComponent } from "angular-svg-icon";
 import {
-    BehaviorSubject,
     catchError,
     first,
     forkJoin,
@@ -10,36 +35,14 @@ import {
     Observable,
     of,
     switchMap,
-    take,
-    tap,
+    tap
 } from "rxjs";
-import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
-import { SvgIconComponent } from "angular-svg-icon";
-import { AppRoutes } from "@/app/shared/enums/app-routes.enum";
-import { MatDialog } from "@angular/material/dialog";
-import { ITopic, TopicState } from "@/app/shared/interfaces";
-import { PulseService } from "@/app/shared/services/api/pulse.service";
-import { MetadataService } from "@/app/shared/services/core/metadata.service";
-import { SettingsService } from "@/app/shared/services/api/settings.service";
-import { FadeInDirective } from "@/app/shared/animations/fade-in.directive";
-import { FormatNumberPipe } from "@/app/shared/pipes/format-number.pipe";
-import { MenuComponent } from "@/app/shared/components/ui-kit/menu/menu.component";
-import { CopyButtonComponent } from "@/app/shared/components/ui-kit/buttons/copy-button/copy-button.component";
-import { SocialsButtonComponent } from "@/app/shared/components/ui-kit/buttons/socials-button/socials-button.component";
+import { TopicQRCodePopupData } from "../../helpers/interfaces/topic-qrcode-popup-data.interface";
 import { MapComponent } from "../../ui/map/map.component";
-import { SliderComponent } from "@/app/shared/components/slider/slider.component";
-import { TopPulseCardComponent } from "@/app/shared/components/pulses/top-pulse/top-pulse-card.component";
-import { SpinnerComponent } from "@/app/shared/components/ui-kit/spinner/spinner.component";
-import { LoadImgPathDirective } from "@/app/shared/directives/load-img-path/load-img-path.directive";
-import { FlatButtonDirective } from "@/app/shared/components/ui-kit/buttons/flat-button/flat-button.directive";
-import { TopicPublishedComponent } from "@/app/shared/components/popups/topic-published/topic-published.component";
-import { PulseButtonComponent } from "../../ui/pulse-button/pulse-button.component";
-import { VoteService } from "@/app/shared/services/api/vote.service";
-import { NotificationService } from "@/app/shared/services/core/notification.service";
-import { IVote } from "@/app/shared/interfaces/vote.interface";
-import { VoteUtils } from "@/app/shared/helpers/vote-utils";
-import { AuthenticationService } from "@/app/shared/services/api/authentication.service";
-import { PendingTopicsService } from "@/app/shared/services/topic/pending-topics.service";
+import { TopicQrcodePopupComponent } from "../../ui/topic-qrcode-popup/topic-qrcode-popup.component";
+import { VoteButtonComponent } from "../../ui/vote-button/vote-button.component";
+import { PulseCampaignComponent } from "./pulse-campaign/pulse-campaign.component";
+
 
 @Component({
     selector: "app-pulse-page",
@@ -61,12 +64,13 @@ import { PendingTopicsService } from "@/app/shared/services/topic/pending-topics
         FormatNumberPipe,
         LoadImgPathDirective,
         FlatButtonDirective,
-        PulseButtonComponent,
+        VoteButtonComponent,
+        QrcodeButtonComponent,
+        PulseCampaignComponent
     ],
 })
 export class PulsePageComponent implements OnInit {
-    @ViewChild("description", { static: false })
-    private dialog: MatDialog = inject(MatDialog);
+    private readonly dialogService = inject(DialogService);
     private readonly router = inject(Router);
     private readonly route = inject(ActivatedRoute);
     private readonly pulseService = inject(PulseService);
@@ -76,8 +80,10 @@ export class PulsePageComponent implements OnInit {
     private readonly notificationService = inject(NotificationService);
     private readonly authService = inject(AuthenticationService);
     private readonly pendingTopicsService = inject(PendingTopicsService);
-    private readonly destroyRef = inject(DestroyRef)
+    private readonly destroyRef = inject(DestroyRef);
     private mutationObserver: MutationObserver | null = null;
+
+    @ViewChild("description", { static: false }) description!: ElementRef<HTMLDivElement>;
 
     topic: ITopic | null = null;
     isReadMore: boolean = false;
@@ -86,15 +92,20 @@ export class PulsePageComponent implements OnInit {
     topicUrl: string = "";
     shortPulseDescription: string = "";
     isArchived: boolean = false;
-    description: ElementRef<HTMLDivElement>;
     vote: IVote | null = null;
     isActiveVote: boolean = false;
     lastVoteInfo: string = "";
-    isAnonymousUser = this.authService.anonymousUserValue;
+
+    
+
+    get isAnonymousUser() {
+        return !!this.authService.anonymousUserValue;
+    }
 
     ngOnInit(): void {
         this.getInitialData();
-        this.openJustCtreatedTipicPopup();
+        this.listenToUserChanges();
+        this.openJustCreatedTopicPopup();
     }
 
     ngAfterViewInit(): void {
@@ -117,6 +128,19 @@ export class PulsePageComponent implements OnInit {
         this.isActiveVote = false;
     }
 
+    public openQrCodePopup = (): void => {
+        this.dialogService.open<TopicQrcodePopupComponent, TopicQRCodePopupData>(
+            TopicQrcodePopupComponent,
+            {
+                width: "400px",
+                data: {
+                    link: this.topicUrl,
+                    type: "topic",
+                },
+            },
+        );
+    };
+
     public onVoted() {
         if (!this.topic) return;
         this.pendingTopicsService.add({
@@ -126,15 +150,22 @@ export class PulsePageComponent implements OnInit {
                 lastDayVotes: (this.topic.stats?.lastDayVotes || 0) + 1,
                 totalUniqueUsers: this.topic.stats?.totalUniqueUsers || 0,
             },
-        })
-        this.loadTopicData(this.topic.id).pipe(first()).subscribe();
+        });
+        this.loadTopicData({ topicId: this.topic.id }).pipe(first()).subscribe();
     }
 
     private getInitialData(): void {
         this.route.paramMap
             .pipe(
                 takeUntilDestroyed(this.destroyRef),
-                map((params: ParamMap) => +params.get("id")!),
+                map((params: ParamMap) => {
+                    const idParam = params.get("id") || "";
+                    const topicId = parseInt(idParam);
+                    return {
+                        topicId: Number.isNaN(topicId) ? undefined : topicId,
+                        shareKey: Number.isNaN(topicId) ? idParam : undefined,
+                    };
+                }),
                 tap(() => {
                     this.topic = null;
                     this.isLoading = true;
@@ -145,21 +176,43 @@ export class PulsePageComponent implements OnInit {
             .subscribe();
     }
 
-    private loadTopicData(topicId: number) {
-        return forkJoin({
-            topic: this.getTopic(topicId),
-            votes: this.getVote(topicId),
-        }).pipe(
-            tap(({ topic, votes }) => {
-                this.updateTopicData(topic);
-                this.createLink(topic);
-                this.updateSuggestions();
-                this.updateMetadata(topic);
-                if (votes && votes[0]) {
-                    this.updateVoteData(votes[0]);
-                }
-            }),
-        );
+    private loadTopicData({ topicId, shareKey = "" }: { topicId?: number; shareKey?: string }) {
+        if (topicId) {
+            return forkJoin({
+                topic: this.getTopic(topicId),
+                votes: this.getVote(topicId),
+            }).pipe(
+                tap(({ topic, votes }) => {
+                    this.updateTopicData(topic);
+                    this.createLink(topic);
+                    this.updateSuggestions();
+                    this.updateMetadata(topic);
+                    if (votes && votes[0]) {
+                        this.updateVoteData(votes[0]);
+                    }
+                }),
+            );
+        } else {
+            return this.getTopic(shareKey).pipe(
+                switchMap((topic) => {
+                    this.updateTopicData(topic);
+                    this.createLink(topic);
+                    this.updateSuggestions();
+                    this.updateMetadata(topic);
+                    return this.getVote(topic.id).pipe(
+                        tap((vote) => {
+                            if (vote && vote[0]) {
+                                this.updateVoteData(vote[0]);
+                            }
+                        }),
+                        map((votes) => ({
+                            topic,
+                            votes,
+                        })),
+                    );
+                }),
+            );
+        }
     }
 
     private getVote(topicId: number) {
@@ -185,6 +238,34 @@ export class PulsePageComponent implements OnInit {
                 return of(error);
             }),
         ) as Observable<ITopic>;
+    }
+
+    TOPICS_TO_TEST = {
+        state: -1,
+        topics: [
+            topicActivePartialProgress,
+            topicActiveAllCompleted,
+            topicActiveEmpty,
+            topicArchived,
+            topicActiveOneGoalUnmet,
+            topicActiveLastGoalInProgress,
+            topicBlockedWithProgress
+        ]
+    }
+    public setAnotherData(): void {
+        if (this.TOPICS_TO_TEST.state < 0) {
+            this.TOPICS_TO_TEST.topics.push(this.topic);
+            this.TOPICS_TO_TEST.state = 0;
+        }
+        if (this.TOPICS_TO_TEST.state >= this.TOPICS_TO_TEST.topics.length) {
+            this.TOPICS_TO_TEST.state = 0;
+        }
+        this.updateTopicData({ 
+            ...(this.TOPICS_TO_TEST.topics[this.TOPICS_TO_TEST.topics.length - 1] as any), 
+            ...this.TOPICS_TO_TEST.topics[this.TOPICS_TO_TEST.state] 
+        });
+
+        this.TOPICS_TO_TEST.state++;
     }
 
     private updateTopicData(topic: ITopic): void {
@@ -244,13 +325,10 @@ export class PulsePageComponent implements OnInit {
         return match ? match[0] : null;
     }
 
-    private openJustCtreatedTipicPopup(): void {
+    private openJustCreatedTopicPopup(): void {
         if (this.pulseService.isJustCreatedTopic) {
             setTimeout(() => {
-                this.dialog.open(TopicPublishedComponent, {
-                    width: "500px",
-                    panelClass: "custom-dialog-container",
-                    backdropClass: "custom-dialog-backdrop",
+                this.dialogService.open(TopicPublishedComponent, {
                     data: {
                         shareKey: this.topic?.shareKey,
                     },
@@ -284,4 +362,124 @@ export class PulsePageComponent implements OnInit {
 
         this.isReadMore = !isTruncated;
     }
+
+    private listenToUserChanges() {
+        this.authService.firebaseUser$.pipe(
+            first((user) => !!user),
+            tap(() => this.getInitialData()),
+        );
+    }
 }
+
+export const topicActivePartialProgress: ITopic | any = {
+    id: 1,
+    title: 'Test 1',
+    endsAt: '2025-07-30T23:59:59.999Z',
+    location: { country: 'Ukraine' },
+    stats: {
+        totalVotes: 30,
+        lastDayVotes: 23,
+        totalUniqueUsers: 102
+    },
+    state: TopicState.Active,
+    campaign: {
+        id: '1',
+        endsAt: '2025-07-30T23:59:59.999Z',
+        sponsorLink: 'https://pulseup.com',
+        sponsorLogo: '',
+        sponsoredBy: 'pulseup.com',
+        startsAt: '2025-04-10T00:00:00.000Z',
+        accomplishedGoals: ['2025-04-11T00:00:00.000Z'],
+        goals: [
+            { reward: '$100 donation to U24', supporters: 100 },
+            { reward: '$200 donation to U24', dailyVotes: 50 },
+            { reward: '$500 donation', lifetimeVotes: 120 }
+        ]
+    }
+};
+
+export const topicActiveAllCompleted: ITopic = {
+    ...topicActivePartialProgress,
+    title: 'Test 2',
+    stats: {
+        totalVotes: 130,
+        lastDayVotes: 60,
+        totalUniqueUsers: 130
+    },
+    campaign: {
+        ...topicActivePartialProgress.campaign!,
+        accomplishedGoals: [
+            '2025-04-11T00:00:00.000Z',
+            '2025-04-12T00:00:00.000Z',
+            '2025-04-13T00:00:00.000Z'
+        ]
+    }
+};
+
+export const topicActiveEmpty: ITopic = {
+    ...topicActivePartialProgress,
+    title: 'Test 3',
+    stats: {
+        totalVotes: 0,
+        lastDayVotes: 0,
+        totalUniqueUsers: 0
+    },
+    campaign: {
+        ...topicActivePartialProgress.campaign!,
+        accomplishedGoals: []
+    }
+};
+
+export const topicArchived: ITopic = {
+    ...topicActivePartialProgress,
+    title: 'Test 4',
+    state: TopicState.Archived,
+    campaign: {
+        ...topicActivePartialProgress.campaign!,
+        endsAt: '2025-04-10T23:59:59.999Z'
+    }
+};
+
+export const topicActiveOneGoalUnmet: ITopic = {
+    ...topicActivePartialProgress,
+    title: 'Test 5',
+    stats: {
+        totalVotes: 0,
+        lastDayVotes: 0,
+        totalUniqueUsers: 23
+    },
+    campaign: {
+        ...topicActivePartialProgress.campaign!,
+        goals: [
+            { reward: '$50 donation to U24', supporters: 100 }
+        ],
+        accomplishedGoals: []
+    }
+};
+
+export const topicActiveLastGoalInProgress: ITopic = {
+    ...topicActivePartialProgress,
+    title: 'Test 6',
+    stats: {
+        totalVotes: 90,          // progress on lifetimeVotes (120 goal)
+        lastDayVotes: 50,
+        totalUniqueUsers: 130
+    },
+    campaign: {
+        ...topicActivePartialProgress.campaign!,
+        accomplishedGoals: [
+            '2025-04-11T00:00:00.000Z',
+            '2025-04-12T00:00:00.000Z'
+        ]
+    }
+};
+
+export const topicBlockedWithProgress: ITopic = {
+    ...topicActiveAllCompleted,
+    title: 'Test 7',
+    state: TopicState.Blocked,
+    campaign: {
+        ...topicActiveAllCompleted.campaign!,
+        endsAt: '2025-08-01T00:00:00.000Z'
+    }
+};

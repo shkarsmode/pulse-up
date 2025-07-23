@@ -1,8 +1,8 @@
 import { CommonModule } from '@angular/common';
 import { Component, Input } from '@angular/core';
 import { NgxMapboxGLModule, MapService } from 'ngx-mapbox-gl';
+import { ITopicMarker } from '../../helpers/interfaces/pulse-marker.interface';
 import { PulseMarkerIconComponent } from "../pulse-marker-icon/pulse-marker-icon.component";
-import { ITopicMarker } from '../../interfaces/pulse-marker.interface';
 
 @Component({
   selector: 'app-pulse-marker',

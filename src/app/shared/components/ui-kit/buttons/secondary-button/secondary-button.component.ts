@@ -14,6 +14,7 @@ export class SecondaryButtonComponent {
     @Input() public type: "button" | "submit" | "reset" = "button";
     @Input() public disabled: boolean = false;
     @Input() public fullWidth: boolean = false;
+    @Input() public fullHeight: boolean = false;
     @Input() public contrast: boolean = false;
     @Input() public size: "small" | "medium" | "large" = "medium";
     @Input() public color: Colors | null = null;
@@ -29,6 +30,7 @@ export class SecondaryButtonComponent {
             "secondary-button--medium": this.size === "medium",
             "secondary-button--large": this.size === "large",
             "secondary-button--full-width": this.fullWidth,
+            "secondary-button--full-height": this.fullHeight,
             "secondary-button--contrast": this.contrast,
         };
     }

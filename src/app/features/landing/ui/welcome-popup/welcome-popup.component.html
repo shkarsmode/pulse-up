@@ -1,0 +1,13 @@
+<app-popup>
+    <app-popup-close-button (close)="onClose()" />
+    <app-popup-subtitle>Let's Sign You In</app-popup-subtitle>
+    <app-popup-text>
+        We use phone number to verify that every support is from a real human
+    </app-popup-text>
+    <div class="welcome-auth-form">
+        <app-auth-form (submitForm)="onSubmit()"/>
+    </div>
+    <app-auth-disclaimer 
+        class="welcome-auth-disclaimer" 
+        (openLink)="onClose()"/>
+</app-popup>

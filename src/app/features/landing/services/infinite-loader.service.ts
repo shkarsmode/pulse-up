@@ -4,11 +4,12 @@ import { IPaginator } from "@/app/shared/interfaces";
 
 @Injectable()
 export class InfiniteLoaderService<T> {
-    public paginator$: Observable<IPaginator<T>>;
-    public loading$ = new BehaviorSubject(true);
+    private loadingSubject = new BehaviorSubject(true);
     private page$ = new BehaviorSubject(1);
     private loadFn: (page: number) => Observable<IPaginator<T>>;
     private transformFn: (response: IPaginator<T>) => IPaginator<T> = (res) => res;
+    public paginator$: Observable<IPaginator<T>>;
+    public loading$ = this.loadingSubject.asObservable();
 
     public init({
         load,
@@ -20,7 +21,7 @@ export class InfiniteLoaderService<T> {
         this.loadFn = load;
         this.transformFn = transform ?? ((res) => res);
         this.paginator$ = this.page$.pipe(
-            tap(() => this.loading$.next(true)),
+            tap(() => this.loadingSubject.next(true)),
             switchMap((page) => {
                 return this.loadFn(page).pipe(map(this.transformFn));
             }),
@@ -29,7 +30,7 @@ export class InfiniteLoaderService<T> {
                 page: 0,
                 hasMorePages: true,
             } as IPaginator<T>),
-            tap(() => this.loading$.next(false)),
+            tap(() => this.loadingSubject.next(false)),
         );
     }
 

@@ -1,0 +1,13 @@
+<app-popup>
+    <app-popup-close-button (close)="onClose()" />
+    <app-popup-subtitle> Scan QR code </app-popup-subtitle>
+    <app-popup-text>
+        {{ dialogText }}
+    </app-popup-text>
+    <app-popup-footer>
+        <app-qrcode
+            [data]="data.link"
+            [rounded]="true"
+            [accessibleLabel]="dialogAccessibleLabel" />
+    </app-popup-footer>
+</app-popup>

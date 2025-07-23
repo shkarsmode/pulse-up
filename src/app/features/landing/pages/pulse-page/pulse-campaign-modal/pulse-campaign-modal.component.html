@@ -1,0 +1,61 @@
+<div class="modal">
+    <div class="modal__header">
+        <h2>Campaign</h2>
+        <div class="modal__close" (click)="dialogRef.close()">
+            <img src="assets/svg/close.svg" alt="">
+        </div>
+    </div>
+
+    @for (goal of campaign.goals; track goal; let i = $index) {
+        <div class="modal__goal" [class.modal__goal--ended]="campaignEnded">
+            <div class="modal__goal-title" [style.color]="getGoalColor(i)">
+                {{ goal.reward }}
+            </div>
+            <div class="modal__progress-bar">
+                <div
+                    class="modal__progress-fill"
+                    style="--fill-width: {{ getGoalProgress(i) }}%"
+                    [class.modal__progress-fill--not-fulled]="
+                        getGoalProgress(i) < 100 && !campaignEnded
+                    "
+                    [style.width.%]="getGoalProgress(i)"
+                    [style.backgroundColor]="getGoalColor(i)">
+                </div>
+            </div>
+            <div class="modal__progress-count">
+                <span>
+                    {{ getGoalCurrentValue(i) }} 
+                </span>
+                <span>{{ getGoalTargetValue(i) }}</span>
+            </div>
+        </div>
+    }
+
+    <div class="modal__footer">
+        <div class="modal__duration">
+            Duration:
+            @if (!campaignEnded) {
+                <span>
+                    {{ campaign.startsAt | date: 'MMM d' }} – {{ campaign.endsAt | date: 'MMM d, y' }}
+                </span>
+            } @else {
+                <span>
+                    Ended {{ formattedDate }}
+                </span>
+            }
+        </div>
+        <a class="modal__sponsor" [href]="campaign.sponsorLink" target="_blank">
+            Sponsor: 
+            @if (campaign.sponsorLogo) {
+                <img
+                    [src]="campaign.sponsorLogo"
+                    alt="sponsor logo"
+                    style="max-height: 30px;" />
+            } @else {
+                <span>
+                    {{ campaign.sponsoredBy }}
+                </span>
+            }
+        </a>
+    </div>
+</div>

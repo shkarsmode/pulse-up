@@ -1,21 +1,22 @@
 import { inject } from "@angular/core";
 import {
     BehaviorSubject,
-    filter,
+    catchError,
     interval,
+    Observable,
+    of,
     Subscription,
     switchMap,
     take,
     takeWhile,
     tap,
+    throwError,
 } from "rxjs";
-import { Router } from "@angular/router";
 import { FormControl } from "@angular/forms";
 import { toSignal } from "@angular/core/rxjs-interop";
 import { MatDialog } from "@angular/material/dialog";
 import { NgOtpInputComponent, NgOtpInputConfig } from "ng-otp-input";
 import { AuthenticationService } from "@/app/shared/services/api/authentication.service";
-import { AppRoutes } from "@/app/shared/enums/app-routes.enum";
 import { NotificationService } from "./notification.service";
 import {
     AuthenticationError,
@@ -24,19 +25,15 @@ import {
 import { Location } from "@angular/common";
 import { isErrorWithMessage } from "../../helpers/errors/is-error-with-message";
 import { SigninRequiredPopupComponent } from "../../components/popups/signin-required-popup/signin-required-popup.component";
-import { ProfileStore } from "../../stores/profile.store";
 
 type ServiceWorkMode = "signIn" | "changePhoneNumber";
 
 export class ConfirmPhoneNumberService {
     private dialog = inject(MatDialog);
-    private readonly router = inject(Router);
     private readonly location = inject(Location);
-    private readonly profileStore = inject(ProfileStore);
     private readonly notificationService = inject(NotificationService);
     private readonly authenticationService = inject(AuthenticationService);
 
-    private appRoutes = AppRoutes;
     private ngOtpInput: NgOtpInputComponent;
     private countdown$ = new BehaviorSubject<number>(0);
     private timerSub: Subscription;
@@ -66,36 +63,44 @@ export class ConfirmPhoneNumberService {
         this.ngOtpInput = ngOtpInput;
     }
 
-    public onConfirmationCodeChange = (value: string) => {
-        if (value?.length !== 6) return;
+    public onConfirmationCodeChange = (value: string): Observable<null | boolean> => {
+        if (value?.length !== 6) return of(null);
 
         if (this.mode === "signIn") {
-            this.authenticationService
-                .confirmVerificationCode(value)
-                .pipe(take(1))
-                .pipe(
-                    switchMap(() => this.profileStore.refreshProfile()),
-                )
-                .subscribe({
-                    next: () => {
-                        this.navigateToHomePage();
-                        this.resetInput();
-                    },
-                    error: this.handleEror,
-                });
+            return this.authenticationService.confirmVerificationCode(value).pipe(
+                take(1),
+                catchError((error) => {
+                    this.resetInput();
+                    return throwError(() => error);
+                }),
+                tap(() => this.resetInput()),
+                switchMap(() => of(true)),
+            );
+            // .subscribe({
+            //     next: () => {
+            //         this.navigateToHomePage();
+            //         this.resetInput();
+            //     },
+            //     error: this.handleEror,
+            // });
         } else {
-            this.authenticationService
-                .confirmNewPhoneNumber(value)
-                .pipe(take(1))
-                .subscribe({
-                    next: (response) => {
-                        this.router.navigateByUrl(`/${this.appRoutes.Profile.EDIT}`);
-                        this.notificationService.success(
-                            "Phone number has been changed successfully.",
-                        );
-                    },
-                    error: this.handleEror,
-                });
+            return this.authenticationService.confirmNewPhoneNumber(value).pipe(
+                take(1),
+                catchError((error) => {
+                    this.resetInput();
+                    return throwError(() => error);
+                }),
+                switchMap(() => of(true)),
+            );
+            // .subscribe({
+            //     next: (response) => {
+            //         this.router.navigateByUrl(`/${this.appRoutes.Profile.EDIT}`);
+            //         this.notificationService.success(
+            //             "Phone number has been changed successfully.",
+            //         );
+            //     },
+            //     error: this.handleEror,
+            // });
         }
     };
 
@@ -113,7 +118,6 @@ export class ConfirmPhoneNumberService {
             .pipe(take(1))
             .subscribe({
                 next: () => {
-                    console.log("Verification code resent successfully");
                     this.resendCodeAttemptsLeft--;
                     this.isResendingCode$.next(false);
                     this.startCooldown(60);
@@ -152,16 +156,16 @@ export class ConfirmPhoneNumberService {
         this.ngOtpInput.focusTo(eleId);
     }
 
-    private navigateToHomePage() {
-        const redirectUrl = this.getRedirectUrl();
-        const navigationUrl = redirectUrl || this.appRoutes.Landing.HOME;
-        this.router.navigateByUrl(navigationUrl);
-    }
+    // private navigateToHomePage() {
+    //     const redirectUrl = this.getRedirectUrl();
+    //     const navigationUrl = redirectUrl || this.appRoutes.Landing.HOME;
+    //     this.router.navigateByUrl(navigationUrl);
+    // }
 
-    private getRedirectUrl(): string | null {
-        const tree = this.router.parseUrl(this.router.url);
-        return tree.queryParams["redirect"] || null;
-    }
+    // private getRedirectUrl(): string | null {
+    //     const tree = this.router.parseUrl(this.router.url);
+    //     return tree.queryParams["redirect"] || null;
+    // }
 
     private handleEror = (error: unknown) => {
         if (error instanceof AuthenticationError) {

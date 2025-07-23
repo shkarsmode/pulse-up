@@ -1,0 +1,34 @@
+<app-popup>
+    <app-popup-close-button (close)="closeDialog()" />
+    @if (isError) {
+        <app-popup-title>Location not Accessible</app-popup-title>
+        <div class="get-location-popup-error">
+            <app-popup-text>
+                We couldn’t determine your device’s location or the accuracy is too low — a valid
+                location is required to send a pulse for this topic.
+            </app-popup-text>
+            <app-popup-text>
+                If your browser is unable to grant location, you can use the PulseUp mobile app
+            </app-popup-text>
+            <app-popup-footer>
+                <div class="get-location-popup-footer">
+                    <app-primary-button 
+                        [fullWidth]="true"
+                        size="large"
+                        class="get-location-popup-footer__retry"
+                        (handleClick)="getCurrentGeolocation()">
+                        Retry
+                    </app-primary-button>
+                    <app-get-app-button
+                        [design]="'new'"
+                        [isOnePlatform]="true" />
+                </div>
+            </app-popup-footer>
+        </div>
+    } @else {
+        <div class="get-location-popup-loading">
+            <app-popup-text> Getting your location... </app-popup-text>
+            <app-spinner></app-spinner>
+        </div>
+    }
+</app-popup>
