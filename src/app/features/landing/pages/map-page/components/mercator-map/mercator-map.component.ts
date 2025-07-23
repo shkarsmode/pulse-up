@@ -1,16 +1,28 @@
 import { Component, effect, EventEmitter, inject, Output } from "@angular/core";
+import { CommonModule } from "@angular/common";
 import { toSignal } from "@angular/core/rxjs-interop";
 import { IMapMarker } from "@/app/shared/interfaces/map-marker.interface";
 import { MediaQueryService } from "@/app/shared/services/core/media-query.service";
 import { ResponsiveMapConfig } from "@/app/shared/interfaces/responsive-map-config.interface";
-import { MapComponent } from "@/app/features/landing/ui/map/map.component";
+import { MapComponent } from "@/app/shared/components/map/map.component";
+import { MapHexagonsLayerComponent } from "@/app/shared/components/map/map-hexagons-layer/map-hexagons-layer.component";
+import { MapHeatmapLayerComponent } from "@/app/shared/components/map/map-heatmap-layer/map-heatmap-layer.component";
+import { MapZoomControlsComponent } from "@/app/shared/components/map/map-zoom-controls/map-zoom-controls.component";
+import { MapControlsComponent } from "@/app/shared/components/map/map-controls/map-controls.component";
 
 @Component({
     selector: "app-mercator-map",
     templateUrl: "./mercator-map.component.html",
     styleUrl: "./mercator-map.component.scss",
     standalone: true,
-    imports: [MapComponent],
+    imports: [
+        CommonModule,
+        MapComponent,
+        MapHexagonsLayerComponent,
+        MapHeatmapLayerComponent,
+        MapZoomControlsComponent,
+        MapControlsComponent,
+    ],
 })
 export class MercatorMapComponent {
     private mediaService = inject(MediaQueryService);
@@ -47,10 +59,11 @@ export class MercatorMapComponent {
         },
     };
 
-    public zoom: [number] = this.configMap.default.zoom;
-    public minZoom: number = this.configMap.default.minZoom;
-    public maxBounds: mapboxgl.LngLatBoundsLike = this.configMap.default.maxBounds;
-    public center: [number, number] = [-100.661, 37.7749];
+    map: mapboxgl.Map | null = null;
+    zoom: [number] = this.configMap.default.zoom;
+    minZoom: number = this.configMap.default.minZoom;
+    maxBounds: mapboxgl.LngLatBoundsLike = this.configMap.default.maxBounds;
+    center: [number, number] = [-100.661, 37.7749];
 
     constructor() {
         effect(() => {
@@ -67,11 +80,15 @@ export class MercatorMapComponent {
         });
     }
 
-    public onMarkerClick(marker: IMapMarker): void {
+    onMapLoaded(map: mapboxgl.Map): void {
+        this.map = map;
+    }
+
+    onMarkerClick(marker: IMapMarker): void {
         this.markerClick.emit(marker);
     }
 
-    public onZoomEnd(zoom: number): void {
+    onZoomEnd(zoom: number): void {
         this.zoomEnd.emit(zoom);
     }
 }

@@ -14,9 +14,8 @@ import { TopicRoutingModule } from "./topic.routing";
 import { PicturePickerComponent } from "@/app/shared/components/ui-kit/picture-picker/picture-picker.component";
 import { PickLocationComponent } from "./pick-location/pick-location.component";
 import { MapComponent } from "../../landing/ui/map/map.component";
-import { MglMapComponent } from "../../landing/ui/maps/mgl-map.component";
 import { PlacesAutocompleteComponent } from "../../../shared/components/places-autocomplete/places-autocomplete.component";
-import { TopicPreviewComponent } from './topic-preview/topic-preview.component';
+import { TopicPreviewComponent } from "./topic-preview/topic-preview.component";
 import { FadeInDirective } from "@/app/shared/animations/fade-in.directive";
 import { FlatButtonDirective } from "@/app/shared/components/ui-kit/buttons/flat-button/flat-button.directive";
 import { RippleEffectDirective } from "@/app/shared/directives/ripple-effect";
@@ -32,21 +31,20 @@ import { SpinnerComponent } from "../../../shared/components/ui-kit/spinner/spin
         TopicPreviewComponent,
     ],
     imports: [
-    CommonModule,
-    TopicRoutingModule,
-    UserModule,
-    SelectComponent,
-    SvgIconComponent,
-    PrimaryButtonComponent,
-    SecondaryButtonComponent,
-    PicturePickerComponent,
-    MapComponent,
-    MglMapComponent,
-    PlacesAutocompleteComponent,
-    FadeInDirective,
-    FlatButtonDirective,
-    RippleEffectDirective,
-    SpinnerComponent
-],
+        CommonModule,
+        TopicRoutingModule,
+        UserModule,
+        SelectComponent,
+        SvgIconComponent,
+        PrimaryButtonComponent,
+        SecondaryButtonComponent,
+        PicturePickerComponent,
+        MapComponent,
+        PlacesAutocompleteComponent,
+        FadeInDirective,
+        FlatButtonDirective,
+        RippleEffectDirective,
+        SpinnerComponent,
+    ],
 })
 export class TopicModule {}

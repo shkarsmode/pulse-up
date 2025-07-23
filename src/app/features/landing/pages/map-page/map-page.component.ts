@@ -4,15 +4,16 @@ import { CommonModule } from "@angular/common";
 import { Projection } from "mapbox-gl";
 import { IMapMarker } from "@/app/shared/interfaces/map-marker.interface";
 import { SwitchComponent } from "@/app/shared/components/ui-kit/switch/switch/switch.component";
-import { GlobeMapComponent } from "./components/globe-map/globe-map.component";
 import { MercatorMapComponent } from "./components/mercator-map/mercator-map.component";
+import { SimpleMapComponent } from "./components/simple-map/simple-map.component";
+import { GlobeMapComponent } from "./components/globe-map/globe-map.component";
 
 @Component({
     selector: "app-map-page",
     templateUrl: "./map-page.component.html",
     styleUrl: "./map-page.component.scss",
     standalone: true,
-    imports: [CommonModule, SwitchComponent, GlobeMapComponent, MercatorMapComponent],
+    imports: [CommonModule, SwitchComponent, MercatorMapComponent, GlobeMapComponent],
 })
 export class MapPageComponent {
     private readonly router: Router = inject(Router);

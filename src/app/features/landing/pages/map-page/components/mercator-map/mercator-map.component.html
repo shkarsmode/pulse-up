@@ -1,4 +1,4 @@
-<app-map
+<!-- <app-map
     [isHideDebugger]="true"
     [isSearch]="false"
     [isLocationName]="false"
@@ -9,4 +9,28 @@
     [center]="center"
     [isToShowTooltip]="true"
     (markerClick)="onMarkerClick($event)" 
-    (zoomEnd)="onZoomEnd($event)" />
+    (zoomEnd)="onZoomEnd($event)" /> -->
+
+<app-map
+    (mapLoaded)="onMapLoaded($event)"
+    [markers]="{
+      enabled: true,
+      showTooltip: true,
+    }"
+    [zoom]="zoom"
+    [minZoom]="minZoom"
+    [maxBounds]="maxBounds"
+    [center]="center"
+    (markerClick)="onMarkerClick($event)"
+    (zoomEnd)="onZoomEnd($event)">
+    <ng-container *ngIf="map">
+        <app-map-hexagons-layer [map]="map" />
+        <app-map-heatmap-layer [map]="map" />
+    </ng-container>
+</app-map>
+
+<ng-container *ngIf="map">
+    <app-map-controls>
+        <app-map-zoom-controls [map]="map" />
+    </app-map-controls>
+</ng-container>

@@ -1,17 +1,31 @@
 import { Component, effect, EventEmitter, inject, Output } from "@angular/core";
+import { CommonModule } from "@angular/common";
 import { toSignal } from "@angular/core/rxjs-interop";
 import mapboxgl from "mapbox-gl";
 import { IMapMarker } from "@/app/shared/interfaces/map-marker.interface";
 import { MediaQueryService } from "@/app/shared/services/core/media-query.service";
-import { MapComponent } from "@/app/features/landing/ui/map/map.component";
 import { MapEventListenerService } from "@/app/features/landing/services/map-event-listener.service";
+import { MapComponent } from "@/app/shared/components/map/map.component";
+import { MapHexagonsLayerComponent } from "@/app/shared/components/map/map-hexagons-layer/map-hexagons-layer.component";
+import { MapHeatmapLayerComponent } from "@/app/shared/components/map/map-heatmap-layer/map-heatmap-layer.component";
+import { MapZoomControlsComponent } from "@/app/shared/components/map/map-zoom-controls/map-zoom-controls.component";
+import { MapControlsComponent } from "@/app/shared/components/map/map-controls/map-controls.component";
+import { MapSpinControlComponent } from "@/app/shared/components/map/map-spin-control/map-spin-control.component";
 
 @Component({
     selector: "app-globe-map",
     templateUrl: "./globe-map.component.html",
     styleUrl: "./globe-map.component.scss",
     standalone: true,
-    imports: [MapComponent],
+    imports: [
+        CommonModule,
+        MapComponent,
+        MapHexagonsLayerComponent,
+        MapHeatmapLayerComponent,
+        MapZoomControlsComponent,
+        MapControlsComponent,
+        MapSpinControlComponent,
+    ],
 })
 export class GlobeMapComponent {
     private readonly mediaService = inject(MediaQueryService);
@@ -73,11 +87,11 @@ export class GlobeMapComponent {
     private is1400Desctop = toSignal(this.mediaService.mediaQuery("max", "XXL"));
     private is1600Desctop = toSignal(this.mediaService.mediaQuery("max", "XXXL"));
     private is1920Desctop = toSignal(this.mediaService.mediaQuery("max", "XXXXL"));
-    private map: mapboxgl.Map | null = null;
+    map: mapboxgl.Map | null = null;
 
     @Output() zoomEnd: EventEmitter<number> = new EventEmitter<number>();
     @Output() markerClick: EventEmitter<IMapMarker> = new EventEmitter<IMapMarker>();
-    
+
     public zoom: number = 2.5;
     public fog: mapboxgl.Fog = {
         color: "rgb(228, 240, 255)",
@@ -123,6 +137,7 @@ export class GlobeMapComponent {
 
     public onMapLoaded(map: mapboxgl.Map): void {
         this.map = map;
+        this.map.setFog(this.fog);
         this.flyToCoordinates();
     }
 
@@ -141,7 +156,7 @@ export class GlobeMapComponent {
                 center: [coordinates.lng, coordinates.lat],
                 zoom: 2.5,
                 speed: 0.4,
-            })
+            });
         }
     }
 }

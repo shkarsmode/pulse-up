@@ -1,0 +1,15 @@
+@for (marker of markers$ | async; track marker.h3Index) {
+
+<app-map-marker
+    [map]="map"
+    [marker]="marker"
+    [isAnimated]="isAnimated"
+    [tooltipData]="tooltipData$ | async" 
+    [showTooltipOnHover]="showTooltip"
+    (markerClick)="onMarkerClick(marker)"
+    (markerHover)="onMarkerHover(marker)"
+    (tooltipHideEnd)="onTooltipHide()"
+    (visibilityChange)="onMarkerVisibilityChange($event)"
+    />
+
+}

@@ -2,7 +2,7 @@ import { PulseService } from "@/app/shared/services/api/pulse.service";
 import { inject, Injectable } from "@angular/core";
 import * as h3 from "h3-js";
 import { Observable } from "rxjs";
-import { IH3Pulses } from "../helpers/interfaces/h3-pulses.interface";
+import { TopCellTopicsByH3Index } from "../helpers/interfaces/h3-pulses.interface";
 import { MapBounds } from "../helpers/interfaces/map-bounds.interface";
 import { MapUtils } from "./map-utils.service";
 
@@ -21,13 +21,15 @@ export class H3LayerService {
         bounds: MapBounds,
         resolution: number,
         pulseId?: number,
-    }): Observable<IH3Pulses> {
+    }): Observable<TopCellTopicsByH3Index> {
         const {ne, sw} = bounds;
         return this.pulseService.getH3PulsesForMap(ne.lat, ne.lng, sw.lat, sw.lng, resolution);
     }
 
-    public updateH3PolygonSource({ map, data }: { map: mapboxgl.Map; data: IH3Pulses }) {
+    public updateH3PolygonSource({ map, data }: { map: mapboxgl.Map; data: TopCellTopicsByH3Index }) {
         const geojson = this.convertH3ToGeoJSON(data);
+        console.log("Updating H3 polygons source with data:", geojson);
+        
         MapUtils.setSourceData({
             map,
             sourceId: this.sourceId,
@@ -48,7 +50,7 @@ export class H3LayerService {
         });
     }
 
-    private convertH3ToGeoJSON(data: IH3Pulses) {
+    private convertH3ToGeoJSON(data: TopCellTopicsByH3Index) {
         const features = Object.keys(data).map((h3Index) => {
             const polygon = h3.h3ToGeoBoundary(h3Index, true);
             return {

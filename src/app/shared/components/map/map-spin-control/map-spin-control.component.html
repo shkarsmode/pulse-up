@@ -1,0 +1,14 @@
+<button
+    class="spin-button"
+    aria-label="spin the map"
+    (click)="onSpinClick()">
+    @if (isSpinning) {
+    <svg-icon
+        src="assets/svg/pause.svg"
+        class="spin-button__icon" />
+    } @else {
+    <svg-icon
+        src="assets/svg/play.svg"
+        class="spin-button__icon" />
+    }
+</button>
