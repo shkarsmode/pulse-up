@@ -1,16 +1,15 @@
-import { ChangeDetectorRef, Component, EventEmitter, inject, Input, Output } from "@angular/core";
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, inject, Input, Output } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { interval, Subscription } from "rxjs";
 import { IVote } from "@/app/shared/interfaces/vote.interface";
 import { SettingsService } from "@/app/shared/services/api/settings.service";
-
-const MS_IN_MINUTE = 60 * 1000;
 
 @Component({
     selector: "app-vote-time-left",
     standalone: true,
     imports: [CommonModule],
     template: ` <span>{{ time }}</span> `,
+    changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class VoteTimeLeftComponent {
     @Input() vote: IVote;
