@@ -4,24 +4,26 @@ import { GlobeSpinnerService } from "@/app/features/landing/services/globe-spinn
 import mapboxgl from "mapbox-gl";
 
 @Component({
-    selector: "app-map-globe-layer",
+    selector: "app-map-spin-control",
     standalone: true,
     imports: [SvgIconComponent],
-    templateUrl: "./map-globe-layer.component.html",
-    styleUrl: "./map-globe-layer.component.scss",
+    templateUrl: "./map-spin-control.component.html",
+    styleUrl: "./map-spin-control.component.scss",
 })
-export class MapGlobeLayerComponent {
+export class MapSpinControlComponent {
     private readonly globeSpinnerService = new GlobeSpinnerService();
 
     @Input() map: mapboxgl.Map;
     @Input() spinning: boolean = false;
     @Input() isSpinEnabled: boolean = false;
 
-    isSpinning = this.globeSpinnerService.spinning;
-    isSpinButtonVisible = this.isSpinEnabled;
+    public isSpinButtonVisible = this.isSpinEnabled;
+    public get isSpinning() {
+        return this.globeSpinnerService.spinning;
+    }
 
     ngOnInit(): void {
-        this.map.on("load", this.initGlobeSpinner);
+        this.initGlobeSpinner();
         this.map.on("zoomend", this.updateSpinButtonVisibility);
         this.map.on("moveend", this.updateSpinButtonVisibility);
     }
@@ -47,5 +49,5 @@ export class MapGlobeLayerComponent {
         } else {
             this.isSpinButtonVisible = false;
         }
-    }
+    };
 }

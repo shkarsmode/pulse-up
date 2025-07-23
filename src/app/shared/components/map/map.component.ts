@@ -1,14 +1,13 @@
 import { CommonModule } from "@angular/common";
 import { Component, EventEmitter, HostBinding, inject, Input, Output } from "@angular/core";
 import { NgxMapboxGLModule } from "ngx-mapbox-gl";
+import { EventData, MapStyleDataEvent } from "mapbox-gl";
 import { throttle } from "@/app/shared/helpers/throttle";
-import { IMapClickEvent } from "@/app/features/landing/interfaces/map-click-event.interface";
 import { MAPBOX_STYLE } from "../../tokens/tokens";
 import { AppConstants } from "../../constants";
-import { EventData, MapStyleDataEvent } from "mapbox-gl";
-import { MapMarkersService } from "../../services/map/map-marker.service";
 import { MapMarkersLayerComponent } from "./map-markers-layer/map-markers-layer.component";
 import { IMapMarker } from "../../interfaces/map-marker.interface";
+import { IMapClickEvent } from "@/app/features/landing/helpers/interfaces/map-click-event.interface";
 
 interface MarkersSettings {
     enabled?: boolean;
@@ -25,7 +24,6 @@ interface MarkersSettings {
 })
 export class MapComponent {
     private readonly mapboxStylesUrl = inject(MAPBOX_STYLE);
-    private readonly markersService = inject(MapMarkersService);
 
     @Input() isRounded: boolean = false;
     @Input() isPreview: boolean = false;
@@ -60,8 +58,6 @@ export class MapComponent {
     }
 
     map: mapboxgl.Map | null = null;
-    markers$ = this.markersService.markers$;
-    tooltipData$ = this.markersService.tooltipData$;
 
     onMapLoad({ target: map }: mapboxgl.MapboxEvent<undefined> & mapboxgl.EventData) {
         this.map = map;

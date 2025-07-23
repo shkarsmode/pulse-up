@@ -5,7 +5,7 @@ import { IMapMarker, IMapMarkerAnimated } from "@/app/shared/interfaces/map-mark
 import { ITopic } from "@/app/shared/interfaces";
 import { PulseService } from "@/app/shared/services/api/pulse.service";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
-import { TopCellTopicsByH3Index } from "@/app/features/landing/interfaces/h3-pulses.interface";
+import { TopCellTopicsByH3Index } from "@/app/features/landing/helpers/interfaces/h3-pulses.interface";
 
 interface TooltipData extends ITopic {
     markerId: number;
@@ -67,7 +67,6 @@ export class MapMarkersService {
                 delay: this.randomInteger(100, 2000),
             });
         });
-        console.log({ markers: this.markers });
         this.markers.next(markers);
     }
 

@@ -27,7 +27,15 @@
     (mapLoaded)="onMapLoaded($event)"
     (markerClick)="onMarkerClick($event)"
     (zoomEnd)="onZoomEnd($event)">
-    @if (map) {
-    <app-map-hexagons-layer [map]="map" />
-    }
+    <ng-container *ngIf="map">
+        <app-map-hexagons-layer [map]="map" />
+        <app-map-heatmap-layer [map]="map" />
+    </ng-container>
 </app-map>
+
+<ng-container *ngIf="map">
+    <app-map-controls>
+        <app-map-spin-control [map]="map" />
+        <app-map-zoom-controls [map]="map" />
+    </app-map-controls>
+</ng-container>

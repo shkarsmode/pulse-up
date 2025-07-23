@@ -6,7 +6,7 @@ import { API_URL } from "../../tokens/tokens";
 import { IValidateTopicTitleResponse } from "../../interfaces/validate-topic-title.response";
 import { ICategory } from "../../interfaces/category.interface";
 import { PendingTopicsService } from "../topic/pending-topics.service";
-import { TopCellTopicsByH3Index } from "@/app/features/landing/interfaces/h3-pulses.interface";
+import { TopCellTopicsByH3Index } from "@/app/features/landing/helpers/interfaces/h3-pulses.interface";
 
 type RequestParams = {
     [param: string]: string | number | boolean | ReadonlyArray<string | number | boolean>;

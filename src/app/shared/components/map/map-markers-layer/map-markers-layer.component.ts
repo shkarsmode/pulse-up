@@ -2,8 +2,6 @@ import { Component, EventEmitter, inject, Input, Output } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { first, Observable, tap } from "rxjs";
 import { PulseService } from "@/app/shared/services/api/pulse.service";
-import { MapBounds } from "@/app/features/landing/interfaces/map-bounds.interface";
-import { TopCellTopicsByH3Index } from "@/app/features/landing/interfaces/h3-pulses.interface";
 import { MapUtils } from "@/app/features/landing/services/map-utils.service";
 import { AppConstants } from "@/app/shared/constants";
 import {
@@ -15,6 +13,8 @@ import { MapMarkersService } from "@/app/shared/services/map/map-marker.service"
 import { NgxMapboxGLModule } from "ngx-mapbox-gl";
 import { throttle } from "@/app/shared/helpers/throttle";
 import { MapMarkerComponent } from "../map-marker/map-marker.component";
+import { MapBounds } from "@/app/features/landing/helpers/interfaces/map-bounds.interface";
+import { TopCellTopicsByH3Index } from "@/app/features/landing/helpers/interfaces/h3-pulses.interface";
 
 @Component({
     selector: "app-map-markers-layer",
@@ -39,7 +39,6 @@ export class MapMarkersLayerComponent {
 
     ngOnInit() {
         this.updateMarkers();
-        this.map.on("load", this.updateMarkers);
         this.map.on("zoomend", this.updateMarkers);
         this.map.on("move", throttle(this.updateMarkers, 500));
         this.checkIfTouchDevice();
@@ -89,6 +88,10 @@ export class MapMarkersLayerComponent {
         this.getH3Pulses({ bounds, resolution })
             .pipe(
                 first(),
+                tap((data) => {
+                    console.log("Markers data:", data);
+                    
+                }),
                 tap((data) => this.mapMarkersService.updateMarkers(data)),
             )
             .subscribe();

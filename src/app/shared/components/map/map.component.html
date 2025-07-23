@@ -21,7 +21,7 @@
     (click)="handleMapClick($event)"
     (touchStart)="handleTouchStart($event)"
     (styleData)="onStyleData($event)">
-    <ng-container></ng-container>
+    <ng-content></ng-content>
 
     @if (markers.enabled && map) {
         <app-map-markers-layer

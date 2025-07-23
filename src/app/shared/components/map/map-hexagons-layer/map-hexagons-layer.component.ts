@@ -5,9 +5,9 @@ import { MapPainter } from "@/app/shared/helpers/map-painter";
 import { MapUtils } from "@/app/features/landing/services/map-utils.service";
 import { AppConstants } from "@/app/shared/constants";
 import { PulseService } from "@/app/shared/services/api/pulse.service";
-import { MapBounds } from "@/app/features/landing/interfaces/map-bounds.interface";
-import { TopCellTopicsByH3Index } from "@/app/features/landing/interfaces/h3-pulses.interface";
 import { throttle } from "@/app/shared/helpers/throttle";
+import { MapBounds } from "@/app/features/landing/helpers/interfaces/map-bounds.interface";
+import { TopCellTopicsByH3Index } from "@/app/features/landing/helpers/interfaces/h3-pulses.interface";
 
 @Component({
     selector: "app-map-hexagons-layer",
@@ -31,9 +31,8 @@ export class MapHexagonsLayerComponent implements OnInit {
         });
         this.addLayersOnMap(this.painter);
         this.updateHexagons();
-        this.map.on("load", () => this.updateHexagons())
         this.map.on("zoomend", () => this.updateHexagons())
-        this.map.on("move", throttle(() => this.updateHexagons(), 500))
+        this.map.on("move", throttle(() => this.updateHexagons(), 500));
     }
 
     private addLayersOnMap(painter: MapPainter): void {
