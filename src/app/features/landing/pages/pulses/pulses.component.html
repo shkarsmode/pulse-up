@@ -6,9 +6,15 @@
             <div class="top-row">
                 <ng-container *ngIf="loading$ as loading$">
                     <app-input-search
-                        [isLoading]="(loading$ | async) || false"
-                        (handleValueChange)="onSearchValueChange($event)" />
+                        class="top-row__search"
+                        [isLoading]="(searchInFocus && (loading$ | async)) || false"
+                        (handleValueChange)="onSearchValueChange($event)"
+                        (focus)="onSearchFocus()"
+                        (blur)="onSearchBlur()" />
                 </ng-container>
+                <app-category-filter
+                    class="top-row__filter"
+                    (selectedCategory)="onCategorySelected($event)" />
                 <a
                     [routerLink]="addTopicRoute"
                     class="add-topic-button">
@@ -17,6 +23,10 @@
                         style="height: 22px" />
                 </a>
             </div>
+            
+            <ng-container *ngIf="loading$ as loading$">
+                <app-spinner *ngIf="loading$ | async" />
+            </ng-container>
 
             <div
                 class="wrap__large-pulses"

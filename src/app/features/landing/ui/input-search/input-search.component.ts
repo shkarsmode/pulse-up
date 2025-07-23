@@ -23,6 +23,12 @@ export class InputSearchComponent {
     @Output()
     public handleValueChange: EventEmitter<string> = new EventEmitter();
 
+    @Output()
+    public focus: EventEmitter<void> = new EventEmitter<void>();
+
+    @Output()
+    public blur: EventEmitter<void> = new EventEmitter<void>();
+
     private readonly inputValueChanged$: Subject<string> = new Subject();
     private readonly throttleConfig: ThrottleConfig = {
         leading: true,
@@ -35,6 +41,14 @@ export class InputSearchComponent {
 
     public handleInputChange(event: InputEvent): void {
         this.inputValueChanged$.next((event.target as HTMLInputElement).value);
+    }
+
+    public onFocus(): void {
+        this.focus.emit();
+    }
+
+    public onBlur(): void {
+        this.blur.emit();
     }
 
     private initThrottleInputValueChange(): void {

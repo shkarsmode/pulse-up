@@ -255,3 +255,12 @@ div.otp-custom-container {
 html {
     --mdc-dialog-container-shape: 10px !important;
 }
+
+// Category filter
+.category-filter-panel.mat-mdc-select-panel {
+    --mat-select-panel-background-color: var(--white-color);
+    --mat-option-selected-state-layer-color: rgb(from var(--accent-color) r g b / 0.3);
+    --mat-option-focus-state-layer-color: rgb(from var(--accent-color) r g b / 0.3);
+    --mat-option-hover-state-layer-color: rgb(from var(--accent-color) r g b / 0.1);
+    background-color: var(--white-color);
+}

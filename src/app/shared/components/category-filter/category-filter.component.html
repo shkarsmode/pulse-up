@@ -1,0 +1,22 @@
+<mat-form-field
+    subscriptSizing="dynamic"
+    appearance="outline"
+    class="category-filter">
+    <mat-select
+        [formControl]="selectControl"
+        panelClass="category-filter-panel"
+        placeholder="Filter by category"
+        #singleSelect>
+        <mat-option>
+            <ngx-mat-select-search
+                [formControl]="filterControl"
+                placeholderLabel="Search categories"
+                noEntriesFoundLabel="No matches found" />
+        </mat-option>
+        <mat-option
+            *ngFor="let category of filteredCategories | async"
+            [value]="category">
+            {{ category.name }}
+        </mat-option>
+    </mat-select>
+</mat-form-field>

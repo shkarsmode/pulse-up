@@ -29,6 +29,7 @@ export class PulseService {
     public get(
         params: {
             keyword?: string;
+            category?: string;
             country?: string;
             state?: string;
             city?: string;
