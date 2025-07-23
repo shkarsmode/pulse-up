@@ -5,7 +5,6 @@ import { LocalStorageService, LOCAL_STORAGE_KEYS } from "../core/local-storage.s
 interface IPendingTopic {
     id: number;
     stats: ITopicStats;
-    expiresAt: string;
 }
 
 @Injectable({
@@ -13,7 +12,6 @@ interface IPendingTopic {
 })
 export class PendingTopicsService {
     private pendingTopics: IPendingTopic[] = [];
-    private expirationTime = 2 * 60 * 1000; // 2 minutes
     private readonly STORAGE_KEY = LOCAL_STORAGE_KEYS.pendingTopics;
 
     constructor() {
@@ -23,11 +21,6 @@ export class PendingTopicsService {
     get(id: number): IPendingTopic | null {
         const topic = this.pendingTopics.find(topic => topic.id === id);
         if (!topic) return null;
-        const isExpired = new Date(topic.expiresAt) < new Date();
-        if (isExpired) {
-            this.remove(id);
-            return null;
-        }
         return topic;
     }
 
@@ -39,10 +32,9 @@ export class PendingTopicsService {
                 totalUniqueUsers: 0,
                 lastDayVotes: 0,
             },
-            expiresAt: new Date(Date.now() + this.expirationTime).toISOString()
         };
 
-        this.pendingTopics = this.pendingTopics.filter(t => t.id !== topic.id);
+        this.pendingTopics = this.pendingTopics.filter((topic) => topic.id !== topic.id);
         this.pendingTopics.push(newPendingTopic);
 
         this.saveToStorage();
@@ -64,8 +56,6 @@ export class PendingTopicsService {
 
     private loadFromStorage(): void {
         const stored = LocalStorageService.get<IPendingTopic[]>(this.STORAGE_KEY);
-        const now = new Date();
-        this.pendingTopics = (stored ?? []).filter(topic => new Date(topic.expiresAt) > now);
-        this.saveToStorage();
+        this.pendingTopics = stored ?? [];
     }
 }
