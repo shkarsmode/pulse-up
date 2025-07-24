@@ -1,0 +1,32 @@
+app-icon-button::ng-deep {
+    .icon-button {
+        background-color: var(--accent-color);
+        color: var(--white-color);
+        transform: rotate(90deg);
+    }
+}
+
+.profile-menu {
+    .profile-menu__item {
+        display: flex;
+        align-items: center;
+        column-gap: 8px;
+        min-height: 36px;
+        color: var(--error-color);
+
+        svg-icon {
+            width: 20px;
+            height: 20px;
+            color: var(--error-color);
+
+            svg {
+                width: 100%;
+                height: 100%;
+
+                path {
+                    stroke: currentColor;
+                }
+            }
+        }
+    }
+}

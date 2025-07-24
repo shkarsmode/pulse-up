@@ -23,18 +23,20 @@ import {
     AuthenticationErrorCode,
 } from "@/app/shared/helpers/errors/authentication-error";
 import { SecondaryButtonComponent } from "@/app/shared/components/ui-kit/buttons/secondary-button/secondary-button.component";
+import { ProfileHeaderComponent } from "../../ui/profile-header/profile-header.component";
 
 @Component({
     selector: "app-change-email",
     standalone: true,
     imports: [
-    CommonModule,
-    ReactiveFormsModule,
-    InputComponent,
-    ProfileLayoutComponent,
-    PrimaryButtonComponent,
-    SecondaryButtonComponent
-],
+        CommonModule,
+        ReactiveFormsModule,
+        InputComponent,
+        ProfileLayoutComponent,
+        PrimaryButtonComponent,
+        SecondaryButtonComponent,
+        ProfileHeaderComponent,
+    ],
     templateUrl: "./change-email.component.html",
     styleUrl: "./change-email.component.scss",
 })
