@@ -1,4 +1,4 @@
-@use '../../../../../styles/mixins' as *;
+@use "../../../../../styles/mixins" as *;
 
 :host {
     display: flex;
@@ -21,41 +21,38 @@
 
     .pulse-header__row {
         width: 100%;
-        max-width: 550px;
-        margin: 0 auto;
         display: flex;
         align-items: center;
         column-gap: 24px;
     }
- 
+
     &__header {
         margin-bottom: 24px;
-    
+
         &-logo {
-    
             max-width: 160px;
             max-height: 160px;
             width: 100%;
             height: 160px;
-    
+
             border-radius: 10px;
             border: 1px solid var(--light-grey-color);
         }
-    
+
         &-title {
             display: flex;
             flex-direction: column;
             gap: 4px;
-    
+
             h2 {
                 @include title-32px;
             }
-    
+
             div {
                 display: flex;
                 align-items: center;
                 gap: 9px;
-               
+
                 @include text-14px;
                 color: var(--dark-grey-color);
             }
@@ -84,64 +81,47 @@
         margin: 0 auto;
     }
 
-    app-primary-button::ng-deep button{
+    app-primary-button::ng-deep button {
         width: 180px;
         height: 48px;
     }
-
 }
 
 .pulse__back {
     display: flex;
-    margin-bottom: 12px;
+    margin-bottom: 24px;
 }
-.pulse-back {
-    &::ng-deep button {
-        padding: 12px 24px;
-    }
-}
-.pulse-back__inner {
-    display: flex;
-    align-items: center ;
-    gap: 8px;
-}
-.pulse-back__icon {
-    border-style: solid;
-	border-width: 2px 2px 0 0;
-	display: inline-block;
-	height: 8px;
-	transform: rotate(-135deg);
-	position: relative;
-	vertical-align: top;
-	width: 8px;
+
+.pulse-container {
+    width: 100%;
+    max-width: 550px;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 @media screen and (max-width: 1200px) {
-
     .pulse-header__row {
         gap: 16px;
         justify-content: flex-start;
     }
     .pulse__header {
         margin-bottom: 16px;
-    
+
         &-logo {
-    
             max-width: 80px;
             max-height: 80px;
             width: 100%;
             height: 80px;
         }
-    
+
         &-title {
             display: flex;
             flex-direction: column;
             gap: 4px;
-    
+
             h2 {
                 @include title-20px;
             }
-    
         }
 
         .pulse-header__row {
@@ -154,9 +134,7 @@
     }
 }
 
-
 @media screen and (max-width: 650px) {
-
     :host {
         padding: 20px 20px 48px;
     }
@@ -165,5 +143,4 @@
         margin: 0;
         align-items: flex-start;
     }
-
 }

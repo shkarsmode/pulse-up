@@ -3,17 +3,10 @@
     fadeIn
     [childrenFadeIn]="true"
     *ngIf="!isLoading">
-    <div class="pulse__back">
-        <app-secondary-button
-            class="pulse-back"
-            (handleClick)="backToPulsePage()">
-            <span class="pulse-back__inner">
-                <span class="pulse-back__icon"></span>
-                <span>Back</span>
-            </span>
-        </app-secondary-button>
+    <div class="pulse__back pulse-container">
+        <app-back-button />
     </div>
-    <div class="pulse__header pulse-header">
+    <div class="pulse__header pulse-header pulse-container">
         <div class="pulse-header__row">
             <img
                 class="pulse__header-logo"

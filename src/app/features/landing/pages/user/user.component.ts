@@ -19,13 +19,14 @@ import { Component, inject } from "@angular/core";
 import { ActivatedRoute, ParamMap, Router } from "@angular/router";
 import { SvgIconComponent } from "angular-svg-icon";
 import { InfiniteScrollDirective } from "ngx-infinite-scroll";
-import { BehaviorSubject, map, Observable, take } from "rxjs";
+import { map, Observable, take } from "rxjs";
 import { TopicQRCodePopupData } from "../../helpers/interfaces/topic-qrcode-popup-data.interface";
 import { InfiniteLoaderService } from "../../services/infinite-loader.service";
 import { TopicQrcodePopupComponent } from "../../ui/topic-qrcode-popup/topic-qrcode-popup.component";
 import { UserAvatarComponent } from "./components/user-avatar/user-avatar.component";
 import { LargePulseFooterComponent } from "@/app/shared/components/pulses/large-pulse/large-pulse-footer/large-pulse-footer.component";
 import { LargePulseFooterRowComponent } from "@/app/shared/components/pulses/large-pulse/large-pulse-footer-row/large-pulse-footer-row.component";
+import { BackButtonComponent } from "@/app/shared/components/ui-kit/buttons/back-button/back-button.component";
 
 @Component({
     selector: "app-author",
@@ -50,6 +51,7 @@ import { LargePulseFooterRowComponent } from "@/app/shared/components/pulses/lar
         QrcodeButtonComponent,
         LargePulseFooterComponent,
         LargePulseFooterRowComponent,
+        BackButtonComponent,
     ],
     providers: [InfiniteLoaderService],
 })

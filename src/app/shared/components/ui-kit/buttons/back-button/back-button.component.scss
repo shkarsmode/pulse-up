@@ -1,0 +1,20 @@
+.back-button {
+    &::ng-deep button {
+        padding: 12px 24px;
+    }
+}
+.back-button__inner {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.back-button__icon {
+    border-style: solid;
+    border-width: 2px 2px 0 0;
+    display: inline-block;
+    height: 8px;
+    transform: rotate(-135deg);
+    position: relative;
+    vertical-align: top;
+    width: 8px;
+}

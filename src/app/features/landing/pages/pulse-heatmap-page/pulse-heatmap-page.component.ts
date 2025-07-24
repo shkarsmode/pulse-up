@@ -3,16 +3,16 @@ import { CommonModule } from "@angular/common";
 import { ActivatedRoute, ParamMap, Router } from "@angular/router";
 import { toSignal } from "@angular/core/rxjs-interop";
 import { catchError, first, of, take } from "rxjs";
-import { ITopic } from "../../../../shared/interfaces";
-import { PulseService } from "../../../../shared/services/api/pulse.service";
-import { AppRoutes } from "../../../../shared/enums/app-routes.enum";
+import { ITopic } from "@/app/shared/interfaces";
+import { PulseService } from "@/app/shared/services/api/pulse.service";
+import { AppRoutes } from "@/app/shared/enums/app-routes.enum";
 import { MediaQueryService } from "@/app/shared/services/core/media-query.service";
 import { ResponsiveMapConfig } from "@/app/shared/interfaces/responsive-map-config.interface";
 import { MapComponent } from "../../ui/map/map.component";
 import { FadeInDirective } from "@/app/shared/animations/fade-in.directive";
-import { SecondaryButtonComponent } from "@/app/shared/components/ui-kit/buttons/secondary-button/secondary-button.component";
 import { FormatNumberPipe } from "@/app/shared/pipes/format-number.pipe";
 import { LoadImgPathDirective } from "@/app/shared/directives/load-img-path/load-img-path.directive";
+import { BackButtonComponent } from "@/app/shared/components/ui-kit/buttons/back-button/back-button.component";
 
 @Component({
     selector: "app-pulse-heatmap-page",
@@ -22,10 +22,10 @@ import { LoadImgPathDirective } from "@/app/shared/directives/load-img-path/load
     imports: [
         CommonModule,
         MapComponent,
-        SecondaryButtonComponent,
         FadeInDirective,
         FormatNumberPipe,
         LoadImgPathDirective,
+        BackButtonComponent,
     ],
 })
 export class PulseHeatmapPageComponent {
@@ -112,9 +112,5 @@ export class PulseHeatmapPageComponent {
                 this.pulse = pulse;
                 this.isLoading = false;
             });
-    }
-
-    public backToPulsePage(): void {
-        this.router.navigateByUrl(`topic/${this.pulse.id}`, {replaceUrl: true});
     }
 }
