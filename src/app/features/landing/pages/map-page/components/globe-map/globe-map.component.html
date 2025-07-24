@@ -26,6 +26,7 @@
     [minZoom]="0.35"
     [maxBounds]="undefined"
     (mapLoaded)="onMapLoaded($event)"
+    (markerClick)="onMarkerClick($event)"
     (zoomEnd)="onZoomEnd($event)">
     <ng-container *ngIf="map">
         <app-map-hexagons-layer
