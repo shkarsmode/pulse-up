@@ -5,7 +5,8 @@ import { IMapMarker, IMapMarkerAnimated } from "@/app/shared/interfaces/map-mark
 import { ITopic } from "@/app/shared/interfaces";
 import { PulseService } from "@/app/shared/services/api/pulse.service";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
-import { TopCellTopicsByH3Index } from "@/app/features/landing/helpers/interfaces/h3-pulses.interface";
+import { IH3Pulses } from "@/app/features/landing/helpers/interfaces/h3-pulses.interface";
+import { ICategory } from "../../interfaces/category.interface";
 
 interface TooltipData extends ITopic {
     markerId: number;
@@ -20,11 +21,17 @@ export class MapMarkersService {
     private readonly markerHover$ = new Subject<IMapMarker>();
     private markers = new BehaviorSubject<IMapMarkerAnimated[]>([]);
     private tooltipData = new BehaviorSubject<TooltipData | null>(null);
+    private categorySubject = new BehaviorSubject<ICategory | null>(null);
     private pulseCache = new Map<number, ITopic>();
-    markers$ = this.markers.asObservable();
-    tooltipData$ = this.tooltipData.asObservable();
-    get tooltipDataValue() {
+
+    public markers$ = this.markers.asObservable();
+    public tooltipData$ = this.tooltipData.asObservable();
+    public category$ = this.categorySubject.asObservable();
+    public get tooltipDataValue() {
         return this.tooltipData.getValue();
+    }
+    public set category(category: ICategory | null) {
+        this.categorySubject.next(category);
     }
 
     constructor() {
@@ -53,7 +60,7 @@ export class MapMarkersService {
         });
     }
 
-    public updateMarkers(data: TopCellTopicsByH3Index): void {
+    public updateMarkers(data: IH3Pulses): void {
         const markers: IMapMarkerAnimated[] = [];
         Object.keys(data).forEach((h3Index: any, index: number) => {
             const [lat, lng] = h3.h3ToGeo(h3Index);
@@ -68,6 +75,10 @@ export class MapMarkersService {
             });
         });
         this.markers.next(markers);
+    }
+
+    public clearMarkers(): void {
+        this.markers.next([]);
     }
 
     public hideTooltip(): void {

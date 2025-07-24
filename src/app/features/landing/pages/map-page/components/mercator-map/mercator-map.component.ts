@@ -1,6 +1,7 @@
-import { Component, effect, EventEmitter, inject, Output } from "@angular/core";
+import { Component, effect, EventEmitter, inject, OnDestroy, Output } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { toSignal } from "@angular/core/rxjs-interop";
+import { BehaviorSubject } from "rxjs";
 import { IMapMarker } from "@/app/shared/interfaces/map-marker.interface";
 import { MediaQueryService } from "@/app/shared/services/core/media-query.service";
 import { ResponsiveMapConfig } from "@/app/shared/interfaces/responsive-map-config.interface";
@@ -9,6 +10,9 @@ import { MapHexagonsLayerComponent } from "@/app/shared/components/map/map-hexag
 import { MapHeatmapLayerComponent } from "@/app/shared/components/map/map-heatmap-layer/map-heatmap-layer.component";
 import { MapZoomControlsComponent } from "@/app/shared/components/map/map-zoom-controls/map-zoom-controls.component";
 import { MapControlsComponent } from "@/app/shared/components/map/map-controls/map-controls.component";
+import { CategoryFilterComponent } from "@/app/shared/components/category-filter/category-filter.component";
+import { ICategory } from "@/app/shared/interfaces/category.interface";
+import { MapMarkersService } from "@/app/shared/services/map/map-marker.service";
 
 @Component({
     selector: "app-mercator-map",
@@ -22,10 +26,12 @@ import { MapControlsComponent } from "@/app/shared/components/map/map-controls/m
         MapHeatmapLayerComponent,
         MapZoomControlsComponent,
         MapControlsComponent,
+        CategoryFilterComponent,
     ],
 })
-export class MercatorMapComponent {
-    private mediaService = inject(MediaQueryService);
+export class MercatorMapComponent implements OnDestroy {
+    private readonly mediaService = inject(MediaQueryService);
+    private readonly mapMarkersService = inject(MapMarkersService);
 
     @Output() zoomEnd: EventEmitter<number> = new EventEmitter<number>();
     @Output() markerClick: EventEmitter<IMapMarker> = new EventEmitter<IMapMarker>();
@@ -58,12 +64,14 @@ export class MercatorMapComponent {
             ],
         },
     };
+    private selectedCategorySubject = new BehaviorSubject<ICategory | null>(null);
 
-    map: mapboxgl.Map | null = null;
-    zoom: [number] = this.configMap.default.zoom;
-    minZoom: number = this.configMap.default.minZoom;
-    maxBounds: mapboxgl.LngLatBoundsLike = this.configMap.default.maxBounds;
-    center: [number, number] = [-100.661, 37.7749];
+    public map: mapboxgl.Map | null = null;
+    public zoom: [number] = this.configMap.default.zoom;
+    public minZoom: number = this.configMap.default.minZoom;
+    public maxBounds: mapboxgl.LngLatBoundsLike = this.configMap.default.maxBounds;
+    public center: [number, number] = [-100.661, 37.7749];
+    public selectedCategory$ = this.selectedCategorySubject.asObservable();
 
     constructor() {
         effect(() => {
@@ -80,15 +88,25 @@ export class MercatorMapComponent {
         });
     }
 
-    onMapLoaded(map: mapboxgl.Map): void {
+    ngOnDestroy(): void {
+        this.mapMarkersService.category = null;
+        this.mapMarkersService.clearMarkers();
+    }
+
+    public onMapLoaded(map: mapboxgl.Map): void {
         this.map = map;
     }
 
-    onMarkerClick(marker: IMapMarker): void {
+    public onMarkerClick(marker: IMapMarker): void {
         this.markerClick.emit(marker);
     }
 
-    onZoomEnd(zoom: number): void {
+    public onZoomEnd(zoom: number): void {
         this.zoomEnd.emit(zoom);
+    }
+
+    public onSelectedCategory(category: ICategory): void {
+        this.selectedCategorySubject.next(category);
+        this.mapMarkersService.category = category;
     }
 }

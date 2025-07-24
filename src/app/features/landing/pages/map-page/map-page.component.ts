@@ -5,7 +5,6 @@ import { Projection } from "mapbox-gl";
 import { IMapMarker } from "@/app/shared/interfaces/map-marker.interface";
 import { SwitchComponent } from "@/app/shared/components/ui-kit/switch/switch/switch.component";
 import { MercatorMapComponent } from "./components/mercator-map/mercator-map.component";
-import { SimpleMapComponent } from "./components/simple-map/simple-map.component";
 import { GlobeMapComponent } from "./components/globe-map/globe-map.component";
 
 @Component({
@@ -18,7 +17,7 @@ import { GlobeMapComponent } from "./components/globe-map/globe-map.component";
 export class MapPageComponent {
     private readonly router: Router = inject(Router);
 
-    public projection: Projection["name"] = "globe";
+    public projection: Projection["name"] = "mercator";
     public switchClasses = {};
     public isProjectionToogleVisible = true;
 

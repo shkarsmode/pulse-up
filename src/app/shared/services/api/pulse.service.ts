@@ -6,11 +6,12 @@ import { API_URL } from "../../tokens/tokens";
 import { IValidateTopicTitleResponse } from "../../interfaces/validate-topic-title.response";
 import { ICategory } from "../../interfaces/category.interface";
 import { PendingTopicsService } from "../topic/pending-topics.service";
-import { TopCellTopicsByH3Index } from "@/app/features/landing/helpers/interfaces/h3-pulses.interface";
+import { IH3Pulses } from "@/app/features/landing/helpers/interfaces/h3-pulses.interface";
+import { IH3Votes } from "@/app/features/landing/helpers/interfaces/h3-votes.interface";
 
 type RequestParams = {
     [param: string]: string | number | boolean | ReadonlyArray<string | number | boolean>;
-}
+};
 
 @Injectable({
     providedIn: "root",
@@ -53,9 +54,9 @@ export class PulseService {
     }
 
     public getById(id: string | number): Observable<ITopic> {
-        return this.http.get<ITopic>(`${this.apiUrl}/topics/${id}`).pipe(
-            map((topic) => this.syncPendingTopics(topic)),
-        );
+        return this.http
+            .get<ITopic>(`${this.apiUrl}/topics/${id}`)
+            .pipe(map((topic) => this.syncPendingTopics(topic)));
     }
 
     public getMyTopics(params: { skip?: number; take?: number; state?: TopicState[] } = {}) {
@@ -107,9 +108,7 @@ export class PulseService {
         SWlongitude: number,
         resolution: number = 1,
         topicId?: number,
-    ): Observable<{
-        [key: string]: number;
-    }> {
+    ): Observable<IH3Votes> {
         if (topicId) {
             return this.getMapVotesByTopicId(
                 NElatitude,
@@ -136,9 +135,7 @@ export class PulseService {
         SWlatitude: number,
         SWlongitude: number,
         resolution: number = 1,
-    ): Observable<{
-        [key: string]: number;
-    }> {
+    ): Observable<IH3Votes> {
         return this.http
             .get<Array<{ id: string; votes: number; children: any }>>(
                 this.apiUrl +
@@ -165,9 +162,7 @@ export class PulseService {
         SWlongitude: number,
         resolution: number = 1,
         topicId: number,
-    ): Observable<{
-        [key: string]: number;
-    }> {
+    ): Observable<IH3Votes> {
         const baseUrl = this.apiUrl + "/map/votes";
         const params = new URLSearchParams({
             "NE.latitude": NElatitude.toString(),
@@ -177,7 +172,7 @@ export class PulseService {
             resolution: resolution.toString(),
             topicId: topicId.toString(),
         });
-        return this.http.get<{ [key: string]: number }>(`${baseUrl}?${params.toString()}`);
+        return this.http.get<IH3Votes>(`${baseUrl}?${params.toString()}`);
     }
 
     private getH3CellsFromChildren = ({
@@ -213,13 +208,21 @@ export class PulseService {
         );
     };
 
-    public getH3PulsesForMap(
-        NElatitude: number,
-        NElongitude: number,
-        SWlatitude: number,
-        SWlongitude: number,
-        resolution: number = 1,
-    ): Observable<TopCellTopicsByH3Index> {
+    public getH3PulsesForMap({
+        NElatitude,
+        NElongitude,
+        SWlatitude,
+        SWlongitude,
+        resolution = 1,
+        category = "",
+    }: {
+        NElatitude: number;
+        NElongitude: number;
+        SWlatitude: number;
+        SWlongitude: number;
+        resolution: number;
+        category?: string;
+    }): Observable<IH3Pulses> {
         if (resolution >= 8) resolution = 7;
         const searchParams = new URLSearchParams({
             "NE.latitude": NElatitude.toString(),
@@ -228,8 +231,11 @@ export class PulseService {
             "SW.longitude": SWlongitude.toString(),
             resolution: resolution.toString(),
         });
+        if (category) {
+            searchParams.append("category", category);
+        }
         return this.http
-            .get<TopCellTopicsByH3Index>(`${this.apiUrl}/map/top?${searchParams.toString()}`)
+            .get<IH3Pulses>(`${this.apiUrl}/map/top?${searchParams.toString()}`)
             .pipe(
                 map((response) => {
                     if (resolution > 0) return response;
@@ -239,7 +245,7 @@ export class PulseService {
                             prev[h3Index] = value;
                         }
                         return prev;
-                    }, {} as TopCellTopicsByH3Index);
+                    }, {} as IH3Pulses);
                 }),
             );
     }
@@ -290,7 +296,8 @@ export class PulseService {
             };
         }
 
-        const isUpdated = topic.stats?.totalVotes && topic.stats.totalVotes >= pendingTopic.stats.totalVotes;
+        const isUpdated =
+            topic.stats?.totalVotes && topic.stats.totalVotes >= pendingTopic.stats.totalVotes;
 
         if (isUpdated) {
             this.pendingTopicsService.remove(topic.id);
@@ -303,7 +310,7 @@ export class PulseService {
                     totalUniqueUsers: pendingTopic.stats.totalUniqueUsers,
                     lastDayVotes: pendingTopic.stats.lastDayVotes,
                 },
-            }
+            };
         }
     }
 
@@ -312,8 +319,10 @@ export class PulseService {
         for (const key in params) {
             const value = params[key];
             if (Array.isArray(value)) {
-                sanitized[key] = value.filter((value) => value !== undefined && value !== null && value !== '');
-            } else if (value !== undefined && value !== null && value !== '') {
+                sanitized[key] = value.filter(
+                    (value) => value !== undefined && value !== null && value !== "",
+                );
+            } else if (value !== undefined && value !== null && value !== "") {
                 sanitized[key] = value;
             }
         }

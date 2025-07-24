@@ -5,7 +5,7 @@ import { inject, Injectable } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import * as h3 from "h3-js";
 import { debounceTime, first, Subject, tap } from "rxjs";
-import { TopCellTopicsByH3Index } from "../helpers/interfaces/h3-pulses.interface";
+import { IH3Pulses } from "../helpers/interfaces/h3-pulses.interface";
 
 @Injectable({
     providedIn: "root",
@@ -44,7 +44,7 @@ export class MapMarkersService {
         });
     }
 
-    public updateMarkers(data: TopCellTopicsByH3Index): void {
+    public updateMarkers(data: IH3Pulses): void {
         this.markers = [];
         Object.keys(data).forEach((h3Index: any, index: number) => {
             const [lat, lng] = h3.h3ToGeo(h3Index);

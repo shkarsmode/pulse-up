@@ -122,8 +122,7 @@ export class MainHeroComponent {
         this.map = map;
     }
 
-    public onMapClick({coordinates}: IMapClickEvent) {
-        this.mapEventListenerService.onMapClick({ coordinates });
+    public onMapClick() {
         this.navigateToMapPage();
     }
 

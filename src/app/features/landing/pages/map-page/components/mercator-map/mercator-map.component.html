@@ -24,7 +24,9 @@
     (markerClick)="onMarkerClick($event)"
     (zoomEnd)="onZoomEnd($event)">
     <ng-container *ngIf="map">
-        <app-map-hexagons-layer [map]="map" />
+        <app-map-hexagons-layer
+            [map]="map"
+            [category$]="selectedCategory$" />
         <app-map-heatmap-layer [map]="map" />
     </ng-container>
 </app-map>
@@ -34,3 +36,7 @@
         <app-map-zoom-controls [map]="map" />
     </app-map-controls>
 </ng-container>
+
+<div class="categories">
+    <app-category-filter (selectedCategory)="onSelectedCategory($event)" />
+</div>
