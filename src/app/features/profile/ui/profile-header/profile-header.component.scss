@@ -1,0 +1,16 @@
+@use "../../../../../styles/mixins" as *;
+
+:host {
+    display: flex;
+    column-gap: 16px;
+    margin-bottom: 24px;
+}
+
+.header-title {
+    @include title-32px;
+    flex-grow: 1;
+}
+
+.header-actions {
+    flex-shrink: 0;
+}
