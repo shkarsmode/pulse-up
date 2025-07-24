@@ -25,7 +25,8 @@ import { FormatNumberPipe } from "@/app/shared/pipes/format-number.pipe";
 import { PulseService } from "../../../../shared/services/api/pulse.service";
 import { MapLocationService } from "../../../../shared/services/core/map-location.service";
 import { MAPBOX_STYLE } from "../../../../shared/tokens/tokens";
-import { TopCellTopicsByH3Index } from "../../helpers/interfaces/h3-pulses.interface";
+import { IH3Pulses } from "../../helpers/interfaces/h3-pulses.interface";
+import { IH3Votes } from "../../helpers/interfaces/h3-votes.interface";
 import { MapBounds } from "../../helpers/interfaces/map-bounds.interface";
 import { IMapClickEvent } from "../../helpers/interfaces/map-click-event.interface";
 import { GlobeSpinnerService } from "../../services/globe-spinner.service";
@@ -129,8 +130,8 @@ export class MapComponent implements OnInit {
     public isSpinButtonVisible = this.isSpinEnabled;
     private globalMapDataUpdated: boolean = false;
 
-    private readonly h3Pulses$: Subject<TopCellTopicsByH3Index> = new Subject();
-    private readonly heatMapData$: Subject<{ [key: string]: number }> = new Subject();
+    private readonly h3Pulses$: Subject<IH3Pulses> = new Subject();
+    private readonly heatMapData$: Subject<IH3Votes> = new Subject();
 
     public ngOnInit(): void {
         this.subscribeOnDataH3Pulses();
@@ -308,7 +309,7 @@ export class MapComponent implements OnInit {
         this.heatmapLayerService.addHeatmapToMap(this.map);
     }
 
-    private addMarkersAndUpdateH3Polygons(h3PulsesData: TopCellTopicsByH3Index): void {
+    private addMarkersAndUpdateH3Polygons(h3PulsesData: IH3Pulses): void {
         if (!this.map) return;
         if (this.isToShowMarkers) {
             this.h3LayerService.updateH3PolygonSource({ map: this.map, data: h3PulsesData });
@@ -399,13 +400,13 @@ export class MapComponent implements OnInit {
     private subscribeOnDataListHeatmap(): void {
         this.heatMapData$
             .pipe(takeUntilDestroyed(this.destroyed))
-            .subscribe((heatmapData: { [key: string]: number }) => {
+            .subscribe((heatmapData: IH3Votes) => {
                 if (!this.map) return;
                 const resolution = MapUtils.getResolutionLevel({
                     map: this.map,
                     resolutionLevelsByZoom: this.zoomResolutionMap,
                 });
-                let heatmap: { [key: string]: number } = {};
+                let heatmap: IH3Votes = {};
                 if (resolution === 0) {
                     Object.entries(heatmapData).forEach(([h3Index, numberOfVotes]) => {
                         const parsedIndex = h3Index.split(":").at(-1);

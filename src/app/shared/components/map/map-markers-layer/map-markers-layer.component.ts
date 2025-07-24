@@ -1,6 +1,15 @@
-import { Component, EventEmitter, inject, Input, Output } from "@angular/core";
+import { Component, DestroyRef, EventEmitter, inject, Input, Output } from "@angular/core";
 import { CommonModule } from "@angular/common";
-import { first, Observable, tap } from "rxjs";
+import {
+    combineLatest,
+    fromEvent,
+    merge,
+    Observable,
+    startWith,
+    switchMap,
+    tap,
+    throttleTime,
+} from "rxjs";
 import { PulseService } from "@/app/shared/services/api/pulse.service";
 import { MapUtils } from "@/app/features/landing/services/map-utils.service";
 import { AppConstants } from "@/app/shared/constants";
@@ -11,10 +20,10 @@ import {
 import { MediaUtilsService } from "@/app/features/landing/services/media-utils.service";
 import { MapMarkersService } from "@/app/shared/services/map/map-marker.service";
 import { NgxMapboxGLModule } from "ngx-mapbox-gl";
-import { throttle } from "@/app/shared/helpers/throttle";
 import { MapMarkerComponent } from "../map-marker/map-marker.component";
-import { MapBounds } from "@/app/features/landing/helpers/interfaces/map-bounds.interface";
-import { TopCellTopicsByH3Index } from "@/app/features/landing/helpers/interfaces/h3-pulses.interface";
+import { IH3Pulses } from "@/app/features/landing/helpers/interfaces/h3-pulses.interface";
+import { ICategory } from "@/app/shared/interfaces/category.interface";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 
 @Component({
     selector: "app-map-markers-layer",
@@ -24,27 +33,35 @@ import { TopCellTopicsByH3Index } from "@/app/features/landing/helpers/interface
     imports: [CommonModule, NgxMapboxGLModule, MapMarkerComponent],
 })
 export class MapMarkersLayerComponent {
+    private readonly destroyRef = inject(DestroyRef);
     private readonly pulseService = inject(PulseService);
     private readonly mapMarkersService = inject(MapMarkersService);
 
-    @Input() map: mapboxgl.Map;
-    @Input() showTooltip: boolean = false;
-    @Input() isAnimated: boolean = false;
+    @Input({ required: true }) public map!: mapboxgl.Map;
+    @Input() public showTooltip = false;
+    @Input() public isAnimated = false;
+
     @Output() public markerClick = new EventEmitter<IMapMarker>();
 
-    markers$ = this.mapMarkersService.markers$;
-    tooltipData$ = this.mapMarkersService.tooltipData$;
-    tooltipData = this.mapMarkersService.tooltipDataValue;
-    isTouchDevice = false;
+    public readonly markers$ = this.mapMarkersService.markers$;
+    public readonly tooltipData$ = this.mapMarkersService.tooltipData$;
+    public tooltipData = this.mapMarkersService.tooltipDataValue;
+    public isTouchDevice = false;
 
     ngOnInit() {
-        this.updateMarkers();
-        this.map.on("zoomend", this.updateMarkers);
-        this.map.on("move", throttle(this.updateMarkers, 500));
         this.checkIfTouchDevice();
+        combineLatest([this.mapInteraction$(), this.mapMarkersService.category$])
+            .pipe(
+                takeUntilDestroyed(this.destroyRef),
+                switchMap(([_, category]) => this.getMarkers(category)),
+                tap((data) => {
+                    this.mapMarkersService.updateMarkers(data);
+                }),
+            )
+            .subscribe();
     }
 
-    onMarkerClick(marker: IMapMarker): void {
+    public onMarkerClick(marker: IMapMarker): void {
         if (!this.isTouchDevice) {
             this.mapMarkersService.hideTooltip();
             this.markerClick.emit(marker);
@@ -55,57 +72,53 @@ export class MapMarkersLayerComponent {
 
         if (theSameMarker) {
             this.mapMarkersService.hideTooltip();
-            // this.markerClick.emit(marker);
         } else {
             this.onMarkerHover(marker);
         }
     }
 
-    onMarkerHover(marker: IMapMarker): void {
+    public onMarkerHover(marker: IMapMarker): void {
         this.mapMarkersService.handleMarkerHover(marker);
     }
 
-    onTooltipHide(): void {
+    public onTooltipHide(): void {
         this.tooltipData = null;
     }
 
-    onMarkerVisibilityChange(marker: IMapMarkerVisibilityEventData): void {
+    public onMarkerVisibilityChange(marker: IMapMarkerVisibilityEventData): void {
         if (this.tooltipData?.markerId === marker.id && !marker.isVisible) {
             this.mapMarkersService.hideTooltip();
         }
     }
 
-    private updateMarkers = (): void => {
+    public trackByMarker(marker: IMapMarker): string {
+        return `${marker.h3Index}-${marker.topicId}`;
+    }
+
+    private mapInteraction$(): Observable<Event | null> {
+        return merge(
+            fromEvent(this.map, "zoomend"),
+            fromEvent(this.map, "move").pipe(throttleTime(500)),
+        ).pipe(startWith(null));
+    }
+
+    private getMarkers(category: ICategory | null): Observable<IH3Pulses> {
         const resolution = MapUtils.getResolutionLevel({
             map: this.map,
             resolutionLevelsByZoom: AppConstants.ZOOM_RESOLUTION_MAP,
         });
 
-        const bounds = MapUtils.getMapBounds({
-            map: this.map,
-        });
+        const bounds = MapUtils.getMapBounds({ map: this.map });
 
-        this.getH3Pulses({ bounds, resolution })
-            .pipe(
-                first(),
-                tap((data) => {
-                    console.log("Markers data:", data);
-                    
-                }),
-                tap((data) => this.mapMarkersService.updateMarkers(data)),
-            )
-            .subscribe();
-    };
-
-    private getH3Pulses({
-        bounds,
-        resolution,
-    }: {
-        bounds: MapBounds;
-        resolution: number;
-    }): Observable<TopCellTopicsByH3Index> {
         const { ne, sw } = bounds;
-        return this.pulseService.getH3PulsesForMap(ne.lat, ne.lng, sw.lat, sw.lng, resolution);
+        return this.pulseService.getH3PulsesForMap({
+            NElatitude: ne.lat,
+            NElongitude: ne.lng,
+            SWlatitude: sw.lat,
+            SWlongitude: sw.lng,
+            resolution,
+            category: category?.name,
+        });
     }
 
     private checkIfTouchDevice(): void {

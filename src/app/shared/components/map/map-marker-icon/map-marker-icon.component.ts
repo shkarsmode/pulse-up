@@ -5,7 +5,7 @@ import { Component, EventEmitter, Input, OnInit, Output } from "@angular/core";
 @Component({
     selector: "app-map-marker-icon",
     standalone: true,
-    imports: [CommonModule, LoadImgPathDirective, LoadImgPathDirective],
+    imports: [CommonModule, LoadImgPathDirective],
     templateUrl: "./map-marker-icon.component.html",
     styleUrl: "./map-marker-icon.component.scss",
 })

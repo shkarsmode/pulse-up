@@ -1,13 +1,22 @@
-import { Component, inject, Input, OnInit } from "@angular/core";
-import { first, Observable, tap } from "rxjs";
+import { Component, DestroyRef, inject, Input, OnInit } from "@angular/core";
+import {
+    combineLatest,
+    fromEvent,
+    merge,
+    Observable,
+    startWith,
+    switchMap,
+    tap,
+    throttleTime,
+} from "rxjs";
 import * as h3 from "h3-js";
 import { MapPainter } from "@/app/shared/helpers/map-painter";
 import { MapUtils } from "@/app/features/landing/services/map-utils.service";
 import { AppConstants } from "@/app/shared/constants";
 import { PulseService } from "@/app/shared/services/api/pulse.service";
-import { throttle } from "@/app/shared/helpers/throttle";
-import { MapBounds } from "@/app/features/landing/helpers/interfaces/map-bounds.interface";
-import { TopCellTopicsByH3Index } from "@/app/features/landing/helpers/interfaces/h3-pulses.interface";
+import { IH3Pulses } from "@/app/features/landing/helpers/interfaces/h3-pulses.interface";
+import { ICategory } from "@/app/shared/interfaces/category.interface";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 
 @Component({
     selector: "app-map-hexagons-layer",
@@ -17,12 +26,14 @@ import { TopCellTopicsByH3Index } from "@/app/features/landing/helpers/interface
     styles: [``],
 })
 export class MapHexagonsLayerComponent implements OnInit {
+    private readonly destroyRef = inject(DestroyRef);
     private readonly pulseService = inject(PulseService);
 
-    @Input() map: mapboxgl.Map;
-    @Input() topicId?: number;
+    @Input({ required: true }) public map: mapboxgl.Map;
+    @Input({ required: true }) public category$: Observable<ICategory | null>;
+    @Input() public topicId?: number;
 
-    painter: MapPainter;
+    public painter: MapPainter;
 
     ngOnInit() {
         this.painter = new MapPainter({
@@ -30,9 +41,26 @@ export class MapHexagonsLayerComponent implements OnInit {
             sourceId: "hexagons",
         });
         this.addLayersOnMap(this.painter);
-        this.updateHexagons();
-        this.map.on("zoomend", () => this.updateHexagons())
-        this.map.on("move", throttle(() => this.updateHexagons(), 500));
+        this.subscribeToHexagonUpdates();
+    }
+
+    private subscribeToHexagonUpdates() {
+        combineLatest([this.mapInteraction$(), this.category$])
+            .pipe(
+                takeUntilDestroyed(this.destroyRef),
+                switchMap(([_, category]) => this.getHexagons(category)),
+                tap((data) => {
+                    this.updateHexagons(data);
+                }),
+            )
+            .subscribe();
+    }
+
+    private mapInteraction$(): Observable<Event | null> {
+        return merge(
+            fromEvent(this.map, "zoomend"),
+            fromEvent(this.map, "move").pipe(throttleTime(500)),
+        ).pipe(startWith(null));
     }
 
     private addLayersOnMap(painter: MapPainter): void {
@@ -57,41 +85,32 @@ export class MapHexagonsLayerComponent implements OnInit {
         });
     }
 
-    private updateHexagons(): void {
+    private getHexagons(category: ICategory | null): Observable<IH3Pulses> {
         const resolution = MapUtils.getResolutionLevel({
             map: this.map,
             resolutionLevelsByZoom: AppConstants.ZOOM_RESOLUTION_MAP,
         });
 
-        const bounds = MapUtils.getMapBounds({
+        const { ne, sw } = MapUtils.getMapBounds({
             map: this.map,
         });
 
-        this.getH3Pulses({ bounds, resolution, pulseId: this.topicId })
-            .pipe(
-                first(),
-                tap((data) => {
-                    const geojson = this.convertH3ToGeoJSON(data);
-                    this.painter.setSourceData(geojson);
-                }),
-            )
-            .subscribe();
+        return this.pulseService.getH3PulsesForMap({
+            NElatitude: ne.lat,
+            NElongitude: ne.lng,
+            SWlatitude: sw.lat,
+            SWlongitude: sw.lng,
+            resolution,
+            category: category?.name,
+        });
     }
 
-    private getH3Pulses({
-        bounds,
-        resolution,
-        pulseId,
-    }: {
-        bounds: MapBounds;
-        resolution: number;
-        pulseId?: number;
-    }): Observable<TopCellTopicsByH3Index> {
-        const { ne, sw } = bounds;
-        return this.pulseService.getH3PulsesForMap(ne.lat, ne.lng, sw.lat, sw.lng, resolution);
+    private updateHexagons(data: IH3Pulses): void {
+        const geojson = this.convertH3ToGeoJSON(data);
+        this.painter.setSourceData(geojson);
     }
 
-    private convertH3ToGeoJSON(data: TopCellTopicsByH3Index) {
+    private convertH3ToGeoJSON(data: IH3Pulses) {
         const features = Object.keys(data).map((h3Index) => {
             const polygon = h3.h3ToGeoBoundary(h3Index, true);
             return {

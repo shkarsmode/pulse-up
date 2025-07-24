@@ -1,4 +1,4 @@
-@for (marker of markers$ | async; track marker.h3Index) {
+@for (marker of markers$ | async; track trackByMarker(marker)) {
 
 <app-map-marker
     [map]="map"
