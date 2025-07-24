@@ -7,21 +7,17 @@
     [childrenFadeIn]="true"
     *ngIf="user">
     <div class="user-header">
+        <div class="pulse__back">
+            <app-back-button />
+        </div>
         <div class="user-header__top">
-            <div class="user-header__back-btn">
-                <button
-                    flatButton
-                    (click)="goBack()">
-                    <svg-icon src="assets/svg/chevron-left.svg" />
-                </button>
-            </div>
             <div class="user-header__info">
                 <app-user-avatar
                     [url]="user.picture"
                     [name]="user.name"
                     [width]="80"
                     [height]="80"
-                    class="user-header__avatar"/>
+                    class="user-header__avatar" />
                 <div class="user-header__text">
                     <h1 class="user-header__name">{{ user.name }}</h1>
                     <div class="user-header__username">&#64;{{ user.username }}</div>
@@ -59,9 +55,11 @@
                     <app-large-pulse-footer pulse-footer>
                         <div class="pulse-footer-item">
                             <app-large-pulse-footer-row [text]="topic.author.name" />
-                            <app-large-pulse-footer-row 
+                            <app-large-pulse-footer-row
                                 icon="assets/svg/pulse.svg"
-                                [text]="(topic.stats?.lastDayVotes || 0 | formatNumber) + ' in last 24h'" />
+                                [text]="
+                                    (topic.stats?.lastDayVotes || 0 | formatNumber) + ' in last 24h'
+                                " />
                         </div>
                     </app-large-pulse-footer>
                 </app-large-pulse>
