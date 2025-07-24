@@ -17,7 +17,7 @@ import { GlobeMapComponent } from "./components/globe-map/globe-map.component";
 export class MapPageComponent {
     private readonly router: Router = inject(Router);
 
-    public projection: Projection["name"] = "globe";
+    public projection: Projection["name"] = "mercator";
     public switchClasses = {};
     public isProjectionToogleVisible = true;
 
