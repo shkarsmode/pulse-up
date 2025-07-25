@@ -7,10 +7,17 @@
     [childrenFadeIn]="true"
     *ngIf="user">
     <div class="user-header">
-        <div class="pulse__back">
-            <app-back-button />
-        </div>
         <div class="user-header__top">
+            <div class="user-header__back">
+                <app-back-button />
+            </div>
+            <div class="user-header__share-btn">
+                <app-menu [content]="menuContent">
+                    <button flatButton>
+                        <svg-icon src="assets/svg/icon_share.svg" />
+                    </button>
+                </app-menu>
+            </div>
             <div class="user-header__info">
                 <app-user-avatar
                     [url]="user.picture"
@@ -27,13 +34,6 @@
                     *ngIf="user.bio">
                     {{ user.bio }}
                 </div>
-            </div>
-            <div class="user-header__share-btn">
-                <app-menu [content]="menuContent">
-                    <button flatButton>
-                        <svg-icon src="assets/svg/icon_share.svg" />
-                    </button>
-                </app-menu>
             </div>
         </div>
     </div>
