@@ -73,6 +73,8 @@ export class VoteButtonComponent implements OnInit {
     isInProgress = false;
 
     ngOnInit() {
+        console.log("VoteButtonComponent initialized with topicId:", this.topicId);
+        
         this.listenToVotingChanges();
         this.listenToUserSignedIn();
         this.checkShouldVoteAutomatically();
@@ -85,6 +87,8 @@ export class VoteButtonComponent implements OnInit {
     }
 
     voteAfterSignIn() {
+        console.log("voteAfterSignIn called");
+        
         this.sendVote({
             onSuccess: () => {
                 this.votingService.congratulate();
@@ -135,7 +139,13 @@ export class VoteButtonComponent implements OnInit {
         ])
             .pipe(
                 filter(([user, signedIn]) => !!user && !user.isAnonymous && signedIn === true),
+                tap(([user, signedIn]) => {
+                    console.log("BEFORE combineLatest:", [user, signedIn]);
+                }),
                 first(),
+                tap(([user, signedIn]) => {
+                    console.log("AFTER combineLatest:", [user, signedIn]);
+                }),
                 tap(() => {
                     this.votingService.setIsAnonymousUserSignedIn(false);
 
