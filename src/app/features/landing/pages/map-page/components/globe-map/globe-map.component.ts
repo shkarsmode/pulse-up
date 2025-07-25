@@ -163,7 +163,7 @@ export class GlobeMapComponent implements OnDestroy {
         this.zoomEnd.emit(zoom);
     }
 
-    public onSelectedCategory(category: ICategory): void {
+    public onSelectedCategory(category: ICategory | null): void {
         this.selectedCategorySubject.next(category);
         this.mapMarkersService.category = category;
     }

@@ -63,7 +63,11 @@ export class PulsesComponent implements OnInit {
         this.getTrendingPulses({ keyword: searchValue });
     }
 
-    public onCategorySelected(category: ICategory): void {
+    public onCategorySelected(category: ICategory | null): void {
+        if (!category) {
+            this.getTrendingPulses();
+            return;
+        }
         this.getTrendingPulses({ category: category.name });
     }
 
