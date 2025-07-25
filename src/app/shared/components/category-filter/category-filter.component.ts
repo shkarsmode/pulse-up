@@ -21,11 +21,11 @@ export class CategoryFilterComponent {
     private readonly pulseService = inject(PulseService);
 
     private categories: ICategory[] = [];
-    public selectControl = new FormControl<ICategory | null>(null);
+    public selectControl = new FormControl<ICategory | "all" | null>("all");
     public filterControl = new FormControl<string>("");
     public filteredCategories: ReplaySubject<ICategory[]> = new ReplaySubject<ICategory[]>();
 
-    @Output() selectedCategory = new EventEmitter<ICategory>();
+    @Output() selectedCategory = new EventEmitter<ICategory | null>();
     @ViewChild("singleSelect", { static: true }) singleSelect: MatSelect;
 
     constructor() {}
@@ -42,14 +42,14 @@ export class CategoryFilterComponent {
             )
             .subscribe();
 
-        this.filterControl.valueChanges
-            .pipe(takeUntilDestroyed(this.destroyRef))
-            .subscribe(() => {
-                this.filterCategories();
-            });
+        this.filterControl.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
+            this.filterCategories();
+        });
 
-        this.selectControl.valueChanges.subscribe((category: ICategory | null) => {
-            if (category) {
+        this.selectControl.valueChanges.subscribe((category: ICategory | "all" | null) => {
+            if (category === "all") {
+                this.selectedCategory.emit();
+            } else if (category) {
                 this.selectedCategory.emit(category);
             }
         });
@@ -67,7 +67,7 @@ export class CategoryFilterComponent {
         } else {
             search = search.toLowerCase();
         }
-        
+
         this.filteredCategories.next(
             this.categories.filter((category) => category.name.toLowerCase().indexOf(search) > -1),
         );
