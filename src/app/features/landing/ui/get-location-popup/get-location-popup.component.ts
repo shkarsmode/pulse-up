@@ -65,7 +65,12 @@ export class GetLocationPopupComponent {
         this.isError = false;
         this.geolocationService
             .getCurrentGeolocation()
-            .pipe(materialize(), take(1), delay(750), dematerialize()) // Adding a delay to simulate loading time
+            .pipe(
+                materialize(),
+                take(1),
+                delay(750),
+                dematerialize(),
+            ) // Adding a delay to simulate loading time
             .subscribe({
                 next: () => {
                     this.dialogRef.close();
