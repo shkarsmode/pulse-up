@@ -1,0 +1,13 @@
+@use "../../../../../../styles/mixins" as *;
+
+:host {
+  display: block;
+  width: 100%;
+}
+
+.card-title {
+  @include title-20px;
+  width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

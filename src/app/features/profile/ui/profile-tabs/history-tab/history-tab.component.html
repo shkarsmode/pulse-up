@@ -13,7 +13,7 @@
             @for (item of paginator.items; track item.vote.id) {
             <li>
                 <app-large-pulse [pulse]="item.topic">
-                    <app-large-pulse-footer pulse-footer>
+                    <app-large-pulse-footer ngProjectAs="card-footer">
                         <app-large-pulse-footer-row
                             icon="assets/svg/pulse.svg"
                             [text]="item.vote.updatedAt | timeFromNow" />

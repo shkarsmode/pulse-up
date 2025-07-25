@@ -58,7 +58,6 @@ export class MapMarkersService {
                 delay: this.randomInteger(100, 2000),
             });
         });
-        console.log({markers: this.markers});
     }
 
     public hideTooltip(): void {

@@ -112,16 +112,3 @@ h1 {
 
     cursor: pointer;
 }
-
-.pulse-footer-item {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    column-gap: 8px;
-
-    @media screen and (max-width: 650px) {
-        flex-direction: column;
-        align-items: flex-start;
-        row-gap: 8px;
-    }
-}

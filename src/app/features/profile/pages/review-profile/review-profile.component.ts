@@ -2,7 +2,7 @@ import { Component, inject } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { RouterModule } from "@angular/router";
 import { filter, map } from "rxjs";
-import { UserAvatarComponent } from "../../../landing/pages/user/components/user-avatar/user-avatar.component";
+import { UserAvatarComponent } from "../../../landing/ui/user-avatar/user-avatar.component";
 import { PrimaryButtonComponent } from "@/app/shared/components/ui-kit/buttons/primary-button/primary-button.component";
 import { AppRoutes } from "@/app/shared/enums/app-routes.enum";
 import { InfiniteLoaderService } from "@/app/features/landing/services/infinite-loader.service";

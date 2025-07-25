@@ -50,10 +50,10 @@
 
         <div class="pulse__vote">
             @if (vote && !isActiveVote) {
-                <div class="pulse__last-vote">
-                    <svg-icon src="assets/svg/pin.svg"></svg-icon>
-                    {{ lastVoteInfo }}
-                </div>
+            <div class="pulse__last-vote">
+                <svg-icon src="assets/svg/pin.svg"></svg-icon>
+                {{ lastVoteInfo }}
+            </div>
             }
             <div class="pulse__buttons">
                 <app-vote-button
@@ -73,13 +73,21 @@
                 </app-menu>
             </div>
             @if (topic.campaign) {
-                <app-pulse-campaign
-                    [campaign]="topic.campaign"
-                    [stats]="topic.stats" />
-                <button style="background-color: #007bff; color: white; border: none; border-radius: 4px; padding: 10px 15px; cursor: pointer;"
-                    (click)="setAnotherData()">
-                    Set another data
-                </button>
+            <app-pulse-campaign
+                [campaign]="topic.campaign"
+                [stats]="topic.stats" />
+            <button
+                style="
+                    background-color: #007bff;
+                    color: white;
+                    border: none;
+                    border-radius: 4px;
+                    padding: 10px 15px;
+                    cursor: pointer;
+                "
+                (click)="setAnotherData()">
+                Set another data
+            </button>
             }
         </div>
     </div>
@@ -94,16 +102,16 @@
                 #description
                 [innerHTML]="isReadMore ? topic.description : shortPulseDescription"></div>
             @if (!isReadMore) {
-                <div
-                    class="pulse__info-description-read-more"
-                    (click)="onReadMore()">
-                    Read More
-                </div>
+            <div
+                class="pulse__info-description-read-more"
+                (click)="onReadMore()">
+                Read More
+            </div>
             }
         </div>
         <div class="pulse__info-keywords">
             @for (keyword of topic.keywords; track keyword) {
-                <div>{{ keyword }}</div>
+            <div>{{ keyword }}</div>
             }
         </div>
         <div class="pulse__info-activity">
@@ -144,9 +152,9 @@
     <h2 class="pulse__slider-title">You may also like</h2>
     <app-slider>
         @for (pulse of suggestions; track pulse.id; let i = $index) {
-            <li class="splide__slide">
-                <app-top-pulse-card [pulse]="pulse" />
-            </li>
+        <li class="splide__slide">
+            <app-top-pulse-card [pulse]="pulse" />
+        </li>
         }
     </app-slider>
 </div>

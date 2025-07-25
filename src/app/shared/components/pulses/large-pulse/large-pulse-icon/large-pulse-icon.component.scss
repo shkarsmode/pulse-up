@@ -1,0 +1,31 @@
+.icon {
+    position: relative;
+    width: var(--size);
+    height: var(--size);
+
+    border: 1px solid var(--light-grey-color);
+    border-radius: 8px;
+    padding: 8px;
+    overflow: hidden;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    &.icon--lg {
+        --size: 140px;
+        @media screen and (max-width: 650px) {
+            --size: 80px;
+        }
+    }
+    &.icon--md {
+        --size: 80px;
+    }
+
+    img {
+        max-width: 100%;
+        max-height: 100%;
+        object-fit: cover;
+        border-radius: 8px;
+    }
+}

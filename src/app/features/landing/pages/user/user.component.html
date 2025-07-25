@@ -52,7 +52,7 @@
             @for (topic of paginator.items; track topic.id) {
             <li>
                 <app-large-pulse [pulse]="topic">
-                    <app-large-pulse-footer pulse-footer>
+                    <app-large-pulse-footer ngProjectAs="card-footer">
                         <div class="pulse-footer-item">
                             <app-large-pulse-footer-row [text]="topic.author.name" />
                             <app-large-pulse-footer-row

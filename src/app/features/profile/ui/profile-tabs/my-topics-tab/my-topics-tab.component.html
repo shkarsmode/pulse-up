@@ -25,7 +25,7 @@
                 @for (topic of paginator.items; track topic.id) {
                 <li>
                     <app-large-pulse [pulse]="topic">
-                        <app-large-pulse-footer pulse-footer>
+                        <app-large-pulse-footer ngProjectAs="card-footer">
                             <app-large-pulse-footer-row
                                 [text]="
                                     'Created: ' + (topic.createdAt | date : 'MMM d, y') || ''
