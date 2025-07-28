@@ -13,7 +13,8 @@
                 @if (isActiveVote || (isAnimating$ | async)) {
                 <svg-icon
                     src="assets/svg/logo/logo-v2.svg"
-                    heartBeatAnimation />
+                    class="pulse-button__svg--animating"
+                     />
                 } @else {
                 <svg-icon src="assets/svg/logo/logo-v2.svg" />
                 }
