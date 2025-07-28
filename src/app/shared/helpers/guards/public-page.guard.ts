@@ -6,7 +6,7 @@ import {
     MaybeAsync,
     RouterStateSnapshot,
 } from "@angular/router";
-import { catchError, map, of, switchMap } from "rxjs";
+import { catchError, filter, map, of, switchMap } from "rxjs";
 import { AuthenticationService } from "../../services/api/authentication.service";
 import { LoadingService } from "../../services/core/loading.service";
 import { AppInitializerService } from "../../services/core/app-initializer.service";
@@ -25,9 +25,14 @@ export class PublicPageGuard implements CanActivate {
     ): MaybeAsync<GuardResult> {
         const userToken = this.authenticationService.userTokenValue;
         const anonymousToken = this.authenticationService.anonymousUserValue;
-        
+        this.loadingService.isLoading = true;
+
         if (userToken || anonymousToken) {
-            return this.loadInitialData().pipe(map(() => true));
+            this.appInitializerService.loadInitialData({ isAuthenticatedUser: !!userToken });
+            return this.appInitializerService.initialized$.pipe(
+                filter((initialized) => initialized),
+                map(() => true),
+            );
         }
 
         return this.authenticationService.loginAsAnonymousThroughTheFirebase().pipe(
@@ -35,16 +40,12 @@ export class PublicPageGuard implements CanActivate {
                 console.log("PublicPageGuard error:", error);
                 return of(false);
             }),
-            switchMap(() => this.loadInitialData()),
+            switchMap(() => {
+            this.appInitializerService.loadInitialData({ isAuthenticatedUser: false });
+                return this.appInitializerService.initialized$;
+            }),
+            filter((initialized) => initialized),
             map(() => true),
         );
     }
-
-    private loadInitialData = () => {
-        if (this.appInitializerService.initialized) {
-            return this.appInitializerService.initialData$;
-        }
-        this.loadingService.isLoading = true;
-        return this.appInitializerService.loadInitialData();
-    };
 }

@@ -1,0 +1,18 @@
+<button
+    mat-icon-button
+    [tp]="tpl"
+    tpVariation="popper"
+    [tpIsVisible]="tooltipVisible"
+    [cdkCopyToClipboard]="topicUrl"
+    aria-label="Share topic"
+    tpClassName="tippy-bg--purple"
+    class="copy-topic-button"
+    (click)="onClick()">
+    <svg-icon
+        src="assets/svg/copy.svg"
+        ariaLabel="copy link" />
+</button>
+
+<ng-template #tpl>
+    <div class="tooltip">Copied!</div>
+</ng-template>

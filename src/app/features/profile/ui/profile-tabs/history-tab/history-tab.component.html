@@ -11,17 +11,10 @@
         (scrolled)="loadMore(paginator)">
         <ul class="user-votes__list">
             @for (item of paginator.items; track item.vote.id) {
-            <li>
-                <app-large-pulse [pulse]="item.topic">
-                    <app-large-pulse-footer pulse-footer>
-                        <app-large-pulse-footer-row
-                            icon="assets/svg/pulse.svg"
-                            [text]="item.vote.updatedAt | timeFromNow" />
-                        <app-large-pulse-footer-row
-                            icon="assets/svg/pin.svg"
-                            [text]="item.vote.location" />
-                    </app-large-pulse-footer>
-                </app-large-pulse>
+            <li *ngIf="item.topic">
+                <app-history-list-item
+                    [data]="item.topic"
+                    [vote]="item.vote" />
             </li>
             }
         </ul>

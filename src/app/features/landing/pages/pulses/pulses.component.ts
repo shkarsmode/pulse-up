@@ -1,24 +1,24 @@
-import { Component, inject, OnInit } from "@angular/core";
+import { Component, DestroyRef, inject, OnInit } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { RouterModule } from "@angular/router";
 import { SvgIconComponent } from "angular-svg-icon";
-import { first, map, Observable } from "rxjs";
+import { first, map, Observable, tap } from "rxjs";
 import { InfiniteScrollDirective } from "ngx-infinite-scroll";
 import { IPaginator, ITopic } from "@/app/shared/interfaces";
 import { PulseService } from "@/app/shared/services/api/pulse.service";
 import { InputSearchComponent } from "../../ui/input-search/input-search.component";
-import { LargePulseComponent } from "@/app/shared/components/pulses/large-pulse/large-pulse.component";
 import { PromoteAdsComponent } from "../../ui/promote-ads/promote-ads.component";
 import { InfiniteLoaderService } from "../../services/infinite-loader.service";
 import { AppConstants } from "@/app/shared/constants/app.constants";
 import { LoadingIndicatorComponent } from "@/app/shared/components/loading-indicator/loading-indicator.component";
 import { AppRoutes } from "@/app/shared/enums/app-routes.enum";
-import { LargePulseFooterComponent } from "@/app/shared/components/pulses/large-pulse/large-pulse-footer/large-pulse-footer.component";
-import { LargePulseFooterRowComponent } from "@/app/shared/components/pulses/large-pulse/large-pulse-footer-row/large-pulse-footer-row.component";
-import { FormatNumberPipe } from "@/app/shared/pipes/format-number.pipe";
 import { CategoryFilterComponent } from "@/app/shared/components/category-filter/category-filter.component";
 import { ICategory } from "@/app/shared/interfaces/category.interface";
 import { SpinnerComponent } from "@/app/shared/components/ui-kit/spinner/spinner.component";
+import { TrendingTopicsListItemComponent } from "../../ui/trending-topics-list-item/trending-topics-list-item.component";
+import { VotesService } from "@/app/shared/services/votes/votes.service";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
+import { IVote } from "@/app/shared/interfaces/vote.interface";
 
 @Component({
     selector: "app-pulses",
@@ -32,19 +32,18 @@ import { SpinnerComponent } from "@/app/shared/components/ui-kit/spinner/spinner
         InfiniteScrollDirective,
         LoadingIndicatorComponent,
         InputSearchComponent,
-        LargePulseComponent,
         PromoteAdsComponent,
-        LargePulseFooterComponent,
-        LargePulseFooterRowComponent,
-        FormatNumberPipe,
         CategoryFilterComponent,
         SpinnerComponent,
+        TrendingTopicsListItemComponent,
     ],
     providers: [InfiniteLoaderService],
 })
 export class PulsesComponent implements OnInit {
+    private readonly destroyRef = inject(DestroyRef);
     private readonly pulseService = inject(PulseService);
     private readonly infiniteLoaderService = inject(InfiniteLoaderService);
+    private readonly votesService = inject(VotesService);
 
     public pulses: ITopic[] = [];
     public isLoading: boolean = true;
@@ -52,6 +51,7 @@ export class PulsesComponent implements OnInit {
     public loading$: Observable<boolean>;
     public paginator$: Observable<IPaginator<ITopic>>;
     public searchInFocus: boolean = false;
+    public votes$ = this.votesService.votesByTopicId$.pipe(takeUntilDestroyed(this.destroyRef));
 
     public ngOnInit(): void {
         this.getTrendingPulses();

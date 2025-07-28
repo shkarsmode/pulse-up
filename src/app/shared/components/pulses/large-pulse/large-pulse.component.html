@@ -1,14 +1,23 @@
-<div class="left">
-    <div class="logo">
-        <img [src]="pulse.icon" width="128" height="128" [alt]="pulse.title" appLoadImgPath />
-        <div *ngIf="archived" class="logo-label">Archived</div>
+<div class="card-wrap" routerLink="/topic/{{ pulse.id }}">
+    <div class="card-top">
+        <div class="card-icon">
+            <ng-content select="card-icon"></ng-content>
+        </div>
+        <div class="card-heading">
+            <div class="card-heading__content">
+                <ng-content select="card-heading"></ng-content>
+            </div>
+            <svg-icon
+                src="assets/svg/arrow-left.svg"
+                class="card-heading__arrow" />
+        </div>
+    </div>
+
+    <div class="card-body">
+        <ng-content select="card-body"></ng-content>
     </div>
 </div>
 
-<div class="right">
-    <h3>{{ pulse.title }}</h3>
-    <div class="description">{{ pulse.description }}</div>
-    <div class="footer">
-        <ng-content select="[pulse-footer]"></ng-content>
-    </div>
+<div class="card-footer">
+    <ng-content select="card-footer"></ng-content>
 </div>

@@ -1,0 +1,7 @@
+<svg-icon
+    *ngIf="icon"
+    [src]="icon"
+    [ariaLabel]="label"
+    class="card-metric-icon" />
+<ng-content />
+<div class="card-metric-text">{{ text }}</div>

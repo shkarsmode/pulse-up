@@ -5,7 +5,7 @@ import { Pipe, PipeTransform } from '@angular/core';
     standalone: true,
 })
 export class FormatNumberPipe implements PipeTransform {
-    public transform(value: number): string | number {
+    public transform(value: number): string {
         if (value / 1_000_000 >= 10) 
             return Math.floor(value / 1_000_000) + 'M';
 
@@ -18,7 +18,7 @@ export class FormatNumberPipe implements PipeTransform {
         if (value / 1_000 >= 1) 
             return this.getRoundedToOneDecimalValueBasedOnNumber(value, 1_000) + 'K';
 
-        return value;
+        return value.toString();
     }
 
     private getRoundedToOneDecimalValueBasedOnNumber(

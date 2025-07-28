@@ -51,18 +51,9 @@
         <ul class="user-topics__list">
             @for (topic of paginator.items; track topic.id) {
             <li>
-                <app-large-pulse [pulse]="topic">
-                    <app-large-pulse-footer pulse-footer>
-                        <div class="pulse-footer-item">
-                            <app-large-pulse-footer-row [text]="topic.author.name" />
-                            <app-large-pulse-footer-row
-                                icon="assets/svg/pulse.svg"
-                                [text]="
-                                    (topic.stats?.lastDayVotes || 0 | formatNumber) + ' in last 24h'
-                                " />
-                        </div>
-                    </app-large-pulse-footer>
-                </app-large-pulse>
+                <app-user-topics-list-item
+                    [data]="topic"
+                    [vote]="(votes$ | async)?.get(topic.id)" />
             </li>
             }
         </ul>
@@ -89,6 +80,6 @@
         <app-socials-button
             [variant]="'email'"
             [url]="shareProfileUrl" />
-        <app-qrcode-button (handleClick)="openQrCodePopup()" />
+        <app-qrcode-button [url]="shareProfileUrl" />
     </div>
 </ng-template>
