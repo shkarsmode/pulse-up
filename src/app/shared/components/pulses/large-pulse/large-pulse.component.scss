@@ -47,27 +47,10 @@
     transform: rotate(180deg);
 }
 
-.card-body {
+.card-body:not(:empty) {
     margin-top: 10px;
 }
 
-.card-footer {
+.card-footer:not(:empty) {
     margin-top: 16px;
 }
-
-// .right {
-//     width: 100%;
-//     flex-grow: 1;
-//     display: flex;
-//     flex-direction: column;
-//     justify-content: center;
-//     overflow: hidden;
-
-//     h3 {
-//         @media screen and (max-width: 650px) {
-//             @include title-20px;
-//         }
-//     }
-// }
-
-

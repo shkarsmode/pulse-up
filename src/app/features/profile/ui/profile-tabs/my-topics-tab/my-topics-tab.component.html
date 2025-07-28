@@ -24,17 +24,9 @@
             <ul class="user-topics__list">
                 @for (topic of paginator.items; track topic.id) {
                 <li>
-                    <app-large-pulse [pulse]="topic">
-                        <app-large-pulse-footer ngProjectAs="card-footer">
-                            <app-large-pulse-footer-row
-                                [text]="
-                                    'Created: ' + (topic.createdAt | date : 'MMM d, y') || ''
-                                " />
-                            @if (isNotExpired(topic.endsAt)) {
-                            <app-large-pulse-footer-row [text]="topic.endsAt | timeToEnd" />
-                            }
-                        </app-large-pulse-footer>
-                    </app-large-pulse>
+                    <app-my-topics-list-item
+                        [data]="topic"
+                        [vote]="(votes$ | async)?.get(topic.id)" />
                 </li>
                 }
             </ul>

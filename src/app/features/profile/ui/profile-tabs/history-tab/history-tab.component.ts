@@ -16,6 +16,7 @@ import { LoadingIndicatorComponent } from "@/app/shared/components/loading-indic
 import { LargePulseFooterComponent } from "@/app/shared/components/pulses/large-pulse/large-pulse-footer/large-pulse-footer.component";
 import { LargePulseFooterRowComponent } from "@/app/shared/components/pulses/large-pulse/large-pulse-footer-row/large-pulse-footer-row.component";
 import { TimeFromNowPipe } from "@/app/shared/pipes/time-from-now.pipe";
+import { HistoryListItemComponent } from "../history-list-item/history-list-item.component";
 
 interface IVoteWithTopic {
     vote: IVote;
@@ -29,11 +30,8 @@ interface IVoteWithTopic {
         CommonModule,
         InfiniteScrollDirective,
         SpinnerComponent,
-        LargePulseComponent,
         LoadingIndicatorComponent,
-        LargePulseFooterComponent,
-        LargePulseFooterRowComponent,
-        TimeFromNowPipe,
+        HistoryListItemComponent,
     ],
     providers: [InfiniteLoaderService],
     templateUrl: "./history-tab.component.html",

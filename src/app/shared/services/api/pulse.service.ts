@@ -59,7 +59,9 @@ export class PulseService {
             .pipe(map((topic) => this.syncPendingTopics(topic)));
     }
 
-    public getMyTopics(params: { skip?: number; take?: number; state?: TopicState[] } = {}) {
+    public getMyTopics(
+        params: { skip?: number; take?: number; state?: TopicState[]; includeStats?: boolean } = {},
+    ) {
         return this.http.get<ITopic[]>(`${this.apiUrl}/topics/my`, { params });
     }
 
@@ -234,20 +236,18 @@ export class PulseService {
         if (category) {
             searchParams.append("category", category);
         }
-        return this.http
-            .get<IH3Pulses>(`${this.apiUrl}/map/top?${searchParams.toString()}`)
-            .pipe(
-                map((response) => {
-                    if (resolution > 0) return response;
-                    return Object.entries(response).reduce((prev, [key, value]) => {
-                        const h3Index = key.split(":").at(-1);
-                        if (h3Index) {
-                            prev[h3Index] = value;
-                        }
-                        return prev;
-                    }, {} as IH3Pulses);
-                }),
-            );
+        return this.http.get<IH3Pulses>(`${this.apiUrl}/map/top?${searchParams.toString()}`).pipe(
+            map((response) => {
+                if (resolution > 0) return response;
+                return Object.entries(response).reduce((prev, [key, value]) => {
+                    const h3Index = key.split(":").at(-1);
+                    if (h3Index) {
+                        prev[h3Index] = value;
+                    }
+                    return prev;
+                }, {} as IH3Pulses);
+            }),
+        );
     }
 
     public validateTitle(value: string) {
