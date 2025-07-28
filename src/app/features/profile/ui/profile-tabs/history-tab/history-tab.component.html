@@ -11,7 +11,7 @@
         (scrolled)="loadMore(paginator)">
         <ul class="user-votes__list">
             @for (item of paginator.items; track item.vote.id) {
-            <li>
+            <li *ngIf="item.topic">
                 <app-history-list-item
                     [data]="item.topic"
                     [vote]="item.vote" />

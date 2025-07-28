@@ -11,16 +11,13 @@ import { PulseService } from "@/app/shared/services/api/pulse.service";
 import { SpinnerComponent } from "@/app/shared/components/ui-kit/spinner/spinner.component";
 import { CommonModule } from "@angular/common";
 import { InfiniteScrollDirective } from "ngx-infinite-scroll";
-import { LargePulseComponent } from "@/app/shared/components/pulses/large-pulse/large-pulse.component";
 import { LoadingIndicatorComponent } from "@/app/shared/components/loading-indicator/loading-indicator.component";
-import { LargePulseFooterComponent } from "@/app/shared/components/pulses/large-pulse/large-pulse-footer/large-pulse-footer.component";
-import { LargePulseFooterRowComponent } from "@/app/shared/components/pulses/large-pulse/large-pulse-footer-row/large-pulse-footer-row.component";
-import { TimeFromNowPipe } from "@/app/shared/pipes/time-from-now.pipe";
 import { HistoryListItemComponent } from "../history-list-item/history-list-item.component";
+import { ActivatedRoute } from "@angular/router";
 
 interface IVoteWithTopic {
     vote: IVote;
-    topic: ITopic;
+    topic?: ITopic;
 }
 
 @Component({
@@ -38,18 +35,26 @@ interface IVoteWithTopic {
     styleUrl: "./history-tab.component.scss",
 })
 export class HistoryTabComponent implements OnInit {
+    private readonly route = inject(ActivatedRoute);
     private readonly destroyed = inject(DestroyRef);
     private readonly voteService = inject(VoteService);
     private readonly pulseService = inject(PulseService);
     private readonly profileService = inject(ProfileService);
     private readonly infiniteLoaderService = inject(InfiniteLoaderService<IVoteWithTopic>);
 
+    private readonly tabIndex = 0;
     private initialLoading = new BehaviorSubject(false);
-    initialLoading$ = this.initialLoading.asObservable();
-    paginator$: Observable<IPaginator<IVoteWithTopic>>;
-    loading$: Observable<boolean>;
-    profile$ = this.profileService.profile$;
-    topics = new Map<number, ITopic>();
+    public initialLoading$ = this.initialLoading.asObservable();
+    public paginator$: Observable<IPaginator<IVoteWithTopic>>;
+    public loading$: Observable<boolean>;
+    public profile$ = this.profileService.profile$;
+    public topics = new Map<number, ITopic>();
+    public selectedTabIndex = 0;
+
+    constructor() {
+        const tabFromUrl = Number(this.route.snapshot.queryParamMap.get("tab"));
+        this.selectedTabIndex = isNaN(tabFromUrl) ? 0 : tabFromUrl;
+    }
 
     ngOnInit(): void {
         this.profile$
@@ -66,7 +71,14 @@ export class HistoryTabComponent implements OnInit {
             .subscribe();
     }
 
-    loadMore = this.infiniteLoaderService.loadMore.bind(this.infiniteLoaderService);
+    private get isActiveTab(): boolean {
+        return this.selectedTabIndex === this.tabIndex;
+    }
+
+    public loadMore(paginator: IPaginator<IVoteWithTopic>) {
+        if (!this.isActiveTab) return;
+        return this.infiniteLoaderService.loadMore.bind(this.infiniteLoaderService)(paginator);
+    }
 
     private loadVotes() {
         this.infiniteLoaderService.init({
@@ -83,12 +95,10 @@ export class HistoryTabComponent implements OnInit {
                                 switchMap(() => {
                                     const votesWithTopics = votes.reduce<IVoteWithTopic[]>(
                                         (all, vote) => {
-                                            if (this.topics.has(vote.topicId)) {
-                                                all.push({
-                                                    vote,
-                                                    topic: this.topics.get(vote.topicId)!,
-                                                });
-                                            }
+                                            all.push({
+                                                vote,
+                                                topic: this.topics.get(vote.topicId)!,
+                                            });
                                             return all;
                                         },
                                         [],

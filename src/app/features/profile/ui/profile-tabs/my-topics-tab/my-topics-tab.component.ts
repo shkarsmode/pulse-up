@@ -1,6 +1,6 @@
 import { Component, DestroyRef, inject, OnInit } from "@angular/core";
 import { CommonModule } from "@angular/common";
-import { RouterModule } from "@angular/router";
+import { ActivatedRoute, RouterModule } from "@angular/router";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { BehaviorSubject, filter, map, Observable, tap } from "rxjs";
 import { SvgIconComponent } from "angular-svg-icon";
@@ -34,12 +34,14 @@ import { IVote } from "@/app/shared/interfaces/vote.interface";
     standalone: true,
 })
 export class MyTopicsTabComponent implements OnInit {
+    private readonly route = inject(ActivatedRoute);
     private readonly destroyRef = inject(DestroyRef);
     private readonly pulseService = inject(PulseService);
     private readonly profileService = inject(ProfileService);
     private readonly infiniteLoaderService = inject(InfiniteLoaderService<ITopic>);
     private readonly votesService = inject(VotesService);
 
+    private readonly tabIndex = 1;
     private initialLoading = new BehaviorSubject(false);
     public initialLoading$ = this.initialLoading.asObservable();
     public paginator$: Observable<IPaginator<ITopic>>;
@@ -49,8 +51,12 @@ export class MyTopicsTabComponent implements OnInit {
     public hasTopics$ = this.topicsCount$.pipe(map((count) => !!count));
     public addTopicRoute = "/" + AppRoutes.User.Topic.SUGGEST;
     public votes$ = this.votesService.votesByTopicId$.pipe(takeUntilDestroyed(this.destroyRef));
+    public selectedTabIndex = 0;
 
-    loadMore = this.infiniteLoaderService.loadMore.bind(this.infiniteLoaderService);
+    constructor() {
+        const tabFromUrl = Number(this.route.snapshot.queryParamMap.get("tab"));
+        this.selectedTabIndex = isNaN(tabFromUrl) ? 0 : tabFromUrl;
+    }
 
     ngOnInit() {
         this.profile$
@@ -66,7 +72,16 @@ export class MyTopicsTabComponent implements OnInit {
             .subscribe();
     }
 
-    isNotExpired(date: string): boolean {
+    private get isActiveTab(): boolean {
+        return this.selectedTabIndex === this.tabIndex;
+    }
+
+    public loadMore(paginator: IPaginator<ITopic>) {
+        if (!this.isActiveTab) return;
+        return this.infiniteLoaderService.loadMore.bind(this.infiniteLoaderService)(paginator);
+    }
+
+    public isNotExpired(date: string): boolean {
         return new Date(date) > new Date();
     }
 
