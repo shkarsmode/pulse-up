@@ -1,64 +1,51 @@
 import { Component, inject, Input } from "@angular/core";
-import { AngularSvgIconModule } from "angular-svg-icon";
-import { MatButtonModule } from "@angular/material/button";
 import { LargePulseComponent } from "@/app/shared/components/pulses/large-pulse/large-pulse.component";
 import { LargePulseIconComponent } from "@/app/shared/components/pulses/large-pulse/large-pulse-icon/large-pulse-icon.component";
-import { FormatNumberPipe } from "@/app/shared/pipes/format-number.pipe";
+import { SettingsService } from "@/app/shared/services/api/settings.service";
+import { IVote } from "@/app/shared/interfaces/vote.interface";
 import { ITopic } from "@/app/shared/interfaces";
+import { VoteUtils } from "@/app/shared/helpers/vote-utils";
 import { LargePulseTitleComponent } from "@/app/shared/components/pulses/large-pulse/large-pulse-title/large-pulse-title.component";
 import { LargePulseDescriptionComponent } from "@/app/shared/components/pulses/large-pulse/large-pulse-description/large-pulse-description.component";
-import { LargePulseMetaComponent } from "@/app/shared/components/pulses/large-pulse/large-pulse-meta/large-pulse-meta.component";
 import { LargePulseMetricComponent } from "@/app/shared/components/pulses/large-pulse/large-pulse-metric/large-pulse-metric.component";
+import { AngularSvgIconModule } from "angular-svg-icon";
 import { MenuComponent } from "@/app/shared/components/ui-kit/menu/menu.component";
+import { CopyTopicButtonComponent } from "../copy-topic-button/copy-topic-button.component";
 import { SocialsButtonComponent } from "@/app/shared/components/ui-kit/buttons/socials-button/socials-button.component";
 import { QrcodeButtonComponent } from "@/app/shared/components/ui-kit/buttons/qrcode-button/qrcode-button.component";
-import { SettingsService } from "@/app/shared/services/api/settings.service";
-import { DialogService } from "@/app/shared/services/core/dialog.service";
-import { TopicQrcodePopupComponent } from "../topic-qrcode-popup/topic-qrcode-popup.component";
-import { TopicQRCodePopupData } from "../../helpers/interfaces/topic-qrcode-popup-data.interface";
-import { CopyTopicButtonComponent } from "../copy-topic-button/copy-topic-button.component";
+import { FormatNumberPipe } from "@/app/shared/pipes/format-number.pipe";
 
 @Component({
-    selector: "app-topics-list-item",
+    selector: "app-user-topics-list-item",
     standalone: true,
     imports: [
         LargePulseComponent,
         LargePulseIconComponent,
-        FormatNumberPipe,
         LargePulseTitleComponent,
         LargePulseDescriptionComponent,
-        LargePulseMetaComponent,
         LargePulseMetricComponent,
         AngularSvgIconModule,
-        MatButtonModule,
         MenuComponent,
+        CopyTopicButtonComponent,
         SocialsButtonComponent,
         QrcodeButtonComponent,
-        CopyTopicButtonComponent,
+        FormatNumberPipe,
     ],
-    templateUrl: "./topics-list-item.component.html",
-    styleUrl: "./topics-list-item.component.scss",
+    templateUrl: "./user-topics-list-item.component.html",
+    styleUrl: "./user-topics-list-item.component.scss",
 })
-export class TopicsListItemComponent {
-    private readonly dialogService = inject(DialogService);
+export class UserTopicsListItemComponent {
     private readonly settingsService = inject(SettingsService);
 
     @Input({ required: true }) data: ITopic;
+    @Input() vote?: IVote | null = null;
 
     public get topicUrl() {
         return this.settingsService.shareTopicBaseUrl + this.data.shareKey;
     }
-
-    public openQrCodePopup = (): void => {
-        this.dialogService.open<TopicQrcodePopupComponent, TopicQRCodePopupData>(
-            TopicQrcodePopupComponent,
-            {
-                width: "400px",
-                data: {
-                    link: this.topicUrl,
-                    type: "topic",
-                },
-            },
+    public get isVoteActive() {
+        return (
+            !!this.vote && VoteUtils.isActiveVote(this.vote, this.settingsService.minVoteInterval)
         );
-    };
+    }
 }

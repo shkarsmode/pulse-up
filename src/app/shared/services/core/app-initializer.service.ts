@@ -1,31 +1,61 @@
 import { inject, Injectable } from "@angular/core";
-import { BehaviorSubject, Observable, switchMap, tap } from "rxjs";
+import { BehaviorSubject, combineLatest, filter, first, tap } from "rxjs";
 import { SettingsService } from "../api/settings.service";
-import { ISettings } from "../../interfaces";
-
-interface IInitialData {
-    settings: ISettings;
-}
+import { VotesService } from "../votes/votes.service";
 
 @Injectable({ providedIn: "root" })
 export class AppInitializerService {
-    private readonly settingsService: SettingsService = inject(SettingsService);
-    private initialData = new BehaviorSubject<IInitialData | null>(null);
-    public initialData$ = this.initialData.asObservable();
-    public initialized = false;
+    private readonly settingsService = inject(SettingsService);
+    private readonly votesService = inject(VotesService);
 
-    loadInitialData(): Observable<IInitialData | null> {
-        if (this.initialized) {
-            return this.initialData.asObservable();
+    private initialized = new BehaviorSubject<boolean>(false);
+    public initialized$ = this.initialized.asObservable();
+
+    public loadInitialData({ isAuthenticatedUser }: { isAuthenticatedUser: boolean }): void {
+        if (this.initialized.value) {
+            return;
         }
-        return this.settingsService.getSettings().pipe(
-            tap((data) => {
-                this.initialData.next({
-                    settings: data,
-                });
-                this.initialized = true;
-            }),
-            switchMap(() => this.initialData.asObservable()),
-        );
+        if (isAuthenticatedUser) {
+            this.updateAuthUserData();
+        } else {
+            this.updateAnonymousUserData();
+        }
+    }
+
+    public resetInitialization(): void {
+        this.initialized.next(false);
+    }
+
+    private updateAuthUserData() {
+        this.settingsService.updateSettings();
+        this.votesService.updateVotes();
+        combineLatest([this.settingsService.loaded$, this.votesService.loaded$])
+            .pipe(
+                filter(([settingsLoaded, votesLoaded]) => settingsLoaded && votesLoaded),
+                first(),
+                tap(() => this.initialized.next(true)),
+            )
+            .subscribe({
+                error: (err) => {
+                    console.error("Failed to load initial data", err);
+                    this.initialized.next(false);
+                },
+            });
+    }
+    private updateAnonymousUserData() {
+        this.settingsService.updateSettings();
+        this.votesService.clearVotes();
+        this.settingsService.loaded$
+            .pipe(
+                filter((loaded) => loaded),
+                first(),
+                tap(() => this.initialized.next(true)),
+            )
+            .subscribe({
+                error: (err) => {
+                    console.error("Failed to load initial data", err);
+                    this.initialized.next(false);
+                },
+            });
     }
 }

@@ -1,0 +1,134 @@
+.card-footer {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-column-gap: 16px;
+}
+
+.card-footer__left {
+    display: flex;
+    align-items: center;
+    column-gap: 44px;
+}
+
+.card-footer__right {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    column-gap: 20px;
+}
+
+.card-footer-icon-wrap {
+    position: relative;
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(#8386a5, 0.2);
+    border-radius: 50%;
+
+    &.card-footer-icon-wrap--active {
+        background-color: rgba(#5e00cc, 0.1);
+
+        .card-footer-icon {
+            filter: none;
+
+            path {
+                transform-origin: center;
+                transition: transform 0.3s;
+
+                &:nth-child(2) {
+                    transform-origin: center;
+                    animation: music-anim 1s linear infinite;
+                }
+
+                &:nth-child(3) {
+                    animation: music-anim3 0.7s 0.1s linear infinite;
+                }
+
+                &:nth-child(4) {
+                    animation: music-anim3 0.8s 0.2s linear infinite;
+                }
+
+                &:nth-child(5) {
+                    animation: music-anim3 0.65s 0.5s linear infinite;
+                }
+
+                &:nth-child(6) {
+                    animation: music-anim2 1.2s 0.2s linear infinite;
+                }
+            }
+        }
+    }
+}
+
+.card-footer-icon {
+    width: 20px;
+    height: 20px;
+    filter: grayscale(1);
+    svg {
+        width: 100%;
+        height: 100%;
+    }
+}
+
+.card-footer-icon-hexagon {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 20px;
+    height: 20px;
+    transform: translate(-50%, -50%);
+
+    svg {
+        width: 100%;
+        height: 100%;
+    }
+}
+
+.card-footer__socials {
+    display: flex;
+    column-gap: 12px;
+}
+
+@keyframes music-anim3 {
+    0% {
+        transform: scaleY(1);
+    }
+
+    50% {
+        transform: scaleY(0.5);
+    }
+
+    100% {
+        transform: scaleY(1);
+    }
+}
+
+@keyframes music-anim {
+    0% {
+        transform: scaleY(1);
+    }
+
+    50% {
+        transform: scaleY(3);
+    }
+
+    100% {
+        transform: scaleY(1);
+    }
+}
+
+@keyframes music-anim2 {
+    0% {
+        transform: scaleY(1);
+    }
+
+    50% {
+        transform: scaleY(3);
+    }
+
+    100% {
+        transform: scaleY(1);
+    }
+}

@@ -6,7 +6,7 @@ import {
     RouterStateSnapshot,
     UrlTree,
 } from "@angular/router";
-import { map, Observable } from "rxjs";
+import { filter, map, Observable } from "rxjs";
 import { AppRoutes } from "../../enums/app-routes.enum";
 import { AuthenticationService } from "../../services/api/authentication.service";
 import { LoadingService } from "../../services/core/loading.service";
@@ -30,18 +30,15 @@ export class PrivatePageGuard implements CanActivate {
         const userToken = this.authenticationService.userTokenValue;
 
         if (userToken) {
-            return this.loadInitialData().pipe(map(() => true));
+            this.loadingService.isLoading = true;
+            this.appInitializerService.loadInitialData({ isAuthenticatedUser: true });
+            return this.appInitializerService.initialized$.pipe(
+                filter((initialized) => initialized),
+                map(() => true)
+            );
         }
 
         this.router.navigateByUrl(`${this.appRoutes.Auth.SIGN_IN}?redirect=${state.url}`);
         return false;
     }
-
-    private loadInitialData = () => {
-        if (this.appInitializerService.initialized) {
-            return this.appInitializerService.initialData$;
-        }
-        this.loadingService.isLoading = true;
-        return this.appInitializerService.loadInitialData()
-    };
 }

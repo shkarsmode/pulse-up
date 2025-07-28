@@ -22,13 +22,24 @@
         class="card-footer"
         ngProjectAs="card-footer">
         <div class="card-footer__left">
-            <app-large-pulse-metric [text]="data.stats?.lastDayVotes || 0 | formatNumber">
+            <app-large-pulse-metric
+                [text]="data.stats?.lastDayVotes || 0 | formatNumber"
+                [accent]="isVoteActive">
+                @if (isVoteActive) {
+                <div class="card-footer-icon-wrap card-footer-icon-wrap--active">
+                    <svg-icon
+                        src="assets/svg/logo/logo-v2.svg"
+                        ariaLabel="pulse icon"
+                        class="card-footer-icon" />
+                </div>
+                } @else {
                 <div class="card-footer-icon-wrap">
                     <svg-icon
                         src="assets/svg/logo/logo-v2.svg"
                         ariaLabel="pulse icon"
                         class="card-footer-icon" />
                 </div>
+                }
             </app-large-pulse-metric>
             <app-large-pulse-metric
                 [text]="data.stats?.totalVotes || 0 | formatNumber"
@@ -44,7 +55,7 @@
                         ariaLabel="share icon" />
                 </button>
             </app-menu>
-            <app-copy-topic-button [topicUrl]="topicUrl"/>
+            <app-copy-topic-button [topicUrl]="topicUrl" />
         </div>
     </div>
 </app-large-pulse>
@@ -60,6 +71,6 @@
         <app-socials-button
             [variant]="'email'"
             [url]="topicUrl" />
-        <app-qrcode-button (handleClick)="openQrCodePopup()" />
+        <app-qrcode-button [url]="topicUrl" />
     </div>
 </ng-template>

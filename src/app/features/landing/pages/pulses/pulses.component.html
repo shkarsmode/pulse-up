@@ -23,7 +23,7 @@
                         style="height: 22px" />
                 </a>
             </div>
-            
+
             <ng-container *ngIf="loading$ as loading$">
                 <app-spinner *ngIf="loading$ | async" />
             </ng-container>
@@ -36,7 +36,9 @@
                 [infiniteScrollThrottle]="150"
                 (scrolled)="loadMore(paginator)">
                 @for (topic of paginator.items; track topic.id) {
-                    <app-topics-list-item [data]="topic" />
+                <app-trending-topics-list-item
+                    [data]="topic"
+                    [vote]="(votes$ | async)?.get(topic.id)" />
                 }
                 <p
                     class="wrap__loading"

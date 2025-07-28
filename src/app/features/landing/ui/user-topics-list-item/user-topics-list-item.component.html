@@ -1,0 +1,70 @@
+<app-large-pulse [pulse]="data">
+    <app-large-pulse-icon
+        [src]="data.icon"
+        size="md"
+        [label]="data.title"
+        ngProjectAs="card-icon" />
+    <div ngProjectAs="card-heading">
+        <app-large-pulse-title>
+            {{ data.title }}
+        </app-large-pulse-title>
+    </div>
+    <app-large-pulse-description ngProjectAs="card-body">
+        {{ data.description }}
+    </app-large-pulse-description>
+    <div
+        class="card-footer"
+        ngProjectAs="card-footer">
+        <div class="card-footer__left">
+            <app-large-pulse-metric
+                [text]="data.stats?.lastDayVotes || 0 | formatNumber"
+                [accent]="isVoteActive">
+                @if (isVoteActive) {
+                <div class="card-footer-icon-wrap card-footer-icon-wrap--active">
+                    <svg-icon
+                        src="assets/svg/logo/logo-v2.svg"
+                        ariaLabel="pulse icon"
+                        class="card-footer-icon" />
+                </div>
+                } @else {
+                <div class="card-footer-icon-wrap">
+                    <svg-icon
+                        src="assets/svg/logo/logo-v2.svg"
+                        ariaLabel="pulse icon"
+                        class="card-footer-icon" />
+                </div>
+                }
+            </app-large-pulse-metric>
+            <app-large-pulse-metric
+                [text]="data.stats?.totalVotes || 0 | formatNumber"
+                icon="assets/svg/chart-simple.svg" />
+        </div>
+        <div class="card-footer__right">
+            <app-menu [content]="menuContent">
+                <button
+                    mat-icon-button
+                    aria-label="Share topic">
+                    <svg-icon
+                        src="assets/svg/icon_share.svg"
+                        ariaLabel="share icon" />
+                </button>
+            </app-menu>
+            <app-copy-topic-button [topicUrl]="topicUrl" />
+        </div>
+    </div>
+</app-large-pulse>
+
+<ng-template #menuContent>
+    <div class="card-footer__socials">
+        <app-socials-button
+            [variant]="'facebook'"
+            [url]="topicUrl" />
+        <app-socials-button
+            [variant]="'x'"
+            [url]="topicUrl" />
+        <app-socials-button
+            [variant]="'email'"
+            [url]="topicUrl" />
+        <app-qrcode-button [url]="topicUrl" />
+    </div>
+</ng-template>

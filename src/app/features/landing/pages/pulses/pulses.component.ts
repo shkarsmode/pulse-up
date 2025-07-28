@@ -1,8 +1,8 @@
-import { Component, inject, OnInit } from "@angular/core";
+import { Component, DestroyRef, inject, OnInit } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { RouterModule } from "@angular/router";
 import { SvgIconComponent } from "angular-svg-icon";
-import { first, map, Observable } from "rxjs";
+import { first, map, Observable, tap } from "rxjs";
 import { InfiniteScrollDirective } from "ngx-infinite-scroll";
 import { IPaginator, ITopic } from "@/app/shared/interfaces";
 import { PulseService } from "@/app/shared/services/api/pulse.service";
@@ -15,7 +15,10 @@ import { AppRoutes } from "@/app/shared/enums/app-routes.enum";
 import { CategoryFilterComponent } from "@/app/shared/components/category-filter/category-filter.component";
 import { ICategory } from "@/app/shared/interfaces/category.interface";
 import { SpinnerComponent } from "@/app/shared/components/ui-kit/spinner/spinner.component";
-import { TopicsListItemComponent } from "../../ui/topics-list-item/topics-list-item.component";
+import { TrendingTopicsListItemComponent } from "../../ui/trending-topics-list-item/trending-topics-list-item.component";
+import { VotesService } from "@/app/shared/services/votes/votes.service";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
+import { IVote } from "@/app/shared/interfaces/vote.interface";
 
 @Component({
     selector: "app-pulses",
@@ -32,13 +35,15 @@ import { TopicsListItemComponent } from "../../ui/topics-list-item/topics-list-i
         PromoteAdsComponent,
         CategoryFilterComponent,
         SpinnerComponent,
-        TopicsListItemComponent,
+        TrendingTopicsListItemComponent,
     ],
     providers: [InfiniteLoaderService],
 })
 export class PulsesComponent implements OnInit {
+    private readonly destroyRef = inject(DestroyRef);
     private readonly pulseService = inject(PulseService);
     private readonly infiniteLoaderService = inject(InfiniteLoaderService);
+    private readonly votesService = inject(VotesService);
 
     public pulses: ITopic[] = [];
     public isLoading: boolean = true;
@@ -46,6 +51,7 @@ export class PulsesComponent implements OnInit {
     public loading$: Observable<boolean>;
     public paginator$: Observable<IPaginator<ITopic>>;
     public searchInFocus: boolean = false;
+    public votes$ = this.votesService.votesByTopicId$.pipe(takeUntilDestroyed(this.destroyRef));
 
     public ngOnInit(): void {
         this.getTrendingPulses();

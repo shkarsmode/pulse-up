@@ -1,6 +1,6 @@
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { FadeInDirective } from "@/app/shared/animations/fade-in.directive";
 import { LoadingIndicatorComponent } from "@/app/shared/components/loading-indicator/loading-indicator.component";
-import { LargePulseComponent } from "@/app/shared/components/pulses/large-pulse/large-pulse.component";
 import { CopyButtonComponent } from "@/app/shared/components/ui-kit/buttons/copy-button/copy-button.component";
 import { FlatButtonDirective } from "@/app/shared/components/ui-kit/buttons/flat-button/flat-button.directive";
 import { QrcodeButtonComponent } from "@/app/shared/components/ui-kit/buttons/qrcode-button/qrcode-button.component";
@@ -15,7 +15,7 @@ import { SettingsService } from "@/app/shared/services/api/settings.service";
 import { UserService } from "@/app/shared/services/api/user.service";
 import { DialogService } from "@/app/shared/services/core/dialog.service";
 import { CommonModule, Location } from "@angular/common";
-import { Component, inject } from "@angular/core";
+import { Component, DestroyRef, inject } from "@angular/core";
 import { ActivatedRoute, ParamMap, Router } from "@angular/router";
 import { SvgIconComponent } from "angular-svg-icon";
 import { InfiniteScrollDirective } from "ngx-infinite-scroll";
@@ -24,9 +24,9 @@ import { TopicQRCodePopupData } from "../../helpers/interfaces/topic-qrcode-popu
 import { InfiniteLoaderService } from "../../services/infinite-loader.service";
 import { TopicQrcodePopupComponent } from "../../ui/topic-qrcode-popup/topic-qrcode-popup.component";
 import { UserAvatarComponent } from "../../ui/user-avatar/user-avatar.component";
-import { LargePulseFooterComponent } from "@/app/shared/components/pulses/large-pulse/large-pulse-footer/large-pulse-footer.component";
-import { LargePulseFooterRowComponent } from "@/app/shared/components/pulses/large-pulse/large-pulse-footer-row/large-pulse-footer-row.component";
 import { BackButtonComponent } from "@/app/shared/components/ui-kit/buttons/back-button/back-button.component";
+import { VotesService } from "@/app/shared/services/votes/votes.service";
+import { UserTopicsListItemComponent } from "../../ui/user-topics-list-item/user-topics-list-item.component";
 
 @Component({
     selector: "app-author",
@@ -34,28 +34,27 @@ import { BackButtonComponent } from "@/app/shared/components/ui-kit/buttons/back
     styleUrl: "./user.component.scss",
     standalone: true,
     imports: [
-        CommonModule,
-        InfiniteScrollDirective,
-        SvgIconComponent,
-        LoadingIndicatorComponent,
-        SpinnerComponent,
-        ContainerComponent,
-        UserAvatarComponent,
-        MenuComponent,
-        LargePulseComponent,
-        CopyButtonComponent,
-        SocialsButtonComponent,
-        FadeInDirective,
-        FlatButtonDirective,
-        FormatNumberPipe,
-        QrcodeButtonComponent,
-        LargePulseFooterComponent,
-        LargePulseFooterRowComponent,
-        BackButtonComponent,
-    ],
+    CommonModule,
+    InfiniteScrollDirective,
+    SvgIconComponent,
+    LoadingIndicatorComponent,
+    SpinnerComponent,
+    ContainerComponent,
+    UserAvatarComponent,
+    MenuComponent,
+    CopyButtonComponent,
+    SocialsButtonComponent,
+    FadeInDirective,
+    FlatButtonDirective,
+    FormatNumberPipe,
+    QrcodeButtonComponent,
+    BackButtonComponent,
+    UserTopicsListItemComponent
+],
     providers: [InfiniteLoaderService],
 })
 export class UserComponent {
+    private readonly destroyRef = inject(DestroyRef);
     private readonly router = inject(Router);
     private readonly location = inject(Location);
     private readonly route = inject(ActivatedRoute);
@@ -63,6 +62,7 @@ export class UserComponent {
     private readonly dialogService = inject(DialogService);
     private readonly settingsService = inject(SettingsService);
     private readonly infiniteLoaderService = inject(InfiniteLoaderService<ITopic>);
+    private readonly votesService = inject(VotesService);
 
     public user: IAuthor | null = null;
     public topics: ITopic[] = [];
@@ -70,6 +70,7 @@ export class UserComponent {
     public pulseId: string = "";
     public paginator$: Observable<IPaginator<ITopic>>;
     public loading$: Observable<boolean>;
+    public votes$ = this.votesService.votesByTopicId$.pipe(takeUntilDestroyed(this.destroyRef));
     public loadMore = this.infiniteLoaderService.loadMore.bind(this.infiniteLoaderService);
 
     constructor() {
