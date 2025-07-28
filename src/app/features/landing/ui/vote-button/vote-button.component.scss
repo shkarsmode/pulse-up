@@ -53,6 +53,13 @@
 
     svg-icon {
         display: flex;
+        width: 26px;
+        height: 30px;
+
+        svg {
+            width: 100%;
+            height: 100%;
+        }
     }
 }
 
@@ -146,13 +153,13 @@
 .active-pulse-info--visible {
     ::ng-deep {
         .active-pulse-info__icon:first-child path {
-            fill: #00C105;
+            fill: #00c105;
         }
     }
 
     .active-pulse-info__text {
         &--active {
-            color: #00C105;
+            color: #00c105;
             font-weight: 500;
         }
     }
@@ -175,4 +182,74 @@
 
 .active-pulse-info__icon {
     padding-top: 1px;
+}
+
+.pulse-button__svg--animating {
+    path {
+        transform-origin: center;
+        transition: transform 0.3s;
+
+        &:nth-child(2) {
+            transform-origin: center;
+            animation: music-anim 1s linear infinite;
+        }
+
+        &:nth-child(3) {
+            animation: music-anim3 0.7s 0.1s linear infinite;
+        }
+
+        &:nth-child(4) {
+            animation: music-anim3 0.8s 0.2s linear infinite;
+        }
+
+        &:nth-child(5) {
+            animation: music-anim3 0.65s 0.5s linear infinite;
+        }
+
+        &:nth-child(6) {
+            animation: music-anim2 1.2s 0.2s linear infinite;
+        }
+    }
+}
+
+@keyframes music-anim {
+    0% {
+        transform: scaleY(1);
+    }
+
+    50% {
+        transform: scaleY(3);
+    }
+
+    100% {
+        transform: scaleY(1);
+    }
+}
+
+@keyframes music-anim2 {
+    0% {
+        transform: scaleY(1);
+    }
+
+    50% {
+        transform: scaleY(3);
+    }
+
+    100% {
+        transform: scaleY(1);
+    }
+}
+
+@keyframes music-anim3 {
+    0% {
+        transform: scaleY(1);
+    }
+
+    50% {
+        transform: scaleY(0.5);
+    }
+
+    100% {
+        transform: scaleY(1);
+    }
 }
