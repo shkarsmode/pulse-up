@@ -98,7 +98,7 @@ export class TopicFormComponent {
     }
 
     public onNextButtonClick(): void {
-        if (!this.topicForm.get("location")?.dirty && !this.popupShown) {
+        if (!this.topicForm.get("location")?.value && !this.popupShown) {
             this.popupShown = true;
             this.sendTopicService.startTopicLocatoinWarningShown = true;
             return this.showLocatoinWarning({
