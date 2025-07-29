@@ -1,52 +1,51 @@
-<div class="wrap">
-    <h1>Trending Topics</h1>
-
-    <div class="row">
-        <div class="col">
-            <div class="top-row">
-                <ng-container *ngIf="loading$ as loading$">
+<app-container>
+    <div class="pulses">
+        <main class="pulses__main">
+            <div class="pulses__header">
+                <h1>Trending Topics</h1>
+                <app-category-filter
+                    class="pulses__filter"
+                    (selectedCategory)="onCategorySelected($event)" />
+                <div class="pulses__search-wrap">
                     <app-input-search
-                        class="top-row__search"
+                        class="tpulses__search"
                         [isLoading]="(searchInFocus && (loading$ | async)) || false"
                         (handleValueChange)="onSearchValueChange($event)"
                         (focus)="onSearchFocus()"
                         (blur)="onSearchBlur()" />
-                </ng-container>
-                <app-category-filter
-                    class="top-row__filter"
-                    (selectedCategory)="onCategorySelected($event)" />
-                <a
-                    [routerLink]="addTopicRoute"
-                    class="add-topic-button">
-                    <svg-icon
-                        src="assets/svg/add.svg"
-                        style="height: 22px" />
-                </a>
+                    <a
+                        [routerLink]="addTopicRoute"
+                        class="add-topic-button">
+                        <svg-icon
+                            src="assets/svg/add.svg"
+                            style="height: 22px" />
+                    </a>
+                </div>
             </div>
-
-            <ng-container *ngIf="loading$ as loading$">
+            <div class="pulses__list-wrap">
                 <app-spinner *ngIf="loading$ | async" />
-            </ng-container>
-
-            <div
-                class="wrap__large-pulses"
-                *ngIf="paginator$ | async as paginator"
-                infiniteScroll
-                [infiniteScrollDistance]="2"
-                [infiniteScrollThrottle]="150"
-                (scrolled)="loadMore(paginator)">
-                @for (topic of paginator.items; track topic.id) {
-                <app-trending-topics-list-item
-                    [data]="topic"
-                    [vote]="(votes$ | async)?.get(topic.id)" />
-                }
-                <p
-                    class="wrap__loading"
-                    *ngIf="loading$ | async">
-                    <app-loading-indicator />
-                </p>
+                <div
+                    class="pulses__list"
+                    *ngIf="paginator$ | async as paginator"
+                    infiniteScroll
+                    [infiniteScrollDistance]="2"
+                    [infiniteScrollThrottle]="150"
+                    (scrolled)="loadMore(paginator)">
+                    @for (topic of paginator.items; track topic.id) {
+                    <app-trending-topics-list-item
+                        [data]="topic"
+                        [vote]="(votes$ | async)?.get(topic.id)" />
+                    }
+                    <p
+                        class="pulses__loading"
+                        *ngIf="loading$ | async">
+                        <app-loading-indicator />
+                    </p>
+                </div>
             </div>
-        </div>
-        <app-promote-ads />
+        </main>
+        <aside class="pulses__aside">
+            <app-promote-ads />
+        </aside>
     </div>
-</div>
+</app-container>
