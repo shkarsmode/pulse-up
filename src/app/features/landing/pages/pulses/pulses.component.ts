@@ -18,7 +18,7 @@ import { SpinnerComponent } from "@/app/shared/components/ui-kit/spinner/spinner
 import { TrendingTopicsListItemComponent } from "../../ui/trending-topics-list-item/trending-topics-list-item.component";
 import { VotesService } from "@/app/shared/services/votes/votes.service";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
-import { IVote } from "@/app/shared/interfaces/vote.interface";
+import { ContainerComponent } from "@/app/shared/components/ui-kit/container/container.component";
 
 @Component({
     selector: "app-pulses",
@@ -36,6 +36,7 @@ import { IVote } from "@/app/shared/interfaces/vote.interface";
         CategoryFilterComponent,
         SpinnerComponent,
         TrendingTopicsListItemComponent,
+        ContainerComponent,
     ],
     providers: [InfiniteLoaderService],
 })
