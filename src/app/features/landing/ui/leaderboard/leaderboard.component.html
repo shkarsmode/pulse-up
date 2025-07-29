@@ -1,25 +1,25 @@
 <h2 class="leaderboard__title">Global Top 10</h2>
 <mat-form-field
     appearance="outline"
-    class="leaderboard__calendar-button"
+    class="leaderboard__calendar"
     subscriptSizing="dynamic">
     <input
         matInput
         [matDatepicker]="picker"
+        [min]="startDate"
+        [max]="todayDate"
         [value]="selectedDate"
         (dateChange)="onDateChange($event.value)"
         readonly
         class="leaderboard__calendar-input"
         [style]="{ display: 'none' }" />
-    <div>{{ formattedDate }}</div>
-    <mat-datepicker-toggle
-        matIconSuffix 
-        [for]="picker">
-        <svg-icon matDatepickerToggleIcon src="assets/svg/arrow-left.svg" class="leaderboard__calendar-icon"/>
-    </mat-datepicker-toggle>
+    <app-link-button class="leaderboard__calendar-button" (click)="openCalendar()">
+        <span>{{ formattedDate }}</span>
+        <svg-icon src="assets/svg/arrow-left.svg" class="leaderboard__calendar-icon"/>
+    </app-link-button>
     <mat-datepicker
         #picker
-        startView="multi-year"
+        startView="year"
         (monthSelected)="onDateChange($event)">
     </mat-datepicker>
 </mat-form-field>

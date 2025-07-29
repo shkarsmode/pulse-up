@@ -8,11 +8,9 @@ import { LargePulseMetaComponent } from "@/app/shared/components/pulses/large-pu
 import { FormatNumberPipe } from "@/app/shared/pipes/format-number.pipe";
 import { SpinnerComponent } from "@/app/shared/components/ui-kit/spinner/spinner.component";
 import { MaterialModule } from "@/app/shared/modules/material.module";
-import { InputComponent } from "@/app/shared/components/ui-kit/input/input.component";
-import { MatDatepicker, MatDatepickerModule } from "@angular/material/datepicker";
-import { MAT_DATE_FORMATS } from "@angular/material/core";
+import { MatDatepicker } from "@angular/material/datepicker";
 import { AngularSvgIconModule } from "angular-svg-icon";
-
+import { LinkButtonComponent } from "@/app/shared/components/ui-kit/buttons/link-button/link-button.component";
 
 @Component({
     selector: "app-leaderboard",
@@ -26,9 +24,9 @@ import { AngularSvgIconModule } from "angular-svg-icon";
         FormatNumberPipe,
         SpinnerComponent,
         MaterialModule,
-        InputComponent,
         DatePipe,
         AngularSvgIconModule,
+        LinkButtonComponent,
     ],
     providers: [DatePipe],
     templateUrl: "./leaderboard.component.html",
@@ -42,9 +40,15 @@ export class LeaderboardComponent {
 
     public topics$ = this.leaderboardService.topics$;
     public selectedDate = new Date();
+    public readonly startDate = new Date(2025, 5, 1);
+    public readonly todayDate = new Date();
 
     public get isLoading() {
         return this.leaderboardService.isLoading;
+    }
+
+    public openCalendar() {
+        this.picker.open();
     }
 
     public onDateChange(date: Date | null) {
