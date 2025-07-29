@@ -1,27 +1,34 @@
 <div class="user-votes">
-    <app-spinner
-        *ngIf="initialLoading$ | async"
-        class="votes__loading" />
-    <div
-        class="user-votes"
-        *ngIf="paginator$ | async as paginator"
-        infiniteScroll
-        [infiniteScrollDistance]="2"
-        [infiniteScrollThrottle]="150"
-        (scrolled)="loadMore(paginator)">
-        <ul class="user-votes__list">
-            @for (item of paginator.items; track item.vote.id) {
-            <li *ngIf="item.topic">
-                <app-history-list-item
-                    [data]="item.topic"
-                    [vote]="item.vote" />
-            </li>
-            }
-        </ul>
-        <p
-            class="user-votes__loading"
-            *ngIf="loading$ | async">
-            <app-loading-indicator />
-        </p>
-    </div>
+    <p
+        *ngIf="!(hasVotes$ | async)"
+        class="user-votes__empty">
+        Your pulses will appear here
+    </p>
+    <ng-container *ngIf="hasVotes$ | async">
+        <app-spinner
+            *ngIf="initialLoading$ | async"
+            class="votes__loading" />
+        <div
+            class="user-votes"
+            *ngIf="paginator$ | async as paginator"
+            infiniteScroll
+            [infiniteScrollDistance]="2"
+            [infiniteScrollThrottle]="150"
+            (scrolled)="loadMore(paginator)">
+            <ul class="user-votes__list">
+                @for (item of paginator.items; track item.vote.id) {
+                <li *ngIf="item.topic">
+                    <app-history-list-item
+                        [data]="item.topic"
+                        [vote]="item.vote" />
+                </li>
+                }
+            </ul>
+            <p
+                class="user-votes__loading"
+                *ngIf="loading$ | async">
+                <app-loading-indicator />
+            </p>
+        </div>
+    </ng-container>
 </div>

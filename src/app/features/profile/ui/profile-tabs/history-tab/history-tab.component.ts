@@ -48,6 +48,10 @@ export class HistoryTabComponent implements OnInit {
     public paginator$: Observable<IPaginator<IVoteWithTopic>>;
     public loading$: Observable<boolean>;
     public profile$ = this.profileService.profile$;
+    public hasVotes$ = this.profile$.pipe(
+        map((profile) => profile?.totalVotes || 0),
+        map((count) => !!count),
+    );
     public topics = new Map<number, ITopic>();
     public selectedTabIndex = 0;
 
