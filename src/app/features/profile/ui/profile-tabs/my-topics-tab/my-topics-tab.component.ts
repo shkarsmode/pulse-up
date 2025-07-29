@@ -15,21 +15,22 @@ import { SpinnerComponent } from "@/app/shared/components/ui-kit/spinner/spinner
 import { LoadingIndicatorComponent } from "@/app/shared/components/loading-indicator/loading-indicator.component";
 import { MyTopicsListItemComponent } from "../my-topics-list-item/my-topics-list-item.component";
 import { VotesService } from "@/app/shared/services/votes/votes.service";
-import { IVote } from "@/app/shared/interfaces/vote.interface";
+import { LinkButtonComponent } from "@/app/shared/components/ui-kit/buttons/link-button/link-button.component";
 
 @Component({
     selector: "app-my-topics-tab",
     templateUrl: "./my-topics-tab.component.html",
     styleUrl: "./my-topics-tab.component.scss",
     imports: [
-        CommonModule,
-        RouterModule,
-        SvgIconComponent,
-        InfiniteScrollDirective,
-        SpinnerComponent,
-        LoadingIndicatorComponent,
-        MyTopicsListItemComponent,
-    ],
+    CommonModule,
+    RouterModule,
+    SvgIconComponent,
+    InfiniteScrollDirective,
+    SpinnerComponent,
+    LoadingIndicatorComponent,
+    MyTopicsListItemComponent,
+    LinkButtonComponent
+],
     providers: [InfiniteLoaderService],
     standalone: true,
 })

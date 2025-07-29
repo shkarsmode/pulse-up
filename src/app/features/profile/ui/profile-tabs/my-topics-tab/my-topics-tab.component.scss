@@ -45,3 +45,16 @@
         }
     }
 }
+
+.topics__empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    row-gap: 16px;
+    padding-top: 16px;
+
+    p {
+        color: var(--dark-grey-color);
+    }
+}
