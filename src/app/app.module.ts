@@ -30,6 +30,18 @@ import {
 import { WindowService } from "./shared/services/core/window.service";
 import { JwtInterceptor } from "./shared/helpers/interceptors/jwt.interceptor";
 import { DevMenuComponent } from "./shared/components/dev-menu/dev-menu.component";
+import { DateAdapter, MAT_DATE_LOCALE, NativeDateAdapter } from "@angular/material/core";
+import { Platform } from "@angular/cdk/platform";
+
+
+export class CustomDateAdapter extends NativeDateAdapter {
+    override format(date: Date, displayFormat: any): string {
+        const days = date.getDate();
+        const months = date.getMonth() + 1;
+        const year = date.getFullYear();
+        return days + "-" + months + "-" + year;
+    }
+}
 
 @NgModule({
     declarations: [AppComponent],
@@ -83,8 +95,14 @@ import { DevMenuComponent } from "./shared/components/dev-menu/dev-menu.componen
                 popper: popperVariation,
             },
         }),
+        {
+            provide: DateAdapter,
+            useClass: CustomDateAdapter,
+            deps: [MAT_DATE_LOCALE, Platform],
+        },
     ],
     schemas: [CUSTOM_ELEMENTS_SCHEMA],
     bootstrap: [AppComponent],
 })
 export class AppModule {}
+

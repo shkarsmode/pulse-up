@@ -20,11 +20,17 @@ export interface ITopic {
     campaign?: Campaign;
 }
 
+export interface ILeaderboardTopic
+    extends Pick<
+        ITopic,
+        "id" | "icon" | "title" | "shareKey" | "authorId" | "author" | "startsAt" | "endsAt"
+    > {}
+
 export enum TopicState {
     Active = "Active",
     Archived = "Archived",
     Blocked = "Blocked",
-};
+}
 
 interface Location {
     country: string;

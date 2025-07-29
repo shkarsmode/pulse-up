@@ -8,6 +8,7 @@
                 <ng-content select="card-heading"></ng-content>
             </div>
             <svg-icon
+                *ngIf="showArrow"
                 src="assets/svg/arrow-left.svg"
                 class="card-heading__arrow" />
         </div>

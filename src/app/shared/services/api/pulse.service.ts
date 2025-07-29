@@ -8,6 +8,8 @@ import { ICategory } from "../../interfaces/category.interface";
 import { PendingTopicsService } from "../topic/pending-topics.service";
 import { IH3Pulses } from "@/app/features/landing/helpers/interfaces/h3-pulses.interface";
 import { IH3Votes } from "@/app/features/landing/helpers/interfaces/h3-votes.interface";
+import { IGetLeaderboardTopicsRequest } from "../../interfaces/topics/get-leaderboard-topics-request.interface";
+import { IGetLeaderboardTopicsResponse } from "../../interfaces/topics/get-leaderboard-topics-response.interface";
 
 type RequestParams = {
     [param: string]: string | number | boolean | ReadonlyArray<string | number | boolean>;
@@ -281,6 +283,16 @@ export class PulseService {
                     return of("");
                 }),
             );
+    }
+
+    public getLeaderboardTopics(
+        params: IGetLeaderboardTopicsRequest,
+    ): Observable<IGetLeaderboardTopicsResponse> {
+        return this.http.get<IGetLeaderboardTopicsResponse>(`${this.apiUrl}/topics/leaderboard`, {
+            params: {
+                ...params,
+            },
+        });
     }
 
     private syncPendingTopics(topic: ITopic): ITopic {

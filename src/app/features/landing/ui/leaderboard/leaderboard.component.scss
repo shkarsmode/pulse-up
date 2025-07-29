@@ -1,0 +1,69 @@
+@use "../../../../../styles/mixins" as *;
+
+.leaderboard__title {
+    @include title-32px;
+    margin-bottom: 8px;
+}
+
+.leaderboard__calendar-button {
+    color: var(--dark-grey-color);
+}
+
+.leaderboard__list {
+    display: flex;
+    flex-direction: column;
+    row-gap: 16px;
+    margin-top: 32px;
+}
+
+.leaderboard__item {
+    padding: 6px;
+    &::ng-deep {
+        .card-top {
+            grid-column-gap: 8px;
+        }
+    }
+}
+
+.card-heading-title {
+    &::ng-deep {
+        .card-title {
+            font-size: 16px;
+            line-height: 19px;
+        }
+    }
+}
+
+.card-heading-meta {
+    display: flex;
+    flex-direction: column;
+    row-gap: 6px;
+    margin-top: 6px;
+
+    &::ng-deep {
+        .card-meta-text {
+            font-size: 12px;
+        }
+    }
+}
+
+.leaderboard__calendar-input {
+    &::ng-deep {
+        .mdc-notched-outline {
+            opacity: 0;
+        }
+    }
+}
+
+.leaderboard__calendar-icon {
+    width: 16px;
+    height: 16px;
+    transform: rotate(-90deg);
+    position: relative;
+    right: -4px;
+
+    svg {
+        width: 100%;
+        height: 100%;
+    }
+}

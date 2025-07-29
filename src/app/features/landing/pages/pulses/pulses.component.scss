@@ -94,6 +94,10 @@
 }
 
 .pulses__aside {
+    display: flex;
+    flex-direction: column;
+    row-gap: 30px;
+
     @include media-xl {
         display: none;
     }
