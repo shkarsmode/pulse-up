@@ -19,6 +19,7 @@ import { TrendingTopicsListItemComponent } from "../../ui/trending-topics-list-i
 import { VotesService } from "@/app/shared/services/votes/votes.service";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { ContainerComponent } from "@/app/shared/components/ui-kit/container/container.component";
+import { LeaderboardComponent } from "../../ui/leaderboard/leaderboard.component";
 
 @Component({
     selector: "app-pulses",
@@ -37,6 +38,7 @@ import { ContainerComponent } from "@/app/shared/components/ui-kit/container/con
         SpinnerComponent,
         TrendingTopicsListItemComponent,
         ContainerComponent,
+        LeaderboardComponent,
     ],
     providers: [InfiniteLoaderService],
 })

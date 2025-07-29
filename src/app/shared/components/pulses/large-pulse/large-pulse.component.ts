@@ -13,4 +13,5 @@ import { ITopic } from "../../../interfaces";
 })
 export class LargePulseComponent {
     @Input() public pulse: ITopic;
+    @Input() public showArrow = true;
 }

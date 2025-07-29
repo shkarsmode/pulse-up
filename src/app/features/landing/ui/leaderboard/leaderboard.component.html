@@ -1,0 +1,58 @@
+<h2 class="leaderboard__title">Global Top 10</h2>
+<mat-form-field
+    appearance="outline"
+    class="leaderboard__calendar"
+    subscriptSizing="dynamic">
+    <input
+        matInput
+        [matDatepicker]="picker"
+        [min]="startDate"
+        [max]="todayDate"
+        [value]="selectedDate"
+        (dateChange)="onDateChange($event.value)"
+        readonly
+        class="leaderboard__calendar-input"
+        [style]="{ display: 'none' }" />
+    <app-link-button class="leaderboard__calendar-button" (click)="openCalendar()">
+        <span>{{ formattedDate }}</span>
+        <svg-icon src="assets/svg/arrow-left.svg" class="leaderboard__calendar-icon"/>
+    </app-link-button>
+    <mat-datepicker
+        #picker
+        startView="year"
+        (monthSelected)="onDateChange($event)">
+    </mat-datepicker>
+</mat-form-field>
+
+<app-spinner *ngIf="isLoading"></app-spinner>
+
+<ul class="leaderboard__list">
+    @for(topicData of topics$ | async; track topicData.topic.id) {
+    <li>
+        <app-large-pulse
+            [pulse]="topicData.topic"
+            class="leaderboard__item"
+            [showArrow]="false">
+            <app-large-pulse-icon
+                [src]="topicData.topic.icon"
+                size="md"
+                [label]="topicData.topic.title"
+                ngProjectAs="card-icon" />
+            <div ngProjectAs="card-heading">
+                <app-large-pulse-title class="card-heading-title">
+                    {{ topicData.topic.title }}
+                </app-large-pulse-title>
+                <div class="card-heading-meta">
+                    <app-large-pulse-meta
+                        [text]="'Pulses: ' + (topicData.votes | formatNumber)"
+                        icon="assets/svg/pulse.svg"
+                        label="number of pulses" />
+                    <app-large-pulse-meta
+                        [text]="'Last pulse: ' + (topicData.lastVoteTime | date : 'MMMM d hh.mm a')"
+                        label="last pulse date" />
+                </div>
+            </div>
+        </app-large-pulse>
+    </li>
+    }
+</ul>
