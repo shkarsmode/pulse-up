@@ -11,8 +11,10 @@ import { FormatNumberPipe } from "@/app/shared/pipes/format-number.pipe";
 import { SpinnerComponent } from "@/app/shared/components/ui-kit/spinner/spinner.component";
 import { MaterialModule } from "@/app/shared/modules/material.module";
 import { LinkButtonComponent } from "@/app/shared/components/ui-kit/buttons/link-button/link-button.component";
+import { DialogService } from "@/app/shared/services/core/dialog.service";
 import { LeaderboardTimeframe } from "../../interface/leaderboard-timeframe.interface";
 import { CustomDatepickerComponent } from "../datepicker/datepicker.component";
+import { LeaderboardInfoPopupComponent } from "./leaderboard-info-popup/leaderboard-info-popup.component";
 
 const dateFormats: Record<LeaderboardTimeframe, string> = {
     Day: "MMMM d, y",
@@ -44,6 +46,7 @@ const dateFormats: Record<LeaderboardTimeframe, string> = {
 export class LeaderboardComponent {
     private datePipe = inject(DatePipe);
     private leaderboardService = inject(LeaderboardService);
+    private dialogService = inject(DialogService);
 
     // @ViewChild("picker") picker!: MatDatepicker<Date>;
 
@@ -74,21 +77,22 @@ export class LeaderboardComponent {
     }
 
     public onDateSelected(date: Date | null) {
-        console.log("Date changed");
         this.selectedDate = date;
     }
 
     public onTimeframeChange(timeframe: LeaderboardTimeframe) {
-        console.log("Timeframe changed");
         this.timeframe = timeframe;
     }
 
     public onConfirm() {
-        console.log("Confirm date and timeframe", this.selectedDate, this.timeframe);
         if (!this.selectedDate) return;
         this.leaderboardService.setFilter({
             date: this.selectedDate.toISOString(),
             timeframe: this.timeframe,
         });
+    }
+
+    public openInfoPopup() {
+        this.dialogService.open(LeaderboardInfoPopupComponent)
     }
 }

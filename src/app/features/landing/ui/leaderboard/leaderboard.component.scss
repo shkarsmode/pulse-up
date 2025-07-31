@@ -2,6 +2,7 @@
 
 .leaderboard-header {
     display: flex;
+    align-items: flex-start;
     justify-content: space-between;
 }
 
@@ -9,12 +10,23 @@
     @include title-32px;
 }
 
+.leaderboard-header__actions {
+    display: flex;
+    align-items: center;
+    padding-top: 4px;
+}
 .leaderboard-header__action {
     &::ng-deep {
         .mat-mdc-button {
             min-width: 0;
+            --mat-text-button-horizontal-padding: 8px;
+            --mdc-text-button-container-height: 32px;
         }
     }
+}
+.leaderboard-header__action--search {
+    display: block;
+    transform: scaleX(-1);
 }
 
 .leaderboard__calendar {
@@ -43,9 +55,9 @@
     display: flex;
     flex-direction: column;
     row-gap: 16px;
-    margin-top: 32px;
+    margin-top: 16px;
+    counter-reset: rate;
 }
-
 .leaderboard__item {
     padding: 6px;
     &::ng-deep {

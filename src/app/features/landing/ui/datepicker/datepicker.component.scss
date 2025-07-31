@@ -18,6 +18,19 @@
     }
 }
 
+.datepicker__month-view {
+    &::ng-deep {
+        .mat-calendar-header {
+            display: none;
+        }
+    }
+}
+
+.datepicker__trigger {
+    padding: 8px 0;
+    color: var(--accent-color);
+}
+
 .datepicker__footer {
     padding: 16px 8px;
 }

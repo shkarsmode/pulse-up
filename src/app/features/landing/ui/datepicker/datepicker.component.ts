@@ -56,7 +56,12 @@ export class WeekRangeSelectionStrategy<D = Date> implements MatDateRangeSelecti
     templateUrl: "./datepicker.component.html",
     styleUrls: ["./datepicker.component.scss"],
     standalone: true,
-    imports: [CommonModule, MatCalendar, CalendarHeaderComponent, PrimaryButtonComponent],
+    imports: [
+        CommonModule,
+        MatCalendar,
+        CalendarHeaderComponent,
+        PrimaryButtonComponent,
+    ],
     providers: [
         {
             provide: MAT_DATE_RANGE_SELECTION_STRATEGY,
@@ -145,12 +150,21 @@ export class CustomDatepickerComponent {
 
         this.overlayRef.backdropClick().subscribe(() => this.overlayRef?.dispose());
     }
-    public closeCalendar(): void {
-        this.overlayRef?.dispose();
+    public openMultiYearView(): void {
+        switch (this.timeframe) {
+            case "Day":
+                this.dayCalendar.currentView = "multi-year";
+                break;
+            case "Week":
+                this.weekCalendar.currentView = "multi-year";
+                break;
+            case "Month":
+                this.monthCalendar.currentView = "multi-year";
+                break;
+        }
     }
 
     public onViewChanged(view: MatCalendarView): void {
-        console.log("View changed");
         this.currentView = view;
         this.dateChange.emit(null);
         this.selectedDateRange = this.getStartWeekRange();

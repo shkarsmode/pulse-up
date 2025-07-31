@@ -1,5 +1,6 @@
 <button
     #triggerButton
+    class="datepicker__trigger"
     (click)="openCalendar()">
     {{ text }}
 </button>
@@ -9,7 +10,7 @@
         <app-calendar-header
             [range]="timeframe"
             (rangeChange)="onTimeframeChange($event)"
-            (backClick)="closeCalendar()" />
+            (backClick)="openMultiYearView()" />
         <mat-calendar
             *ngIf="isDayView"
             #dayCalendar
@@ -27,16 +28,19 @@
             [selected]="selectedDateRange"
             startView="month"
             (selectedChange)="onWeekSelected($event)"
-            (viewChanged)="onViewChanged($event)"  />
-        <mat-calendar
-            *ngIf="isMonthView"
-            #monthCalendar
-            [minDate]="calendarMinDate"
-            [maxDate]="calendarMaxDate"
-            [selected]="date"
-            startView="year"
-            (monthSelected)="onMonthSelected($event)" 
             (viewChanged)="onViewChanged($event)" />
+        <div
+            class="datepicker__month-view"
+            *ngIf="isMonthView">
+            <mat-calendar
+                #monthCalendar
+                [minDate]="calendarMinDate"
+                [maxDate]="calendarMaxDate"
+                [selected]="date"
+                startView="year"
+                (monthSelected)="onMonthSelected($event)"
+                (viewChanged)="onViewChanged($event)" />
+        </div>
         <div class="datepicker__footer">
             <app-primary-button
                 [fullWidth]="true"
