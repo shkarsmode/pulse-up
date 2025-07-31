@@ -24,19 +24,31 @@
     @include media-sm {
         grid-template-columns: 1fr auto;
     }
+}
+.pulses__top {
+    display: flex;
+    flex-direction: column;
+    row-gap: 8px;
 
-    h1 {
-        @include title-32px;
-
-        @include media-md {
-            grid-column: 1 / 4;
-        }
-        @include media-sm {
-            grid-column: 1 / 3;
-        }
+    @include media-md {
+        grid-column: 1 / 4;
+    }
+    @include media-sm {
+        grid-column: 1 / 3;
+    }
+}
+.pulses__title {
+    @include title-32px;
+}
+.pulses__top-link {
+    display: none;
+    @include media-xl {
+        display: block;
     }
 }
 .pulses__filter {
+    display: flex;
+    align-items: flex-end;
     width: 300px;
 
     @include media-md {

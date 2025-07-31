@@ -57,6 +57,11 @@ const routes: Routes = [
                 loadComponent: () => import('./pages/user/user.component').then((m) => m.UserComponent),
                 canActivate: [PublicPageGuard],
             },
+            {
+                path: Landing.LEADERBOARD,
+                loadComponent: () => import('./pages/leaderboard-page/leaderboard-page.component').then((m) => m.LeaderboardPageComponent),
+                canActivate: [PublicPageGuard],
+            },
         ],
     },
 ];
