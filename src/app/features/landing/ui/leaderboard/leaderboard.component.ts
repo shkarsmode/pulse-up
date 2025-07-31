@@ -1,5 +1,7 @@
-import { Component, inject, ViewChild } from "@angular/core";
+import { ChangeDetectionStrategy, Component, inject } from "@angular/core";
 import { CommonModule, DatePipe } from "@angular/common";
+import { AngularSvgIconModule } from "angular-svg-icon";
+import { map } from "rxjs";
 import { LeaderboardService } from "../../services/leaderboard.service";
 import { LargePulseComponent } from "@/app/shared/components/pulses/large-pulse/large-pulse.component";
 import { LargePulseIconComponent } from "@/app/shared/components/pulses/large-pulse/large-pulse-icon/large-pulse-icon.component";
@@ -8,9 +10,17 @@ import { LargePulseMetaComponent } from "@/app/shared/components/pulses/large-pu
 import { FormatNumberPipe } from "@/app/shared/pipes/format-number.pipe";
 import { SpinnerComponent } from "@/app/shared/components/ui-kit/spinner/spinner.component";
 import { MaterialModule } from "@/app/shared/modules/material.module";
-import { MatDatepicker } from "@angular/material/datepicker";
-import { AngularSvgIconModule } from "angular-svg-icon";
 import { LinkButtonComponent } from "@/app/shared/components/ui-kit/buttons/link-button/link-button.component";
+import { DialogService } from "@/app/shared/services/core/dialog.service";
+import { LeaderboardTimeframe } from "../../interface/leaderboard-timeframe.interface";
+import { CustomDatepickerComponent } from "../datepicker/datepicker.component";
+import { LeaderboardInfoPopupComponent } from "./leaderboard-info-popup/leaderboard-info-popup.component";
+
+const dateFormats: Record<LeaderboardTimeframe, string> = {
+    Day: "MMMM d, y",
+    Week: "MMMM d, y",
+    Month: "MMMM y",
+};
 
 @Component({
     selector: "app-leaderboard",
@@ -24,44 +34,65 @@ import { LinkButtonComponent } from "@/app/shared/components/ui-kit/buttons/link
         FormatNumberPipe,
         SpinnerComponent,
         MaterialModule,
-        DatePipe,
         AngularSvgIconModule,
         LinkButtonComponent,
+        CustomDatepickerComponent,
     ],
     providers: [DatePipe],
     templateUrl: "./leaderboard.component.html",
     styleUrl: "./leaderboard.component.scss",
+    changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class LeaderboardComponent {
     private datePipe = inject(DatePipe);
     private leaderboardService = inject(LeaderboardService);
+    private dialogService = inject(DialogService);
 
-    @ViewChild("picker") picker!: MatDatepicker<Date>;
+    // @ViewChild("picker") picker!: MatDatepicker<Date>;
 
     public topics$ = this.leaderboardService.topics$;
-    public selectedDate = new Date();
-    public readonly startDate = new Date(2025, 5, 1);
-    public readonly todayDate = new Date();
+    public selectedDate: Date | null = this.leaderboardService.startDate;
+    public timeframe = this.leaderboardService.startTimeframe;
+    public datepickerButtonText$ = this.leaderboardService.filter$.pipe(
+        map(({ date, timeframe }) => {
+            switch (timeframe) {
+                case "Day":
+                    return this.datePipe.transform(date, dateFormats.Day) ?? "";
+                case "Week":
+                    return `Week ending ${this.datePipe.transform(date, dateFormats.Day) ?? ""}`;
+                case "Month":
+                    return this.datePipe.transform(date, dateFormats.Month) ?? "";
+                default:
+                    return "";
+            }
+        })
+    )
 
     public get isLoading() {
         return this.leaderboardService.isLoading;
     }
 
-    public openCalendar() {
-        this.picker.open();
+    public get startView() {
+        return this.timeframe === "Month" ? "year" : "month";
     }
 
-    public onDateChange(date: Date | null) {
-        if (date) {
-            this.selectedDate = date;
-            const firstDay = new Date(date.getFullYear(), date.getMonth(), 1);
-            this.leaderboardService.setFilter({
-                date: firstDay.toISOString(),
-            });
-        }
-        this.picker.close();
+    public onDateSelected(date: Date | null) {
+        this.selectedDate = date;
     }
-    get formattedDate(): string {
-        return this.datePipe.transform(this.selectedDate, "MMMM yyyy") ?? "";
+
+    public onTimeframeChange(timeframe: LeaderboardTimeframe) {
+        this.timeframe = timeframe;
+    }
+
+    public onConfirm() {
+        if (!this.selectedDate) return;
+        this.leaderboardService.setFilter({
+            date: this.selectedDate.toISOString(),
+            timeframe: this.timeframe,
+        });
+    }
+
+    public openInfoPopup() {
+        this.dialogService.open(LeaderboardInfoPopupComponent)
     }
 }

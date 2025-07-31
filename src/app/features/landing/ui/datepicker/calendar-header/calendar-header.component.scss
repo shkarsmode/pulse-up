@@ -1,0 +1,40 @@
+@use "../../../../../../styles/mixins" as *;
+
+:host {
+    display: block;
+}
+
+.calendar-header__back-wrap {
+    padding: 8px 8px 0;
+}
+
+.calendar-header__back {
+    display: flex;
+    align-items: center;
+    column-gap: 16px;
+    padding: 12px;
+
+    span {
+        padding: 0 8px;
+        text-align: center;
+        @include link-16px;
+    }
+}
+
+.calendar-header__ranges {
+    display: flex;
+    justify-content: center;
+    padding: 12px 20px;
+    border-top: 1px solid var(--light-grey-color);
+}
+
+.calendar-header__ranges-toggle {
+    width: 100%;
+
+    &::ng-deep {
+        .mat-button-toggle {
+            flex: 1;
+            border-radius: 8px;
+        }
+    }
+}

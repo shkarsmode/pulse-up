@@ -1,0 +1,17 @@
+app-popup-text {
+    
+    strong {
+        font-weight: 600;
+    }
+
+    &::ng-deep {
+        .popup-text {
+            text-align: left;
+        }
+    }
+}
+
+.leaderboard-info-popup__list {
+    list-style-type: disc;
+    padding-left: 16px;
+}
