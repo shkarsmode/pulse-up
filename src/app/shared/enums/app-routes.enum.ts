@@ -8,6 +8,7 @@ enum LandingRoutes {
     HEATMAP = 'topic/:id/heatmap',
     USER = 'user/:username',
     ABOUT = 'about',
+    LEADERBOARD = 'leaderboard',
 }
 
 enum CommunityRoutes {

@@ -20,6 +20,7 @@ import { VotesService } from "@/app/shared/services/votes/votes.service";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { ContainerComponent } from "@/app/shared/components/ui-kit/container/container.component";
 import { LeaderboardComponent } from "../../ui/leaderboard/leaderboard.component";
+import { LinkButtonComponent } from "@/app/shared/components/ui-kit/buttons/link-button/link-button.component";
 
 @Component({
     selector: "app-pulses",
@@ -39,6 +40,7 @@ import { LeaderboardComponent } from "../../ui/leaderboard/leaderboard.component
         TrendingTopicsListItemComponent,
         ContainerComponent,
         LeaderboardComponent,
+        LinkButtonComponent,
     ],
     providers: [InfiniteLoaderService],
 })
@@ -51,6 +53,7 @@ export class PulsesComponent implements OnInit {
     public pulses: ITopic[] = [];
     public isLoading: boolean = true;
     public addTopicRoute = "/" + AppRoutes.User.Topic.SUGGEST;
+    public leaderboardRoute = "/" + AppRoutes.Landing.LEADERBOARD;
     public loading$: Observable<boolean>;
     public paginator$: Observable<IPaginator<ITopic>>;
     public searchInFocus: boolean = false;

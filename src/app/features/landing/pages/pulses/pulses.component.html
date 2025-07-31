@@ -2,7 +2,14 @@
     <div class="pulses">
         <main class="pulses__main">
             <div class="pulses__header">
-                <h1>Trending Topics</h1>
+                <div class="pulses__top">
+                    <h1 class="pulses__title">Trending Topics</h1>
+                    <app-link-button 
+                        class="pulses__top-link" 
+                        [routerLink]="leaderboardRoute">
+                        Global Top 10 Topics
+                    </app-link-button>
+                </div>
                 <app-category-filter
                     class="pulses__filter"
                     (selectedCategory)="onCategorySelected($event)" />
