@@ -42,10 +42,8 @@ export class WeekRangeSelectionStrategy<D = Date> implements MatDateRangeSelecti
         const currentDate = date || this._dateAdapter.today();
 
         const day = this._dateAdapter.getDayOfWeek(currentDate); // 0 (Sunday) to 6 (Saturday)
-        const daysToMonday = day === 0 ? -6 : 1 - day;
-
-        const start = this._dateAdapter.addCalendarDays(currentDate, daysToMonday);
-        const end = this._dateAdapter.addCalendarDays(start, 6); // 7-day range
+        const start = this._dateAdapter.addCalendarDays(currentDate, -day); // back to Sunday
+        const end = this._dateAdapter.addCalendarDays(start, 6); // through Saturday
 
         return new DateRange<D>(start, end);
     }
@@ -56,12 +54,7 @@ export class WeekRangeSelectionStrategy<D = Date> implements MatDateRangeSelecti
     templateUrl: "./datepicker.component.html",
     styleUrls: ["./datepicker.component.scss"],
     standalone: true,
-    imports: [
-        CommonModule,
-        MatCalendar,
-        CalendarHeaderComponent,
-        PrimaryButtonComponent,
-    ],
+    imports: [CommonModule, MatCalendar, CalendarHeaderComponent, PrimaryButtonComponent],
     providers: [
         {
             provide: MAT_DATE_RANGE_SELECTION_STRATEGY,
@@ -174,9 +167,10 @@ export class CustomDatepickerComponent {
         if (!date) return;
 
         const selectedDate = new Date(date);
-        const day = selectedDate.getDay(); // 0 (Sun) - 6 (Sat)
-        const diff = selectedDate.getDate() - day + (day === 0 ? -6 : 1); // Adjust if Sunday
-        const startOfWeek = new Date(selectedDate.setDate(diff));
+        const day = selectedDate.getDay();
+
+        const startOfWeek = new Date(selectedDate);
+        startOfWeek.setDate(selectedDate.getDate() - day);
 
         const endOfWeek = new Date(startOfWeek);
         endOfWeek.setDate(startOfWeek.getDate() + 6);
@@ -221,16 +215,15 @@ export class CustomDatepickerComponent {
     }
 
     private getStartWeekRange(): DateRange<Date> {
-        const today = new Date(1970, 0, 7);
-        const day = today.getDay();
-        const diff = today.getDate() - day + (day === 0 ? -6 : 1);
+        const today = new Date(1970, 0, 7); // Example date: Wednesday, Jan 7, 1970
+        const day = today.getDay(); // 0 = Sunday, 1 = Monday, ..., 6 = Saturday
 
-        const monday = new Date(today);
-        monday.setDate(diff);
+        const sunday = new Date(today);
+        sunday.setDate(today.getDate() - day); // Go back to Sunday
 
-        const sunday = new Date(monday);
-        sunday.setDate(monday.getDate() + 6);
+        const saturday = new Date(sunday);
+        saturday.setDate(sunday.getDate() + 6); // Add 6 days for full week
 
-        return new DateRange<Date>(monday, sunday);
+        return new DateRange<Date>(sunday, saturday);
     }
 }
