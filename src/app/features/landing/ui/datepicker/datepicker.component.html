@@ -1,0 +1,49 @@
+<button
+    #triggerButton
+    (click)="openCalendar()">
+    {{ text }}
+</button>
+
+<ng-template #calendarPortal>
+    <div class="datepicker">
+        <app-calendar-header
+            [range]="timeframe"
+            (rangeChange)="onTimeframeChange($event)"
+            (backClick)="closeCalendar()" />
+        <mat-calendar
+            *ngIf="isDayView"
+            #dayCalendar
+            [minDate]="calendarMinDate"
+            [maxDate]="calendarMaxDate"
+            [selected]="date"
+            startView="month"
+            (selectedChange)="onDaySelected($event)"
+            (viewChanged)="onViewChanged($event)" />
+        <mat-calendar
+            *ngIf="isWeekView"
+            #weekCalendar
+            [minDate]="calendarMinDate"
+            [maxDate]="calendarMaxDate"
+            [selected]="selectedDateRange"
+            startView="month"
+            (selectedChange)="onWeekSelected($event)"
+            (viewChanged)="onViewChanged($event)"  />
+        <mat-calendar
+            *ngIf="isMonthView"
+            #monthCalendar
+            [minDate]="calendarMinDate"
+            [maxDate]="calendarMaxDate"
+            [selected]="date"
+            startView="year"
+            (monthSelected)="onMonthSelected($event)" 
+            (viewChanged)="onViewChanged($event)" />
+        <div class="datepicker__footer">
+            <app-primary-button
+                [fullWidth]="true"
+                [disabled]="!isConfirmAllowed"
+                (handleClick)="onConfirm()">
+                Select
+            </app-primary-button>
+        </div>
+    </div>
+</ng-template>

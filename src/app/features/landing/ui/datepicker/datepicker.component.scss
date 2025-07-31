@@ -1,0 +1,23 @@
+:host {
+    position: relative;
+}
+
+.datepicker {
+    width: 300px;
+    background: var(--white-color);
+    border: 1px solid var(--light-grey-color);
+    border-radius: 8px;
+    box-shadow: 0px 12px 40px rgba(0, 0, 0, 0.12);
+
+    &::ng-deep {
+        .mat-calendar-body-label {
+            font-size: 0;
+            padding-top: 0 !important;
+            padding-bottom: 0 !important;
+        }
+    }
+}
+
+.datepicker__footer {
+    padding: 16px 8px;
+}

@@ -1,34 +1,31 @@
-<h2 class="leaderboard__title">Global Top 10</h2>
-<mat-form-field
-    appearance="outline"
-    class="leaderboard__calendar"
-    subscriptSizing="dynamic">
-    <input
-        matInput
-        [matDatepicker]="picker"
-        [min]="startDate"
-        [max]="todayDate"
-        [value]="selectedDate"
-        (dateChange)="onDateChange($event.value)"
-        readonly
-        class="leaderboard__calendar-input"
-        [style]="{ display: 'none' }" />
-    <app-link-button class="leaderboard__calendar-button" (click)="openCalendar()">
-        <span>{{ formattedDate }}</span>
-        <svg-icon src="assets/svg/arrow-left.svg" class="leaderboard__calendar-icon"/>
-    </app-link-button>
-    <mat-datepicker
-        #picker
-        startView="year"
-        (monthSelected)="onDateChange($event)">
-    </mat-datepicker>
-</mat-form-field>
+<div class="leaderboard-header">
+    <div>
+        <h2 class="leaderboard__title">Global Top 10</h2>
+        <app-datepicker
+            [text]="(datepickerButtonText$ | async) || ''"
+            [date]="selectedDate"
+            [timeframe]="timeframe"
+            (dateChange)="onDateSelected($event)"
+            (timeframeChange)="onTimeframeChange($event)"
+            (confirm)="onConfirm()" />
+    </div>
+    <div class="leaderboard-header__actions">
+        <app-link-button class="leaderboard-header__action">
+            <span class="visualy-hidden">More information</span>
+            <svg-icon
+                src="assets/svg/info.svg"
+                class="leaderboard-header__action-icon" />
+        </app-link-button>
+    </div>
+</div>
 
-<app-spinner *ngIf="isLoading"></app-spinner>
+@if (isLoading) {
+    <app-spinner class="leaderboard__spinner"></app-spinner>
+}
 
 <ul class="leaderboard__list">
     @for(topicData of topics$ | async; track topicData.topic.id) {
-    <li>
+    <li *ngIf="!isLoading">
         <app-large-pulse
             [pulse]="topicData.topic"
             class="leaderboard__item"

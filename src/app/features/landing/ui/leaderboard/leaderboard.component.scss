@@ -1,8 +1,20 @@
 @use "../../../../../styles/mixins" as *;
 
+.leaderboard-header {
+    display: flex;
+    justify-content: space-between;
+}
+
 .leaderboard__title {
     @include title-32px;
-    margin-bottom: 8px;
+}
+
+.leaderboard-header__action {
+    &::ng-deep {
+        .mat-mdc-button {
+            min-width: 0;
+        }
+    }
 }
 
 .leaderboard__calendar {
@@ -88,4 +100,9 @@
             fill: var(--accent-color);
         }
     }
+}
+
+.leaderboard__spinner {
+    height: auto;
+    padding-top: 16px;
 }

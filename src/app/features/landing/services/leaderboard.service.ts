@@ -13,20 +13,29 @@ interface ILeaderboardFilter {
 })
 export class LeaderboardService {
     private pulseService = inject(PulseService);
+    
+    public readonly startDate = new Date();
+    public readonly startTimeframe: LeaderboardTimeframe = "Day";
 
     private readonly count = 10;
-    private filter = new BehaviorSubject<ILeaderboardFilter>({
-        date: new Date().toISOString(),
-        timeframe: "Month",
+    private filterSubject = new BehaviorSubject<ILeaderboardFilter>({
+        date: this.startDate.toISOString(),
+        timeframe: this.startTimeframe,
     });
-
-    public isLoading = false;
-    public isError = false;
-    public filter$ = this.filter.asObservable();
+    private _isLoading = false;
+    private _isError = false;
+    
+    public get isLoading() {
+        return this._isLoading;
+    }
+    public get isError() {
+        return this._isError;
+    }
+    public filter$ = this.filterSubject.asObservable();
     public topics$ = this.filter$.pipe(
         tap(() => {
-            this.isLoading = true;
-            this.isError = false;
+            this._isLoading = true;
+            this._isError = false;
         }),
         switchMap((filter) => {
             return this.pulseService.getLeaderboardTopics({
@@ -37,17 +46,17 @@ export class LeaderboardService {
             });
         }),
         catchError(() => {
-            this.isError = true;
-            this.isLoading = false;
+            this._isError = true;
+            this._isLoading = false;
             return of(null);
         }),
         tap(() => {
-            this.isLoading = false;
+            this._isLoading = false;
         }),
-        map((data) => data?.results || null)
+        map((data) => data?.results || null),
     );
 
     public setFilter(filter: Partial<ILeaderboardFilter>) {
-        this.filter.next({ ...this.filter.getValue(), ...filter });
+        this.filterSubject.next({ ...this.filterSubject.getValue(), ...filter });
     }
 }
