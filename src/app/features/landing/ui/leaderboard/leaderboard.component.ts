@@ -48,8 +48,6 @@ export class LeaderboardComponent {
     private leaderboardService = inject(LeaderboardService);
     private dialogService = inject(DialogService);
 
-    // @ViewChild("picker") picker!: MatDatepicker<Date>;
-
     public topics$ = this.leaderboardService.topics$;
     public selectedDate: Date | null = this.leaderboardService.startDate;
     public timeframe = this.leaderboardService.startTimeframe;
