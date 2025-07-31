@@ -30,6 +30,9 @@ body .cdk-overlay-pane.mat-mdc-dialog-panel {
             calendar-date-selected-state-background-color: var(--accent-color),
             calendar-date-today-selected-state-outline-color: var(--accent-color),
             calendar-date-in-overlap-range-selected-state-background-color: var(--accent-color),
+            calendar-date-in-range-state-background-color: var(--accent-light-color),
+            calendar-date-today-outline-color: var(--accent-color),
+            calendar-date-preview-state-outline-color: var(--accent-color),
         )
     );
     @include mat.button-toggle-overrides(
