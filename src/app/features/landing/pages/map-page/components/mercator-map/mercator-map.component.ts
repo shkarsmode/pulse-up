@@ -10,7 +10,8 @@ import { MapHexagonsLayerComponent } from "@/app/shared/components/map/map-hexag
 import { MapHeatmapLayerComponent } from "@/app/shared/components/map/map-heatmap-layer/map-heatmap-layer.component";
 import { MapZoomControlsComponent } from "@/app/shared/components/map/map-zoom-controls/map-zoom-controls.component";
 import { MapControlsComponent } from "@/app/shared/components/map/map-controls/map-controls.component";
-import { CategoryFilterComponent } from "@/app/shared/components/category-filter/category-filter.component";
+import { CategoryFilterSelectComponent } from "@/app/shared/components/category-filter-select/category-filter-select.component";
+import { CategoryFilterMenuComponent } from "@/app/shared/components/category-filter-menu/category-filter-menu.component";
 import { ICategory } from "@/app/shared/interfaces/category.interface";
 import { MapMarkersService } from "@/app/shared/services/map/map-marker.service";
 
@@ -26,7 +27,8 @@ import { MapMarkersService } from "@/app/shared/services/map/map-marker.service"
         MapHeatmapLayerComponent,
         MapZoomControlsComponent,
         MapControlsComponent,
-        CategoryFilterComponent,
+        CategoryFilterSelectComponent,
+        CategoryFilterMenuComponent,
     ],
 })
 export class MercatorMapComponent implements OnDestroy {

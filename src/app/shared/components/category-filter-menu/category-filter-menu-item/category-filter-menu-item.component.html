@@ -1,0 +1,11 @@
+<button
+    mat-menu-item
+    (click)="onSelect()"
+    class="category-filter-menu-item"
+    [class.category-filter-menu-item--selected]="isSelected">
+    {{ category === "all" ? "All categories" : category.name }}
+    <svg-icon
+        class="category-filter-menu-icon"
+        src="assets/svg/checked.svg"
+        aria-hidden="true" />
+</button>

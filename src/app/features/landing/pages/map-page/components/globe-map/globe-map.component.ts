@@ -13,8 +13,9 @@ import { MapHeatmapLayerComponent } from "@/app/shared/components/map/map-heatma
 import { MapZoomControlsComponent } from "@/app/shared/components/map/map-zoom-controls/map-zoom-controls.component";
 import { MapControlsComponent } from "@/app/shared/components/map/map-controls/map-controls.component";
 import { MapSpinControlComponent } from "@/app/shared/components/map/map-spin-control/map-spin-control.component";
-import { CategoryFilterComponent } from "@/app/shared/components/category-filter/category-filter.component";
+import { CategoryFilterSelectComponent } from "@/app/shared/components/category-filter-select/category-filter-select.component";
 import { ICategory } from "@/app/shared/interfaces/category.interface";
+import { CategoryFilterMenuComponent } from "@/app/shared/components/category-filter-menu/category-filter-menu.component";
 
 @Component({
     selector: "app-globe-map",
@@ -29,7 +30,8 @@ import { ICategory } from "@/app/shared/interfaces/category.interface";
         MapZoomControlsComponent,
         MapControlsComponent,
         MapSpinControlComponent,
-        CategoryFilterComponent,
+        CategoryFilterSelectComponent,
+        CategoryFilterMenuComponent,
     ],
 })
 export class GlobeMapComponent implements OnDestroy {
@@ -94,7 +96,7 @@ export class GlobeMapComponent implements OnDestroy {
     private is1600Desctop = toSignal(this.mediaService.mediaQuery("max", "XXXL"));
     private is1920Desctop = toSignal(this.mediaService.mediaQuery("max", "XXXXL"));
     private selectedCategorySubject = new BehaviorSubject<ICategory | null>(null);
-    
+
     public map: mapboxgl.Map | null = null;
     public selectedCategory$ = this.selectedCategorySubject.asObservable();
 

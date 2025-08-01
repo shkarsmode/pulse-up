@@ -1,3 +1,4 @@
+@use '@angular/material' as mat;
 @import url("./_reset.scss");
 @import url("./_fonts.scss");
 @import url("./_variables.scss");
@@ -270,11 +271,28 @@ html {
     --mdc-dialog-container-shape: 10px !important;
 }
 
-// Category filter
+// Category filter select
 .category-filter-panel.mat-mdc-select-panel {
     --mat-select-panel-background-color: var(--white-color);
     --mat-option-selected-state-layer-color: rgb(from var(--accent-color) r g b / 0.3);
     --mat-option-focus-state-layer-color: rgb(from var(--accent-color) r g b / 0.3);
     --mat-option-hover-state-layer-color: rgb(from var(--accent-color) r g b / 0.1);
     background-color: var(--white-color);
+}
+
+// Category filter menu
+.category-filter-menu {
+    &.mat-mdc-menu-panel {
+        min-width: 240px;
+    }
+    .mat-mdc-menu-content {
+        padding: 0;
+    }
+    @include mat.menu-overrides(
+        (
+            container-color: var(--white-color),
+            item-hover-state-layer-color: rgb(from var(--accent-color) r g b / 0.1),
+            item-label-text-size: 16px,
+        )
+    );
 }

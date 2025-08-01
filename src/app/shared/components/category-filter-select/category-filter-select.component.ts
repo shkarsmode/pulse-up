@@ -10,13 +10,13 @@ import { PulseService } from "../../services/api/pulse.service";
 import { CommonModule } from "@angular/common";
 
 @Component({
-    selector: "app-category-filter",
+    selector: "app-category-filter-select",
     standalone: true,
     imports: [CommonModule, NgxMatSelectSearchModule, MaterialModule, ReactiveFormsModule],
-    templateUrl: "./category-filter.component.html",
-    styleUrl: "./category-filter.component.scss",
+    templateUrl: "./category-filter-select.component.html",
+    styleUrl: "./category-filter-select.component.scss",
 })
-export class CategoryFilterComponent {
+export class CategoryFilterSelectComponent {
     private readonly destroyRef = inject(DestroyRef);
     private readonly pulseService = inject(PulseService);
 

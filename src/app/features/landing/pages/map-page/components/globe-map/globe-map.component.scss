@@ -1,5 +1,25 @@
+@use "../../../../../../../styles/mixins" as *;
+
 .categories {
-  position: absolute;
-  top: 30px;
-  left: 30px;
+    position: absolute;
+    top: 30px;
+    left: 30px;
+
+    @include media-sm {
+        top: 20px;
+        left: 20px;
+    }
+}
+
+.category-filter-select {
+    @include media-md {
+        display: none;
+    }
+}
+
+.category-filter-menu {
+    display: none;
+    @include media-md {
+        display: block;
+    }
 }
