@@ -36,6 +36,7 @@ import { LinkButtonComponent } from "@/app/shared/components/ui-kit/buttons/link
 })
 export class MyTopicsTabComponent implements OnInit {
     private readonly route = inject(ActivatedRoute);
+    private readonly destroyed = inject(DestroyRef);
     private readonly destroyRef = inject(DestroyRef);
     private readonly pulseService = inject(PulseService);
     private readonly profileService = inject(ProfileService);
@@ -51,12 +52,18 @@ export class MyTopicsTabComponent implements OnInit {
     public topicsCount$ = this.profile$.pipe(map((profile) => profile.totalTopics || 0));
     public hasTopics$ = this.topicsCount$.pipe(map((count) => !!count));
     public addTopicRoute = "/" + AppRoutes.User.Topic.SUGGEST;
-    public votes$ = this.votesService.votesByTopicId$.pipe(takeUntilDestroyed(this.destroyRef));
+    public votes$ = this.votesService.votesByTopicId$;
     public selectedTabIndex = 0;
 
     constructor() {
-        const tabFromUrl = Number(this.route.snapshot.queryParamMap.get("tab"));
-        this.selectedTabIndex = isNaN(tabFromUrl) ? 0 : tabFromUrl;
+        this.route.queryParamMap.pipe(
+            takeUntilDestroyed(this.destroyed),
+            map((params) => params.get("tab")),
+            tap((tab) => {
+                const tabFromUrl = Number(tab);
+                this.selectedTabIndex = isNaN(tabFromUrl) ? 0 : tabFromUrl;
+            })
+        ).subscribe();
     }
 
     ngOnInit() {
@@ -71,6 +78,8 @@ export class MyTopicsTabComponent implements OnInit {
                 takeUntilDestroyed(this.destroyRef),
             )
             .subscribe();
+
+        this.votesService.votes$.pipe(takeUntilDestroyed(this.destroyRef), tap((votes) => console.log(votes))).subscribe();
     }
 
     private get isActiveTab(): boolean {

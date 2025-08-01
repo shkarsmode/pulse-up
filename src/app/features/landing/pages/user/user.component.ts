@@ -70,7 +70,7 @@ export class UserComponent {
     public pulseId: string = "";
     public paginator$: Observable<IPaginator<ITopic>>;
     public loading$: Observable<boolean>;
-    public votes$ = this.votesService.votesByTopicId$.pipe(takeUntilDestroyed(this.destroyRef));
+    public votes$ = this.votesService.votesByTopicId$;
     public loadMore = this.infiniteLoaderService.loadMore.bind(this.infiniteLoaderService);
 
     constructor() {

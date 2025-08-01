@@ -64,7 +64,9 @@ export class PulseService {
     public getMyTopics(
         params: { skip?: number; take?: number; state?: TopicState[]; includeStats?: boolean } = {},
     ) {
-        return this.http.get<ITopic[]>(`${this.apiUrl}/topics/my`, { params });
+        return this.http
+            .get<ITopic[]>(`${this.apiUrl}/topics/my`, { params })
+            .pipe(map((pulses) => pulses.map((pulse) => this.syncPendingTopics(pulse))),);
     }
 
     public create(params: {

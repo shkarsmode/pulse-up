@@ -56,8 +56,15 @@ export class HistoryTabComponent implements OnInit {
     public selectedTabIndex = 0;
 
     constructor() {
-        const tabFromUrl = Number(this.route.snapshot.queryParamMap.get("tab"));
-        this.selectedTabIndex = isNaN(tabFromUrl) ? 0 : tabFromUrl;
+        this.route.queryParamMap.pipe(
+            takeUntilDestroyed(this.destroyed),
+            map((params) => params.get("tab")),
+            tap((tab) => {
+                const tabFromUrl = Number(tab);
+                this.selectedTabIndex = isNaN(tabFromUrl) ? 0 : tabFromUrl;
+            })
+        ).subscribe();
+
     }
 
     ngOnInit(): void {
@@ -121,6 +128,8 @@ export class HistoryTabComponent implements OnInit {
     }
 
     private convertToPaginator(votes: IVoteWithTopic[], page: number): IPaginator<IVoteWithTopic> {
+        console.log({ length: votes.length });
+        
         return {
             items: votes,
             page: page,
