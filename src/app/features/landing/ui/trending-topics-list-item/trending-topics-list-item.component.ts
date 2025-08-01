@@ -16,6 +16,7 @@ import { SettingsService } from "@/app/shared/services/api/settings.service";
 import { CopyTopicButtonComponent } from "../copy-topic-button/copy-topic-button.component";
 import { IVote } from "@/app/shared/interfaces/vote.interface";
 import { VoteUtils } from "@/app/shared/helpers/vote-utils";
+import { WaveAnimationDirective } from "@/app/shared/directives/wave-animation/wave-animation.directive";
 
 @Component({
     selector: "app-trending-topics-list-item",
@@ -34,6 +35,7 @@ import { VoteUtils } from "@/app/shared/helpers/vote-utils";
         SocialsButtonComponent,
         QrcodeButtonComponent,
         CopyTopicButtonComponent,
+        WaveAnimationDirective,
     ],
     templateUrl: "./trending-topics-list-item.component.html",
     styleUrl: "./trending-topics-list-item.component.scss",

@@ -22,6 +22,7 @@ import { VoteTimeLeftComponent } from "../vote-time-left/vote-time-left.componen
 import { AuthenticationService } from "@/app/shared/services/api/authentication.service";
 import { VotingError, VotingErrorCode } from "@/app/shared/helpers/errors/voting-error";
 import { isErrorWithMessage } from "@/app/shared/helpers/errors/is-error-with-message";
+import { WaveAnimationDirective } from "@/app/shared/directives/wave-animation/wave-animation.directive";
 
 function delayBetween<T>(delayMs: number, first = false) {
     let past = Date.now();
@@ -46,6 +47,7 @@ function delayBetween<T>(delayMs: number, first = false) {
         PrimaryButtonComponent,
         SvgIconComponent,
         VoteTimeLeftComponent,
+        WaveAnimationDirective,
     ],
     templateUrl: "./vote-button.component.html",
     styleUrl: "./vote-button.component.scss",

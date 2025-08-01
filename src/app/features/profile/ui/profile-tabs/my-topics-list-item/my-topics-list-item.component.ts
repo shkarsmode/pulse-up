@@ -16,6 +16,7 @@ import { MenuComponent } from "@/app/shared/components/ui-kit/menu/menu.componen
 import { CopyTopicButtonComponent } from "@/app/features/landing/ui/copy-topic-button/copy-topic-button.component";
 import { SocialsButtonComponent } from "@/app/shared/components/ui-kit/buttons/socials-button/socials-button.component";
 import { QrcodeButtonComponent } from "@/app/shared/components/ui-kit/buttons/qrcode-button/qrcode-button.component";
+import { WaveAnimationDirective } from "@/app/shared/directives/wave-animation/wave-animation.directive";
 
 @Component({
     selector: "app-my-topics-list-item",
@@ -34,6 +35,7 @@ import { QrcodeButtonComponent } from "@/app/shared/components/ui-kit/buttons/qr
         CopyTopicButtonComponent,
         SocialsButtonComponent,
         QrcodeButtonComponent,
+        WaveAnimationDirective,
     ],
     templateUrl: "./my-topics-list-item.component.html",
     styleUrl: "./my-topics-list-item.component.scss",
