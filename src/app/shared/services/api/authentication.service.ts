@@ -35,7 +35,6 @@ import { WindowService } from "../core/window.service";
 import { ProfileService } from "../profile/profile.service";
 import { IdentityService } from "./identity.service";
 import { UserService } from "./user.service";
-import { AppInitializerService } from "../core/app-initializer.service";
 
 @Injectable({
     providedIn: "root",
@@ -45,7 +44,6 @@ export class AuthenticationService {
     private readonly userService: UserService = inject(UserService);
     private readonly profileService: ProfileService = inject(ProfileService);
     private readonly identityService: IdentityService = inject(IdentityService);
-    private readonly appInitializerService: AppInitializerService = inject(AppInitializerService);
 
     private anonymousUser$: BehaviorSubject<string | null>;
     private userToken$: BehaviorSubject<string | null>;
@@ -86,10 +84,6 @@ export class AuthenticationService {
 
         getAuth(this.firebaseApp).onAuthStateChanged((user) => {
             this.firebaseUserSubject.next(user);
-            
-            if (user) {
-                this.appInitializerService.resetInitialization();
-            }
         });
     }
 
@@ -380,8 +374,6 @@ export class AuthenticationService {
                 this.anonymousUser$.next(null);
 
                 LocalStorageService.remove(LOCAL_STORAGE_KEYS.isAnonymous);
-
-                this.appInitializerService.resetInitialization();
             }),
             catchError((error: any) => {
                 throw new AuthenticationError(error.message, AuthenticationErrorCode.UNKNOWN_ERROR);

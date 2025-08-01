@@ -1,57 +1,72 @@
-import { inject, Injectable } from "@angular/core";
-import { BehaviorSubject, firstValueFrom } from "rxjs";
-import { IVote } from "../../interfaces/vote.interface";
+import { Injectable, inject } from "@angular/core";
+import {
+    Observable,
+    defer,
+    of,
+    concatMap,
+    expand,
+    map,
+    reduce,
+    shareReplay,
+    takeWhile,
+    BehaviorSubject,
+    tap,
+} from "rxjs";
 import { VoteService } from "../api/vote.service";
+import { IVote } from "../../interfaces/vote.interface";
 
 @Injectable({
     providedIn: "root",
 })
 export class VotesService {
-    private voteService = inject(VoteService);
+    private readonly voteService = inject(VoteService);
 
-    private votes = new BehaviorSubject<IVote[]>([]);
-    private votesByTopicId = new BehaviorSubject<Map<number, IVote>>(new Map());
-    private loaded = new BehaviorSubject<boolean>(false);
-    public votes$ = this.votes.asObservable();
-    public votesByTopicId$ = this.votesByTopicId.asObservable();
-    public loaded$ = this.loaded.asObservable();
-
-    public async updateVotes(): Promise<void> {
-        this.loaded.next(false);
-        const take = 500;
-        let skip = 0;
-        let allVotes: IVote[] = [];
-
-        try {
-            while (true) {
-                const votes = await firstValueFrom(this.voteService.getMyVotes({ take, skip }));
-                allVotes = [...allVotes, ...votes];
-
-                if (votes.length < take) {
-                    break;
-                }
-
-                skip += take;
-            }
-
-            this.votes.next(allVotes);
-
-            const voteMap = new Map<number, IVote>();
-            allVotes.forEach((vote) => {
-                if (!voteMap.has(vote.topicId)) {
-                    voteMap.set(vote.topicId, vote);
+    private readonly votesSubject = new BehaviorSubject<IVote[]>([]);
+    public readonly votes$: Observable<IVote[]> = this.votesSubject.asObservable();
+    public readonly votesByTopicId$ = this.votes$.pipe(
+        map((votes) => {
+            const map = new Map<number, IVote>();
+            votes.forEach((vote) => {
+                if (!map.has(vote.topicId)) {
+                    map.set(vote.topicId, vote);
                 }
             });
-            this.votesByTopicId.next(voteMap);
-            this.loaded.next(true);
-        } catch (err) {
-            console.error("Failed to fetch votes", err);
-        }
+            return map;
+        }),
+    );
+
+    private initialized = false;
+
+    constructor() {
+        this.loadAllVotes();
     }
 
-    public clearVotes(): void {
-        this.votes.next([]);
-        this.votesByTopicId.next(new Map());
-        this.loaded.next(false);
+    private loadAllVotes(): void {
+        if (this.initialized) return;
+        this.initialized = true;
+
+        const take = 500;
+        let skip = 0;
+
+        this.voteService
+            .getMyVotes({ take, skip })
+            .pipe(
+                expand((batch) => {
+                    if (batch.length < take) {
+                        return of([]);
+                    }
+                    skip += take;
+                    return this.voteService.getMyVotes({ take, skip });
+                }),
+                takeWhile((batch) => batch.length > 0, true),
+                reduce((acc, batch) => [...acc, ...batch], [] as IVote[]),
+                tap((allVotes) => this.votesSubject.next(allVotes)),
+            )
+            .subscribe();
+    }
+
+    public addVote(vote: IVote): void {
+        const currentVotes = this.votesSubject.getValue();
+        this.votesSubject.next([vote, ...currentVotes]);
     }
 }

@@ -61,7 +61,7 @@
                     [vote]="vote"
                     [isActiveVote]="isActiveVote"
                     [lastVoteInfo]="lastVoteInfo"
-                    (voted)="onVoted()"
+                    (voted)="onVoted($event)"
                     (voteExpired)="onVoteExpired()" />
                 <app-menu [content]="menuContent">
                     <button

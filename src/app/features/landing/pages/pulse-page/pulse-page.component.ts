@@ -42,6 +42,7 @@ import { MapComponent } from "../../ui/map/map.component";
 import { TopicQrcodePopupComponent } from "../../ui/topic-qrcode-popup/topic-qrcode-popup.component";
 import { VoteButtonComponent } from "../../ui/vote-button/vote-button.component";
 import { PulseCampaignComponent } from "./pulse-campaign/pulse-campaign.component";
+import { VotesService } from "@/app/shared/services/votes/votes.service";
 
 
 @Component({
@@ -70,7 +71,7 @@ import { PulseCampaignComponent } from "./pulse-campaign/pulse-campaign.componen
     ],
 })
 export class PulsePageComponent implements OnInit {
-    private readonly dialogService = inject(DialogService);
+    private readonly destroyRef = inject(DestroyRef);
     private readonly router = inject(Router);
     private readonly route = inject(ActivatedRoute);
     private readonly pulseService = inject(PulseService);
@@ -79,8 +80,9 @@ export class PulsePageComponent implements OnInit {
     private readonly voteService = inject(VoteService);
     private readonly notificationService = inject(NotificationService);
     private readonly authService = inject(AuthenticationService);
+    private readonly dialogService = inject(DialogService);
     private readonly pendingTopicsService = inject(PendingTopicsService);
-    private readonly destroyRef = inject(DestroyRef);
+    private readonly votesService = inject(VotesService);
     private mutationObserver: MutationObserver | null = null;
 
     @ViewChild("description", { static: false }) description!: ElementRef<HTMLDivElement>;
@@ -141,7 +143,7 @@ export class PulsePageComponent implements OnInit {
         );
     };
 
-    public onVoted() {
+    public onVoted(vote: IVote): void {
         if (!this.topic) return;
         this.pendingTopicsService.add({
             ...this.topic,
@@ -151,6 +153,7 @@ export class PulsePageComponent implements OnInit {
                 totalUniqueUsers: this.topic.stats?.totalUniqueUsers || 0,
             },
         });
+        this.votesService.addVote(vote);
         this.loadTopicData({ topicId: this.topic.id }).pipe(first()).subscribe();
     }
 

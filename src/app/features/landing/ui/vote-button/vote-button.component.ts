@@ -16,7 +16,6 @@ import {
     tap,
 } from "rxjs";
 import { IVote } from "@/app/shared/interfaces/vote.interface";
-import { HeartBeatDirective } from "@/app/shared/animations/heart-beat.directive";
 import { PrimaryButtonComponent } from "@/app/shared/components/ui-kit/buttons/primary-button/primary-button.component";
 import { NotificationService } from "@/app/shared/services/core/notification.service";
 import { VoteTimeLeftComponent } from "../vote-time-left/vote-time-left.component";
@@ -46,7 +45,6 @@ function delayBetween<T>(delayMs: number, first = false) {
         CommonModule,
         PrimaryButtonComponent,
         SvgIconComponent,
-        HeartBeatDirective,
         VoteTimeLeftComponent,
     ],
     templateUrl: "./vote-button.component.html",
