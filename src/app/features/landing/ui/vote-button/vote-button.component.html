@@ -3,7 +3,7 @@
         size="large"
         [fullWidth]="true"
         class="pulse-button"
-        [class.pulse-button--voting]="isAnimating$  | async"
+        [class.pulse-button--voting]="isAnimating$ | async"
         [class.pulse-button--success]="isActiveVote"
         [disabled]="(isAnimating$ | async) || !!isActiveVote"
         (handleClick)="onClick()">
@@ -12,9 +12,8 @@
             <span class="pulse-button__icon">
                 @if (isActiveVote || (isAnimating$ | async)) {
                 <svg-icon
-                    src="assets/svg/logo/logo-v2.svg"
-                    class="pulse-button__svg--animating"
-                     />
+                    appVawesAnimation
+                    src="assets/svg/logo/logo-v2.svg" />
                 } @else {
                 <svg-icon src="assets/svg/logo/logo-v2.svg" />
                 }
@@ -22,22 +21,22 @@
         </span>
     </app-primary-button>
     @if (vote && isActiveVote) {
-        <div
-            class="active-pulse-info"
-            [class.active-pulse-info--visible]="isActiveVote">
-            <div class="active-pulse-info__icon">
-                <svg-icon src="assets/svg/checked-circle.svg" />
-            </div>
-            <div class="active-pulse-info__text active-pulse-info__text--active">
-                Pulse active for
-                <app-vote-time-left
-                    [vote]="vote"
-                    (expired)="onVoteExpired()" />
-            </div>
-            <div class="active-pulse-info__icon">
-                <svg-icon src="assets/svg/pin.svg" />
-            </div>
-            <div class="active-pulse-info__text active-pulse-info__text--grey">{{ lastVoteInfo }}</div>
+    <div
+        class="active-pulse-info"
+        [class.active-pulse-info--visible]="isActiveVote">
+        <div class="active-pulse-info__icon">
+            <svg-icon src="assets/svg/checked-circle.svg" />
         </div>
+        <div class="active-pulse-info__text active-pulse-info__text--active">
+            Pulse active for
+            <app-vote-time-left
+                [vote]="vote"
+                (expired)="onVoteExpired()" />
+        </div>
+        <div class="active-pulse-info__icon">
+            <svg-icon src="assets/svg/pin.svg" />
+        </div>
+        <div class="active-pulse-info__text active-pulse-info__text--grey">{{ lastVoteInfo }}</div>
+    </div>
     }
 </div>

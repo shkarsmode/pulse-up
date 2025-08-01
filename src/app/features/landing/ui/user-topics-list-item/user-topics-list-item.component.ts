@@ -14,6 +14,7 @@ import { CopyTopicButtonComponent } from "../copy-topic-button/copy-topic-button
 import { SocialsButtonComponent } from "@/app/shared/components/ui-kit/buttons/socials-button/socials-button.component";
 import { QrcodeButtonComponent } from "@/app/shared/components/ui-kit/buttons/qrcode-button/qrcode-button.component";
 import { FormatNumberPipe } from "@/app/shared/pipes/format-number.pipe";
+import { WaveAnimationDirective } from "@/app/shared/directives/wave-animation/wave-animation.directive";
 
 @Component({
     selector: "app-user-topics-list-item",
@@ -30,6 +31,7 @@ import { FormatNumberPipe } from "@/app/shared/pipes/format-number.pipe";
         SocialsButtonComponent,
         QrcodeButtonComponent,
         FormatNumberPipe,
+        WaveAnimationDirective,
     ],
     templateUrl: "./user-topics-list-item.component.html",
     styleUrl: "./user-topics-list-item.component.scss",
