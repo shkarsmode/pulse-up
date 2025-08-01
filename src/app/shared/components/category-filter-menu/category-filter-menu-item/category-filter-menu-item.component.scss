@@ -1,0 +1,25 @@
+.category-filter-menu-item {
+    padding-right: 32px;
+}
+.category-filter-menu-item--selected {
+    background-color: #d0b5f1;
+
+    .category-filter-menu-icon {
+        display: block;
+    }
+}
+
+.category-filter-menu-icon {
+    display: none;
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 16px;
+    height: 16px;
+
+    svg {
+        width: 100%;
+        height: 100%;
+    }
+}

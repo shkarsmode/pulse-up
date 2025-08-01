@@ -44,5 +44,10 @@
 </ng-container>
 
 <div class="categories">
-    <app-category-filter (selectedCategory)="onSelectedCategory($event)" />
+    <app-category-filter-select
+        class="category-filter-select"
+        (selectedCategory)="onSelectedCategory($event)" />
+    <app-category-filter-menu
+        class="category-filter-menu"
+        (selectedCategory)="onSelectedCategory($event)" />
 </div>

@@ -1,0 +1,52 @@
+<button
+    flatButton
+    [matMenuTriggerFor]="menu"
+    #trigger="matMenuTrigger"
+    (menuOpened)="onMenuOpened()"
+    (menuClosed)="onMenuClosed()"
+    class="category-filter-button">
+    <span class="visualy-hidden">Filter by category</span>
+    <svg-icon
+        class="category-filter-button__icon"
+        [class.category-filter-button__icon--active]="activeCategory !== 'all'"
+        src="assets/svg/filter-filled.svg" />
+</button>
+
+<mat-menu
+    #menu="matMenu"
+    class="category-filter-menu">
+    <div class="search-container">
+        <input
+            #searchInput
+            type="text"
+            name="search"
+            [formControl]="filterControl"
+            class="category-filter-menu__search"
+            placeholder="Search categories"
+            (click)="$event.stopPropagation()"
+            (keydown)="$event.stopPropagation()" />
+        <button
+            mat-icon-button
+            *ngIf="clearButtonVisible$ | async"
+            aria-label="Clear search"
+            class="category-filter-menu__clear-button"
+            (click)="clearSearch($event)">
+            <svg-icon
+                src="assets/svg/close.svg"
+                aria-hidden="true" />
+        </button>
+    </div>
+
+    <div class="menu-scroll">
+        <app-category-filter-menu-item
+            category="all"
+            [isSelected]="activeCategory === 'all'"
+            (selectCategory)="onCategorySelect($event)" />
+        <ng-container *ngFor="let category of filteredCategories">
+            <app-category-filter-menu-item
+                [category]="category"
+                [isSelected]="activeCategory === category"
+                (selectCategory)="onCategorySelect($event)" />
+        </ng-container>
+    </div>
+</mat-menu>

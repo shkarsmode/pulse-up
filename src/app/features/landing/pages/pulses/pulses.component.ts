@@ -12,7 +12,7 @@ import { InfiniteLoaderService } from "../../services/infinite-loader.service";
 import { AppConstants } from "@/app/shared/constants/app.constants";
 import { LoadingIndicatorComponent } from "@/app/shared/components/loading-indicator/loading-indicator.component";
 import { AppRoutes } from "@/app/shared/enums/app-routes.enum";
-import { CategoryFilterComponent } from "@/app/shared/components/category-filter/category-filter.component";
+import { CategoryFilterSelectComponent } from "@/app/shared/components/category-filter-select/category-filter-select.component";
 import { ICategory } from "@/app/shared/interfaces/category.interface";
 import { SpinnerComponent } from "@/app/shared/components/ui-kit/spinner/spinner.component";
 import { TrendingTopicsListItemComponent } from "../../ui/trending-topics-list-item/trending-topics-list-item.component";
@@ -35,7 +35,7 @@ import { LinkButtonComponent } from "@/app/shared/components/ui-kit/buttons/link
         LoadingIndicatorComponent,
         InputSearchComponent,
         PromoteAdsComponent,
-        CategoryFilterComponent,
+        CategoryFilterSelectComponent,
         SpinnerComponent,
         TrendingTopicsListItemComponent,
         ContainerComponent,

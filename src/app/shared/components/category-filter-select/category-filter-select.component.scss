@@ -32,5 +32,8 @@
         .mat-mdc-select-placeholder {
             color: var(--dark-grey-color);
         }
+        .mat-select-search-clear {
+            display: none;
+        }
     }
 }
