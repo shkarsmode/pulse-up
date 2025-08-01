@@ -57,7 +57,7 @@ export class PulsesComponent implements OnInit {
     public loading$: Observable<boolean>;
     public paginator$: Observable<IPaginator<ITopic>>;
     public searchInFocus: boolean = false;
-    public votes$ = this.votesService.votesByTopicId$.pipe(takeUntilDestroyed(this.destroyRef));
+    public votes$ = this.votesService.votesByTopicId$;
 
     public ngOnInit(): void {
         this.getTrendingPulses();

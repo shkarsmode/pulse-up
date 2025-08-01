@@ -51,7 +51,7 @@ export class MyTopicsTabComponent implements OnInit {
     public topicsCount$ = this.profile$.pipe(map((profile) => profile.totalTopics || 0));
     public hasTopics$ = this.topicsCount$.pipe(map((count) => !!count));
     public addTopicRoute = "/" + AppRoutes.User.Topic.SUGGEST;
-    public votes$ = this.votesService.votesByTopicId$.pipe(takeUntilDestroyed(this.destroyRef));
+    public votes$ = this.votesService.votesByTopicId$;
     public selectedTabIndex = 0;
 
     constructor() {
@@ -71,6 +71,8 @@ export class MyTopicsTabComponent implements OnInit {
                 takeUntilDestroyed(this.destroyRef),
             )
             .subscribe();
+
+        this.votesService.votes$.pipe(takeUntilDestroyed(this.destroyRef), tap((votes) => console.log(votes))).subscribe();
     }
 
     private get isActiveTab(): boolean {
