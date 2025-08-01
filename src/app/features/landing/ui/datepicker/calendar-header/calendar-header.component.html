@@ -16,7 +16,7 @@
         class="calendar-header__ranges-toggle"
         [hideSingleSelectionIndicator]="true"
         (change)="onRangeChange($event)">
-        @for(rangeItem of ranges; track range) {
+        @for(rangeItem of ranges; track rangeItem.value) {
         <mat-button-toggle
             mat-button
             [value]="rangeItem.value"

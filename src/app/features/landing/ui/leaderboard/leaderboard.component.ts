@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, inject } from "@angular/core";
 import { CommonModule, DatePipe } from "@angular/common";
 import { AngularSvgIconModule } from "angular-svg-icon";
-import { map } from "rxjs";
+import { map, tap } from "rxjs";
 import { LeaderboardService } from "../../services/leaderboard.service";
 import { LargePulseComponent } from "@/app/shared/components/pulses/large-pulse/large-pulse.component";
 import { LargePulseIconComponent } from "@/app/shared/components/pulses/large-pulse/large-pulse-icon/large-pulse-icon.component";
@@ -48,9 +48,12 @@ export class LeaderboardComponent {
     private leaderboardService = inject(LeaderboardService);
     private dialogService = inject(DialogService);
 
-    public topics$ = this.leaderboardService.topics$;
+    public isInitialLoading = true;
     public selectedDate: Date | null = this.leaderboardService.startDate;
     public timeframe = this.leaderboardService.startTimeframe;
+    public topics$ = this.leaderboardService.topics$.pipe(
+        tap(() => this.isInitialLoading = false),
+    );
     public datepickerButtonText$ = this.leaderboardService.filter$.pipe(
         map(({ date, timeframe }) => {
             switch (timeframe) {
@@ -67,7 +70,7 @@ export class LeaderboardComponent {
     )
 
     public get isLoading() {
-        return this.leaderboardService.isLoading;
+        return this.isInitialLoading || this.leaderboardService.isLoading;
     }
 
     public get startView() {
