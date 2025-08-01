@@ -31,7 +31,7 @@ export class PrivatePageGuard implements CanActivate {
 
         if (userToken) {
             this.loadingService.isLoading = true;
-            this.appInitializerService.loadInitialData({ isAuthenticatedUser: true });
+            this.appInitializerService.loadInitialData();
             return this.appInitializerService.initialized$.pipe(
                 filter((initialized) => initialized),
                 map(() => true)

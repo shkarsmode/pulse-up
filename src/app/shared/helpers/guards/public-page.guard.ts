@@ -28,7 +28,7 @@ export class PublicPageGuard implements CanActivate {
         this.loadingService.isLoading = true;
 
         if (userToken || anonymousToken) {
-            this.appInitializerService.loadInitialData({ isAuthenticatedUser: !!userToken });
+            this.appInitializerService.loadInitialData();
             return this.appInitializerService.initialized$.pipe(
                 filter((initialized) => initialized),
                 map(() => true),
@@ -41,7 +41,7 @@ export class PublicPageGuard implements CanActivate {
                 return of(false);
             }),
             switchMap(() => {
-            this.appInitializerService.loadInitialData({ isAuthenticatedUser: false });
+                this.appInitializerService.loadInitialData();
                 return this.appInitializerService.initialized$;
             }),
             filter((initialized) => initialized),
