@@ -78,8 +78,6 @@ export class MyTopicsTabComponent implements OnInit {
                 takeUntilDestroyed(this.destroyRef),
             )
             .subscribe();
-
-        this.votesService.votes$.pipe(takeUntilDestroyed(this.destroyRef), tap((votes) => console.log(votes))).subscribe();
     }
 
     private get isActiveTab(): boolean {

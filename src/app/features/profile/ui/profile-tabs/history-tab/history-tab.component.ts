@@ -128,8 +128,6 @@ export class HistoryTabComponent implements OnInit {
     }
 
     private convertToPaginator(votes: IVoteWithTopic[], page: number): IPaginator<IVoteWithTopic> {
-        console.log({ length: votes.length });
-        
         return {
             items: votes,
             page: page,
