@@ -1,7 +1,7 @@
 import { Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { LogoComponent } from '@/app/shared/components/loading/logo/logo.component';
 import { ContainerComponent } from '@/app/shared/components/ui-kit/container/container.component';
+import { LogoComponent } from '@/app/shared/components/router-loading-indicator/logo/logo.component';
 
 @Component({
   selector: 'app-profile-layout',
