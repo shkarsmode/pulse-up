@@ -5,8 +5,8 @@ import { Directive, ElementRef, Renderer2, OnInit, Input } from '@angular/core';
   standalone: true
 })
 export class HeartBeatDirective implements OnInit {
-    @Input() isBlink: boolean = false;
-    @Input() delay: number = 0;
+    @Input() isBlink = false;
+    @Input() delay = 0;
 
   constructor(private el: ElementRef, private renderer: Renderer2) {}
 

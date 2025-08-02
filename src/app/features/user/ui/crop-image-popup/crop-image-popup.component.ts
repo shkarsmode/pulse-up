@@ -1,4 +1,4 @@
-import { Component, ElementRef, inject, Input, ViewChild } from "@angular/core";
+import { Component, ElementRef, inject, ViewChild } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
 import { MatSliderModule } from "@angular/material/slider";
@@ -6,7 +6,6 @@ import { DomSanitizer, SafeUrl } from "@angular/platform-browser";
 import {
     ImageCropperComponent,
     ImageCroppedEvent,
-    LoadedImage,
     ImageTransform,
 } from "ngx-image-cropper";
 import { PopupLayoutComponent } from "@/app/shared/components/ui-kit/popup/popup.component";
@@ -49,13 +48,13 @@ export class CropImagePopupComponent {
     private readonly dialogRef: MatDialogRef<CropImagePopupComponent> = inject(MatDialogRef);
     private readonly data: CropImagePopupData = inject(MAT_DIALOG_DATA);
 
-    minScale: number = 1;
-    maxScale: number = 3;
-    stepScale: number = 0.01;
+    minScale = 1;
+    maxScale = 3;
+    stepScale = 0.01;
     imageChangedEvent: Event | null = null;
     croppedImageUrl: SafeUrl = "";
     croppedImageBlob: Blob | null = null;
-    sourceImageLoaded: boolean = false;
+    sourceImageLoaded = false;
     scale = this.minScale;
     rotation = 0;
     canvasRotation = 0;
@@ -79,7 +78,7 @@ export class CropImagePopupComponent {
         this.croppedImageUrl = this.sanitizer.bypassSecurityTrustUrl(event.objectUrl || "");
         this.croppedImageBlob = event.blob || null;
     }
-    imageLoaded(image: LoadedImage) {
+    imageLoaded() {
         this.sourceImageLoaded = true;
         this.hideSpinner();
         this.updateClasses();

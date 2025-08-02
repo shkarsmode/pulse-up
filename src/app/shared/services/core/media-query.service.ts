@@ -2,18 +2,18 @@ import { Injectable } from "@angular/core";
 import { Observable, fromEvent, map, shareReplay, startWith } from "rxjs";
 import { Breakpoints } from "../../enums/breakpoints.enum";
 
-type MediaQueryOptions = {
+interface MediaQueryOptions {
     type: "min" | "max";
     breakPoint: keyof typeof Breakpoints;
     orientation?: "landscape" | "portrait";
     parameter?: "width" | "height";
-};
+}
 
 @Injectable({
     providedIn: "root",
 })
 export class MediaQueryService {
-    private activeMediaQueries: { [key: string]: Observable<boolean> } = {};
+    private activeMediaQueries: Record<string, Observable<boolean>> = {};
 
     public mediaQuery(
         type: "min" | "max",

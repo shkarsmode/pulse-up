@@ -28,7 +28,7 @@ import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
     `,
 })
 export class UserComponent implements OnInit {
-    public isToShowFooter: boolean = true;
+    public isToShowFooter = true;
     private readonly destroyed = inject(DestroyRef);
     private readonly route = inject(ActivatedRoute);
 

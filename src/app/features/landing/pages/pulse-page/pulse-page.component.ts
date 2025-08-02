@@ -23,7 +23,7 @@ import { MetadataService } from "@/app/shared/services/core/metadata.service";
 import { NotificationService } from "@/app/shared/services/core/notification.service";
 import { PendingTopicsService } from "@/app/shared/services/topic/pending-topics.service";
 import { CommonModule } from "@angular/common";
-import { Component, DestroyRef, ElementRef, inject, OnInit, ViewChild } from "@angular/core";
+import { Component, DestroyRef, ElementRef, inject, OnInit, ViewChild, AfterViewInit, OnDestroy } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { ActivatedRoute, ParamMap, Router, RouterModule } from "@angular/router";
 import { SvgIconComponent } from "angular-svg-icon";
@@ -70,7 +70,7 @@ import { VotesService } from "@/app/shared/services/votes/votes.service";
         PulseCampaignComponent
     ],
 })
-export class PulsePageComponent implements OnInit {
+export class PulsePageComponent implements OnInit, AfterViewInit, OnDestroy {
     private readonly destroyRef = inject(DestroyRef);
     private readonly router = inject(Router);
     private readonly route = inject(ActivatedRoute);
@@ -88,15 +88,15 @@ export class PulsePageComponent implements OnInit {
     @ViewChild("description", { static: false }) description!: ElementRef<HTMLDivElement>;
 
     topic: ITopic | null = null;
-    isReadMore: boolean = false;
-    isLoading: boolean = true;
+    isReadMore = false;
+    isLoading = true;
     suggestions: ITopic[] = [];
-    topicUrl: string = "";
-    shortPulseDescription: string = "";
-    isArchived: boolean = false;
+    topicUrl = "";
+    shortPulseDescription = "";
+    isArchived = false;
     vote: IVote | null = null;
-    isActiveVote: boolean = false;
-    lastVoteInfo: string = "";
+    isActiveVote = false;
+    lastVoteInfo = "";
 
     
 
@@ -224,7 +224,7 @@ export class PulsePageComponent implements OnInit {
         }
         return this.voteService.getMyVotes({ topicId }).pipe(
             first(),
-            catchError((error) => {
+            catchError(() => {
                 this.notificationService.error(
                     "Failed to fetch your vote. Please reload the page.",
                 );
@@ -264,7 +264,7 @@ export class PulsePageComponent implements OnInit {
             this.TOPICS_TO_TEST.state = 0;
         }
         this.updateTopicData({ 
-            ...(this.TOPICS_TO_TEST.topics[this.TOPICS_TO_TEST.topics.length - 1] as any), 
+            ...(this.TOPICS_TO_TEST.topics[this.TOPICS_TO_TEST.topics.length - 1]), 
             ...this.TOPICS_TO_TEST.topics[this.TOPICS_TO_TEST.state] 
         });
 
@@ -309,7 +309,7 @@ export class PulsePageComponent implements OnInit {
     }
 
     private createLink(topic: ITopic): void {
-        let link = this.extractUrl(topic.description);
+        const link = this.extractUrl(topic.description);
 
         if (!link || !this.topic) return;
 

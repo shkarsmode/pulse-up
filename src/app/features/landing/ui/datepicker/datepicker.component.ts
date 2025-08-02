@@ -68,7 +68,7 @@ export class CustomDatepickerComponent {
     private overlay = inject(Overlay);
     private viewContainerRef = inject(ViewContainerRef);
 
-    @Input() text: string = "";
+    @Input() text = "";
     @Input() date: Date | null = null;
     @Input() timeframe: LeaderboardTimeframe = "Day";
 
@@ -76,7 +76,7 @@ export class CustomDatepickerComponent {
     @Output() timeframeChange = new EventEmitter<LeaderboardTimeframe>();
     @Output() confirm = new EventEmitter<void>();
 
-    @ViewChild("calendarPortal") calendarPortal!: TemplateRef<any>;
+    @ViewChild("calendarPortal") calendarPortal!: TemplateRef<void>;
     @ViewChild("triggerButton") triggerButton!: ElementRef;
     @ViewChild("dayCalendar", { static: false }) dayCalendar!: MatCalendar<Date>;
     @ViewChild("weekCalendar", { static: false }) weekCalendar!: MatCalendar<Date>;

@@ -31,8 +31,8 @@ import { MapPopoverComponent } from "../../map-popover/map-popover.component";
 export class MapMarkerComponent implements OnInit {
     @Input() marker: IMapMarkerAnimated;
     @Input() tooltipData: ITopic | null;
-    @Input() showTooltipOnHover: boolean = true;
-    @Input() isAnimated: boolean = false;
+    @Input() showTooltipOnHover = true;
+    @Input() isAnimated = false;
     @Input() map: mapboxgl.Map | null = null;
 
     @Output() tooltipHideEnd: EventEmitter<void> = new EventEmitter<void>();
@@ -43,7 +43,7 @@ export class MapMarkerComponent implements OnInit {
     @Output() visibilityChange: EventEmitter<IMapMarkerVisibilityEventData> =
         new EventEmitter<IMapMarkerVisibilityEventData>();
 
-    private isVisible: boolean = true;
+    private isVisible = true;
 
     ngOnInit(): void {
         this.map?.on("moveend", this.checkMarkerVisibility.bind(this));
@@ -79,7 +79,7 @@ export class MapMarkerComponent implements OnInit {
         };
     }
 
-    public opacity: number = 0;
+    public opacity = 0;
 
     public onImageLoaded(): void {
         this.opacity = 1;

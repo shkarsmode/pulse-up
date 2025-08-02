@@ -12,7 +12,7 @@ import { AngularSvgIconModule } from "angular-svg-icon";
 })
 export class CategoryFilterMenuItemComponent {
   @Input() category: ICategory | "all";
-  @Input() isSelected: boolean = false;
+  @Input() isSelected = false;
 
   @Output() selectCategory = new EventEmitter<ICategory | "all">();
 

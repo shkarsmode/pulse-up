@@ -11,7 +11,7 @@ import { ContainerComponent } from "@/app/shared/components/ui-kit/container/con
     styleUrl: "./mobile-app-banner.component.scss",
 })
 export class MobileAppBannerComponent implements OnInit, OnChanges {
-    @Input() visible: boolean = true;
+    @Input() visible = true;
 
     public classes = {};
 

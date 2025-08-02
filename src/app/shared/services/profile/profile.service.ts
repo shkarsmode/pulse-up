@@ -19,7 +19,7 @@ export class ProfileService {
                 .getOwnProfile()
                 .pipe(tap((profile) => (this.cachedProfile = profile)));
         }),
-        shareReplay(1),
+        shareReplay({ refCount: true, bufferSize: 1 }),
     );
 
     readonly hasPublicInformation$: Observable<boolean> = this.profile$.pipe(

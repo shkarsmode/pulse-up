@@ -16,11 +16,9 @@ export class H3LayerService {
     public getH3Pulses({
         bounds,
         resolution,
-        pulseId,
     }: {
         bounds: MapBounds,
         resolution: number,
-        pulseId?: number,
     }): Observable<IH3Pulses> {
         const {ne, sw} = bounds;
         return this.pulseService.getH3PulsesForMap({
@@ -54,7 +52,7 @@ export class H3LayerService {
         });
     }
 
-    private convertH3ToGeoJSON(data: IH3Pulses) {
+    private convertH3ToGeoJSON(data: IH3Pulses): GeoJSON.FeatureCollection {
         const features = Object.keys(data).map((h3Index) => {
             const polygon = h3.h3ToGeoBoundary(h3Index, true);
             return {
@@ -69,7 +67,7 @@ export class H3LayerService {
                     icon: data[h3Index].icon,
                     h3Index,
                 },
-            };
+            } as GeoJSON.Feature;
         });
 
         return {

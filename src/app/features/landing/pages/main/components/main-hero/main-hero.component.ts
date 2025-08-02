@@ -1,4 +1,3 @@
-import { IMapClickEvent } from "@/app/features/landing/helpers/interfaces/map-click-event.interface";
 import { MapEventListenerService } from "@/app/features/landing/services/map-event-listener.service";
 import { MapComponent } from "@/app/features/landing/ui/map/map.component";
 import { OpenGetAppPopupDirective } from "@/app/shared/components/popups/get-app-popup/open-get-app-popup.directive";
@@ -6,7 +5,7 @@ import { PrimaryButtonComponent } from "@/app/shared/components/ui-kit/buttons/p
 import { SecondaryButtonComponent } from "@/app/shared/components/ui-kit/buttons/secondary-button/secondary-button.component";
 import { AppRoutes } from "@/app/shared/enums/app-routes.enum";
 import { MediaQueryService } from "@/app/shared/services/core/media-query.service";
-import { Component, effect, ElementRef, inject, ViewChild } from "@angular/core";
+import { Component, effect, ElementRef, inject, ViewChild, AfterViewInit } from "@angular/core";
 import { toSignal } from "@angular/core/rxjs-interop";
 import { Router, RouterModule } from "@angular/router";
 import mapboxgl from "mapbox-gl";
@@ -24,12 +23,12 @@ import mapboxgl from "mapbox-gl";
         OpenGetAppPopupDirective,
     ],
 })
-export class MainHeroComponent {
+export class MainHeroComponent implements AfterViewInit {
     private router: Router = inject(Router);
     private mediaService: MediaQueryService = inject(MediaQueryService);
     private readonly mapEventListenerService: MapEventListenerService = inject(MapEventListenerService);
 
-    @ViewChild("mapWrapper", { static: true }) mapWrapperRef!: ElementRef;
+    @ViewChild("mapWrapper", { static: true }) mapWrapperRef!: ElementRef<HTMLDivElement>;
 
     private is1400Desctop = toSignal(this.mediaService.mediaQuery("max", "XXL"));
     private is1200Desctop = toSignal(this.mediaService.mediaQuery("max", "XL"));
@@ -95,7 +94,7 @@ export class MainHeroComponent {
 
         el.addEventListener(
             "touchstart",
-            (e: any) => {
+            (e) => {
                 this.startX = e.touches[0].clientX;
                 this.startY = e.touches[0].clientY;
             },
@@ -104,7 +103,7 @@ export class MainHeroComponent {
 
         el.addEventListener(
             "touchmove",
-            (e: any) => {
+            (e) => {
                 const dx = Math.abs(e.touches[0].clientX - this.startX);
                 const dy = Math.abs(e.touches[0].clientY - this.startY);
                 

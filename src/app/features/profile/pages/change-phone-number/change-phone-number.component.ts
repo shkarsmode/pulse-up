@@ -1,4 +1,4 @@
-import { Component, DestroyRef, inject, ViewChild } from "@angular/core";
+import { Component, DestroyRef, inject, ViewChild, AfterViewInit, OnDestroy } from "@angular/core";
 import { FormGroup, ReactiveFormsModule } from "@angular/forms";
 import { Router } from "@angular/router";
 import { map, take, tap, throwError } from "rxjs";
@@ -14,6 +14,7 @@ import { PrimaryButtonComponent } from "@/app/shared/components/ui-kit/buttons/p
 import { AuthenticationService } from "@/app/shared/services/api/authentication.service";
 import { SecondaryButtonComponent } from "@/app/shared/components/ui-kit/buttons/secondary-button/secondary-button.component";
 import { NotificationService } from "@/app/shared/services/core/notification.service";
+import { isErrorWithMessage } from "@/app/shared/helpers/errors/is-error-with-message";
 
 @Component({
     selector: "app-change-phone-number",
@@ -31,7 +32,7 @@ import { NotificationService } from "@/app/shared/services/core/notification.ser
     templateUrl: "./change-phone-number.component.html",
     styleUrl: "./change-phone-number.component.scss",
 })
-export class ChangePhoneNumberComponent {
+export class ChangePhoneNumberComponent implements AfterViewInit, OnDestroy {
     private router: Router = inject(Router);
     private destroyRef = inject(DestroyRef);
     private readonly notificationService = inject(NotificationService);
@@ -40,7 +41,7 @@ export class ChangePhoneNumberComponent {
     private appRotes = AppRoutes;
 
     public isLoading$ = this.signInFormService.isChangingPhoneNumberInProgress.asObservable();
-    public initialValue: string = "";
+    public initialValue = "";
 
     @ViewChild("telInput") telInput: { nativeElement: HTMLInputElement };
 
@@ -50,9 +51,11 @@ export class ChangePhoneNumberComponent {
             mode: "changePhoneNumber",
         });
         this.signInFormService.submit$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
-            error: (error: any) => {
+            error: (error: unknown) => {
                 console.log("Error sending verification code:", error);
-                this.notificationService.error(error.message);
+                if (isErrorWithMessage(error)) {
+                    this.notificationService.error(error.message);
+                }
                 return throwError(() => error);
             },
             next: (result) => {

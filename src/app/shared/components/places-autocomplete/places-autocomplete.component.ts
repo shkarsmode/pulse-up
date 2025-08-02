@@ -35,7 +35,7 @@ interface Suggestion {
     imports: [CommonModule, FormsModule, ReactiveFormsModule, SvgIconComponent, SpinnerComponent],
 })
 export class PlacesAutocompleteComponent implements OnInit, OnChanges {
-    @Input() initialValue: string = "";
+    @Input() initialValue = "";
 
     @Output() selectLocation = new EventEmitter<TopicLocation | null>();
 

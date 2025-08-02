@@ -1,5 +1,5 @@
 import { CommonModule } from "@angular/common";
-import { Component, ElementRef, EventEmitter, Input, Output, SimpleChanges, ViewChild } from "@angular/core";
+import { Component, ElementRef, EventEmitter, Input, Output, SimpleChanges, ViewChild, OnInit, OnChanges } from "@angular/core";
 
 @Component({
     selector: "app-picture-picker",
@@ -8,13 +8,13 @@ import { Component, ElementRef, EventEmitter, Input, Output, SimpleChanges, View
     templateUrl: "./picture-picker.component.html",
     styleUrl: "./picture-picker.component.scss",
 })
-export class PicturePickerComponent {
-    @Input() public id: string = "";
-    @Input() public name: string = "";
-    @Input() public label: string = "";
+export class PicturePickerComponent implements OnInit, OnChanges {
+    @Input() public id = "";
+    @Input() public name = "";
+    @Input() public label = "";
     @Input() public picture: File | null = null;
-    @Input() public previewUrl: string = "";
-    @Input() public invalid: boolean = false;
+    @Input() public previewUrl = "";
+    @Input() public invalid = false;
 
     @Output() public pictureSelected = new EventEmitter<Event>();
     @Output() public pictureDeleted = new EventEmitter<void>();
@@ -77,7 +77,10 @@ export class PicturePickerComponent {
         }
     }
 
-    private getExtensionFromBase64(dataUrl: any): string | null {
+    private getExtensionFromBase64(dataUrl: unknown): string | null {
+        if (typeof dataUrl !== "string") {
+            return null;
+        }
         const match = dataUrl.toString().match(/^data:(.+?);base64,/);
         if (match) {
             const mimeType = match[1];

@@ -7,13 +7,13 @@ import { RectangleCoordinates } from '../../interfaces/reactangle-coords.interfa
 export class MapLocationService {
 
       
-    public mapLocationFilter: string = '';
+    public mapLocationFilter = '';
     /**
      * Retrieves/GET the list of public/published vibe counts and their tiles for map by H3 cells
      *
      * @param region Gets or sets latitude (Y)
      */
-    public getLocationFilter(region: any, visibleBounds: Array<Array<any>>) {
+    public getLocationFilter(region: any, visibleBounds: any[][]) {
         // region.getCurrentPosition();
         const longitude = region.lng;
         const latitude = region.lat;
@@ -27,7 +27,7 @@ export class MapLocationService {
             .then((response) => response.json())
             .then((data) => {
                 if (data.features.length) {
-                    let properties: any = {};
+                    const properties: any = {};
                     data.features.map((f: any) => {
                         properties[f.place_type[0]] = f.text;
                     });
@@ -133,7 +133,7 @@ export class MapLocationService {
 
     public getMapCoordinatesWebClient(map: any): RectangleCoordinates {
         let coordinates: RectangleCoordinates = {};
-        let radius: number = 11220;
+        const radius = 11220;
 
         coordinates = {
             lat: map.getCenter().lat,

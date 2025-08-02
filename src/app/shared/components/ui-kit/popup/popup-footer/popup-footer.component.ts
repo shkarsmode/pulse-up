@@ -1,5 +1,5 @@
 import { CommonModule } from "@angular/common";
-import { Component, Input } from "@angular/core";
+import { Component, Input, OnInit } from "@angular/core";
 
 @Component({
     selector: "app-popup-footer",
@@ -8,9 +8,9 @@ import { Component, Input } from "@angular/core";
     templateUrl: "./popup-footer.component.html",
     styleUrl: "./popup-footer.component.scss",
 })
-export class PopupFooterComponent {
+export class PopupFooterComponent implements OnInit {
     @Input() align: "left" | "right" | "center" = "center";
-    @Input() gap: number = 16;
+    @Input() gap = 16;
 
     styles = {};
 

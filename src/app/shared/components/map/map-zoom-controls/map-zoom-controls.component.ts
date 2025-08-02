@@ -12,9 +12,9 @@ export class MapZoomControlsComponent {
     @Input() map: mapboxgl.Map;
 
     public zoomMapClick(sign: "+" | "-"): void {
-        let minZoom = this.map.getMinZoom();
-        let maxZoom = this.map.getMaxZoom();
-        let currentZoom = this.map.getZoom();
+        const minZoom = this.map.getMinZoom();
+        const maxZoom = this.map.getMaxZoom();
+        const currentZoom = this.map.getZoom();
 
         if (sign === "+" && currentZoom < maxZoom) {
             this.map.setZoom(currentZoom + 2); // Zoom in (increase zoom level)

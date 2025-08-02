@@ -11,18 +11,16 @@ import { IH3Votes } from "@/app/features/landing/helpers/interfaces/h3-votes.int
 import { IGetLeaderboardTopicsRequest } from "../../interfaces/topics/get-leaderboard-topics-request.interface";
 import { IGetLeaderboardTopicsResponse } from "../../interfaces/topics/get-leaderboard-topics-response.interface";
 
-type RequestParams = {
-    [param: string]: string | number | boolean | ReadonlyArray<string | number | boolean>;
-};
+type RequestParams = Record<string, string | number | boolean | readonly (string | number | boolean)[]>;
 
 @Injectable({
     providedIn: "root",
 })
 export class PulseService {
     public latestAppVersionNumber: number;
-    public currentHeatmapDepth: number = 3;
-    public actualTopicsImageKeyMap: { [key: string]: string } = {};
-    public isJustCreatedTopic: boolean = false;
+    public currentHeatmapDepth = 3;
+    public actualTopicsImageKeyMap: Record<string, string> = {};
+    public isJustCreatedTopic = false;
 
     private readonly apiUrl: string = inject(API_URL);
     private readonly http: HttpClient = inject(HttpClient);
@@ -112,7 +110,7 @@ export class PulseService {
         NElongitude: number,
         SWlatitude: number,
         SWlongitude: number,
-        resolution: number = 1,
+        resolution = 1,
         topicId?: number,
     ): Observable<IH3Votes> {
         if (topicId) {
@@ -140,10 +138,10 @@ export class PulseService {
         NElongitude: number,
         SWlatitude: number,
         SWlongitude: number,
-        resolution: number = 1,
+        resolution = 1,
     ): Observable<IH3Votes> {
         return this.http
-            .get<Array<{ id: string; votes: number; children: any }>>(
+            .get<{ id: string; votes: number; children: any }[]>(
                 this.apiUrl +
                     `/map?NE.latitude=${NElatitude}&NE.longitude=${NElongitude}&SW.latitude=${SWlatitude}&SW.longitude=${SWlongitude}&resolution=${resolution}`,
             )
@@ -166,7 +164,7 @@ export class PulseService {
         NElongitude: number,
         SWlatitude: number,
         SWlongitude: number,
-        resolution: number = 1,
+        resolution = 1,
         topicId: number,
     ): Observable<IH3Votes> {
         const baseUrl = this.apiUrl + "/map/votes";

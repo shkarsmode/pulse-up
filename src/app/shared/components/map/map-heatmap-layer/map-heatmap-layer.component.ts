@@ -1,6 +1,5 @@
 import { Component, DestroyRef, inject, Input, OnInit } from "@angular/core";
 import {
-    combineLatest,
     fromEvent,
     map,
     merge,
@@ -35,7 +34,7 @@ export class MapHeatmapLayerComponent implements OnInit {
     private readonly sourceId = "vibes";
     public readonly intensity: number = 0.1;
     public painter: MapPainter;
-    public heatmapDataPointsCount: number = 0;
+    public heatmapDataPointsCount = 0;
 
     ngOnInit() {
         this.painter = new MapPainter({

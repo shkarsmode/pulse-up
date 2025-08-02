@@ -9,8 +9,8 @@ import { filter } from "rxjs";
 export class MetadataService {
     private readonly title: Title = inject(Title);
     private readonly meta: Meta = inject(Meta);
-    private defaultTitle: string = "";
-    private defaultDescription: string = "";
+    private defaultTitle = "";
+    private defaultDescription = "";
 
     private getTitle(): string {
         return this.title.getTitle();

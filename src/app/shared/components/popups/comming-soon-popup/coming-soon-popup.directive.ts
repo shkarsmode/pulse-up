@@ -8,7 +8,7 @@ import { EmailPopupComponent } from './email-popup/email-popup.component';
     standalone: true,
 })
 export class ComingSoonPopupDirective {
-    @Input() isAddPulsePopup: boolean = false;
+    @Input() isAddPulsePopup = false;
 
     constructor( private dialog: MatDialog) {}
 

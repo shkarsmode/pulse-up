@@ -8,7 +8,7 @@ import {
     Input,
     OnInit,
     Output,
-    ViewChild,
+    ViewChild, OnDestroy,
 } from '@angular/core';
 import {
     ControlValueAccessor,
@@ -34,40 +34,40 @@ export const APP_UI_INPUT_ACCESSOR = {
     styleUrl: './select.component.scss',
 })
 export class SelectComponent
-    implements OnInit, AfterViewInit, ControlValueAccessor
+    implements OnInit, AfterViewInit, ControlValueAccessor, OnDestroy
 {
     @Input() public id: string;
     @Input() public name: string;
     @Input() public svg: string;
     @Input() public min: number | string;
     @Input() public max: number | string;
-    @Input() public label: string = '';
+    @Input() public label = '';
     @Input() public hasErrorClass: boolean;
-    @Input() public placeholder: string = '';
-    @Input() public required: boolean = false;
-    @Input() public isLoading: boolean = false;
-    @Input() public inputType: string = 'text';
+    @Input() public placeholder = '';
+    @Input() public required = false;
+    @Input() public isLoading = false;
+    @Input() public inputType = 'text';
     @Input() public autocomplete: string | boolean;
     @Input() public preventBrowserAutofill: boolean;
 
-    @Output() public emitBlur: EventEmitter<any> = new EventEmitter();
-    @Output() public emitFocus: EventEmitter<any> = new EventEmitter();
-    @Output() public onInput: EventEmitter<any> = new EventEmitter();
-    @Output() public emitAutofill: EventEmitter<any> = new EventEmitter();
+    @Output() public emitBlur = new EventEmitter<any>();
+    @Output() public emitFocus = new EventEmitter<any>();
+    @Output() public onInput = new EventEmitter<any>();
+    @Output() public emitAutofill = new EventEmitter<any>();
 
     @ViewChild('selectRef', { static: true }) public selectRef: ElementRef;
 
     public isOnFocus: boolean;
     public isPasswordVisible: boolean;
 
-    @Input() public options: Array<string> = [];
-    @Input() public isShowInfo: boolean = false;
+    @Input() public options: string[] = [];
+    @Input() public isShowInfo = false;
     @Input() public info: { title: string; description: string };
 
     private _autofillSubject: BehaviorSubject<boolean> =
         new BehaviorSubject<boolean>(false);
     public autofillObservable = this._autofillSubject.asObservable();
-    public isSelectOpen: boolean = false;
+    public isSelectOpen = false;
 
     private readonly INPUT_IN_FOCUS_CLASS = 'app-ui-input--focus';
     private readonly INPUT_HAS_VALUE_CLASS = 'app-ui-input--has-value';

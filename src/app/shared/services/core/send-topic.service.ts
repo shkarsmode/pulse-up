@@ -32,9 +32,9 @@ export class SendTopicService {
     public currentTopic: FormGroup;
     public submitting: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
     public resultId: string;
-    public isTopicReadyForPreview: boolean = false;
+    public isTopicReadyForPreview = false;
     public customLocation: TopicLocation | null = null;
-    public isTopicEditing: boolean = false;
+    public isTopicEditing = false;
     public startTopicLocatoinWarningShown = false;
 
     private readonly formBuilder = inject(FormBuilder);
@@ -122,7 +122,7 @@ export class SendTopicService {
             .pipe(
                 take(1),
                 tap((shareKey) => {
-                    params["shareKey"] = !!shareKey ? shareKey : uuidv4();
+                    params["shareKey"] = shareKey ? shareKey : uuidv4();
                 }),
                 switchMap(() => this.pulseService.create(params)),
                 switchMap((topic) => {
@@ -166,7 +166,7 @@ export class SendTopicService {
         this.isTopicReadyForPreview = true;
     }
 
-    public get topicsArrayKeywords(): Array<string> {
+    public get topicsArrayKeywords(): string[] {
         const keywords = this.currentTopic.get("keywords")?.value;
         if (typeof keywords === "object") return keywords;
 

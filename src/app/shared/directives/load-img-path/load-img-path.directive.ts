@@ -1,5 +1,4 @@
 import { AfterViewInit, Directive, ElementRef, inject, OnInit, Renderer2 } from '@angular/core';
-import { PulseService } from '../../services/api/pulse.service';
 import { SettingsService } from '../../services/api/settings.service';
 
 @Directive({
@@ -7,7 +6,7 @@ import { SettingsService } from '../../services/api/settings.service';
     standalone: true,
 })
 export class LoadImgPathDirective implements OnInit, AfterViewInit {
-    private hasPathUpdated: boolean = false;
+    private hasPathUpdated = false;
 
     private readonly settingsService: SettingsService = inject(SettingsService);
     private readonly elementRef: ElementRef<HTMLImageElement> =

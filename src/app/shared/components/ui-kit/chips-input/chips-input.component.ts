@@ -19,20 +19,20 @@ import { IconButtonComponent } from "../buttons/icon-button/icon-button.componen
     ],
 })
 export class ChipsInputComponent implements ControlValueAccessor {
-    @Input() limit: number = 5;
-    @Input() hasErrorClass: boolean = false;
+    @Input() limit = 5;
+    @Input() hasErrorClass = false;
 
     @ViewChild("chipsInput") chipsInput: ElementRef<HTMLInputElement>;
 
     chips: string[] = [];
-    inputValue: string = "";
+    inputValue = "";
 
     get canAddChip(): boolean {
         return this.chips.length < this.limit && this.inputValue.trim().length > 0;
     }
 
-    public onChange: (value: string[]) => void = () => {};
-    public onTouched: () => void = () => {};
+    public onChange: (value: string[]) => void = () => false;
+    public onTouched: () => void = () => false;
 
     public writeValue(value: string[]): void {
         this.chips = value || [];
@@ -46,7 +46,7 @@ export class ChipsInputComponent implements ControlValueAccessor {
         this.onTouched = fn;
     }
 
-    public setDisabledState?(isDisabled: boolean): void {
+    public setDisabledState?(): void {
         // Optionally: if you need to consider the disabled state
     }
 

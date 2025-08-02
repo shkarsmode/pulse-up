@@ -1,9 +1,8 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { SvgIconComponent } from 'angular-svg-icon';
-import { map, Observable, take } from 'rxjs';
 import { AppRoutes } from '../../enums/app-routes.enum';
 import { BurgerButtonComponent } from '../ui-kit/buttons/burger-button/burger-button.component';
 import { PrimaryButtonComponent } from '../ui-kit/buttons/primary-button/primary-button.component';
@@ -31,14 +30,14 @@ import { HeaderService } from './header.service';
     templateUrl: './header.component.html',
     styleUrl: './header.component.scss',
 })
-export class HeaderComponent {
+export class HeaderComponent implements OnInit {
     private readonly headerService = inject(HeaderService);
     private readonly authService = inject(AuthenticationService);
 
-    public isMobileDropdown: boolean = false;
+    public isMobileDropdown = false;
     public AppRoutes = AppRoutes;
     public version: { major: number; minor: number; patch: number };
-    public isToShowVersionOfApp: boolean = !!localStorage.getItem('version');
+    public isToShowVersionOfApp = !!localStorage.getItem('version');
 
     ngOnInit(): void {
         //Called after the constructor, initializing input properties, and the first call to ngOnChanges.

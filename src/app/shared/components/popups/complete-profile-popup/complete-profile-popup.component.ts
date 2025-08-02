@@ -32,10 +32,10 @@ export class CompleteProfilePopupComponent {
     private fb: FormBuilder = inject(FormBuilder);
     private profileService = inject(ProfileService);
     private userService: UserService = inject(UserService);
-    private readonly dialogRef: MatDialogRef<any> = inject(MatDialogRef);
+    private readonly dialogRef: MatDialogRef<CompleteProfilePopupComponent> = inject(MatDialogRef);
 
     public form: FormGroup;
-    public loading: boolean = false;
+    public loading = false;
     public errorMessage: string | null = null;
 
     constructor() {
@@ -89,7 +89,7 @@ export class CompleteProfilePopupComponent {
                                 this.router.navigate([AppRoutes.User.Topic.SUGGEST]);
                             });
                     },
-                    error: (err) => {
+                    error: () => {
                         this.loading = false;
                         this.errorMessage = "Failed to update profile. Please try again.";
                     },

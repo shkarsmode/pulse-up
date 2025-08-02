@@ -32,8 +32,8 @@ import { NotificationService } from "@/app/shared/services/core/notification.ser
 export class TopicDescriptionComponent implements OnInit {
     @Input() public textControl: AbstractControl | null = null;
     @Input() public pictureControl: AbstractControl | null = null;
-    @Output() public handleBlur: EventEmitter<any> = new EventEmitter();
-    @Output() public handleFocus: EventEmitter<any> = new EventEmitter();
+    @Output() public handleBlur = new EventEmitter<void>();
+    @Output() public handleFocus = new EventEmitter<void>();
 
     @ViewChild("descriptionInput") descriptionInput!: TextareaComponent;
     @ViewChild("descriptionPictures", { static: false }) public descriptionPictures: ElementRef;
@@ -41,7 +41,7 @@ export class TopicDescriptionComponent implements OnInit {
     private readonly dialog = inject(MatDialog);
     public readonly notificationService = inject(NotificationService);
 
-    public isDescriptionFocused: boolean = false;
+    public isDescriptionFocused = false;
     public selectedPicture: string | ArrayBuffer | null;
     public selectedTypeOfPicture: "img" | "gif" | "smile" | "";
     public showEmojiPicker = false;
@@ -129,11 +129,20 @@ export class TopicDescriptionComponent implements OnInit {
         this.showEmojiPicker = !this.showEmojiPicker;
     }
 
-    public addEmoji(event: any) {
-        const emoji = event.emoji.native;
-        const currentValue = this.textControl?.value || "";
-        this.textControl?.setValue(currentValue + emoji);
-        this.descriptionInput.nativeElement.focus();
+    public addEmoji(event: unknown) {
+        if (
+            event &&
+            typeof event === "object" &&
+            "emoji" in event &&
+            event.emoji &&
+            typeof event.emoji === "object" &&
+            "native" in event.emoji
+        ) {
+            const emoji = event.emoji.native;
+            const currentValue = this.textControl?.value || "";
+            this.textControl?.setValue(currentValue + emoji);
+            this.descriptionInput.nativeElement.focus();
+        }
     }
 
     private getSelectedTypeOfPicture(): "img" | "gif" | "smile" {
@@ -150,8 +159,11 @@ export class TopicDescriptionComponent implements OnInit {
         }
     }
 
-    private getExtensionFromBase64(dataUrl: any): string | null {
-        const match = dataUrl.toString().match(/^data:(.+?);base64,/);
+    private getExtensionFromBase64(dataUrl: unknown): string | null {
+        if (typeof dataUrl !== "string") {
+            return null;
+        }
+        const match = dataUrl.match(/^data:(.+?);base64,/);
         if (match) {
             const mimeType = match[1];
             return mimeType.split("/")[1];

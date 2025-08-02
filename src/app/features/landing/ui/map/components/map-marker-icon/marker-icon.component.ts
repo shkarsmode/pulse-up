@@ -10,9 +10,9 @@ import { LoadImgPathDirective } from "@/app/shared/directives/load-img-path/load
     imports: [CommonModule, LoadImgPathDirective, LoadImgPathDirective],
 })
 export class MarkerIconComponent implements OnInit {
-    @Input() icon: string = "";
-    @Input() isAnimated: boolean = false;
-    @Input() animationDelay: number = 0;
+    @Input() icon = "";
+    @Input() isAnimated = false;
+    @Input() animationDelay = 0;
     @Output() imageLoaded: EventEmitter<void> = new EventEmitter<void>();
 
     public classes = {}

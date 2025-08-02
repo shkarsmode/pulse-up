@@ -12,7 +12,7 @@ import { SecondaryButtonComponent } from "@/app/shared/components/ui-kit/buttons
     imports: [RouterModule, SecondaryButtonComponent],
 })
 export class AboutSectionComponent {
-    public isShowMore: boolean = false;
+    public isShowMore = false;
     public AppRoutes = AppRoutes;
     public buttonColor = Colors.BLACK;
 }

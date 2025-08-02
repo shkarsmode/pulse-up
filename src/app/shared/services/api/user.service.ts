@@ -65,7 +65,7 @@ export class UserService {
     }
 
     public getAllTopics(userId: string): Observable<ITopic[]> {
-        const topics: Subject<ITopic[]> = new Subject();
+        const topics = new Subject<ITopic[]>();
         const pageSize = 100;
 
         of({

@@ -1,4 +1,4 @@
-import { Component, DestroyRef, EventEmitter, inject, Output, ViewChild } from "@angular/core";
+import { Component, DestroyRef, EventEmitter, inject, Output, ViewChild, OnInit } from "@angular/core";
 import { FormControl, ReactiveFormsModule } from "@angular/forms";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { MatSelect } from "@angular/material/select";
@@ -16,7 +16,7 @@ import { CommonModule } from "@angular/common";
     templateUrl: "./category-filter-select.component.html",
     styleUrl: "./category-filter-select.component.scss",
 })
-export class CategoryFilterSelectComponent {
+export class CategoryFilterSelectComponent implements OnInit {
     private readonly destroyRef = inject(DestroyRef);
     private readonly pulseService = inject(PulseService);
 
@@ -27,8 +27,6 @@ export class CategoryFilterSelectComponent {
 
     @Output() selectedCategory = new EventEmitter<ICategory | null>();
     @ViewChild("singleSelect", { static: true }) singleSelect: MatSelect;
-
-    constructor() {}
 
     ngOnInit() {
         this.pulseService

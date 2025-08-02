@@ -90,7 +90,7 @@ export class MapUtils {
         map: mapboxgl.Map;
         layerId: string;
         property: string;
-        value: any;
+        value: unknown;
     }) {
         map.setPaintProperty(layerId, property, value);
     }
@@ -103,7 +103,7 @@ export class MapUtils {
     }: {
         map: mapboxgl.Map;
         sourceId: string;
-        data: any;
+        data: string | GeoJSON.FeatureCollection | GeoJSON.Feature;
     }) {
         const source = map.getSource(sourceId) as mapboxgl.GeoJSONSource;
         if (source) {
@@ -116,7 +116,7 @@ export class MapUtils {
         resolutionLevelsByZoom,
     }: {
         map: mapboxgl.Map;
-        resolutionLevelsByZoom: { [key: number]: number };
+        resolutionLevelsByZoom: Record<number, number>;
     }): number {
         const zoom = map.getZoom();
         if (zoom === undefined || zoom === null) return 7;

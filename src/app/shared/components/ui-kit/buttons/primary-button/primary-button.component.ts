@@ -15,15 +15,15 @@ import { RippleEffectDirective } from '../../../../directives/ripple-effect';
     styleUrl: './primary-button.component.scss',
 })
 export class PrimaryButtonComponent {
-    @Input() public type: string = 'button';
-    @Input() public disabled: boolean = false;
-    @Input() public href: string = "";
+    @Input() public type = 'button';
+    @Input() public disabled = false;
+    @Input() public href = "";
     @Input() public target: "_blank" | "_self" | "_parent" | "_top" = '_self' as const;
     @Input() public color: string;
-    @Input() public fullWidth: boolean = false;
-    @Input() public contrast: boolean = false;
+    @Input() public fullWidth = false;
+    @Input() public contrast = false;
     @Input() public size: "small" | "medium" | "large" = "medium";
-    @Input() public loading: boolean = false;
+    @Input() public loading = false;
 
     @Output() public handleClick: EventEmitter<MouseEvent> = new EventEmitter<MouseEvent>();
 

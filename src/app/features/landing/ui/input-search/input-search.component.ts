@@ -18,18 +18,18 @@ import { InputComponent } from "@/app/shared/components/ui-kit/input/input.compo
 })
 export class InputSearchComponent {
     @Input()
-    public isLoading: boolean = false;
+    public isLoading = false;
 
     @Output()
-    public handleValueChange: EventEmitter<string> = new EventEmitter();
+    public handleValueChange = new EventEmitter<string>();
 
     @Output()
-    public focus: EventEmitter<void> = new EventEmitter<void>();
+    public handleFocus: EventEmitter<void> = new EventEmitter<void>();
 
     @Output()
-    public blur: EventEmitter<void> = new EventEmitter<void>();
+    public handleBlur: EventEmitter<void> = new EventEmitter<void>();
 
-    private readonly inputValueChanged$: Subject<string> = new Subject();
+    private readonly inputValueChanged$ = new Subject<string>();
     private readonly throttleConfig: ThrottleConfig = {
         leading: true,
         trailing: true,
@@ -44,11 +44,11 @@ export class InputSearchComponent {
     }
 
     public onFocus(): void {
-        this.focus.emit();
+        this.handleFocus.emit();
     }
 
     public onBlur(): void {
-        this.blur.emit();
+        this.handleBlur.emit();
     }
 
     private initThrottleInputValueChange(): void {

@@ -1,4 +1,4 @@
-import { Component, DestroyRef, inject, Input } from "@angular/core";
+import { Component, DestroyRef, inject, Input, OnInit } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { Router, RouterModule } from "@angular/router";
 import { MatDialog } from "@angular/material/dialog";
@@ -43,7 +43,7 @@ import { ProfileService } from "@/app/shared/services/profile/profile.service";
     templateUrl: "./profile-form.component.html",
     styleUrl: "./profile-form.component.scss",
 })
-export class ProfileFormComponent {
+export class ProfileFormComponent implements OnInit {
     @Input() public initialValues: {
         name: string;
         username: string;
@@ -61,10 +61,10 @@ export class ProfileFormComponent {
     private notificationService: NotificationService = inject(NotificationService);
     private authenticationService: AuthenticationService = inject(AuthenticationService);
 
-    private isPicturePristine: boolean = true;
-    private emailPlaceholder: string = "Add an email to secure your account";
+    private isPicturePristine = true;
+    private emailPlaceholder = "Add an email to secure your account";
     public form: FormGroup;
-    public submitting: boolean = false;
+    public submitting = false;
     public phoneNumber: string | null = null;
     public email: string = this.emailPlaceholder;
     public profilePicture: File | null = null;
@@ -142,7 +142,7 @@ export class ProfileFormComponent {
         return "assets/svg/plus-placeholder.svg";
     }
 
-    private disabled: boolean = false;
+    private disabled = false;
 
     public isDisabled(): boolean {
         let disabled = false;

@@ -1,4 +1,4 @@
-import { Component, DestroyRef, EventEmitter, inject, Input, Output } from "@angular/core";
+import { Component, DestroyRef, EventEmitter, inject, Input, Output, OnInit } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import {
     combineLatest,
@@ -32,7 +32,7 @@ import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
     standalone: true,
     imports: [CommonModule, NgxMapboxGLModule, MapMarkerComponent],
 })
-export class MapMarkersLayerComponent {
+export class MapMarkersLayerComponent implements OnInit {
     private readonly destroyRef = inject(DestroyRef);
     private readonly pulseService = inject(PulseService);
     private readonly mapMarkersService = inject(MapMarkersService);

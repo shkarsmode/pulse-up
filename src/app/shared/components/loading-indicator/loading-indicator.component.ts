@@ -45,5 +45,5 @@ import { SvgIconComponent } from "angular-svg-icon";
   `,
 })
 export class LoadingIndicatorComponent {
-    @Input() size: number = 40;
+    @Input() size = 40;
 }

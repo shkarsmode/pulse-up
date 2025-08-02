@@ -12,9 +12,9 @@ import { SettingsService } from "@/app/shared/services/api/settings.service";
 })
 export class UserAvatarComponent {
     @Input() public url?: string = "";
-    @Input() public name: string = "";
-    @Input() public width: number = 80;
-    @Input() public height: number = 80;
+    @Input() public name = "";
+    @Input() public width = 80;
+    @Input() public height = 80;
 
     private readonly settingsService: SettingsService = inject(SettingsService);
 
