@@ -1,6 +1,6 @@
 import { inject, Injectable } from "@angular/core";
 import * as h3 from "h3-js";
-import { BehaviorSubject, debounceTime, first, Subject, tap } from "rxjs";
+import { BehaviorSubject, debounceTime, first, Subject, switchMap, tap } from "rxjs";
 import { IMapMarker, IMapMarkerAnimated } from "@/app/shared/interfaces/map-marker.interface";
 import { ITopic } from "@/app/shared/interfaces";
 import { PulseService } from "@/app/shared/services/api/pulse.service";
@@ -35,29 +35,32 @@ export class MapMarkersService {
     }
 
     constructor() {
-        this.markerHover$.pipe(debounceTime(300), takeUntilDestroyed()).subscribe((marker) => {
-            this.tooltipData.next(null);
-            const cached = this.pulseCache.get(marker.topicId);
-            if (cached) {
-                this.tooltipData.next({
-                    ...cached,
-                    markerId: marker.id,
-                });
-                return;
-            }
-            this.pulseService
-                .getById(marker.topicId)
-                .pipe(
-                    first(),
-                    tap((pulse) => this.pulseCache.set(pulse.id, pulse)),
-                )
-                .subscribe((pulse) => {
+        this.markerHover$.pipe(
+            debounceTime(300),
+            takeUntilDestroyed(),
+            switchMap((marker) => {
+                this.tooltipData.next(null);
+                const cached = this.pulseCache.get(marker.topicId);
+                if (cached) {
                     this.tooltipData.next({
-                        ...pulse,
+                        ...cached,
                         markerId: marker.id,
                     });
-                });
-        });
+                    // Return an empty observable since we already handled it
+                    return [];
+                }
+                return this.pulseService.getById(marker.topicId).pipe(
+                    first(),
+                    tap((pulse) => this.pulseCache.set(pulse.id, pulse)),
+                    tap((pulse) => {
+                        this.tooltipData.next({
+                            ...pulse,
+                            markerId: marker.id,
+                        });
+                    })
+                );
+            })
+        ).subscribe();
     }
 
     public updateMarkers(data: IH3Pulses): void {

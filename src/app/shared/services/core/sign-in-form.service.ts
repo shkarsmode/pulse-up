@@ -159,10 +159,10 @@ export class SignInFormService {
             dropdownContainer: document.body,
         });
         this.subscriptions.push(
-            fromEvent(inputElement, "blur").pipe(delay(100), map(this.onBlur)).subscribe(),
-            fromEvent(inputElement, "focus").pipe(map(this.onFocus)).subscribe(),
+            fromEvent(inputElement, "blur").pipe(delay(100), map(() => this.onBlur())).subscribe(),
+            fromEvent(inputElement, "focus").pipe(map(() => this.onFocus())).subscribe(),
             fromEvent(inputElement, "countrychange")
-                .pipe(map(this.onCountryCodeChange))
+                .pipe(map(() => this.onCountryCodeChange()))
                 .subscribe(),
             fromEvent(inputElement, "keydown")
                 .pipe(map((event) => this.onInputKeyDown(event as KeyboardEvent)))

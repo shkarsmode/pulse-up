@@ -77,7 +77,7 @@ export class VotingService {
                 });
             }),
             tap(() => this.isVoting.next(false)),
-            catchError((error) => {
+            catchError((error: unknown) => {
                 this.isVoting.next(false);
                 if (error instanceof VotingError) {
                     return throwError(() => error);
