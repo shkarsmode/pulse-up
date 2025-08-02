@@ -6,8 +6,8 @@ import { Component, Input } from '@angular/core';
   styleUrl: './qrcode.component.scss'
 })
 export class QrcodeComponent {
-  @Input() data: string = '';
-  @Input() size: number = 256;
-  @Input() rounded: boolean = false;
-  @Input() accessibleLabel: string = 'QR Code';
+  @Input() data = '';
+  @Input() size = 256;
+  @Input() rounded = false;
+  @Input() accessibleLabel = 'QR Code';
 }

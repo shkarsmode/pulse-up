@@ -1,21 +1,21 @@
 import { InjectionToken } from "@angular/core";
 import { IFirebaseConfig } from "../interfaces";
 
-export const MAPBOX_ACCESS_TOKEN: InjectionToken<string> = new InjectionToken(
+export const MAPBOX_ACCESS_TOKEN = new InjectionToken<string>(
     'mapboxAccessToken'
 );
-export const MAPBOX_STYLE: InjectionToken<string> = new InjectionToken(
+export const MAPBOX_STYLE = new InjectionToken<string>(
     'mapboxStyle'
 );
 
-export const API_URL: InjectionToken<string> = new InjectionToken(
+export const API_URL = new InjectionToken<string>(
     'apiUrl'
 );
 
-export const GEOCODE_API_URL: InjectionToken<string> = new InjectionToken(
+export const GEOCODE_API_URL = new InjectionToken<string>(
     'geocodeApiUrl'
 );
 
-export const FIREBASE_CONFIG: InjectionToken<IFirebaseConfig> = new InjectionToken(
+export const FIREBASE_CONFIG = new InjectionToken<IFirebaseConfig>(
     'fireBaseConfig'
 );

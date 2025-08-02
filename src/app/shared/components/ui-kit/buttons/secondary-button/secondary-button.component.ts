@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output } from "@angular/core";
+import { Component, EventEmitter, Input, Output, OnInit } from "@angular/core";
 import { RippleEffectDirective } from "../../../../directives/ripple-effect";
 import { CommonModule } from "@angular/common";
 import { Colors } from "@/app/shared/enums/colors.enum";
@@ -10,12 +10,12 @@ import { Colors } from "@/app/shared/enums/colors.enum";
     templateUrl: "./secondary-button.component.html",
     styleUrl: "./secondary-button.component.scss",
 })
-export class SecondaryButtonComponent {
+export class SecondaryButtonComponent implements OnInit {
     @Input() public type: "button" | "submit" | "reset" = "button";
-    @Input() public disabled: boolean = false;
-    @Input() public fullWidth: boolean = false;
-    @Input() public fullHeight: boolean = false;
-    @Input() public contrast: boolean = false;
+    @Input() public disabled = false;
+    @Input() public fullWidth = false;
+    @Input() public fullHeight = false;
+    @Input() public contrast = false;
     @Input() public size: "small" | "medium" | "large" = "medium";
     @Input() public color: Colors | null = null;
 

@@ -8,5 +8,5 @@ import { Component, Input } from '@angular/core';
   styleUrl: './large-pulse-label.component.scss'
 })
 export class LargePulseLabelComponent {
-  @Input({ required: true }) text: string = '';
+  @Input({ required: true }) text = '';
 }

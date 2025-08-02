@@ -61,7 +61,7 @@ export class VoteButtonComponent implements OnInit {
     @Input() topicId: number | null = null;
     @Input() vote: IVote | null = null;
     @Input() isActiveVote: boolean | null = null;
-    @Input() lastVoteInfo: string = "";
+    @Input() lastVoteInfo = "";
     @Output() voteExpired = new EventEmitter<void>();
     @Output() voted = new EventEmitter<IVote>();
     @Output() pulse = new EventEmitter<{ justSignedIn?: boolean }>();

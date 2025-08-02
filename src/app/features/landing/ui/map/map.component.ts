@@ -64,35 +64,35 @@ export class MapComponent implements OnInit {
     private readonly globeSpinner = new GlobeSpinnerService();
 
     @Input() public pulseId: number;
-    @Input() public isPreview: boolean = false;
-    @Input() public isToShowMarkers: boolean = true;
-    @Input() public isToShowHeatmap: boolean = true;
-    @Input() public isToShowTooltip: boolean = false;
-    @Input() public isHideDebugger: boolean = false;
-    @Input() public isToShowWeights: boolean = true;
+    @Input() public isPreview = false;
+    @Input() public isToShowMarkers = true;
+    @Input() public isToShowHeatmap = true;
+    @Input() public isToShowTooltip = false;
+    @Input() public isHideDebugger = false;
+    @Input() public isToShowWeights = true;
 
-    @Input() public isSearch: boolean = false;
-    @Input() public isZoomButton: boolean = false;
-    @Input() public isLocationName: boolean = false;
-    @Input() public isRounded: boolean = false;
+    @Input() public isSearch = false;
+    @Input() public isZoomButton = false;
+    @Input() public isLocationName = false;
+    @Input() public isRounded = false;
     @Input() public zoom: [number] = [1];
-    @Input() public minZoom: number = 1;
-    @Input() public touchPitch: boolean = true;
-    @Input() public touchZoomRotate: boolean = true;
-    @Input() public isScrollZoomEnabled: boolean = true;
-    @Input() public isDoubleClickZoomEnabled: boolean = true;
-    @Input() public isMarkerAnimated: boolean = false;
+    @Input() public minZoom = 1;
+    @Input() public touchPitch = true;
+    @Input() public touchZoomRotate = true;
+    @Input() public isScrollZoomEnabled = true;
+    @Input() public isDoubleClickZoomEnabled = true;
+    @Input() public isMarkerAnimated = false;
     @Input() public maxBounds: mapboxgl.LngLatBoundsLike | undefined = [
         [-180, -80],
         [180, 85],
     ];
     @Input() public center: [number, number] = [-100.661, 37.7749];
     @Input() public projection: mapboxgl.Projection["name"] = "mercator";
-    @Input() public isLabelsHidden: boolean = false;
-    @Input() public isMapStatic: boolean = false;
-    @Input() public isSpinEnabled: boolean = false;
+    @Input() public isLabelsHidden = false;
+    @Input() public isMapStatic = false;
+    @Input() public isSpinEnabled = false;
     @Input() public fog: Fog | null = null;
-    @Input() public zoomResolutionMap: { [key: number]: number } = {
+    @Input() public zoomResolutionMap: Record<number, number> = {
         0: 0,
         1: 1,
         2: 1,
@@ -107,8 +107,8 @@ export class MapComponent implements OnInit {
         10: 6,
     };
     @Input() public mapStylesUrl: string = this.mapboxStylesUrl;
-    @Input() public spinning: boolean = false;
-    @Input() public showEmptyPolygons: boolean = false;
+    @Input() public spinning = false;
+    @Input() public showEmptyPolygons = false;
     @Input() public mode: "default" | "heatmap" = "default";
 
     @Output() public mapLoaded: EventEmitter<mapboxgl.Map> = new EventEmitter<mapboxgl.Map>();
@@ -123,15 +123,15 @@ export class MapComponent implements OnInit {
     }
 
     public map: mapboxgl.Map | null = null;
-    public isToShowH3: boolean = true;
-    public heatmapDataPointsCount: number = 0;
+    public isToShowH3 = true;
+    public heatmapDataPointsCount = 0;
     public isToShoDebugger: string | null = localStorage.getItem("show-debugger");
     public isTouchDevice = false;
     public isSpinButtonVisible = this.isSpinEnabled;
-    private globalMapDataUpdated: boolean = false;
+    private globalMapDataUpdated = false;
 
-    private readonly h3Pulses$: Subject<IH3Pulses> = new Subject();
-    private readonly heatMapData$: Subject<IH3Votes> = new Subject();
+    private readonly h3Pulses$ = new Subject<IH3Pulses>();
+    private readonly heatMapData$ = new Subject<IH3Votes>();
 
     public ngOnInit(): void {
         this.subscribeOnDataH3Pulses();
@@ -205,7 +205,7 @@ export class MapComponent implements OnInit {
 
     public toggleHeatmapVisibility(): void {
         if (!this.map) return;
-        let opacity = this.heatmapLayerService.heatmapStyles["heatmap-opacity"];
+        let opacity = Number(this.heatmapLayerService.heatmapStyles["heatmap-opacity"]);
         if (this.isToShowHeatmap) opacity = 0;
         this.heatmapLayerService.paintHeatmapOpacity(this.map, opacity);
         this.isToShowHeatmap = !this.isToShowHeatmap;
@@ -355,7 +355,7 @@ export class MapComponent implements OnInit {
         });
 
         this.h3LayerService
-            .getH3Pulses({ bounds, resolution, pulseId: this.pulseId })
+            .getH3Pulses({ bounds, resolution })
             .pipe(
                 first(),
                 filter(() => !this.pulseId),
@@ -438,7 +438,7 @@ export class MapComponent implements OnInit {
                 const heatmapGeoJSON = {
                     type: "FeatureCollection",
                     features: heatmapFeatures,
-                };
+                } as GeoJSON.FeatureCollection;
 
                 this.heatmapLayerService.paintHeatmapIntensity(this.map);
 
@@ -572,9 +572,9 @@ export class MapComponent implements OnInit {
 
     public zoomMapClick(sign: "+" | "-"): void {
         if (!this.map) return;
-        let minZoom = this.map.getMinZoom();
-        let maxZoom = this.map.getMaxZoom();
-        let currentZoom = this.map.getZoom();
+        const minZoom = this.map.getMinZoom();
+        const maxZoom = this.map.getMaxZoom();
+        const currentZoom = this.map.getZoom();
 
         if (sign === "+" && currentZoom < maxZoom) {
             this.map.setZoom(currentZoom + 2); // Zoom in (increase zoom level)

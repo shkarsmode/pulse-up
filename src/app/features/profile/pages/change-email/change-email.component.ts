@@ -47,7 +47,7 @@ export class ChangeEmailComponent {
     private authenticationService: AuthenticationService = inject(AuthenticationService);
 
     public form: FormGroup;
-    public submitting: boolean = false;
+    public submitting = false;
     public errorMessage: string | null = null;
     private firebaseUser = this.authenticationService.firebaseAuth.currentUser;
     private initialEmail: string = this.firebaseUser?.email || "";
@@ -76,7 +76,7 @@ export class ChangeEmailComponent {
         return !!(user?.email && user?.emailVerified);
     }
 
-    private get emailControl(): AbstractControl<any, any> | null {
+    private get emailControl(): AbstractControl<string, string> | null {
         return this.form.get("email");
     }
 
@@ -93,12 +93,12 @@ export class ChangeEmailComponent {
         this.submitting = true;
         this.errorMessage = null;
 
-        const hasEmail = this.firebaseUser?.email && this.firebaseUser?.emailVerified;
+        // const hasEmail = this.firebaseUser?.email && this.firebaseUser?.emailVerified;
         const action = "changeEmail";
 
         this.authenticationService
             .changeEmail({
-                email: this.emailControl?.value,
+                email: this.emailControl?.value || "",
                 continueUrl:
                     window.location.origin +
                     `/profile/verify-email?action=${action}&showPopup=true`,

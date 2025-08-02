@@ -1,4 +1,4 @@
-import { Component, inject } from "@angular/core";
+import { Component, inject, OnInit } from "@angular/core";
 import { Router } from "@angular/router";
 import { CommonModule } from "@angular/common";
 import { Projection } from "mapbox-gl";
@@ -14,7 +14,7 @@ import { GlobeMapComponent } from "./components/globe-map/globe-map.component";
     standalone: true,
     imports: [CommonModule, SwitchComponent, MercatorMapComponent, GlobeMapComponent],
 })
-export class MapPageComponent {
+export class MapPageComponent implements OnInit {
     private readonly router: Router = inject(Router);
 
     public projection: Projection["name"] = "mercator";

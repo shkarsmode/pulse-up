@@ -10,7 +10,7 @@ export class SuggestGuard implements CanActivate {
     private readonly router: Router = inject(Router);
 
     private readonly appRoutes = AppRoutes;
-    public isUserBeenHere: boolean = true;
+    public isUserBeenHere = true;
 
     canActivate() {
         const isAllowed = this.isAllowed();

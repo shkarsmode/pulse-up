@@ -1,4 +1,4 @@
-import { Component, DestroyRef, inject } from "@angular/core";
+import { Component, DestroyRef, inject, OnInit } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { Router } from "@angular/router";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
@@ -32,11 +32,11 @@ import { AppRoutes } from "@/app/shared/enums/app-routes.enum";
     templateUrl: "./edit-profile.component.html",
     styleUrl: "./edit-profile.component.scss",
 })
-export class EditProfileComponent {
+export class EditProfileComponent implements OnInit {
     private readonly router = inject(Router);
     private readonly destroyed = inject(DestroyRef);
     public readonly profileService = inject(ProfileService);
-    public isLoading: boolean = true;
+    public isLoading = true;
 
     public profileFormvalues = {
         name: "",

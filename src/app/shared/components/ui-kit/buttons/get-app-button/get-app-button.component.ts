@@ -15,7 +15,7 @@ import { SettingsService } from "@/app/shared/services/api/settings.service";
 export class GetAppButtonComponent implements OnInit {
     @Input() design: "old" | "new" = "new";
     @Input() theme: "light" | "dark" = "light";
-    @Input() isOnePlatform: boolean = false;
+    @Input() isOnePlatform = false;
 
     public platformService: PlatformService = inject(PlatformService);
     public settingsService: SettingsService = inject(SettingsService);

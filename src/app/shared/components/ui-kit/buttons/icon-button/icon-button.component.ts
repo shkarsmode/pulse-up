@@ -9,15 +9,15 @@ import { MatButtonModule } from "@angular/material/button";
     imports: [MatButtonModule],
 })
 export class IconButtonComponent {
-    @Input() label: string = "";
-    @Input() size: number = 48;
+    @Input() label = "";
+    @Input() size = 48;
     @Input() variant: "default" | "outline" = "default";
     @Input() type : "button" | "submit" = "button";
-    @Input() disabled: boolean = false;
+    @Input() disabled = false;
 
-    @Output() onClick: EventEmitter<MouseEvent> = new EventEmitter<MouseEvent>();
+    @Output() handleClick: EventEmitter<MouseEvent> = new EventEmitter<MouseEvent>();
 
-    public handleClick(event: MouseEvent): void {
-        this.onClick.emit(event);
+    public onClick(event: MouseEvent): void {
+        this.handleClick.emit(event);
     }
 }

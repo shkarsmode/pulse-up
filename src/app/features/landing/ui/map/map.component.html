@@ -91,11 +91,11 @@
 <div
     class="debugger"
     [class.hidden]="isHideDebugger">
-    <div
+    <button
         class="hide"
         (click)="isHideDebugger = !isHideDebugger">
         @if (isHideDebugger) { Show } @else { Hide }
-    </div>
+    </button>
     @if (!isHideDebugger) {
     <div>
         <span>Zoom</span>

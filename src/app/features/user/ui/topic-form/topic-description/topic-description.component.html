@@ -24,14 +24,14 @@
             alt="Selected Picture"
             class="description-pictures__preview" />
         } @if (pictureControl.value?.name) {
-        <div
+        <button
             class="description-picture"
             (click)="deleteChosenPicture()">
             <span>
                 {{ pictureControl.value.name }}
             </span>
             <svg-icon src="assets/svg/close.svg" />
-        </div>
+        </button>
         }
         <div class="description-pictures__buttons">
             <svg-icon

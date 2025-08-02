@@ -2,7 +2,7 @@ import { Component, DestroyRef, inject, OnInit } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { RouterModule } from "@angular/router";
 import { SvgIconComponent } from "angular-svg-icon";
-import { first, map, Observable, tap } from "rxjs";
+import { first, map, Observable } from "rxjs";
 import { InfiniteScrollDirective } from "ngx-infinite-scroll";
 import { IPaginator, ITopic } from "@/app/shared/interfaces";
 import { PulseService } from "@/app/shared/services/api/pulse.service";
@@ -17,7 +17,6 @@ import { ICategory } from "@/app/shared/interfaces/category.interface";
 import { SpinnerComponent } from "@/app/shared/components/ui-kit/spinner/spinner.component";
 import { TrendingTopicsListItemComponent } from "../../ui/trending-topics-list-item/trending-topics-list-item.component";
 import { VotesService } from "@/app/shared/services/votes/votes.service";
-import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { ContainerComponent } from "@/app/shared/components/ui-kit/container/container.component";
 import { LeaderboardComponent } from "../../ui/leaderboard/leaderboard.component";
 import { LinkButtonComponent } from "@/app/shared/components/ui-kit/buttons/link-button/link-button.component";
@@ -51,12 +50,12 @@ export class PulsesComponent implements OnInit {
     private readonly votesService = inject(VotesService);
 
     public pulses: ITopic[] = [];
-    public isLoading: boolean = true;
+    public isLoading = true;
     public addTopicRoute = "/" + AppRoutes.User.Topic.SUGGEST;
     public leaderboardRoute = "/" + AppRoutes.Landing.LEADERBOARD;
     public loading$: Observable<boolean>;
     public paginator$: Observable<IPaginator<ITopic>>;
-    public searchInFocus: boolean = false;
+    public searchInFocus = false;
     public votes$ = this.votesService.votesByTopicId$;
 
     public ngOnInit(): void {

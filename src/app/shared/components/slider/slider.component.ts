@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild, OnDestroy } from '@angular/core';
 import Splide, { Options } from '@splidejs/splide';
 import { SvgIconComponent } from 'angular-svg-icon';
 
@@ -10,7 +10,7 @@ import { SvgIconComponent } from 'angular-svg-icon';
     standalone: true,
     imports: [CommonModule, SvgIconComponent],
 })
-export class SliderComponent implements OnInit {
+export class SliderComponent implements OnInit, OnDestroy {
     @ViewChild('contentWrapper', { static: true }) public contentWrapper: ElementRef;
     @ViewChild('splide', { static: true }) public splide: ElementRef;
 

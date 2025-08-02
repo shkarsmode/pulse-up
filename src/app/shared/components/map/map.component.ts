@@ -25,12 +25,12 @@ interface MarkersSettings {
 export class MapComponent {
     private readonly mapboxStylesUrl = inject(MAPBOX_STYLE);
 
-    @Input() isRounded: boolean = false;
-    @Input() isPreview: boolean = false;
-    @Input() isScrollZoomEnabled: boolean = true;
-    @Input() isDoubleClickZoomEnabled: boolean = true;
-    @Input() touchPitch: boolean = true;
-    @Input() touchZoomRotate: boolean = true;
+    @Input() isRounded = false;
+    @Input() isPreview = false;
+    @Input() isScrollZoomEnabled = true;
+    @Input() isDoubleClickZoomEnabled = true;
+    @Input() touchPitch = true;
+    @Input() touchZoomRotate = true;
     @Input() markers: MarkersSettings = {
         enabled: false,
         showTooltip: false,
@@ -39,7 +39,7 @@ export class MapComponent {
     @Input() center: [number, number] = AppConstants.MAP_CENTER_COORDINATES;
     @Input() maxBounds: mapboxgl.LngLatBoundsLike | undefined = AppConstants.MAP_MAX_BOUNDS;
     @Input() zoom: [number] = [1];
-    @Input() minZoom: number = 1;
+    @Input() minZoom = 1;
     @Input() maxZoom: number = AppConstants.MAP_MAX_ZOOM;
     @Input() mapStylesUrl: string = this.mapboxStylesUrl;
     @Input() projection: mapboxgl.Projection["name"] = "mercator";

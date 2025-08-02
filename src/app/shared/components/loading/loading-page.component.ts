@@ -33,7 +33,7 @@ import { trigger, state, style, transition, animate } from "@angular/animations"
     imports: [LogoComponent],
 })
 export class LoadingPageComponent implements OnChanges {
-    @Input() isVisible: boolean = true;
+    @Input() isVisible = true;
 
     @HostBinding("@fade") get fadeAnimation() {
         return this.isVisible ? "visible" : "hidden";

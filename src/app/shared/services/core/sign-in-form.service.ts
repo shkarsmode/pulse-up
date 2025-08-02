@@ -1,6 +1,6 @@
 // phone-form.service.ts
 import { inject } from "@angular/core";
-import { FormBuilder, FormControl, FormGroup, FormGroupDirective, NgForm } from "@angular/forms";
+import { FormBuilder, FormControl, FormGroup } from "@angular/forms";
 import { ErrorStateMatcher } from "@angular/material/core";
 import { Router } from "@angular/router";
 import intlTelInput, { Iti } from "intl-tel-input";
@@ -27,7 +27,7 @@ export class SignInFormService {
 
     public isValid = true;
     public countryCodeChanged = false;
-    public countryCode: string = "US";
+    public countryCode = "US";
     public form: FormGroup;
     public errorStateMatcher: ErrorStateMatcher;
     public AppRoutes = AppRoutes;
@@ -44,21 +44,20 @@ export class SignInFormService {
         return this.form.get("phone") as FormControl;
     }
 
-    private createForm(initialValue: string = ""): FormGroup {
+    private createForm(initialValue = ""): FormGroup {
         return this.formBuilder.group({
             phone: initialValue,
         });
     }
 
     private resetInput() {
-        const code = this.iti.getSelectedCountryData().dialCode;
         this.form.get("phone")?.reset("");
         this.validateNumber({ isEmptyValid: true });
     }
 
     private validateMaxValueLength(event: KeyboardEvent) {
         let isValid = false;
-        const numberChars = /[0-9\+\-\ ]/;
+        const numberChars = /[0-9+\- ]/;
         if (!numberChars.test(event.key)) {
             isValid = true;
             return isValid;
@@ -91,7 +90,7 @@ export class SignInFormService {
 
     private validateChar(event: KeyboardEvent) {
         let isValid = true;
-        const allowedChars = /[0-9\+\-]/;
+        const allowedChars = /[0-9+-]/;
         const allowedCtrlChars = /[axcv]/;
         const allowedOtherKeys = [
             "ArrowLeft",
@@ -236,7 +235,7 @@ export class SignInFormService {
 class CustomErrorStateMatcher implements ErrorStateMatcher {
     constructor(private isValidRef: () => boolean) {}
 
-    isErrorState(control: FormControl | null, form: FormGroupDirective | NgForm | null): boolean {
+    isErrorState(): boolean {
         return !this.isValidRef();
     }
 }

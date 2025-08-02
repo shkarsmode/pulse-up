@@ -18,8 +18,8 @@
                         class="tpulses__search"
                         [isLoading]="(searchInFocus && (loading$ | async)) || false"
                         (handleValueChange)="onSearchValueChange($event)"
-                        (focus)="onSearchFocus()"
-                        (blur)="onSearchBlur()" />
+                        (handleFocus)="onSearchFocus()"
+                        (handleBlur)="onSearchBlur()" />
                     <a
                         [routerLink]="addTopicRoute"
                         class="add-topic-button">

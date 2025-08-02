@@ -29,10 +29,10 @@ export class PersonalInfoPopupComponent {
     private fb: FormBuilder = inject(FormBuilder);
     private profileService: ProfileService = inject(ProfileService);
     private userService: UserService = inject(UserService);
-    private dialogRef: MatDialogRef<any> = inject(MatDialogRef);
+    private dialogRef: MatDialogRef<PersonalInfoPopupComponent> = inject(MatDialogRef);
 
     public form: FormGroup;
-    public loading: boolean = false;
+    public loading = false;
     public errorMessage: string | null = null;
 
     constructor() {
@@ -86,7 +86,7 @@ export class PersonalInfoPopupComponent {
                         this.loading = false;
                         this.dialogRef.close(res);
                     },
-                    error: (err) => {
+                    error: () => {
                         this.loading = false;
                         this.errorMessage = "Failed to update profile. Please try again.";
                     },

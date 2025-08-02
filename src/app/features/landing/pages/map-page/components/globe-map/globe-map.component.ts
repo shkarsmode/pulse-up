@@ -103,7 +103,7 @@ export class GlobeMapComponent implements OnDestroy {
     @Output() zoomEnd: EventEmitter<number> = new EventEmitter<number>();
     @Output() markerClick: EventEmitter<IMapMarker> = new EventEmitter<IMapMarker>();
 
-    public zoom: number = 2.5;
+    public zoom = 2.5;
     public fog: mapboxgl.Fog = {
         color: "rgb(228, 240, 255)",
         "high-color": "rgb(117, 172, 255)",

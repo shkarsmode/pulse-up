@@ -11,5 +11,5 @@ import { ContainerComponent } from '@/app/shared/components/ui-kit/container/con
   styleUrl: './profile-layout.component.scss'
 })
 export class ProfileLayoutComponent {
-  @Input() public isLoading: boolean = false;
+  @Input() public isLoading = false;
 }

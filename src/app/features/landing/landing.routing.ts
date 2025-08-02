@@ -10,7 +10,7 @@ import { metaTagsData } from '@/assets/data/meta-tags';
 import { PublicPageGuard } from '@/app/shared/helpers/guards/public-page.guard';
 import { CollectPersonalInfoGuard } from '@/app/shared/helpers/guards/collect-personal-info.guard';
 
-let Landing = AppRoutes.Landing;
+const Landing = AppRoutes.Landing;
 
 const routes: Routes = [
     {

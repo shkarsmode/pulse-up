@@ -1,4 +1,3 @@
-import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { FadeInDirective } from "@/app/shared/animations/fade-in.directive";
 import { LoadingIndicatorComponent } from "@/app/shared/components/loading-indicator/loading-indicator.component";
 import { CopyButtonComponent } from "@/app/shared/components/ui-kit/buttons/copy-button/copy-button.component";
@@ -15,7 +14,7 @@ import { SettingsService } from "@/app/shared/services/api/settings.service";
 import { UserService } from "@/app/shared/services/api/user.service";
 import { DialogService } from "@/app/shared/services/core/dialog.service";
 import { CommonModule, Location } from "@angular/common";
-import { Component, DestroyRef, inject } from "@angular/core";
+import { Component, DestroyRef, inject, OnInit } from "@angular/core";
 import { ActivatedRoute, ParamMap, Router } from "@angular/router";
 import { SvgIconComponent } from "angular-svg-icon";
 import { InfiniteScrollDirective } from "ngx-infinite-scroll";
@@ -53,7 +52,7 @@ import { UserTopicsListItemComponent } from "../../ui/user-topics-list-item/user
 ],
     providers: [InfiniteLoaderService],
 })
-export class UserComponent {
+export class UserComponent implements OnInit {
     private readonly destroyRef = inject(DestroyRef);
     private readonly router = inject(Router);
     private readonly location = inject(Location);
@@ -66,8 +65,8 @@ export class UserComponent {
 
     public user: IAuthor | null = null;
     public topics: ITopic[] = [];
-    public isLoading: boolean = true;
-    public pulseId: string = "";
+    public isLoading = true;
+    public pulseId = "";
     public paginator$: Observable<IPaginator<ITopic>>;
     public loading$: Observable<boolean>;
     public votes$ = this.votesService.votesByTopicId$;

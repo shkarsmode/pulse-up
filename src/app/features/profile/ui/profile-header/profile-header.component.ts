@@ -9,5 +9,5 @@ import { Component, Input } from "@angular/core";
     styleUrl: "./profile-header.component.scss",
 })
 export class ProfileHeaderComponent {
-    @Input() public heading: string = "";
+    @Input() public heading = "";
 }

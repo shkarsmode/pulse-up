@@ -15,9 +15,9 @@ const LOGO_SIZES = {
     styleUrl: "./large-pulse-icon.component.scss",
 })
 export class LargePulseIconComponent {
-    @Input({ required: true }) src: string = "";
+    @Input({ required: true }) src = "";
     @Input({ required: true }) size: keyof typeof LOGO_SIZES = "lg";
-    @Input() label: string = "";
+    @Input() label = "";
 
     public get width() {
         return LOGO_SIZES[this.size];

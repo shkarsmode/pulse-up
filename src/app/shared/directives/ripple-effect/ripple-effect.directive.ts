@@ -12,11 +12,11 @@ import {
     selector: '[appRippleEffect]'
 })
 export class RippleEffectDirective {
-    @Input() public unit: string = 'ms';
-    @Input() public animationTime: number = 600;
-    @Input() public enablePreventDefault: boolean = false;
-    @Input() public animationType: string = 'ease-in-out';
-    @Input() public rippleColor: string = 'rgba(255, 255, 255, 0.35)';
+    @Input() public unit = 'ms';
+    @Input() public animationTime = 600;
+    @Input() public enablePreventDefault = false;
+    @Input() public animationType = 'ease-in-out';
+    @Input() public rippleColor = 'rgba(255, 255, 255, 0.35)';
 
     private readonly _renderer: Renderer2 = inject(Renderer2);
     private readonly _elementRef: ElementRef = inject(ElementRef);

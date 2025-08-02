@@ -42,19 +42,19 @@ export class InputComponent
     @Input() public iconEnd: string;
     @Input() public min: number | string;
     @Input() public max: number | string;
-    @Input() public label: string = '';
+    @Input() public label = '';
     @Input() public hasErrorClass: boolean;
-    @Input() public placeholder: string = '';
-    @Input() public required: boolean = false;
-    @Input() public isLoading: boolean = false;
-    @Input() public inputType: string = 'text';
+    @Input() public placeholder = '';
+    @Input() public required = false;
+    @Input() public isLoading = false;
+    @Input() public inputType = 'text';
     @Input() public autocomplete: HTMLInputElement['autocomplete'];
     @Input() public preventBrowserAutofill: boolean;
 
-    @Output() public emitBlur: EventEmitter<any> = new EventEmitter();
-    @Output() public emitFocus: EventEmitter<any> = new EventEmitter();
-    @Output() public onInput: EventEmitter<any> = new EventEmitter();
-    @Output() public emitAutofill: EventEmitter<any> = new EventEmitter();
+    @Output() public emitBlur = new EventEmitter<any>();
+    @Output() public emitFocus = new EventEmitter<any>();
+    @Output() public onInput = new EventEmitter<any>();
+    @Output() public emitAutofill = new EventEmitter<any>();
 
     @ViewChild('inputRef', { static: true }) public inputRef: ElementRef;
 

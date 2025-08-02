@@ -8,7 +8,7 @@ import { PopupCloseButtonComponent } from "@/app/shared/components/ui-kit/popup/
 import { GeolocationService } from "@/app/shared/services/core/geolocation.service";
 import { VotingService } from "@/app/shared/services/core/voting.service";
 import { CommonModule } from "@angular/common";
-import { Component, DestroyRef, inject } from "@angular/core";
+import { Component, DestroyRef, inject, OnInit } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { MatDialogRef } from "@angular/material/dialog";
 import { delay, dematerialize, map, materialize, take } from "rxjs";
@@ -31,7 +31,7 @@ import { PrimaryButtonComponent } from "@/app/shared/components/ui-kit/buttons/p
     templateUrl: "./get-location-popup.component.html",
     styleUrl: "./get-location-popup.component.scss",
 })
-export class GetLocationPopupComponent {
+export class GetLocationPopupComponent implements OnInit {
     private readonly dialogRef = inject(MatDialogRef<GetLocationPopupComponent>);
     private readonly destroyRef = inject(DestroyRef);
     private readonly votingService = inject(VotingService);

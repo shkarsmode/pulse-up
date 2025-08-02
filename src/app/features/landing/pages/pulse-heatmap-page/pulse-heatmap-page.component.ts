@@ -1,4 +1,4 @@
-import { Component, effect, inject } from "@angular/core";
+import { Component, effect, inject, OnInit } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { ActivatedRoute, ParamMap, Router } from "@angular/router";
 import { toSignal } from "@angular/core/rxjs-interop";
@@ -28,7 +28,7 @@ import { BackButtonComponent } from "@/app/shared/components/ui-kit/buttons/back
         BackButtonComponent,
     ],
 })
-export class PulseHeatmapPageComponent {
+export class PulseHeatmapPageComponent implements OnInit {
     private readonly router: Router = inject(Router);
     private readonly route: ActivatedRoute = inject(ActivatedRoute);
     private readonly pulseService: PulseService = inject(PulseService);
@@ -63,7 +63,7 @@ export class PulseHeatmapPageComponent {
     };
 
     public pulse: ITopic;
-    public isLoading: boolean = true;
+    public isLoading = true;
     public zoom: [number] = this.configMap.default.zoom;
     public minZoom: number = this.configMap.default.minZoom;
     public maxBounds: mapboxgl.LngLatBoundsLike = this.configMap.default.maxBounds;

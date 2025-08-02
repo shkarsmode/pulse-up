@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output } from "@angular/core";
+import { Component, EventEmitter, Input, Output, OnInit } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { NgxMapboxGLModule } from "ngx-mapbox-gl";
 import { ITopic } from "@/app/shared/interfaces";
@@ -19,12 +19,12 @@ import { SpinnerComponent } from "../../ui-kit/spinner/spinner.component";
     templateUrl: "./map-marker.component.html",
     styleUrl: "./map-marker.component.scss",
 })
-export class MapMarkerComponent {
+export class MapMarkerComponent implements OnInit {
     @Input() map: mapboxgl.Map | null = null;
     @Input() marker: IMapMarkerAnimated;
     @Input() tooltipData: ITopic | null;
-    @Input() showTooltipOnHover: boolean = true;
-    @Input() isAnimated: boolean = false;
+    @Input() showTooltipOnHover = true;
+    @Input() isAnimated = false;
 
     @Output() tooltipHideEnd: EventEmitter<void> = new EventEmitter<void>();
     @Output() markerClick: EventEmitter<IMapMarkerAnimated> =
@@ -34,7 +34,7 @@ export class MapMarkerComponent {
     @Output() visibilityChange: EventEmitter<IMapMarkerVisibilityEventData> =
         new EventEmitter<IMapMarkerVisibilityEventData>();
 
-    private isVisible: boolean = true;
+    private isVisible = true;
 
     ngOnInit(): void {
         this.map?.on("moveend", this.checkMarkerVisibility.bind(this));
@@ -70,7 +70,7 @@ export class MapMarkerComponent {
         }
     }
 
-    public opacity: number = 0;
+    public opacity = 0;
 
     public onImageLoaded(): void {
         this.opacity = 1;

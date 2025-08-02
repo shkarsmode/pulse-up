@@ -1,4 +1,4 @@
-import { Component, Input } from "@angular/core";
+import { Component, Input, OnInit } from "@angular/core";
 import { SvgIconComponent } from "angular-svg-icon";
 import { GlobeSpinnerService } from "@/app/features/landing/services/globe-spinner.service";
 import mapboxgl from "mapbox-gl";
@@ -10,12 +10,12 @@ import mapboxgl from "mapbox-gl";
     templateUrl: "./map-spin-control.component.html",
     styleUrl: "./map-spin-control.component.scss",
 })
-export class MapSpinControlComponent {
+export class MapSpinControlComponent implements OnInit {
     private readonly globeSpinnerService = new GlobeSpinnerService();
 
     @Input() map: mapboxgl.Map;
-    @Input() spinning: boolean = false;
-    @Input() isSpinEnabled: boolean = false;
+    @Input() spinning = false;
+    @Input() isSpinEnabled = false;
 
     public isSpinButtonVisible = this.isSpinEnabled;
     public get isSpinning() {

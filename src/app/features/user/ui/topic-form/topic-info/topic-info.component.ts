@@ -11,5 +11,5 @@ import {MatTooltipModule} from '@angular/material/tooltip';
   encapsulation: ViewEncapsulation.None
 })
 export class TopicInfoComponent {
-  @Input() text: string = '';
+  @Input() text = '';
 }

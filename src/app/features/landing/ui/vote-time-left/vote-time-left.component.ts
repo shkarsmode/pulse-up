@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, inject, Input, Output } from "@angular/core";
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, inject, Input, Output, OnInit, OnDestroy } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { interval, Subscription } from "rxjs";
 import { IVote } from "@/app/shared/interfaces/vote.interface";
@@ -11,7 +11,7 @@ import { SettingsService } from "@/app/shared/services/api/settings.service";
     template: ` <span>{{ time }}</span> `,
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class VoteTimeLeftComponent {
+export class VoteTimeLeftComponent implements OnInit, OnDestroy {
     @Input() vote: IVote;
     @Output() expired = new EventEmitter<void>();
 

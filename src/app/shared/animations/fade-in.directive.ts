@@ -1,11 +1,11 @@
-import { Directive, ElementRef, Input, Renderer2, SimpleChanges } from '@angular/core';
+import { Directive, ElementRef, Input, AfterViewInit } from '@angular/core';
 
 @Directive({
     selector: '[fadeIn]',
     standalone: true,
 })
-export class FadeInDirective { 
-    @Input() childrenFadeIn: boolean = false;
+export class FadeInDirective implements AfterViewInit { 
+    @Input() childrenFadeIn = false;
 
     constructor(
         private el: ElementRef,
@@ -17,19 +17,19 @@ export class FadeInDirective {
     }
 
     private fadeIn() {
-        let element = this.el.nativeElement as HTMLElement;
+        const element = this.el.nativeElement as HTMLElement;
 
         element.classList.add('fade-in');
     }
 
     
     private fadeInChildren() {
-        let children = this.el.nativeElement.children as HTMLCollection;
+        const children = this.el.nativeElement.children as HTMLCollection;
 
-        let elementsList = Object.values(children);
+        const elementsList = Object.values(children);
         
         elementsList.map((element, i) => {
-            let e = element as HTMLElement;
+            const e = element as HTMLElement;
             element.classList.add('fade-in');
         })        
         

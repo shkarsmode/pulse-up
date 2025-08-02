@@ -62,7 +62,7 @@ export class MapMarkersService {
 
     public updateMarkers(data: IH3Pulses): void {
         const markers: IMapMarkerAnimated[] = [];
-        Object.keys(data).forEach((h3Index: any, index: number) => {
+        Object.keys(data).forEach((h3Index: string, index: number) => {
             const [lat, lng] = h3.h3ToGeo(h3Index);
             markers.push({
                 id: index,
@@ -90,7 +90,7 @@ export class MapMarkersService {
     }
 
     private randomInteger(min: number, max: number) {
-        let rand = min + Math.random() * (max + 1 - min);
+        const rand = min + Math.random() * (max + 1 - min);
         return Math.floor(rand);
     }
 }

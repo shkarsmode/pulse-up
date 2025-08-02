@@ -15,7 +15,7 @@ import { SettingsService } from '@/app/shared/services/api/settings.service';
 export class TopPulseCardComponent {
     @Input() public pulse: ITopic;
     @Input() public index: number;
-    @Input() public interactive: boolean = true;
+    @Input() public interactive = true;
 
     private readonly router: Router = inject(Router);
     private readonly settingsService: SettingsService = inject(SettingsService);

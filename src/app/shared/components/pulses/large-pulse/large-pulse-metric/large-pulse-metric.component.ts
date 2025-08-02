@@ -13,7 +13,7 @@ export class LargePulseMetricComponent {
     @Input({ required: true }) text: string;
     @Input() icon: string | null = null;
     @Input() label: string | null = null;
-    @Input() accent: boolean = false;
+    @Input() accent = false;
 
     @HostBinding("class.accent")
     public get isAccent() {

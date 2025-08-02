@@ -5,7 +5,7 @@ import {
     inject,
     Input,
     Output,
-    ViewChild,
+    ViewChild, OnInit, AfterViewInit, OnDestroy,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
@@ -30,7 +30,7 @@ import { LOCAL_STORAGE_KEYS, LocalStorageService } from "../../services/core/loc
     templateUrl: "./confirm-phone-number-form.component.html",
     styleUrl: "./confirm-phone-number-form.component.scss",
 })
-export class ConfirmPhoneNumberFormComponent {
+export class ConfirmPhoneNumberFormComponent implements OnInit, AfterViewInit, OnDestroy {
     private readonly destroyed: DestroyRef = inject(DestroyRef);
     private readonly confirmPhoneNumberService: ConfirmPhoneNumberService =
         inject(ConfirmPhoneNumberService);

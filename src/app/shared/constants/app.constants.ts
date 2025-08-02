@@ -22,7 +22,7 @@ export class AppConstants {
         [180, 85],
     ];
     public static readonly MAP_MAX_ZOOM = 10;
-    public static readonly ZOOM_RESOLUTION_MAP: { [key: number]: number } = {
+    public static readonly ZOOM_RESOLUTION_MAP: Record<number, number> = {
         0: 0,
         1: 1,
         2: 1,
@@ -36,7 +36,7 @@ export class AppConstants {
         9: 6,
         10: 6,
     };
-    public static readonly HEATMAP_STYLES: any = {
+    public static readonly HEATMAP_STYLES: Record<string, unknown> = {
         "heatmap-intensity": 0.35,
         "heatmap-color": [
             "interpolate",

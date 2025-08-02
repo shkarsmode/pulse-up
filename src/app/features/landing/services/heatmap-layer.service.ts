@@ -4,6 +4,7 @@ import mapboxgl from "mapbox-gl";
 import { IHeatmapData } from "../helpers/interfaces/heatmap-data.interface";
 import { MapBounds } from "../helpers/interfaces/map-bounds.interface";
 import { MapUtils } from "./map-utils.service";
+import { IPulseWeight } from "../interface/pulse-weight.interface";
 
 @Injectable({
     providedIn: "root",
@@ -12,9 +13,9 @@ export class HeatmapLayerService {
     private readonly pulseService: PulseService = inject(PulseService);
     private readonly sourceId = "vibes";
 
-    public intensity: number = 0.1;
-    public weights: any = [];
-    public heatmapStyles: any = {
+    public intensity = 0.1;
+    public weights: IPulseWeight[] = [];
+    public heatmapStyles: Record<string, unknown> = {
         "heatmap-intensity": 0.35,
         "heatmap-color": [
             "interpolate",
@@ -265,7 +266,7 @@ export class HeatmapLayerService {
             pulseId,
         );
     }
-    public updateHeatmap({ map, data }: { map: mapboxgl.Map; data: any }): void {
+    public updateHeatmap({ map, data }: { map: mapboxgl.Map; data: string | GeoJSON.FeatureCollection | GeoJSON.Feature }): void {
         MapUtils.setSourceData({
             map,
             sourceId: this.sourceId,
@@ -321,7 +322,7 @@ export class HeatmapLayerService {
     // TODO: use PuslseWeight entity
     public addWeightsToMap(data: IHeatmapData): void {
         this.weights = [];
-        data.forEach((item: any) => {
+        data.forEach((item) => {
             this.weights.push({
                 lat: item.coords[0],
                 lng: item.coords[1],

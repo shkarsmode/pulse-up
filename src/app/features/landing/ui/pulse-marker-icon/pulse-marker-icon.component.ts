@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output } from "@angular/core";
+import { Component, EventEmitter, Input, Output, OnInit } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { LoadImgPathDirective } from "@/app/shared/directives/load-img-path/load-img-path.directive";
 
@@ -9,10 +9,10 @@ import { LoadImgPathDirective } from "@/app/shared/directives/load-img-path/load
     templateUrl: "./pulse-marker-icon.component.html",
     styleUrl: "./pulse-marker-icon.component.scss",
 })
-export class PulseMarkerIconComponent {
-    @Input() icon: string = "";
-    @Input() isAnimated: boolean = false;
-    @Input() animationDelay: number = 0;
+export class PulseMarkerIconComponent implements OnInit {
+    @Input() icon = "";
+    @Input() isAnimated = false;
+    @Input() animationDelay = 0;
     @Output() imageLoaded: EventEmitter<void> = new EventEmitter<void>();
 
     public classes = {};

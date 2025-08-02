@@ -1,4 +1,4 @@
-import { Component, ElementRef, inject, ViewChild } from "@angular/core";
+import { Component, ElementRef, inject, ViewChild, OnInit } from "@angular/core";
 import { Location } from "@angular/common";
 import { Router } from "@angular/router";
 import { filter, map, take } from "rxjs";
@@ -13,7 +13,7 @@ import { VotingService } from "@/app/shared/services/core/voting.service";
     templateUrl: "./topic-preview.component.html",
     styleUrl: "./topic-preview.component.scss",
 })
-export class TopicPreviewComponent {
+export class TopicPreviewComponent implements OnInit {
     private readonly router = inject(Router);
     private readonly location = inject(Location);
     private readonly profileService = inject(ProfileService);
@@ -32,7 +32,7 @@ export class TopicPreviewComponent {
     longDescription = this.topicData.description;
     shortDescription = this.longDescription.replace(/\n/g, " ");
     keywords = this.topicData.keywords;
-    isReadMore: boolean = false;
+    isReadMore = false;
     isReadyForPreview = this.sendTopicService.isTopicReadyForPreview;
     isSubmitting = this.sendTopicService.submitting.asObservable();
     customLocationCoordinates = this.sendTopicService.customLocation

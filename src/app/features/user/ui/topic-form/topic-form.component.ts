@@ -1,4 +1,4 @@
-import { Component, EventEmitter, inject, Output } from "@angular/core";
+import { Component, EventEmitter, inject, Output, OnInit } from "@angular/core";
 import { FormGroup } from "@angular/forms";
 import { MatDialog } from "@angular/material/dialog";
 import { map, Observable, take } from "rxjs";
@@ -26,7 +26,7 @@ interface Topic {
     templateUrl: "./topic-form.component.html",
     styleUrl: "./topic-form.component.scss",
 })
-export class TopicFormComponent {
+export class TopicFormComponent implements OnInit {
     @Output() public submit = new EventEmitter<void>();
 
     private readonly dialog = inject(MatDialog);

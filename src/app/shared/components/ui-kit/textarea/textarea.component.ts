@@ -30,14 +30,14 @@ export const APP_UI_INPUT_ACCESSOR = {
 export class TextareaComponent implements OnInit, AfterViewInit, ControlValueAccessor {
     @Input() public id: string;
     @Input() public name: string;
-    @Input() public label: string = "";
+    @Input() public label = "";
     @Input() public hasErrorClass: boolean;
-    @Input() public placeholder: string = "";
-    @Input() public required: boolean = false;
+    @Input() public placeholder = "";
+    @Input() public required = false;
 
-    @Output() public emitBlur: EventEmitter<any> = new EventEmitter();
-    @Output() public emitFocus: EventEmitter<any> = new EventEmitter();
-    @Output() public onInput: EventEmitter<any> = new EventEmitter();
+    @Output() public emitBlur = new EventEmitter<any>();
+    @Output() public emitFocus = new EventEmitter<any>();
+    @Output() public onInput = new EventEmitter<any>();
 
     @ViewChild("textareaRef", { static: true }) public textareaRef: ElementRef;
 

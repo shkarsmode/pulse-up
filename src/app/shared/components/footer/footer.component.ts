@@ -16,7 +16,7 @@ export class FooterComponent implements OnInit {
     private readonly http: HttpClient = inject(HttpClient);
     public version: { major: number; minor: number; patch: number };
     public CommunityRoutes = AppRoutes.Community;
-    public isToShowVersionOfApp: boolean = !!localStorage.getItem('version');
+    public isToShowVersionOfApp = !!localStorage.getItem('version');
 
     public ngOnInit(): void {
         this.getCurrentVersionOfApplication();
