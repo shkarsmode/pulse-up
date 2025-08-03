@@ -160,7 +160,6 @@ export class PulsePageComponent implements OnInit, AfterViewInit, OnDestroy {
     private getInitialData(): void {
         this.route.paramMap
             .pipe(
-                takeUntilDestroyed(this.destroyRef),
                 map((params: ParamMap) => {
                     const idParam = params.get("id") || "";
                     const topicId = parseInt(idParam);
@@ -175,6 +174,7 @@ export class PulsePageComponent implements OnInit, AfterViewInit, OnDestroy {
                 }),
                 switchMap(this.loadTopicData.bind(this)),
                 tap(() => (this.isLoading = false)),
+                takeUntilDestroyed(this.destroyRef),
             )
             .subscribe();
     }
@@ -236,7 +236,7 @@ export class PulsePageComponent implements OnInit, AfterViewInit, OnDestroy {
     private getTopic(id: string | number) {
         return this.pulseService.getById(id).pipe(
             first(),
-            catchError((error) => {
+            catchError((error: unknown) => {
                 this.router.navigateByUrl("/" + AppRoutes.Community.INVALID_LINK);
                 return of(error);
             }),

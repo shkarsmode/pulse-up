@@ -11,79 +11,85 @@ import { CommonModule } from "@angular/common";
 import { Component, DestroyRef, inject, OnInit } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { MatDialogRef } from "@angular/material/dialog";
-import { delay, dematerialize, map, materialize, take } from "rxjs";
+import {
+  catchError,
+  delay,
+  dematerialize,
+  map,
+  materialize,
+  switchMap,
+  take,
+  tap,
+  throwError,
+} from "rxjs";
 import { PrimaryButtonComponent } from "@/app/shared/components/ui-kit/buttons/primary-button/primary-button.component";
 
 @Component({
-    selector: "app-get-location-popup",
-    standalone: true,
-    imports: [
-        CommonModule,
-        PopupLayoutComponent,
-        PopupTextComponent,
-        SpinnerComponent,
-        PopupFooterComponent,
-        GetAppButtonComponent,
-        PopupTitleComponent,
-        PopupCloseButtonComponent,
-        PrimaryButtonComponent,
-    ],
-    templateUrl: "./get-location-popup.component.html",
-    styleUrl: "./get-location-popup.component.scss",
+  selector: "app-get-location-popup",
+  standalone: true,
+  imports: [
+    CommonModule,
+    PopupLayoutComponent,
+    PopupTextComponent,
+    SpinnerComponent,
+    PopupFooterComponent,
+    GetAppButtonComponent,
+    PopupTitleComponent,
+    PopupCloseButtonComponent,
+    PrimaryButtonComponent,
+  ],
+  templateUrl: "./get-location-popup.component.html",
+  styleUrl: "./get-location-popup.component.scss",
 })
 export class GetLocationPopupComponent implements OnInit {
-    private readonly dialogRef = inject(MatDialogRef<GetLocationPopupComponent>);
-    private readonly destroyRef = inject(DestroyRef);
-    private readonly votingService = inject(VotingService);
-    private readonly geolocationService = inject(GeolocationService);
+  private readonly dialogRef = inject(MatDialogRef<GetLocationPopupComponent>);
+  private readonly destroyRef = inject(DestroyRef);
+  private readonly votingService = inject(VotingService);
+  private readonly geolocationService = inject(GeolocationService);
 
-    loading$ = this.geolocationService.status$.pipe(
-        takeUntilDestroyed(this.destroyRef),
-        map((status) => status === "initial" || status === "pending"),
+  loading$ = this.geolocationService.status$.pipe(
+    map((status) => status === "initial" || status === "pending"),
+    takeUntilDestroyed(this.destroyRef),
+  );
+  isError = false;
+
+  ngOnInit() {
+    this.getCurrentGeolocation();
+  }
+
+  proceed() {
+    this.dialogRef.close();
+    this.dialogRef
+      .afterClosed()
+      .pipe(delay(250), takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => {
+        this.votingService.signInWithoutGeolocation();
+      });
+  }
+
+  closeDialog() {
+    this.dialogRef.close();
+  }
+
+  getCurrentGeolocation() {
+    this.isError = false;
+    this.geolocationService.getCurrentGeolocation().pipe(
+      materialize(),
+      take(1),
+      delay(750),
+      dematerialize(), // Adding a delay to simulate loading time
+      tap(() => this.dialogRef.close()),
+      switchMap(() =>
+        this.dialogRef.afterClosed().pipe(
+          delay(250),
+          takeUntilDestroyed(this.destroyRef),
+          tap(() => this.votingService.signInWithGeolocation()),
+        ),
+      ),
+      catchError((error: unknown) => {
+        this.isError = true;
+        return throwError(() => error);
+      }),
     );
-    isError = false;
-
-    ngOnInit() {
-        this.getCurrentGeolocation();
-    }
-
-    proceed() {
-        this.dialogRef.close();
-        this.dialogRef
-            .afterClosed()
-            .pipe(take(1), delay(250))
-            .subscribe(() => {
-                this.votingService.signInWithoutGeolocation();
-            });
-    }
-
-    closeDialog() {
-        this.dialogRef.close();
-    }
-
-    getCurrentGeolocation() {
-        this.isError = false;
-        this.geolocationService
-            .getCurrentGeolocation()
-            .pipe(
-                materialize(),
-                take(1),
-                delay(750),
-                dematerialize(),
-            ) // Adding a delay to simulate loading time
-            .subscribe({
-                next: () => {
-                    this.dialogRef.close();
-                    this.dialogRef
-                        .afterClosed()
-                        .pipe(take(1), delay(250))
-                        .subscribe(() => {
-                            this.votingService.signInWithGeolocation();
-                        });
-                },
-                error: () => {
-                    this.isError = true;
-                },
-            });
-    }
+  }
 }

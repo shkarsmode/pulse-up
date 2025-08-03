@@ -25,7 +25,7 @@ export class AppInitializerService {
                 tap(() => this.initialized.next(true)),
             )
             .subscribe({
-                error: (err) => {
+                error: (err: unknown) => {
                     console.error("Failed to load initial data", err);
                     this.initialized.next(false);
                 },

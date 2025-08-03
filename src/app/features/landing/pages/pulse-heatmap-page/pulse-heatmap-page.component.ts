@@ -2,7 +2,7 @@ import { Component, effect, inject, OnInit } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { ActivatedRoute, ParamMap, Router } from "@angular/router";
 import { toSignal } from "@angular/core/rxjs-interop";
-import { catchError, first, of, take } from "rxjs";
+import { catchError, first, take, throwError } from "rxjs";
 import { ITopic } from "@/app/shared/interfaces";
 import { PulseService } from "@/app/shared/services/api/pulse.service";
 import { AppRoutes } from "@/app/shared/enums/app-routes.enum";
@@ -103,9 +103,9 @@ export class PulseHeatmapPageComponent implements OnInit {
             .getById(id)
             .pipe(
                 first(),
-                catchError((error) => {
+                catchError((error: unknown) => {
                     this.router.navigateByUrl("/" + AppRoutes.Community.INVALID_LINK);
-                    return of(error);
+                    return throwError(() => error);
                 }),
             )
             .subscribe((pulse) => {

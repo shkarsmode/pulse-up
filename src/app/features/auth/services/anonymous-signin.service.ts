@@ -16,7 +16,7 @@ export class AnonymousSigninService {
     public loginAsAnonymous(): void {
         this.loadingService.isLoading = true;
         this.authenticationService.loginAsAnonymousThroughTheFirebase().pipe(
-            catchError((error) => {
+            catchError(() => {
                 this.notificationService.error("Failed to sign in as guest");
                 return of(null);
             }),

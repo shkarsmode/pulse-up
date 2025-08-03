@@ -17,6 +17,7 @@ import { throwError } from "rxjs";
 import { PrimaryButtonComponent } from "@/app/shared/components/ui-kit/buttons/primary-button/primary-button.component";
 import { NotificationService } from "@/app/shared/services/core/notification.service";
 import { SignInFormService } from "@/app/shared/services/core/sign-in-form.service";
+import { isErrorWithMessage } from "../../helpers/errors/is-error-with-message";
 
 @Component({
     selector: "app-auth-form",
@@ -46,9 +47,11 @@ export class AuthFormComponent implements AfterViewInit, OnDestroy {
                 takeUntilDestroyed(this.destroyRef),
             )
             .subscribe({
-                error: (error: any) => {
+                error: (error: unknown) => {
                     console.log("Error sending verification code:", error);
-                    this.notificationService.error(error.message);
+                    if (isErrorWithMessage(error)) {
+                        this.notificationService.error(error.message);
+                    }
                     return throwError(() => error);
                 },
                 next: (result) => {
