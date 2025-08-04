@@ -1,7 +1,13 @@
 import { Component, inject } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { MatDialogRef } from "@angular/material/dialog";
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
+import {
+    AbstractControl,
+    FormBuilder,
+    FormGroup,
+    ReactiveFormsModule,
+    Validators,
+} from "@angular/forms";
 import { take } from "rxjs";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { InputComponent } from "../../ui-kit/input/input.component";
@@ -11,6 +17,50 @@ import { UserService } from "@/app/shared/services/api/user.service";
 import { atLeastOneLetterValidator } from "@/app/shared/helpers/validators/at-least-one-letter.validator";
 import { usernameUniqueValidator } from "@/app/shared/helpers/validators/username-unique.validator";
 import { ProfileService } from "@/app/shared/services/profile/profile.service";
+
+export class ErrorMessageBuilder {
+    public static getErrorMessage(
+        control: AbstractControl<string, string>,
+        name: string,
+    ): string | null {
+        if (!control || !(control.touched || control.dirty) || control.valid) {
+            return null;
+        }
+
+        const messages = this.errorMessages[name as keyof typeof this.errorMessages];
+
+        if (!messages) return null;
+
+        for (const [errorKey, message] of Object.entries(messages)) {
+            if (control.hasError(errorKey)) {
+                return message;
+            }
+        }
+
+        if (control.errors) {
+            const error = Object.values(control.errors)[0];
+            return error || null;
+        }
+
+        return null;
+    }
+
+    private static errorMessages = {
+        name: {
+            required: "Name is required",
+            maxlength: "Name cannot exceed 50 characters",
+            pattern: "Name must contain only letters",
+        },
+        username: {
+            required: "Username is required",
+            minlength: "Username must be at least 6 characters long",
+            maxlength: "Username cannot exceed 50 characters",
+            pattern: "Username must be alphanumeric and can include one underscore",
+            noLetter: "Username must contain at least one letter",
+            notUnique: "Username is already taken",
+        },
+    };
+}
 
 @Component({
     selector: "app-personal-info-popup",
@@ -98,5 +148,11 @@ export class PersonalInfoPopupComponent {
 
     onCloseDialog() {
         this.dialogRef.close();
+    }
+
+    public getErrorMessage(name: string): string | null {
+        const control = this.form.get(name);
+        if (!control) return null;
+        return ErrorMessageBuilder.getErrorMessage(control, name);
     }
 }
