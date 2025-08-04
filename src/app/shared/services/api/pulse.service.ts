@@ -8,8 +8,8 @@ import { ICategory } from "../../interfaces/category.interface";
 import { PendingTopicsService } from "../topic/pending-topics.service";
 import { IH3Pulses } from "@/app/features/landing/helpers/interfaces/h3-pulses.interface";
 import { IH3Votes } from "@/app/features/landing/helpers/interfaces/h3-votes.interface";
-import { IGetLeaderboardTopicsRequest } from "../../interfaces/topics/get-leaderboard-topics-request.interface";
-import { IGetLeaderboardTopicsResponse } from "../../interfaces/topics/get-leaderboard-topics-response.interface";
+import { IGetLeaderboardTopicsRequest } from "../../interfaces/topic/get-leaderboard-topics-request.interface";
+import { IGetLeaderboardTopicsResponse } from "../../interfaces/topic/get-leaderboard-topics-response.interface";
 
 type RequestParams = Record<string, string | number | boolean | readonly (string | number | boolean)[]>;
 

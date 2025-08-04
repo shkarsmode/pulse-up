@@ -20,14 +20,8 @@
                 label="Name"
                 [hasErrorClass]="!!(form.get('name')?.touched && form.get('name')?.invalid)"
                 (emitBlur)="onBlur('name')" />
-            <div *ngIf="form.get('name')?.touched && form.get('name')?.invalid">
-                <span *ngIf="form.get('name')?.hasError('required')"> Name is required</span>
-                <span *ngIf="form.get('name')?.hasError('maxlength')">
-                    Name must be 50 characters or less</span
-                >
-                <span *ngIf="form.get('name')?.hasError('pattern')">
-                    Name must contain only letters
-                </span>
+            <div *ngIf="form.get('name')?.touched && getErrorMessage('name') as error">
+                <span>{{ error }}</span>
             </div>
         </div>
 
@@ -41,25 +35,8 @@
                 label="Username"
                 [hasErrorClass]="!!(form.get('username')?.touched && form.get('username')?.invalid)"
                 (emitBlur)="onBlur('username')" />
-            <div *ngIf="form.get('username')?.touched && form.get('username')?.invalid">
-                <span *ngIf="form.get('username')?.hasError('required')">
-                    Username is required
-                </span>
-                <span *ngIf="form.get('username')?.hasError('minlength')">
-                    Username must be at least 6 characters long
-                </span>
-                <span *ngIf="form.get('username')?.hasError('maxlength')">
-                    Username must be 50 characters or less
-                </span>
-                <span *ngIf="form.get('username')?.hasError('pattern')">
-                    Username must be alphanumeric and can include one underscore
-                </span>
-                <span *ngIf="form.get('username')?.hasError('noLetter')">
-                    Must contain at least one letter.
-                </span>
-                <span *ngIf="form.get('username')?.hasError('notUnique')">
-                    Username already taken.
-                </span>
+            <div *ngIf="form.get('username')?.touched && getErrorMessage('username') as error">
+                <span>{{ error }}</span>
             </div>
         </div>
         <div

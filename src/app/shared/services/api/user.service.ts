@@ -1,10 +1,11 @@
 import { inject, Injectable } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
-import { BehaviorSubject, catchError, expand, last, map, Observable, of, shareReplay, Subject, switchMap, takeWhile } from "rxjs";
+import { catchError, expand, last, map, Observable, of, Subject, takeWhile } from "rxjs";
 import { IProfile, ITopic, IPaginator } from "../../interfaces";
 import { API_URL } from "../../tokens/tokens";
-import { IPhoneValidationResult } from "../../interfaces/phone-validatuion-result.interface";
 import { Nullable } from "../../types";
+import { IPhoneValidationResult } from "../../interfaces/user/phone-validatuion-result.interface";
+import { UsernameValidationResult } from "../../interfaces/user/username-validation-result.interface";
 
 @Injectable({
     providedIn: "root",
@@ -26,7 +27,7 @@ export class UserService {
         return this.http.get<IProfile>(`${this.apiUrl}/users/self`).pipe(
             catchError(() => {
                 return of(null);
-            })  
+            }),
         );
     }
 
@@ -49,19 +50,24 @@ export class UserService {
         itemsPerPage: number;
         includeStats?: boolean;
     }) {
-        return this.http.get<ITopic[]>(`${this.apiUrl}/users/${userId}/topics`, {
-            params: {
-                skip: itemsPerPage * (page - 1),
-                take: itemsPerPage,
-                includeStats: !!includeStats,
-            },
-        }).pipe(
-            map((response) => ({
-                items: response,
-                page: page,
-                hasMorePages: response.length !== 0 && response.length === itemsPerPage,
-            } as IPaginator<ITopic>)),
-        );
+        return this.http
+            .get<ITopic[]>(`${this.apiUrl}/users/${userId}/topics`, {
+                params: {
+                    skip: itemsPerPage * (page - 1),
+                    take: itemsPerPage,
+                    includeStats: !!includeStats,
+                },
+            })
+            .pipe(
+                map(
+                    (response) =>
+                        ({
+                            items: response,
+                            page: page,
+                            hasMorePages: response.length !== 0 && response.length === itemsPerPage,
+                        }) as IPaginator<ITopic>,
+                ),
+            );
     }
 
     public getAllTopics(userId: string): Observable<ITopic[]> {
@@ -104,23 +110,28 @@ export class UserService {
     }
 
     public validatePhoneNumber(phoneNumber: string): Observable<IPhoneValidationResult> {
-        return this.http.post<IPhoneValidationResult>(`${this.apiUrl}/users/validate:phone`, { phoneNumber }).pipe(
-            map((response) => {
-                if (response) {
-                    return response;
-                } else {
-                    throw new Error("Phone number validation failed", response);
-                }
-            }),
-        );
+        return this.http
+            .post<IPhoneValidationResult>(`${this.apiUrl}/users/validate:phone`, { phoneNumber })
+            .pipe(
+                map((response) => {
+                    if (response) {
+                        return response;
+                    } else {
+                        throw new Error("Phone number validation failed", response);
+                    }
+                }),
+            );
     }
 
-    public validateUsername = (username: string): Observable<boolean> => {
-        return this.http.post<{ username: string }>(`${this.apiUrl}/users/validate`, { username }).pipe(
-            catchError(() => {
-                return of(false);
-            }),
-            map((result) => !!result),
-        );
-    }
+    public validateUsername = (username: string): Observable<UsernameValidationResult> => {
+        return this.http
+            .post<{ username: string }>(`${this.apiUrl}/users/validate`, { username })
+            .pipe(
+                map(() => {
+                    return {
+                        success: true,
+                    };
+                }),
+            );
+    };
 }

@@ -81,17 +81,19 @@ export class ProfileFormComponent implements OnInit {
             bio: "",
             profilePicture: null,
         });
-        
+
         this.profilePicture = this.form.get("profilePicture")?.value || null;
 
-        this.authenticationService.firebaseUser$.pipe(takeUntilDestroyed(this.destroyed)).subscribe((user) => {
-            if (user && user.email) {
-                this.email = user.email;
-            }
-            if (user && user.phoneNumber) {
-                this.phoneNumber = user.phoneNumber;
-            }
-        })
+        this.authenticationService.firebaseUser$
+            .pipe(takeUntilDestroyed(this.destroyed))
+            .subscribe((user) => {
+                if (user && user.email) {
+                    this.email = user.email;
+                }
+                if (user && user.phoneNumber) {
+                    this.phoneNumber = user.phoneNumber;
+                }
+            });
     }
 
     ngOnInit() {
@@ -184,7 +186,10 @@ export class ProfileFormComponent implements OnInit {
                     },
                 },
             );
-            dialogRef.afterClosed().pipe(take(1)).subscribe(result => this.onCroppedImage(result));
+            dialogRef
+                .afterClosed()
+                .pipe(take(1))
+                .subscribe((result) => this.onCroppedImage(result));
         }
     }
 
