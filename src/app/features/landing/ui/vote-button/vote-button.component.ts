@@ -118,7 +118,7 @@ export class VoteButtonComponent implements OnInit {
             .vote({
                 topicId: this.topicId,
             })
-            .pipe(switchMap(this.waitForEndOfAnimation))
+            .pipe(switchMap((vote) => this.waitForEndOfAnimation(vote)))
             .subscribe({
                 next: ([vote]) => {
                     this.voted.emit(vote);

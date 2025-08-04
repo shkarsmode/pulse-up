@@ -106,22 +106,22 @@ export class AuthenticationService {
     public loginWithPhoneNumber(phoneNumber: string) {
         return of(null).pipe(
             tap(() => this.isSigninInProgress$.next(true)),
-            switchMap(this.loginAsAnonymousThroughTheFirebase),
+            switchMap(() => this.loginAsAnonymousThroughTheFirebase()),
             switchMap(() =>
                 forkJoin({
                     identityCheckResult: this.identityService
                         .checkByPhoneNumber(phoneNumber)
-                        .pipe(switchMap(this.handleIdentityCheckByPhoneNumber)),
+                        .pipe(switchMap((result) => this.handleIdentityCheckByPhoneNumber(result))),
                     voipValidationResult: this.validatePhoneNumberOnVoip(phoneNumber).pipe(
-                        switchMap(this.handlePhoneNumberVoipValidation),
+                        switchMap((isValid) => this.handlePhoneNumberVoipValidation(isValid)),
                     ),
                 }),
             ),
-            switchMap(this.logout),
-            switchMap(this.prepareRecaptcha),
+            switchMap(() => this.logout()),
+            switchMap(() => this.prepareRecaptcha()),
             switchMap(() => this.sendVerificationCode(phoneNumber)),
             tap(() => this.isSigninInProgress$.next(false)),
-            catchError((error) => {
+            catchError((error: unknown) => {
                 this.isSigninInProgress$.next(false);
                 return this.handleLoginWithPhoneNumberError(error);
             }),
@@ -143,11 +143,11 @@ export class AuthenticationService {
         return of(null).pipe(
             tap(() => this.isConfirmInProgress$.next(true)),
             switchMap(() => from(confirmationResult.confirm(verificationCode))),
-            switchMap(this.getIdToken),
-            switchMap(this.createUserWithToken),
-            switchMap(this.updateAuthenticatedUserdData),
+            switchMap((userCredential) => this.getIdToken(userCredential)),
+            switchMap((token) => this.createUserWithToken(token)),
+            switchMap((userData) => this.updateAuthenticatedUserdData(userData)),
             tap(() => this.isConfirmInProgress$.next(false)),
-            catchError((error) => {
+            catchError((error: unknown) => {
                 this.isConfirmInProgress$.next(false);
                 return this.handleConfirmCodeVerificationError(error);
             }),
@@ -169,10 +169,10 @@ export class AuthenticationService {
         }
         return of(null).pipe(
             tap(() => this.isResendInProgress$.next(true)),
-            switchMap(this.prepareRecaptcha),
+            switchMap(() => this.prepareRecaptcha()),
             switchMap(() => this.sendVerificationCode(phoneNumber)),
             tap(() => this.isResendInProgress$.next(false)),
-            catchError((error) => {
+            catchError((error: unknown) => {
                 this.isResendInProgress$.next(false);
                 return this.handleResendPhoneNumberError(error);
             }),
@@ -207,7 +207,7 @@ export class AuthenticationService {
             tap(() => {
                 LocalStorageService.set(LOCAL_STORAGE_KEYS.verifyEmail, email);
             }),
-            catchError(this.handleEmailVerificationError),
+            catchError((error: unknown) => this.handleEmailVerificationError(error)),
         );
     };
 
@@ -286,25 +286,25 @@ export class AuthenticationService {
             tap(() => {
                 LocalStorageService.set(LOCAL_STORAGE_KEYS.changeEmail, email);
             }),
-            catchError(this.handleEmailChangingError),
+            catchError((error: unknown) => this.handleEmailChangingError(error)),
         );
     };
 
     public changePhoneNumber = (phoneNumber: string) => {
         return of(null).pipe(
             tap(() => this.isChangePhoneNumberInProgress$.next(true)),
-            switchMap(this.prepareRecaptcha),
+            switchMap(() => this.prepareRecaptcha()),
             switchMap(() => this.identityService.checkByPhoneNumber(phoneNumber)),
-            switchMap(this.handleCheckPhoneNumberBeforeChange),
+            switchMap((result) => this.handleCheckPhoneNumberBeforeChange(result)),
             switchMap(() => this.validatePhoneNumberOnVoip(phoneNumber)),
-            switchMap(this.handlePhoneNumberVoipValidation),
+            switchMap((isValid) => this.handlePhoneNumberVoipValidation(isValid)),
             switchMap(() => this.sendVerificationCodeToNewPhoneNumber(phoneNumber)),
             tap((verificationId) => {
                 this.isChangePhoneNumberInProgress$.next(false);
                 LocalStorageService.set(LOCAL_STORAGE_KEYS.verificationId, verificationId);
                 LocalStorageService.set(LOCAL_STORAGE_KEYS.phoneNumberForChanging, phoneNumber);
             }),
-            catchError(this.handleChangePhoneNumberError),
+            catchError((error: unknown) => this.handleChangePhoneNumberError(error)),
         );
     };
 
@@ -360,7 +360,7 @@ export class AuthenticationService {
                 LocalStorageService.remove(LOCAL_STORAGE_KEYS.verificationId);
                 LocalStorageService.remove(LOCAL_STORAGE_KEYS.phoneNumberForChanging);
             }),
-            catchError(this.handleConfirmNewPhoneNumberError),
+            catchError((error: unknown) => this.handleConfirmNewPhoneNumberError(error)),
         );
     };
 
@@ -375,8 +375,8 @@ export class AuthenticationService {
 
                 LocalStorageService.remove(LOCAL_STORAGE_KEYS.isAnonymous);
             }),
-            catchError((error: any) => {
-                throw new AuthenticationError(error.message, AuthenticationErrorCode.UNKNOWN_ERROR);
+            catchError((error: unknown) => {
+                throw new AuthenticationError((error as Error).message, AuthenticationErrorCode.UNKNOWN_ERROR);
             }),
         );
     };
@@ -417,11 +417,11 @@ export class AuthenticationService {
                     }),
                 );
             }),
-            catchError((error: any) => {
+            catchError((error: unknown) => {
                 return throwError(
                     () =>
                         new AuthenticationError(
-                            error.message,
+                            (error as Error).message,
                             AuthenticationErrorCode.UNKNOWN_ERROR,
                         ),
                 );

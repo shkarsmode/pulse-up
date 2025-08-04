@@ -184,7 +184,7 @@ export class ProfileFormComponent implements OnInit {
                     },
                 },
             );
-            dialogRef.afterClosed().pipe(take(1)).subscribe(this.onCroppedImage);
+            dialogRef.afterClosed().pipe(take(1)).subscribe(result => this.onCroppedImage(result));
         }
     }
 

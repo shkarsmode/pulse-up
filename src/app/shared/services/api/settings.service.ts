@@ -45,7 +45,7 @@ export class SettingsService {
                 }),
             )
             .subscribe({
-                error: (err) => {
+                error: (err: unknown) => {
                     console.error("Failed to load settings", err);
                     this.loaded.next(false);
                 },

@@ -23,9 +23,9 @@ export class InfiniteLoaderService<T> {
         this.paginator$ = this.page$.pipe(
             tap(() => this.loadingSubject.next(true)),
             switchMap((page) => {
-                return this.loadFn(page).pipe(map(this.transformFn));
+                return this.loadFn(page).pipe(map((response) => this.transformFn(response)));
             }),
-            scan(this.updatePaginator, {
+            scan(this.updatePaginator.bind(this), {
                 items: [],
                 page: 0,
                 hasMorePages: true,

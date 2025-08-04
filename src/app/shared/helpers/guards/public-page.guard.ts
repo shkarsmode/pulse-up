@@ -36,7 +36,7 @@ export class PublicPageGuard implements CanActivate {
         }
 
         return this.authenticationService.loginAsAnonymousThroughTheFirebase().pipe(
-            catchError((error) => {
+            catchError((error: unknown) => {
                 console.log("PublicPageGuard error:", error);
                 return of(false);
             }),

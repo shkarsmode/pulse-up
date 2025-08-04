@@ -267,7 +267,7 @@ export class PulseService {
         if (!this.categories$) {
             this.categories$ = this.http
                 .get<ICategory[]>(`${this.apiUrl}/topics/categories`)
-                .pipe(shareReplay(1));
+                .pipe(shareReplay({ bufferSize: 1, refCount: true }));
         }
         return this.categories$;
     }

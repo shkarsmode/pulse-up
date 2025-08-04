@@ -13,7 +13,7 @@ export class SignInPageGuard implements CanActivate {
     canActivate(): Observable<boolean> {
         this.loadingService.isLoading = true;
         return this.authenticationService.logout().pipe(
-            catchError((error) => {
+            catchError(() => {
                 return of(false);
             }),
             map(() => true),

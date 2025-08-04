@@ -100,8 +100,7 @@ export class PickLocationComponent implements OnInit, OnDestroy {
         this.geolocationService
             .getCurrentGeolocation()
             .pipe(
-                takeUntil(this.destroy$),
-                catchError((error) => {
+                catchError(() => {
                     return throwError(() => new Error("Geolocation not available."));
                 }),
                 tap((geolocation) => {
@@ -111,13 +110,14 @@ export class PickLocationComponent implements OnInit, OnDestroy {
                         zoom: 10,
                     });
                 }),
+                takeUntil(this.destroy$),
             )
             .subscribe({
                 next: (geolocation) => {
                     this.selectedLocationSubject.next(geolocation.details);
                     this.isGeolocationRequestInProgress.next(false);
                 },
-                error: (error) => {
+                error: () => {
                     this.openDialog();
                     this.isGeolocationRequestInProgress.next(false);
                     this.sendTopicService.startTopicLocatoinWarningShown = true;
