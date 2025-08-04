@@ -5,6 +5,6 @@ export * from './settings.interface';
 export * from './top-cell-topic.interface';
 export * from './paginator.interface';
 export * from './profile.interface';
-export * from './mapbox.interface';
+export * from './map/mapbox.interface';
 export * from './geolocation.interface';
 

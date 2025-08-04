@@ -2,7 +2,7 @@ import { Component, effect, EventEmitter, inject, OnDestroy, Output } from "@ang
 import { CommonModule } from "@angular/common";
 import { toSignal } from "@angular/core/rxjs-interop";
 import { BehaviorSubject } from "rxjs";
-import { IMapMarker } from "@/app/shared/interfaces/map-marker.interface";
+import { IMapMarker } from "@/app/shared/interfaces/map/map-marker.interface";
 import { MediaQueryService } from "@/app/shared/services/core/media-query.service";
 import { ResponsiveMapConfig } from "@/app/shared/interfaces/responsive-map-config.interface";
 import { MapComponent } from "@/app/shared/components/map/map.component";

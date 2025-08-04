@@ -1,163 +1,165 @@
 @if (isLoading || !topic) {
-<app-spinner />
+    <app-spinner />
 } @else {
-<div
-    class="pulse"
-    fadeIn
-    [childrenFadeIn]="true">
-    <div class="pulse__header">
-        <img
-            class="pulse__header-logo"
-            [src]="topic.icon"
-            width="160"
-            height="160"
-            alt="pulse icon"
-            appLoadImgPath />
-        <div class="pulse__header-title">
-            <h2>{{ topic.title }}</h2>
-            <a
-                [routerLink]="['/user', topic.author.username]"
-                [state]="{ pulseId: topic.id }">
-                {{ topic.author.name }}
-            </a>
-        </div>
-    </div>
-
-    <div class="pulse__stats">
-        <div class="pulse__stats-wrap">
-            <div>
-                <span class="pulse__stats-title">Fans</span>
-                <svg-icon src="assets/svg/fans.svg" />
-                <span class="pulse__stats-count">
-                    {{ topic.stats?.totalUniqueUsers || 0 | formatNumber }}
-                </span>
-            </div>
-            <div>
-                <span class="pulse__stats-title">Lifetime</span>
-                <svg-icon src="assets/svg/chart-simple-solid.svg" />
-                <span class="pulse__stats-count">
-                    {{ topic.stats?.totalVotes || 0 | formatNumber }}
-                </span>
-            </div>
-            <div>
-                <span class="pulse__stats-title">24 hours</span>
-                <svg-icon src="assets/svg/pulse.svg" />
-                <span class="pulse__stats-count">
-                    {{ topic.stats?.lastDayVotes || 0 | formatNumber }}
-                </span>
-            </div>
-        </div>
-
-        <div class="pulse__vote">
-            @if (vote && !isActiveVote) {
-            <div class="pulse__last-vote">
-                <svg-icon src="assets/svg/pin.svg"></svg-icon>
-                {{ lastVoteInfo }}
-            </div>
-            }
-            <div class="pulse__buttons">
-                <app-vote-button
-                    [topicId]="topic.id"
-                    [vote]="vote"
-                    [isActiveVote]="isActiveVote"
-                    [lastVoteInfo]="lastVoteInfo"
-                    (voted)="onVoted($event)"
-                    (voteExpired)="onVoteExpired()" />
-                <app-menu [content]="menuContent">
-                    <button
-                        flatButton
-                        class="pulse__share-button"
-                        [class.pulse__share-button--dark]="isActiveVote">
-                        <svg-icon src="assets/svg/icon_share.svg"></svg-icon>
-                    </button>
-                </app-menu>
-            </div>
-            @if (topic.campaign) {
-            <app-pulse-campaign
-                [campaign]="topic.campaign"
-                [stats]="topic.stats" />
-            <button
-                style="
-                    background-color: #007bff;
-                    color: white;
-                    border: none;
-                    border-radius: 4px;
-                    padding: 10px 15px;
-                    cursor: pointer;
-                "
-                (click)="setAnotherData()">
-                Set another data
-            </button>
-            }
-        </div>
-    </div>
-
-    <hr class="divider" />
-
-    <div class="pulse__info">
-        <div class="pulse__info-description">
-            <div
-                class="pulse__info-description-text"
-                [class.pulse__info-description-text--read-more]="isReadMore"
-                #description
-                [innerHTML]="isReadMore ? topic.description : shortPulseDescription"></div>
-            @if (!isReadMore) {
-            <div
-                class="pulse__info-description-read-more"
-                (click)="onReadMore()">
-                Read More
-            </div>
-            }
-        </div>
-        <div class="pulse__info-keywords">
-            @for (keyword of topic.keywords; track keyword) {
-            <div>{{ keyword }}</div>
-            }
-        </div>
-        <div class="pulse__info-activity">
-            Active from {{ topic.startsAt | date : "MMM d, y" }}, to
-            {{ topic.endsAt | date : "MMM d, y" }}
-        </div>
-
-        <div class="pulse__info-media">
+    <div
+        class="pulse"
+        fadeIn
+        [childrenFadeIn]="true">
+        <div class="pulse__header">
             <img
-                *ngIf="topic.picture"
-                [src]="topic.picture"
-                width="275"
-                height="180"
-                [alt]="topic.title"
+                class="pulse__header-logo"
+                [src]="topic.icon"
+                width="160"
+                height="160"
+                alt="pulse icon"
                 appLoadImgPath />
-
-            <div
-                class="pulse__info-media__map"
-                [routerLink]="'/topic/' + topic.id + '/heatmap'">
-                <div class="pulse__info-media__map-clickbait">
-                    <svg-icon src="assets/svg/time-icon-large.svg" />
-                    <h3>View Heatmap</h3>
-                </div>
-
-                <app-map
-                    [pulseId]="topic.id"
-                    [isToShowHeatmap]="true"
-                    [isHideDebugger]="true"
-                    [isToShowMarkers]="false"
-                    [isToShowWeights]="true"
-                    [showEmptyPolygons]="false"
-                    [zoom]="[1.5]"
-                    [minZoom]="1.5" />
+            <div class="pulse__header-title">
+                <h2>{{ topic.title }}</h2>
+                <a
+                    [routerLink]="['/user', topic.author.username]"
+                    [state]="{ pulseId: topic.id }">
+                    {{ topic.author.name }}
+                </a>
             </div>
         </div>
-    </div>
 
-    <h2 class="pulse__slider-title">You may also like</h2>
-    <app-slider>
-        @for (pulse of suggestions; track pulse.id; let i = $index) {
-        <li class="splide__slide">
-            <app-top-pulse-card [pulse]="pulse" />
-        </li>
-        }
-    </app-slider>
-</div>
+        <div class="pulse__stats">
+            <div class="pulse__stats-wrap">
+                <div>
+                    <span class="pulse__stats-title">Fans</span>
+                    <svg-icon src="assets/svg/fans.svg" />
+                    <span class="pulse__stats-count">
+                        {{ topic.stats?.totalUniqueUsers || 0 | formatNumber }}
+                    </span>
+                </div>
+                <div>
+                    <span class="pulse__stats-title">Lifetime</span>
+                    <svg-icon src="assets/svg/chart-simple-solid.svg" />
+                    <span class="pulse__stats-count">
+                        {{ topic.stats?.totalVotes || 0 | formatNumber }}
+                    </span>
+                </div>
+                <div>
+                    <span class="pulse__stats-title">24 hours</span>
+                    <svg-icon src="assets/svg/pulse.svg" />
+                    <span class="pulse__stats-count">
+                        {{ topic.stats?.lastDayVotes || 0 | formatNumber }}
+                    </span>
+                </div>
+            </div>
+
+            <div class="pulse__vote">
+                @if (vote && !isActiveVote) {
+                    <div class="pulse__last-vote">
+                        <svg-icon src="assets/svg/pin.svg"></svg-icon>
+                        {{ lastVoteInfo }}
+                    </div>
+                }
+                <div class="pulse__buttons">
+                    <app-vote-button
+                        [topicId]="topic.id"
+                        [vote]="vote"
+                        [isActiveVote]="isActiveVote"
+                        [lastVoteInfo]="lastVoteInfo"
+                        (voted)="onVoted($event)"
+                        (voteExpired)="onVoteExpired()" />
+                    <app-menu [content]="menuContent">
+                        <button
+                            flatButton
+                            class="pulse__share-button"
+                            [class.pulse__share-button--dark]="isActiveVote">
+                            <svg-icon src="assets/svg/icon_share.svg"></svg-icon>
+                        </button>
+                    </app-menu>
+                </div>
+                @if (topic.campaign) {
+                    <app-pulse-campaign
+                        [campaign]="topic.campaign"
+                        [stats]="topic.stats" />
+                    <button
+                        style="
+                            background-color: #007bff;
+                            color: white;
+                            border: none;
+                            border-radius: 4px;
+                            padding: 10px 15px;
+                            cursor: pointer;
+                        "
+                        (click)="setAnotherData()">
+                        Set another data
+                    </button>
+                }
+            </div>
+        </div>
+
+        <hr class="divider" />
+
+        <div class="pulse__info">
+            <div class="pulse__info-description">
+                <div
+                    class="pulse__info-description-text"
+                    [class.pulse__info-description-text--read-more]="isReadMore"
+                    #description
+                    [innerHTML]="isReadMore ? topic.description : shortPulseDescription"></div>
+                @if (!isReadMore) {
+                    <button
+                        class="pulse__info-description-read-more"
+                        (click)="onReadMore()">
+                        Read More
+                    </button>
+                }
+            </div>
+            <div class="pulse__info-keywords">
+                @for (keyword of topic.keywords; track keyword) {
+                    <div>{{ keyword }}</div>
+                }
+            </div>
+            <div class="pulse__info-activity">
+                Active from {{ topic.startsAt | date: "MMM d, y" }}, to
+                {{ topic.endsAt | date: "MMM d, y" }}
+            </div>
+
+            <div class="pulse__info-media">
+                <img
+                    *ngIf="topic.picture"
+                    [src]="topic.picture"
+                    width="275"
+                    height="180"
+                    [alt]="topic.title"
+                    appLoadImgPath />
+
+                <div
+                    class="pulse__info-media__map"
+                    [routerLink]="'/topic/' + topic.id + '/heatmap'">
+                    <div class="pulse__info-media__map-clickbait">
+                        <svg-icon src="assets/svg/time-icon-large.svg" />
+                        <h3>View Heatmap</h3>
+                    </div>
+
+                    <app-map
+                        [zoom]="[1.5]"
+                        [minZoom]="1.5"
+                        [weights]="{ enabled: true }"
+                        (mapLoaded)="onMapLoaded($event)">
+                        <ng-container *ngIf="map">
+                            <app-map-heatmap-layer
+                                [map]="map"
+                                [topicId]="topic.id" />
+                        </ng-container>
+                    </app-map>
+                </div>
+            </div>
+        </div>
+
+        <h2 class="pulse__slider-title">You may also like</h2>
+        <app-slider>
+            @for (pulse of suggestions; track pulse.id; let i = $index) {
+                <li class="splide__slide">
+                    <app-top-pulse-card [pulse]="pulse" />
+                </li>
+            }
+        </app-slider>
+    </div>
 }
 
 <ng-template #menuContent>

@@ -6,7 +6,7 @@ import mapboxgl from "mapbox-gl";
 import {
     IMapMarkerAnimated,
     IMapMarkerVisibilityEventData,
-} from "@/app/shared/interfaces/map-marker.interface";
+} from "@/app/shared/interfaces/map/map-marker.interface";
 import { MarkerIconComponent } from "../../map-marker-icon/marker-icon.component";
 import { TopPulseCardComponent } from "@/app/shared/components/pulses/top-pulse/top-pulse-card.component";
 import { ITopic } from "@/app/shared/interfaces";

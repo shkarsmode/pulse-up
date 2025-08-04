@@ -23,27 +23,27 @@ import { MetadataService } from "@/app/shared/services/core/metadata.service";
 import { NotificationService } from "@/app/shared/services/core/notification.service";
 import { PendingTopicsService } from "@/app/shared/services/topic/pending-topics.service";
 import { CommonModule } from "@angular/common";
-import { Component, DestroyRef, ElementRef, inject, OnInit, ViewChild, AfterViewInit, OnDestroy } from "@angular/core";
+import {
+    Component,
+    DestroyRef,
+    ElementRef,
+    inject,
+    OnInit,
+    ViewChild,
+    AfterViewInit,
+    OnDestroy,
+} from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { ActivatedRoute, ParamMap, Router, RouterModule } from "@angular/router";
 import { SvgIconComponent } from "angular-svg-icon";
-import {
-    catchError,
-    first,
-    forkJoin,
-    map,
-    Observable,
-    of,
-    switchMap,
-    tap
-} from "rxjs";
+import { catchError, first, forkJoin, map, Observable, of, switchMap, tap } from "rxjs";
 import { TopicQRCodePopupData } from "../../helpers/interfaces/topic-qrcode-popup-data.interface";
-import { MapComponent } from "../../ui/map/map.component";
+import { MapComponent } from "@/app/shared/components/map/map.component";
 import { TopicQrcodePopupComponent } from "../../ui/topic-qrcode-popup/topic-qrcode-popup.component";
 import { VoteButtonComponent } from "../../ui/vote-button/vote-button.component";
 import { PulseCampaignComponent } from "./pulse-campaign/pulse-campaign.component";
 import { VotesService } from "@/app/shared/services/votes/votes.service";
-
+import { MapHeatmapLayerComponent } from "@/app/shared/components/map/map-heatmap-layer/map-heatmap-layer.component";
 
 @Component({
     selector: "app-pulse-page",
@@ -67,7 +67,8 @@ import { VotesService } from "@/app/shared/services/votes/votes.service";
         FlatButtonDirective,
         VoteButtonComponent,
         QrcodeButtonComponent,
-        PulseCampaignComponent
+        PulseCampaignComponent,
+        MapHeatmapLayerComponent,
     ],
 })
 export class PulsePageComponent implements OnInit, AfterViewInit, OnDestroy {
@@ -97,8 +98,7 @@ export class PulsePageComponent implements OnInit, AfterViewInit, OnDestroy {
     vote: IVote | null = null;
     isActiveVote = false;
     lastVoteInfo = "";
-
-    
+    map: mapboxgl.Map | null = null;
 
     get isAnonymousUser() {
         return !!this.authService.anonymousUserValue;
@@ -116,6 +116,10 @@ export class PulsePageComponent implements OnInit, AfterViewInit, OnDestroy {
 
     ngOnDestroy(): void {
         this.mutationObserver?.disconnect();
+    }
+
+    public onMapLoaded(map: mapboxgl.Map): void {
+        this.map = map;
     }
 
     public onReadMore(): void {
@@ -252,9 +256,9 @@ export class PulsePageComponent implements OnInit, AfterViewInit, OnDestroy {
             topicArchived,
             topicActiveOneGoalUnmet,
             topicActiveLastGoalInProgress,
-            topicBlockedWithProgress
-        ]
-    }
+            topicBlockedWithProgress,
+        ],
+    };
     public setAnotherData(): void {
         if (this.TOPICS_TO_TEST.state < 0) {
             this.TOPICS_TO_TEST.topics.push(this.topic);
@@ -263,9 +267,9 @@ export class PulsePageComponent implements OnInit, AfterViewInit, OnDestroy {
         if (this.TOPICS_TO_TEST.state >= this.TOPICS_TO_TEST.topics.length) {
             this.TOPICS_TO_TEST.state = 0;
         }
-        this.updateTopicData({ 
-            ...(this.TOPICS_TO_TEST.topics[this.TOPICS_TO_TEST.topics.length - 1]), 
-            ...this.TOPICS_TO_TEST.topics[this.TOPICS_TO_TEST.state] 
+        this.updateTopicData({
+            ...this.TOPICS_TO_TEST.topics[this.TOPICS_TO_TEST.topics.length - 1],
+            ...this.TOPICS_TO_TEST.topics[this.TOPICS_TO_TEST.state],
         });
 
         this.TOPICS_TO_TEST.state++;
@@ -376,113 +380,108 @@ export class PulsePageComponent implements OnInit, AfterViewInit, OnDestroy {
 
 export const topicActivePartialProgress: ITopic | any = {
     id: 1,
-    title: 'Test 1',
-    endsAt: '2025-07-30T23:59:59.999Z',
-    location: { country: 'Ukraine' },
+    title: "Test 1",
+    endsAt: "2025-07-30T23:59:59.999Z",
+    location: { country: "Ukraine" },
     stats: {
         totalVotes: 30,
         lastDayVotes: 23,
-        totalUniqueUsers: 102
+        totalUniqueUsers: 102,
     },
     state: TopicState.Active,
     campaign: {
-        id: '1',
-        endsAt: '2025-07-30T23:59:59.999Z',
-        sponsorLink: 'https://pulseup.com',
-        sponsorLogo: '',
-        sponsoredBy: 'pulseup.com',
-        startsAt: '2025-04-10T00:00:00.000Z',
-        accomplishedGoals: ['2025-04-11T00:00:00.000Z'],
+        id: "1",
+        endsAt: "2025-07-30T23:59:59.999Z",
+        sponsorLink: "https://pulseup.com",
+        sponsorLogo: "",
+        sponsoredBy: "pulseup.com",
+        startsAt: "2025-04-10T00:00:00.000Z",
+        accomplishedGoals: ["2025-04-11T00:00:00.000Z"],
         goals: [
-            { reward: '$100 donation to U24', supporters: 100 },
-            { reward: '$200 donation to U24', dailyVotes: 50 },
-            { reward: '$500 donation', lifetimeVotes: 120 }
-        ]
-    }
+            { reward: "$100 donation to U24", supporters: 100 },
+            { reward: "$200 donation to U24", dailyVotes: 50 },
+            { reward: "$500 donation", lifetimeVotes: 120 },
+        ],
+    },
 };
 
 export const topicActiveAllCompleted: ITopic = {
     ...topicActivePartialProgress,
-    title: 'Test 2',
+    title: "Test 2",
     stats: {
         totalVotes: 130,
         lastDayVotes: 60,
-        totalUniqueUsers: 130
+        totalUniqueUsers: 130,
     },
     campaign: {
         ...topicActivePartialProgress.campaign!,
         accomplishedGoals: [
-            '2025-04-11T00:00:00.000Z',
-            '2025-04-12T00:00:00.000Z',
-            '2025-04-13T00:00:00.000Z'
-        ]
-    }
+            "2025-04-11T00:00:00.000Z",
+            "2025-04-12T00:00:00.000Z",
+            "2025-04-13T00:00:00.000Z",
+        ],
+    },
 };
 
 export const topicActiveEmpty: ITopic = {
     ...topicActivePartialProgress,
-    title: 'Test 3',
+    title: "Test 3",
     stats: {
         totalVotes: 0,
         lastDayVotes: 0,
-        totalUniqueUsers: 0
+        totalUniqueUsers: 0,
     },
     campaign: {
         ...topicActivePartialProgress.campaign!,
-        accomplishedGoals: []
-    }
+        accomplishedGoals: [],
+    },
 };
 
 export const topicArchived: ITopic = {
     ...topicActivePartialProgress,
-    title: 'Test 4',
+    title: "Test 4",
     state: TopicState.Archived,
     campaign: {
         ...topicActivePartialProgress.campaign!,
-        endsAt: '2025-04-10T23:59:59.999Z'
-    }
+        endsAt: "2025-04-10T23:59:59.999Z",
+    },
 };
 
 export const topicActiveOneGoalUnmet: ITopic = {
     ...topicActivePartialProgress,
-    title: 'Test 5',
+    title: "Test 5",
     stats: {
         totalVotes: 0,
         lastDayVotes: 0,
-        totalUniqueUsers: 23
+        totalUniqueUsers: 23,
     },
     campaign: {
         ...topicActivePartialProgress.campaign!,
-        goals: [
-            { reward: '$50 donation to U24', supporters: 100 }
-        ],
-        accomplishedGoals: []
-    }
+        goals: [{ reward: "$50 donation to U24", supporters: 100 }],
+        accomplishedGoals: [],
+    },
 };
 
 export const topicActiveLastGoalInProgress: ITopic = {
     ...topicActivePartialProgress,
-    title: 'Test 6',
+    title: "Test 6",
     stats: {
-        totalVotes: 90,          // progress on lifetimeVotes (120 goal)
+        totalVotes: 90, // progress on lifetimeVotes (120 goal)
         lastDayVotes: 50,
-        totalUniqueUsers: 130
+        totalUniqueUsers: 130,
     },
     campaign: {
         ...topicActivePartialProgress.campaign!,
-        accomplishedGoals: [
-            '2025-04-11T00:00:00.000Z',
-            '2025-04-12T00:00:00.000Z'
-        ]
-    }
+        accomplishedGoals: ["2025-04-11T00:00:00.000Z", "2025-04-12T00:00:00.000Z"],
+    },
 };
 
 export const topicBlockedWithProgress: ITopic = {
     ...topicActiveAllCompleted,
-    title: 'Test 7',
+    title: "Test 7",
     state: TopicState.Blocked,
     campaign: {
         ...topicActiveAllCompleted.campaign!,
-        endsAt: '2025-08-01T00:00:00.000Z'
-    }
+        endsAt: "2025-08-01T00:00:00.000Z",
+    },
 };

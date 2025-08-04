@@ -1,7 +1,7 @@
 import { inject, Injectable } from "@angular/core";
 import * as h3 from "h3-js";
 import { BehaviorSubject, debounceTime, first, Subject, switchMap, tap } from "rxjs";
-import { IMapMarker, IMapMarkerAnimated } from "@/app/shared/interfaces/map-marker.interface";
+import { IMapMarker, IMapMarkerAnimated } from "@/app/shared/interfaces/map/map-marker.interface";
 import { ITopic } from "@/app/shared/interfaces";
 import { PulseService } from "@/app/shared/services/api/pulse.service";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";

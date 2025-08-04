@@ -5,7 +5,6 @@ import {
     catchError,
     map,
     Subject,
-    switchMap,
     take,
     takeUntil,
     tap,
@@ -17,7 +16,7 @@ import { MatDialog } from "@angular/material/dialog";
 import { SendTopicService } from "@/app/shared/services/core/send-topic.service";
 import { AppRoutes } from "@/app/shared/enums/app-routes.enum";
 import { H3LayerService } from "@/app/features/landing/services/h3-layer.service";
-import { MapUtils } from "@/app/features/landing/services/map-utils.service";
+import { MapUtils } from "@/app/shared/services/map/map-utils.service";
 import { GeolocationService } from "@/app/shared/services/core/geolocation.service";
 import { TopicLocation } from "../../interfaces/topic-location.interface";
 import { GeocodeService } from "@/app/shared/services/api/geocode.service";

@@ -11,12 +11,12 @@ import {
     throttleTime,
 } from "rxjs";
 import { PulseService } from "@/app/shared/services/api/pulse.service";
-import { MapUtils } from "@/app/features/landing/services/map-utils.service";
+import { MapUtils } from "@/app/shared/services/map/map-utils.service";
 import { AppConstants } from "@/app/shared/constants";
 import {
     IMapMarker,
     IMapMarkerVisibilityEventData,
-} from "@/app/shared/interfaces/map-marker.interface";
+} from "@/app/shared/interfaces/map/map-marker.interface";
 import { MediaUtilsService } from "@/app/features/landing/services/media-utils.service";
 import { MapMarkersService } from "@/app/shared/services/map/map-marker.service";
 import { NgxMapboxGLModule } from "ngx-mapbox-gl";
@@ -37,7 +37,7 @@ export class MapMarkersLayerComponent implements OnInit {
     private readonly pulseService = inject(PulseService);
     private readonly mapMarkersService = inject(MapMarkersService);
 
-    @Input({ required: true }) public map!: mapboxgl.Map;
+    @Input() public map: mapboxgl.Map;
     @Input() public showTooltip = false;
     @Input() public isAnimated = false;
 
@@ -52,11 +52,11 @@ export class MapMarkersLayerComponent implements OnInit {
         this.checkIfTouchDevice();
         combineLatest([this.mapInteraction$(), this.mapMarkersService.category$])
             .pipe(
-                takeUntilDestroyed(this.destroyRef),
-                switchMap(([_, category]) => this.getMarkers(category)),
+                switchMap(([, category]) => this.getMarkers(category)),
                 tap((data) => {
                     this.mapMarkersService.updateMarkers(data);
                 }),
+                takeUntilDestroyed(this.destroyRef),
             )
             .subscribe();
     }

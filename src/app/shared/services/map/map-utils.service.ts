@@ -1,6 +1,6 @@
 import mapboxgl from "mapbox-gl";
 import * as h3 from "h3-js";
-import { MapBounds } from "../helpers/interfaces/map-bounds.interface";
+import { MapBounds } from "../../interfaces/map/map-bounds.interface";
 
 export class MapUtils {
     // TODO: Remove method

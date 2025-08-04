@@ -5,7 +5,7 @@ import { ITopic } from "@/app/shared/interfaces";
 import {
     IMapMarkerAnimated,
     IMapMarkerVisibilityEventData,
-} from "@/app/shared/interfaces/map-marker.interface";
+} from "@/app/shared/interfaces/map/map-marker.interface";
 import { MapPopoverComponent } from "../map-popover/map-popover.component";
 import { MapMarkerIconComponent } from "../map-marker-icon/map-marker-icon.component";
 import { RouterModule } from "@angular/router";
