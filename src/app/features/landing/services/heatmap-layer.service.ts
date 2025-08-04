@@ -1,10 +1,10 @@
 import { PulseService } from "@/app/shared/services/api/pulse.service";
 import { inject, Injectable } from "@angular/core";
 import mapboxgl from "mapbox-gl";
-import { IHeatmapData } from "../helpers/interfaces/heatmap-data.interface";
-import { MapBounds } from "../helpers/interfaces/map-bounds.interface";
-import { MapUtils } from "./map-utils.service";
-import { IPulseWeight } from "../interface/pulse-weight.interface";
+import { MapBounds } from "../../../shared/interfaces/map/map-bounds.interface";
+import { MapUtils } from "../../../shared/services/map/map-utils.service";
+import { IHeatmapData } from "@/app/shared/interfaces/map/heatmap-data.interface";
+import { IHeatmapWeight } from "@/app/shared/interfaces/map/heatmap-weight.interface";
 
 @Injectable({
     providedIn: "root",
@@ -14,7 +14,7 @@ export class HeatmapLayerService {
     private readonly sourceId = "vibes";
 
     public intensity = 0.1;
-    public weights: IPulseWeight[] = [];
+    public weights: IHeatmapWeight[] = [];
     public heatmapStyles: Record<string, unknown> = {
         "heatmap-intensity": 0.35,
         "heatmap-color": [

@@ -1,18 +1,20 @@
-import { Component, effect, inject, OnInit } from "@angular/core";
+import { Component, DestroyRef, effect, inject, OnInit } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { ActivatedRoute, ParamMap, Router } from "@angular/router";
-import { toSignal } from "@angular/core/rxjs-interop";
-import { catchError, first, take, throwError } from "rxjs";
+import { takeUntilDestroyed, toSignal } from "@angular/core/rxjs-interop";
+import { catchError, throwError } from "rxjs";
+import mapboxgl from "mapbox-gl";
 import { ITopic } from "@/app/shared/interfaces";
 import { PulseService } from "@/app/shared/services/api/pulse.service";
 import { AppRoutes } from "@/app/shared/enums/app-routes.enum";
 import { MediaQueryService } from "@/app/shared/services/core/media-query.service";
 import { ResponsiveMapConfig } from "@/app/shared/interfaces/responsive-map-config.interface";
-import { MapComponent } from "../../ui/map/map.component";
+import { MapComponent } from "@/app/shared/components/map/map.component";
 import { FadeInDirective } from "@/app/shared/animations/fade-in.directive";
 import { FormatNumberPipe } from "@/app/shared/pipes/format-number.pipe";
 import { LoadImgPathDirective } from "@/app/shared/directives/load-img-path/load-img-path.directive";
 import { BackButtonComponent } from "@/app/shared/components/ui-kit/buttons/back-button/back-button.component";
+import { MapHeatmapLayerComponent } from "@/app/shared/components/map/map-heatmap-layer/map-heatmap-layer.component";
 
 @Component({
     selector: "app-pulse-heatmap-page",
@@ -26,13 +28,16 @@ import { BackButtonComponent } from "@/app/shared/components/ui-kit/buttons/back
         FormatNumberPipe,
         LoadImgPathDirective,
         BackButtonComponent,
+        MapHeatmapLayerComponent,
     ],
 })
 export class PulseHeatmapPageComponent implements OnInit {
+    private readonly destroyRef = inject(DestroyRef);
     private readonly router: Router = inject(Router);
     private readonly route: ActivatedRoute = inject(ActivatedRoute);
     private readonly pulseService: PulseService = inject(PulseService);
     private mediaService = inject(MediaQueryService);
+
     private isMobile = toSignal(this.mediaService.mediaQuery("max", "SM"));
     private isSmallMobile = toSignal(this.mediaService.mediaQuery("max", "XS"));
     private readonly configMap: Record<"xs" | "sm" | "default", ResponsiveMapConfig> = {
@@ -62,6 +67,7 @@ export class PulseHeatmapPageComponent implements OnInit {
         },
     };
 
+    public map: mapboxgl.Map | null = null;
     public pulse: ITopic;
     public isLoading = true;
     public zoom: [number] = this.configMap.default.zoom;
@@ -74,8 +80,8 @@ export class PulseHeatmapPageComponent implements OnInit {
             const config = this.isSmallMobile()
                 ? this.configMap.xs
                 : this.isMobile()
-                ? this.configMap.sm
-                : this.configMap.default;
+                  ? this.configMap.sm
+                  : this.configMap.default;
 
             this.zoom = config.zoom;
             this.minZoom = config.minZoom;
@@ -88,8 +94,12 @@ export class PulseHeatmapPageComponent implements OnInit {
         this.initPulseUrlIdListener();
     }
 
+    public onMapLoaded(map: mapboxgl.Map): void {
+        this.map = map;
+    }
+
     private initPulseUrlIdListener(): void {
-        this.route.paramMap.pipe(take(1)).subscribe(this.handlePulseUrlIdListener.bind(this));
+        this.route.paramMap.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(this.handlePulseUrlIdListener.bind(this));
     }
 
     private handlePulseUrlIdListener(data: ParamMap): void {
@@ -102,7 +112,7 @@ export class PulseHeatmapPageComponent implements OnInit {
         this.pulseService
             .getById(id)
             .pipe(
-                first(),
+                takeUntilDestroyed(this.destroyRef),
                 catchError((error: unknown) => {
                     this.router.navigateByUrl("/" + AppRoutes.Community.INVALID_LINK);
                     return throwError(() => error);

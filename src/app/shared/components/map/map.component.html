@@ -28,6 +28,9 @@
             [map]="map"
             [isAnimated]="markers.isAnimated || false"
             [showTooltip]="markers.showTooltip || false"
-            (markerClick)="onMarkerClick($event)"/>
+            (markerClick)="onMarkerClick($event)" />
+    }
+    @if (weights.enabled && map) {
+        <app-map-weights-layer [map]="map" />
     }
 </mgl-map>

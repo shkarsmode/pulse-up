@@ -3,7 +3,7 @@ import { CommonModule } from "@angular/common";
 import { toSignal } from "@angular/core/rxjs-interop";
 import { BehaviorSubject } from "rxjs";
 import mapboxgl from "mapbox-gl";
-import { IMapMarker } from "@/app/shared/interfaces/map-marker.interface";
+import { IMapMarker } from "@/app/shared/interfaces/map/map-marker.interface";
 import { MediaQueryService } from "@/app/shared/services/core/media-query.service";
 import { MapEventListenerService } from "@/app/features/landing/services/map-event-listener.service";
 import { MapMarkersService } from "@/app/shared/services/map/map-marker.service";

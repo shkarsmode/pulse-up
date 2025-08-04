@@ -1,7 +1,7 @@
 export interface MapboxFeatureCollection {
     type: "FeatureCollection";
     features: MapboxFeature[];
-    attribution: string;
+    attribution?: string;
 }
 
 export interface MapboxFeature {

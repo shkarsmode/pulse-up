@@ -1,0 +1,32 @@
+::ng-deep .mapboxgl-marker {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    width: var(--map-marker-size);
+    height: var(--map-marker-size);
+    border-radius: 50%;
+
+    cursor: pointer;
+
+    &:hover {
+        box-shadow: 0px 4px 20px 0px #00000072;
+    }
+
+    &.weight-marker {
+        width: auto;
+        height: auto;
+        min-width: 20px;
+        height: 20px;
+        padding: 4px;
+        border-radius: 14px;
+        background-color: #fff;
+        box-shadow: 0px 4px 20px 0px #0000004d;
+
+        .weight-marker__text {
+            font-size: 14px;
+            line-height: 1;
+            font-weight: 600;
+        }
+    }
+}

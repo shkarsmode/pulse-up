@@ -2,7 +2,7 @@ import { Component, inject, OnInit } from "@angular/core";
 import { Router } from "@angular/router";
 import { CommonModule } from "@angular/common";
 import { Projection } from "mapbox-gl";
-import { IMapMarker } from "@/app/shared/interfaces/map-marker.interface";
+import { IMapMarker } from "@/app/shared/interfaces/map/map-marker.interface";
 import { SwitchComponent } from "@/app/shared/components/ui-kit/switch/switch/switch.component";
 import { MercatorMapComponent } from "./components/mercator-map/mercator-map.component";
 import { GlobeMapComponent } from "./components/globe-map/globe-map.component";

@@ -1,0 +1,7 @@
+@for (weight of weights$ | async; track weight.h3Index) {
+    <mgl-marker
+        [lngLat]="[weight.lng, weight.lat]"
+        className="weight-marker">
+        <span class="weight-marker__text">{{ weight.value | formatNumber }}</span>
+    </mgl-marker>
+}

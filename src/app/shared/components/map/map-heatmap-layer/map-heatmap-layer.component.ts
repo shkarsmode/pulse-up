@@ -9,13 +9,11 @@ import {
     tap,
     throttleTime,
 } from "rxjs";
-import * as h3 from "h3-js";
-import { MapUtils } from "@/app/features/landing/services/map-utils.service";
+import { MapUtils } from "@/app/shared/services/map/map-utils.service";
 import { AppConstants } from "@/app/shared/constants";
-import { PulseService } from "@/app/shared/services/api/pulse.service";
 import { MapPainter } from "@/app/shared/helpers/map-painter";
-import { IH3Votes } from "@/app/features/landing/helpers/interfaces/h3-votes.interface";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
+import { HeatmapService } from "@/app/shared/services/map/heatmap.service";
 
 @Component({
     selector: "app-map-heatmap-layer",
@@ -26,7 +24,7 @@ import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 })
 export class MapHeatmapLayerComponent implements OnInit {
     private readonly destroyRef = inject(DestroyRef);
-    private readonly pulseService = inject(PulseService);
+    private readonly heatmapService = inject(HeatmapService);
 
     @Input({ required: true }) public map: mapboxgl.Map;
     @Input() public topicId?: number;
@@ -48,11 +46,12 @@ export class MapHeatmapLayerComponent implements OnInit {
     private subscribeToHexagonUpdates() {
         this.mapInteraction$()
             .pipe(
-                takeUntilDestroyed(this.destroyRef),
-                switchMap(() => this.getHeatmapData()),
-                tap((data) => {
-                    this.updateHeatmap(data);
+                switchMap(() => this.heatmapService.getHeatmapData(this.map, this.topicId)),
+                map((heatmapData) => this.heatmapService.getHeatmapGeoJson(heatmapData)),
+                tap((geoJson) => {
+                    this.updateHeatmap(geoJson);
                 }),
+                takeUntilDestroyed(this.destroyRef),
             )
             .subscribe();
     }
@@ -64,75 +63,10 @@ export class MapHeatmapLayerComponent implements OnInit {
         ).pipe(startWith(null));
     }
 
-    private getHeatmapData() {
-        const resolution = MapUtils.getResolutionLevel({
-            map: this.map,
-            resolutionLevelsByZoom: AppConstants.ZOOM_RESOLUTION_MAP,
-        });
-
-        const { ne, sw } = MapUtils.getMapBounds({ map: this.map });
-
-        return this.pulseService
-            .getMapVotes(
-                ne.lat,
-                ne.lng,
-                sw.lat,
-                sw.lng,
-                resolution > 9 ? 7 : resolution,
-                this.topicId,
-            )
-            .pipe(
-                tap((heatmap) => {
-                    this.heatmapDataPointsCount = Object.keys(heatmap).length;
-                }),
-                map((heatmapData) => {
-                    const resolution = MapUtils.getResolutionLevel({
-                        map: this.map,
-                        resolutionLevelsByZoom: AppConstants.ZOOM_RESOLUTION_MAP,
-                    });
-                    let heatmap: IH3Votes = {};
-                    if (resolution === 0) {
-                        Object.entries(heatmapData).forEach(([h3Index, numberOfVotes]) => {
-                            const parsedIndex = h3Index.split(":").at(-1);
-                            if (parsedIndex) {
-                                heatmap[parsedIndex] = numberOfVotes;
-                            }
-                        });
-                    } else {
-                        heatmap = heatmapData;
-                    }
-
-                    return heatmap;
-                }),
-            );
-    }
-
-    private updateHeatmap = (heatmapData: IH3Votes): void => {
-        const updatedHeatmapData = Object.keys(heatmapData).map((key: string) => ({
-            coords: h3.h3ToGeo(key),
-            value: heatmapData[key],
-            h3Index: key,
-        }));
-
-        const heatmapFeatures = updatedHeatmapData.map(({ coords, value }) => ({
-            type: "Feature",
-            properties: {
-                value: value,
-            },
-            geometry: {
-                type: "Point",
-                coordinates: [coords[1], coords[0]],
-            },
-        }));
-
-        const heatmapGeoJSON = {
-            type: "FeatureCollection",
-            features: heatmapFeatures,
-        };
-
+    private updateHeatmap = (data: GeoJSON.FeatureCollection): void => {
         this.paintIntensity();
         this.paintRadius();
-        this.updateHeatmapData(heatmapGeoJSON);
+        this.updateHeatmapData(data);
     };
 
     private paintIntensity() {
@@ -175,7 +109,7 @@ export class MapHeatmapLayerComponent implements OnInit {
         return radius;
     }
 
-    private updateHeatmapData(data: any): void {
+    private updateHeatmapData(data: GeoJSON.FeatureCollection): void {
         MapUtils.setSourceData({
             map: this.map,
             sourceId: this.sourceId,

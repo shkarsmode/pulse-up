@@ -6,8 +6,9 @@ import { throttle } from "@/app/shared/helpers/throttle";
 import { MAPBOX_STYLE } from "../../tokens/tokens";
 import { AppConstants } from "../../constants";
 import { MapMarkersLayerComponent } from "./map-markers-layer/map-markers-layer.component";
-import { IMapMarker } from "../../interfaces/map-marker.interface";
+import { IMapMarker } from "../../interfaces/map/map-marker.interface";
 import { IMapClickEvent } from "@/app/features/landing/helpers/interfaces/map-click-event.interface";
+import { MapWeightsLayerComponent } from "./map-weights-layer/map-weights-layer.component";
 
 interface MarkersSettings {
     enabled?: boolean;
@@ -18,7 +19,7 @@ interface MarkersSettings {
 @Component({
     selector: "app-map",
     standalone: true,
-    imports: [CommonModule, NgxMapboxGLModule, MapMarkersLayerComponent],
+    imports: [CommonModule, NgxMapboxGLModule, MapMarkersLayerComponent, MapWeightsLayerComponent],
     templateUrl: "./map.component.html",
     styleUrl: "./map.component.scss",
 })
@@ -35,6 +36,9 @@ export class MapComponent {
         enabled: false,
         showTooltip: false,
         isAnimated: false,
+    };
+    @Input() weights: MarkersSettings = {
+        enabled: false,
     };
     @Input() center: [number, number] = AppConstants.MAP_CENTER_COORDINATES;
     @Input() maxBounds: mapboxgl.LngLatBoundsLike | undefined = AppConstants.MAP_MAX_BOUNDS;

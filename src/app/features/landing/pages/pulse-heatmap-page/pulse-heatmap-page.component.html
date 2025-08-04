@@ -29,16 +29,16 @@
     </div>
 
     <app-map
-        [pulseId]="pulse.id"
-        [isToShowHeatmap]="true"
-        [isHideDebugger]="true"
-        [isLocationName]="false"
-        [isToShowMarkers]="false"
-        [isToShowWeights]="true"
         [center]="center"
         [zoom]="zoom"
         [minZoom]="minZoom"
         [maxBounds]="maxBounds"
-        [showEmptyPolygons]="false"
-        [mode]="'heatmap'"/>
+        [weights]="{ enabled: true }"
+        (mapLoaded)="onMapLoaded($event)">
+        <ng-container *ngIf="map">
+            <app-map-heatmap-layer
+                [map]="map"
+                [topicId]="pulse.id" />
+        </ng-container>
+    </app-map>
 </div>

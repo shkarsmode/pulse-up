@@ -1,5 +1,5 @@
 import { ITopic } from "@/app/shared/interfaces";
-import { IMapMarker, IMapMarkerAnimated } from "@/app/shared/interfaces/map-marker.interface";
+import { IMapMarker, IMapMarkerAnimated } from "@/app/shared/interfaces/map/map-marker.interface";
 import { PulseService } from "@/app/shared/services/api/pulse.service";
 import { inject, Injectable } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
