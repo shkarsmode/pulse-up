@@ -1,12 +1,13 @@
-import { Component, ElementRef, inject, ViewChild, OnInit } from "@angular/core";
+import { Component, ElementRef, inject, ViewChild, OnInit, DestroyRef } from "@angular/core";
 import { Location } from "@angular/common";
 import { Router } from "@angular/router";
-import { filter, map, take } from "rxjs";
+import { filter, map } from "rxjs";
 import { SendTopicService } from "@/app/shared/services/core/send-topic.service";
 import { ProfileService } from "@/app/shared/services/profile/profile.service";
 import { NotificationService } from "@/app/shared/services/core/notification.service";
 import { isErrorWithMessage } from "@/app/shared/helpers/errors/is-error-with-message";
 import { VotingService } from "@/app/shared/services/core/voting.service";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 
 @Component({
     selector: "app-topic-preview",
@@ -14,6 +15,7 @@ import { VotingService } from "@/app/shared/services/core/voting.service";
     styleUrl: "./topic-preview.component.scss",
 })
 export class TopicPreviewComponent implements OnInit {
+    private readonly destroyRef = inject(DestroyRef);
     private readonly router = inject(Router);
     private readonly location = inject(Location);
     private readonly profileService = inject(ProfileService);
@@ -35,13 +37,13 @@ export class TopicPreviewComponent implements OnInit {
     isReadMore = false;
     isReadyForPreview = this.sendTopicService.isTopicReadyForPreview;
     isSubmitting = this.sendTopicService.submitting.asObservable();
-    customLocationCoordinates = this.sendTopicService.customLocation
+    topicLocationCoordinates = this.sendTopicService.topicLocation
         ? {
-              lng: this.sendTopicService.customLocation.lng,
-              lat: this.sendTopicService.customLocation.lat,
+              lng: this.sendTopicService.topicLocation.lng,
+              lat: this.sendTopicService.topicLocation.lat,
           }
         : null;
-    customLocationName = this.sendTopicService.customLocation?.fullname || "";
+    topicLocationName = this.sendTopicService.topicLocation?.fullname || "";
 
     constructor() {
         if (!this.isReadyForPreview) {
@@ -60,8 +62,8 @@ export class TopicPreviewComponent implements OnInit {
 
     onPublish() {
         this.sendTopicService.createTopic().pipe(
-            take(1),
             filter((result) => !!result),
+            takeUntilDestroyed(this.destroyRef),
         ).subscribe({
             next: (topic) => {
                 this.votingService.shouldVoteAutomatically = true;

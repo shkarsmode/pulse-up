@@ -1,14 +1,16 @@
-import { MapEventListenerService } from "@/app/features/landing/services/map-event-listener.service";
-import { MapComponent } from "@/app/features/landing/ui/map/map.component";
-import { OpenGetAppPopupDirective } from "@/app/shared/components/popups/get-app-popup/open-get-app-popup.directive";
+import { MapComponent } from "@/app/shared/components/map/map.component";
 import { PrimaryButtonComponent } from "@/app/shared/components/ui-kit/buttons/primary-button/primary-button.component";
 import { SecondaryButtonComponent } from "@/app/shared/components/ui-kit/buttons/secondary-button/secondary-button.component";
 import { AppRoutes } from "@/app/shared/enums/app-routes.enum";
 import { MediaQueryService } from "@/app/shared/services/core/media-query.service";
+import { CommonModule } from "@angular/common";
 import { Component, effect, ElementRef, inject, ViewChild, AfterViewInit } from "@angular/core";
 import { toSignal } from "@angular/core/rxjs-interop";
 import { Router, RouterModule } from "@angular/router";
-import mapboxgl from "mapbox-gl";
+import mapboxgl, { EventData, MapStyleDataEvent } from "mapbox-gl";
+import { MapHexagonsLayerComponent } from "@/app/shared/components/map/map-hexagons-layer/map-hexagons-layer.component";
+import { MapHeatmapLayerComponent } from "@/app/shared/components/map/map-heatmap-layer/map-heatmap-layer.component";
+import { GlobeSpinnerService } from "@/app/shared/services/map/globe-spinner.service";
 
 @Component({
     selector: "app-main-hero",
@@ -16,17 +18,19 @@ import mapboxgl from "mapbox-gl";
     styleUrls: ["./main-hero.component.scss"],
     standalone: true,
     imports: [
-        RouterModule,
-        PrimaryButtonComponent,
-        SecondaryButtonComponent,
-        MapComponent,
-        OpenGetAppPopupDirective,
-    ],
+    CommonModule,
+    RouterModule,
+    PrimaryButtonComponent,
+    SecondaryButtonComponent,
+    MapComponent,
+    MapHexagonsLayerComponent,
+    MapHeatmapLayerComponent
+],
 })
 export class MainHeroComponent implements AfterViewInit {
-    private router: Router = inject(Router);
-    private mediaService: MediaQueryService = inject(MediaQueryService);
-    private readonly mapEventListenerService: MapEventListenerService = inject(MapEventListenerService);
+    private router = inject(Router);
+    private mediaService = inject(MediaQueryService);
+    private globeSpinnerService = new GlobeSpinnerService();
 
     @ViewChild("mapWrapper", { static: true }) mapWrapperRef!: ElementRef<HTMLDivElement>;
 
@@ -37,9 +41,9 @@ export class MainHeroComponent implements AfterViewInit {
     private isXXSMobile = toSignal(this.mediaService.mediaQuery("max", "XXS"));
     private isXXXSMobile = toSignal(this.mediaService.mediaQuery("max", "XXXS"));
 
-    private map: mapboxgl.Map | null = null;
     private startX = 0;
     private startY = 0;
+    public map: mapboxgl.Map | null = null;
     public AppRoutes = AppRoutes;
     public zoom = 1.5;
     public zoomResolutionMap = {
@@ -69,16 +73,16 @@ export class MainHeroComponent implements AfterViewInit {
             this.zoom = this.isXXXSMobile()
                 ? 0.45
                 : this.isXXSMobile()
-                    ? 0.55
-                    : this.isXSMobile()
+                  ? 0.55
+                  : this.isXSMobile()
+                    ? 0.8
+                    : this.isTablet()
+                      ? 1
+                      : this.is1200Desctop()
                         ? 0.8
-                        : this.isTablet()
-                            ? 1
-                            : this.is1200Desctop()
-                                ? 0.8
-                                : this.is1400Desctop()
-                                    ? 1.5
-                                    : 1.85;
+                        : this.is1400Desctop()
+                          ? 1.5
+                          : 1.85;
 
             if (this.isTablet()) {
                 this.zoomResolutionMap = { ...this.zoomResolutionMap, 1: 0 };
@@ -106,7 +110,7 @@ export class MainHeroComponent implements AfterViewInit {
             (e) => {
                 const dx = Math.abs(e.touches[0].clientX - this.startX);
                 const dy = Math.abs(e.touches[0].clientY - this.startY);
-                
+
                 if (dx > dy) {
                     this.map?.dragPan.enable();
                 } else {
@@ -119,6 +123,20 @@ export class MainHeroComponent implements AfterViewInit {
 
     public onMapLoaded(map: mapboxgl.Map) {
         this.map = map;
+        this.map.setFog(this.fog);
+        this.globeSpinnerService.init(this.map);
+        this.globeSpinnerService.start();
+    }
+
+    public onStyleData(style: MapStyleDataEvent & EventData): void {
+        const map = style.target;
+        const layers = map.getStyle().layers;
+        if (!layers) return;
+        for (const layer of layers) {
+            if (layer.type === "symbol") {
+                map.setLayoutProperty(layer.id, "visibility", "none");
+            }
+        }
     }
 
     public onMapClick() {

@@ -1,6 +1,6 @@
 import { Component, Input, OnInit } from "@angular/core";
 import { SvgIconComponent } from "angular-svg-icon";
-import { GlobeSpinnerService } from "@/app/features/landing/services/globe-spinner.service";
+import { GlobeSpinnerService } from "@/app/shared/services/map/globe-spinner.service";
 import mapboxgl from "mapbox-gl";
 
 @Component({

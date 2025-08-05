@@ -1,25 +1,14 @@
 import { Component, inject, OnDestroy, OnInit } from "@angular/core";
 import { Router } from "@angular/router";
-import {
-    BehaviorSubject,
-    catchError,
-    map,
-    Subject,
-    take,
-    takeUntil,
-    tap,
-    throwError,
-} from "rxjs";
+import { BehaviorSubject, catchError, map, Subject, take, takeUntil, tap, throwError } from "rxjs";
 import mapboxgl from "mapbox-gl";
 import * as h3 from "h3-js";
 import { MatDialog } from "@angular/material/dialog";
 import { SendTopicService } from "@/app/shared/services/core/send-topic.service";
 import { AppRoutes } from "@/app/shared/enums/app-routes.enum";
-import { H3LayerService } from "@/app/features/landing/services/h3-layer.service";
 import { MapUtils } from "@/app/shared/services/map/map-utils.service";
 import { GeolocationService } from "@/app/shared/services/core/geolocation.service";
 import { TopicLocation } from "../../interfaces/topic-location.interface";
-import { GeocodeService } from "@/app/shared/services/api/geocode.service";
 import { UnavailableGeolocationPopupComponent } from "../../ui/unavailable-geolocation-popup/unavailable-geolocation-popup.component";
 
 @Component({
@@ -31,14 +20,12 @@ export class PickLocationComponent implements OnInit, OnDestroy {
     private readonly router = inject(Router);
     private dialog = inject(MatDialog);
     private readonly sendTopicService = inject(SendTopicService);
-    private readonly h3LayerService = inject(H3LayerService);
-    private readonly geteocodeService = inject(GeocodeService);
     private readonly geolocationService = inject(GeolocationService);
     private readonly sourceId = "search-polygons";
     private destroy$ = new Subject<void>();
 
     map: mapboxgl.Map | null = null;
-    selectedLocationSubject = new BehaviorSubject(this.sendTopicService.customLocation);
+    selectedLocationSubject = new BehaviorSubject(this.sendTopicService.topicLocation);
     selectedLocation$ = this.selectedLocationSubject.asObservable();
     isGeolocationSupported = this.geolocationService.isSupported;
     isGeolocationRequestInProgress = new BehaviorSubject<boolean>(false);
@@ -176,7 +163,7 @@ export class PickLocationComponent implements OnInit, OnDestroy {
 
     private addPolygonsToMap(h3Indexes: string[]) {
         if (!this.map) return;
-        this.h3LayerService.addH3PolygonsToMap({
+        this.addH3PolygonsToMap({
             map: this.map,
             h3Indexes: h3Indexes,
             sourceId: this.sourceId,
@@ -185,11 +172,46 @@ export class PickLocationComponent implements OnInit, OnDestroy {
 
     private removePolygonsFromMap() {
         if (!this.map) return;
-        this.h3LayerService.addH3PolygonsToMap({
+        this.addH3PolygonsToMap({
             map: this.map,
             h3Indexes: [],
             sourceId: this.sourceId,
         });
+    }
+
+    private addH3PolygonsToMap({
+        map,
+        h3Indexes,
+        sourceId,
+    }: {
+        map: mapboxgl.Map;
+        h3Indexes: string[];
+        sourceId?: string;
+    }): void {
+        const hexagons = h3Indexes.filter(
+            (h3Index) => !MapUtils.isHexagonCrossesAntimeridian(h3Index),
+        );
+        const hexagonFeatures = hexagons.map((hex) => this.h3ToPolygonFeature(hex));
+        MapUtils.setSourceData({
+            map,
+            sourceId: sourceId || this.sourceId,
+            data: {
+                type: "FeatureCollection",
+                features: hexagonFeatures,
+            },
+        });
+    }
+
+    private h3ToPolygonFeature(hex: string): GeoJSON.Feature<GeoJSON.Polygon> {
+        const boundary = h3.h3ToGeoBoundary(hex, true);
+        return {
+            type: "Feature",
+            geometry: {
+                type: "Polygon",
+                coordinates: [boundary],
+            },
+            properties: {},
+        };
     }
 
     private openDialog() {

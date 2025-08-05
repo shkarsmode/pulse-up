@@ -33,7 +33,7 @@ export class SendTopicService {
     public submitting: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
     public resultId: string;
     public isTopicReadyForPreview = false;
-    public customLocation: TopicLocation | null = null;
+    public topicLocation: TopicLocation | null = null;
     public isTopicEditing = false;
     public startTopicLocatoinWarningShown = false;
 
@@ -74,7 +74,7 @@ export class SendTopicService {
     }
 
     public setTopicLocation(location: TopicLocation) {
-        this.customLocation = location;
+        this.topicLocation = location;
         this.currentTopic
             .get("location")
             ?.setValue(
