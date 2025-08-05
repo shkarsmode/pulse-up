@@ -1,13 +1,17 @@
 import { Component, DestroyRef, inject, Input, OnInit } from "@angular/core";
 import {
     combineLatest,
+    delay,
+    filter,
     fromEvent,
+    map,
     merge,
     Observable,
+    of,
     startWith,
     switchMap,
     tap,
-    throttleTime,
+    throttle,
 } from "rxjs";
 import * as h3 from "h3-js";
 import { MapPainter } from "@/app/shared/helpers/map-painter";
@@ -30,9 +34,10 @@ export class MapHexagonsLayerComponent implements OnInit {
     private readonly pulseService = inject(PulseService);
 
     @Input({ required: true }) public map: mapboxgl.Map;
-    @Input({ required: true }) public category$: Observable<ICategory | null>;
+    @Input() public category$: Observable<ICategory | null>;
     @Input() public topicId?: number;
 
+    private dataLoaded = false;
     public painter: MapPainter;
 
     ngOnInit() {
@@ -45,22 +50,46 @@ export class MapHexagonsLayerComponent implements OnInit {
     }
 
     private subscribeToHexagonUpdates() {
-        combineLatest([this.mapInteraction$(), this.category$])
+        combineLatest([this.mapDelayedInteraction$(), this.category$ ?? of(null)])
             .pipe(
-                takeUntilDestroyed(this.destroyRef),
-                switchMap(([_, category]) => this.getHexagons(category)),
+                switchMap(([, category]) => {
+                    return of(this.getResolution()).pipe(
+                        map((resolution) => ({ resolution, category })),
+                    );
+                }),
+                filter(({ resolution }) => resolution >= 2 || !this.dataLoaded),
+                switchMap(({ category }) => this.getHexagons(category)),
                 tap((data) => {
                     this.updateHexagons(data);
+                    this.dataLoaded = true;
                 }),
+                takeUntilDestroyed(this.destroyRef),
+            )
+            .subscribe();
+
+        combineLatest([this.mapImmediateInteractions$(), this.category$ ?? of(null)])
+            .pipe(
+                switchMap(([, category]) => this.getHexagons(category)),
+                tap((data) => this.updateHexagons(data)),
+                takeUntilDestroyed(this.destroyRef),
             )
             .subscribe();
     }
 
-    private mapInteraction$(): Observable<Event | null> {
-        return merge(
-            fromEvent(this.map, "zoomend"),
-            fromEvent(this.map, "move").pipe(throttleTime(500)),
-        ).pipe(startWith(null));
+    private mapImmediateInteractions$(): Observable<Event | null> {
+        const zoomend$ = fromEvent(this.map, "zoomend");
+        const moveend$ = fromEvent(this.map, "dragend");
+        return merge(zoomend$, moveend$).pipe(startWith(null));
+    }
+
+    private mapDelayedInteraction$(): Observable<Event | null> {
+        return fromEvent(this.map, "move").pipe(
+            throttle(() => {
+                const zoom = this.map.getZoom();
+                const delayMs = MapUtils.interpolateDelay(zoom);
+                return of(null).pipe(delay(delayMs));
+            }),
+        );
     }
 
     private addLayersOnMap(painter: MapPainter): void {
@@ -86,10 +115,7 @@ export class MapHexagonsLayerComponent implements OnInit {
     }
 
     private getHexagons(category: ICategory | null): Observable<IH3Pulses> {
-        const resolution = MapUtils.getResolutionLevel({
-            map: this.map,
-            resolutionLevelsByZoom: AppConstants.ZOOM_RESOLUTION_MAP,
-        });
+        const resolution = this.getResolution();
 
         const { ne, sw } = MapUtils.getMapBounds({
             map: this.map,
@@ -131,5 +157,12 @@ export class MapHexagonsLayerComponent implements OnInit {
             type: "FeatureCollection",
             features,
         };
+    }
+
+    private getResolution() {
+        return MapUtils.getResolutionLevel({
+            map: this.map,
+            resolutionLevelsByZoom: AppConstants.ZOOM_RESOLUTION_MAP,
+        });
     }
 }

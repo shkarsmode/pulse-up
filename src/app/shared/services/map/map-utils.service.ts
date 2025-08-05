@@ -153,11 +153,18 @@ export class MapUtils {
         return crosses;
     }
 
-    public static getMapBounds({ map, global = false }: { map: mapboxgl.Map, global?: boolean }): MapBounds {
-        if (!map || global) return {
-            ne: { lat: 90, lng: 180 },
-            sw: { lat: -90, lng: -180 },
-        };
+    public static getMapBounds({
+        map,
+        global = false,
+    }: {
+        map: mapboxgl.Map;
+        global?: boolean;
+    }): MapBounds {
+        if (!map || global)
+            return {
+                ne: { lat: 90, lng: 180 },
+                sw: { lat: -90, lng: -180 },
+            };
         const bounds = map.getBounds();
         return {
             ne: {
@@ -169,5 +176,18 @@ export class MapUtils {
                 lng: Math.max(bounds.getSouthWest().lng, -180),
             },
         };
+    }
+
+    public static interpolateDelay(zoom: number): number {
+        const minZoom = 3.3;
+        const maxZoom = 4;
+        const minDelay = 500;
+        const maxDelay = 10000;
+
+        if (zoom < minZoom || zoom >= maxZoom) return minDelay;
+
+        const factor = (zoom - minZoom) / (maxZoom - minZoom);
+        
+        return Math.round(minDelay + factor * (maxDelay - minDelay));
     }
 }

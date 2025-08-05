@@ -2,13 +2,17 @@ import { Component, DestroyRef, EventEmitter, inject, Input, Output, OnInit } fr
 import { CommonModule } from "@angular/common";
 import {
     combineLatest,
+    filter,
     fromEvent,
+    map,
     merge,
     Observable,
+    of,
     startWith,
     switchMap,
     tap,
-    throttleTime,
+    throttle,
+    delay,
 } from "rxjs";
 import { PulseService } from "@/app/shared/services/api/pulse.service";
 import { MapUtils } from "@/app/shared/services/map/map-utils.service";
@@ -43,6 +47,7 @@ export class MapMarkersLayerComponent implements OnInit {
 
     @Output() public markerClick = new EventEmitter<IMapMarker>();
 
+    private dataLoaded = false;
     public readonly markers$ = this.mapMarkersService.markers$;
     public readonly tooltipData$ = this.mapMarkersService.tooltipData$;
     public tooltipData = this.mapMarkersService.tooltipDataValue;
@@ -50,15 +55,48 @@ export class MapMarkersLayerComponent implements OnInit {
 
     ngOnInit() {
         this.checkIfTouchDevice();
-        combineLatest([this.mapInteraction$(), this.mapMarkersService.category$])
+        combineLatest([this.mapDelayedInteraction$(), this.mapMarkersService.category$])
             .pipe(
-                switchMap(([, category]) => this.getMarkers(category)),
+                switchMap(([, category]) => {
+                    return of(this.getResolution()).pipe(
+                        map((resolution) => ({ resolution, category })),
+                    );
+                }),
+                filter(({ resolution }) => resolution >= 2 || !this.dataLoaded),
+                switchMap(({ category }) => {
+                    return this.getMarkers(category);
+                }),
                 tap((data) => {
                     this.mapMarkersService.updateMarkers(data);
+                    this.dataLoaded = true;
                 }),
                 takeUntilDestroyed(this.destroyRef),
             )
             .subscribe();
+
+        combineLatest([this.mapImmediateInteractions$(), this.mapMarkersService.category$])
+            .pipe(
+                switchMap(([, category]) => this.getMarkers(category)),
+                tap((data) => this.mapMarkersService.updateMarkers(data)),
+                takeUntilDestroyed(this.destroyRef),
+            )
+            .subscribe();
+    }
+
+    private mapImmediateInteractions$(): Observable<Event | null> {
+        const zoomend$ = fromEvent(this.map, "zoomend");
+        const moveend$ = fromEvent(this.map, "dragend");
+        return merge(zoomend$, moveend$).pipe(startWith(null));
+    }
+
+    private mapDelayedInteraction$(): Observable<Event | null> {
+        return fromEvent(this.map, "move").pipe(
+            throttle(() => {
+                const zoom = this.map.getZoom();
+                const delayMs = MapUtils.interpolateDelay(zoom);
+                return of(null).pipe(delay(delayMs));
+            }),
+        );
     }
 
     public onMarkerClick(marker: IMapMarker): void {
@@ -95,21 +133,9 @@ export class MapMarkersLayerComponent implements OnInit {
         return `${marker.h3Index}-${marker.topicId}`;
     }
 
-    private mapInteraction$(): Observable<Event | null> {
-        return merge(
-            fromEvent(this.map, "zoomend"),
-            fromEvent(this.map, "move").pipe(throttleTime(500)),
-        ).pipe(startWith(null));
-    }
-
     private getMarkers(category: ICategory | null): Observable<IH3Pulses> {
-        const resolution = MapUtils.getResolutionLevel({
-            map: this.map,
-            resolutionLevelsByZoom: AppConstants.ZOOM_RESOLUTION_MAP,
-        });
-
+        const resolution = this.getResolution();
         const bounds = MapUtils.getMapBounds({ map: this.map });
-
         const { ne, sw } = bounds;
         return this.pulseService.getH3PulsesForMap({
             NElatitude: ne.lat,
@@ -123,5 +149,12 @@ export class MapMarkersLayerComponent implements OnInit {
 
     private checkIfTouchDevice(): void {
         this.isTouchDevice = MediaUtilsService.checkIfTouchDevice();
+    }
+
+    private getResolution() {
+        return MapUtils.getResolutionLevel({
+            map: this.map,
+            resolutionLevelsByZoom: AppConstants.ZOOM_RESOLUTION_MAP,
+        });
     }
 }

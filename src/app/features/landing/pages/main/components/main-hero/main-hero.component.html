@@ -3,7 +3,8 @@
         <div class="hero__content">
             <h1 class="hero__title">Real-Time Map of Public Support</h1>
             <p class="hero__description">
-                Each icon shows the top-supported topic in that region. <i>Tap the globe</i> to explore and support what matters.
+                Each icon shows the top-supported topic in that region. <i>Tap the globe</i> to
+                explore and support what matters.
             </p>
             <div class="hero__actions">
                 <app-primary-button
@@ -26,24 +27,29 @@
                 </app-secondary-button>
             </div>
         </div>
-        <div class="hero__map" #mapWrapper>
+        <div
+            class="hero__map"
+            #mapWrapper>
             <app-map
-                [isHideDebugger]="true"
+                projection="globe"
+                [markers]="{
+                    enabled: true,
+                    showTooltip: true,
+                    isAnimated: true,
+                }"
                 [zoom]="[zoom]"
                 [minZoom]="0.45"
-                projection="globe"
                 [maxBounds]="undefined"
-                [isToShowTooltip]="true"
                 [isScrollZoomEnabled]="false"
                 [isDoubleClickZoomEnabled]="false"
-                [isMarkerAnimated]="true"
-                [isLabelsHidden]="true"
-                [isMapStatic]="true"
-                [zoomResolutionMap]="zoomResolutionMap"
-                [fog]="fog"
-                [spinning]="true"
-                (mapClick)="onMapClick()"
-                (mapLoaded)="onMapLoaded($event)"/>
+                (mapLoaded)="onMapLoaded($event)"
+                (mapStyleData)="onStyleData($event)"
+                (mapClick)="onMapClick()">
+                <ng-container *ngIf="map">
+                    <app-map-hexagons-layer [map]="map" />
+                    <app-map-heatmap-layer [map]="map" />
+                </ng-container>
+            </app-map>
         </div>
     </div>
 </section>

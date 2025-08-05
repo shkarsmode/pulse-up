@@ -1,13 +1,16 @@
 import { Component, DestroyRef, inject, Input, OnInit } from "@angular/core";
 import {
+    delay,
+    filter,
     fromEvent,
     map,
     merge,
     Observable,
+    of,
     startWith,
     switchMap,
     tap,
-    throttleTime,
+    throttle,
 } from "rxjs";
 import { MapUtils } from "@/app/shared/services/map/map-utils.service";
 import { AppConstants } from "@/app/shared/constants";
@@ -30,6 +33,7 @@ export class MapHeatmapLayerComponent implements OnInit {
     @Input() public topicId?: number;
 
     private readonly sourceId = "vibes";
+    private dataLoaded = false;
     public readonly intensity: number = 0.1;
     public painter: MapPainter;
     public heatmapDataPointsCount = 0;
@@ -44,23 +48,44 @@ export class MapHeatmapLayerComponent implements OnInit {
     }
 
     private subscribeToHexagonUpdates() {
-        this.mapInteraction$()
+        this.mapDelayedInteraction$()
             .pipe(
+                switchMap(() => of(this.getResolution())),
+                filter((resolution) => resolution >= 2 || !this.dataLoaded),
                 switchMap(() => this.heatmapService.getHeatmapData(this.map, this.topicId)),
                 map((heatmapData) => this.heatmapService.getHeatmapGeoJson(heatmapData)),
                 tap((geoJson) => {
                     this.updateHeatmap(geoJson);
+                    this.dataLoaded = true;
                 }),
+                takeUntilDestroyed(this.destroyRef),
+            )
+            .subscribe();
+
+        this.mapImmediateInteractions$()
+            .pipe(
+                switchMap(() => this.heatmapService.getHeatmapData(this.map, this.topicId)),
+                map((heatmapData) => this.heatmapService.getHeatmapGeoJson(heatmapData)),
+                tap((geoJson) => this.updateHeatmap(geoJson)),
                 takeUntilDestroyed(this.destroyRef),
             )
             .subscribe();
     }
 
-    private mapInteraction$(): Observable<Event | null> {
-        return merge(
-            fromEvent(this.map, "zoomend"),
-            fromEvent(this.map, "move").pipe(throttleTime(500)),
-        ).pipe(startWith(null));
+    private mapImmediateInteractions$(): Observable<Event | null> {
+        const zoomend$ = fromEvent(this.map, "zoomend");
+        const moveend$ = fromEvent(this.map, "dragend");
+        return merge(zoomend$, moveend$).pipe(startWith(null));
+    }
+
+    private mapDelayedInteraction$(): Observable<Event | null> {
+        return fromEvent(this.map, "move").pipe(
+            throttle(() => {
+                const zoom = this.map.getZoom();
+                const delayMs = MapUtils.interpolateDelay(zoom);
+                return of(null).pipe(delay(delayMs));
+            }),
+        );
     }
 
     private updateHeatmap = (data: GeoJSON.FeatureCollection): void => {
@@ -131,6 +156,13 @@ export class MapHeatmapLayerComponent implements OnInit {
             layerId: "vibes-heat",
             sourceId: this.sourceId,
             data: AppConstants.HEATMAP_STYLES,
+        });
+    }
+
+    private getResolution() {
+        return MapUtils.getResolutionLevel({
+            map: this.map,
+            resolutionLevelsByZoom: AppConstants.ZOOM_RESOLUTION_MAP,
         });
     }
 }

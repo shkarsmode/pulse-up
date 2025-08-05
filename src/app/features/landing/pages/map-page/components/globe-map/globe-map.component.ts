@@ -117,32 +117,32 @@ export class GlobeMapComponent implements OnDestroy {
             this.zoom = this.isXXXSMobileLandscape()
                 ? 0.35
                 : this.isXXXSMobile()
-                ? 0.45
-                : this.isXXSMobileLandscape()
-                ? 0.35
-                : this.isXXSMobile()
-                ? 0.55
-                : this.isXSMobileLandscape()
-                ? 0.5
-                : this.isXSMobile()
-                ? 0.8
-                : this.isMobileLandscape()
-                ? 0.45
-                : this.isMobile()
-                ? 1
-                : this.isLGDesctop()
-                ? 1.2
-                : this.is1400Desctop()
-                ? 1.4
-                : this.is1600Desctop()
-                ? 1.6
-                : this.is1920Desctop()
-                ? 1.85
-                : this.isMDLandscape()
-                ? 0.8
-                : this.isLGLandscape()
-                ? 0.7
-                : 2;
+                  ? 0.45
+                  : this.isXXSMobileLandscape()
+                    ? 0.35
+                    : this.isXXSMobile()
+                      ? 0.55
+                      : this.isXSMobileLandscape()
+                        ? 0.5
+                        : this.isXSMobile()
+                          ? 0.8
+                          : this.isMobileLandscape()
+                            ? 0.45
+                            : this.isMobile()
+                              ? 1
+                              : this.isLGDesctop()
+                                ? 1.2
+                                : this.is1400Desctop()
+                                  ? 1.4
+                                  : this.is1600Desctop()
+                                    ? 1.6
+                                    : this.is1920Desctop()
+                                      ? 1.85
+                                      : this.isMDLandscape()
+                                        ? 0.8
+                                        : this.isLGLandscape()
+                                          ? 0.7
+                                          : 2;
         });
     }
 
