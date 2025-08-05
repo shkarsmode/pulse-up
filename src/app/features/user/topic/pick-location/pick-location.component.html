@@ -1,13 +1,5 @@
 <div class="location">
     <app-map
-        [isHideDebugger]="true"
-        [isSearch]="false"
-        [isLocationName]="false"
-        [isZoomButton]="false"
-        [isToShowTooltip]="false"
-        [isToShowMarkers]="false"
-        [isToShowWeights]="false"
-        [isToShowHeatmap]="false"
         [isPreview]="true"
         [zoom]="[2.8]"
         [minZoom]="2.8"
@@ -28,7 +20,7 @@
         </app-primary-button>
     </div>
     <div
-        *ngIf="!(isMyPositionSelected$ | async)"
+        *ngIf="(isMyPositionSelected$ | async) === false"
         class="location__my-position">
         <button
             flatButton
@@ -36,6 +28,7 @@
             rippleColor="rgba(94, 0, 204, 0.35)"
             (click)="getMyPosition()">
             <svg-icon src="assets/svg/my-location.svg" />
+            <span class="visualy-hidden">Show my location</span>
         </button>
     </div>
     <div

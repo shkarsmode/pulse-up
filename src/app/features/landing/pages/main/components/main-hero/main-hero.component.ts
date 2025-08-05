@@ -10,7 +10,7 @@ import { Router, RouterModule } from "@angular/router";
 import mapboxgl, { EventData, MapStyleDataEvent } from "mapbox-gl";
 import { MapHexagonsLayerComponent } from "@/app/shared/components/map/map-hexagons-layer/map-hexagons-layer.component";
 import { MapHeatmapLayerComponent } from "@/app/shared/components/map/map-heatmap-layer/map-heatmap-layer.component";
-import { GlobeSpinnerService } from "@/app/features/landing/services/globe-spinner.service";
+import { GlobeSpinnerService } from "@/app/shared/services/map/globe-spinner.service";
 
 @Component({
     selector: "app-main-hero",

@@ -23,16 +23,16 @@
                 #description
                 [innerHTML]="isReadMore ? longDescription : shortDescription"></div>
             @if (!isReadMore) {
-            <div
-                class="pulse__info-description-read-more"
-                (click)="onReadMore()">
-                Read More
-            </div>
+                <button
+                    class="pulse__info-description-read-more"
+                    (click)="onReadMore()">
+                    Read More
+                </button>
             }
         </div>
         <div class="pulse__info-keywords">
             @for (keyword of keywords; track keyword) {
-            <div>{{ keyword }}</div>
+                <div>{{ keyword }}</div>
             }
         </div>
         <div class="pulse__info-media">
@@ -42,28 +42,27 @@
                 width="275"
                 height="180"
                 [alt]="title" />
-            @if (customLocationCoordinates) {
-            <div class="pulse-map">
-                <p class="pulse-map__top-text">Your topic will appear here first</p>
-                <div class="pulse__info-media__map">
-                    <svg-icon
-                        [src]="'assets/svg/location-accent.svg'"
-                        class="pulse__info-media__map-marker" />
-                    <span class="pulse-map__location-name">{{ customLocationName }}</span>
-                    <app-map
-                        [isHideDebugger]="true"
-                        [isToShowHeatmap]="true"
-                        [isToShowHeatmap]="false"
-                        [isToShowMarkers]="false"
-                        [isPreview]="true"
-                        [zoom]="[6]"
-                        [minZoom]="6"
-                        [center]="[customLocationCoordinates.lng, customLocationCoordinates.lat]" />
+            @if (topicLocationCoordinates) {
+                <div class="pulse-map">
+                    <p class="pulse-map__top-text">Your topic will appear here first</p>
+                    <div class="pulse__info-media__map">
+                        <svg-icon
+                            [src]="'assets/svg/location-accent.svg'"
+                            class="pulse__info-media__map-marker" />
+                        <span class="pulse-map__location-name">{{ topicLocationName }}</span>
+                        <app-map
+                            [isPreview]="true"
+                            [zoom]="[6]"
+                            [minZoom]="6"
+                            [center]="[
+                                topicLocationCoordinates.lng,
+                                topicLocationCoordinates.lat,
+                            ]" />
+                    </div>
+                    <p class="pulse-map__bottom-text">
+                        Auto-pulse from this location active for 7 days
+                    </p>
                 </div>
-                <p class="pulse-map__bottom-text">
-                    Auto-pulse from this location active for 7 days
-                </p>
-            </div>
             }
         </div>
     </div>

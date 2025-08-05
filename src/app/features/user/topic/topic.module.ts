@@ -13,7 +13,7 @@ import { TopicComponent } from "./topic.component";
 import { TopicRoutingModule } from "./topic.routing";
 import { PicturePickerComponent } from "@/app/shared/components/ui-kit/picture-picker/picture-picker.component";
 import { PickLocationComponent } from "./pick-location/pick-location.component";
-import { MapComponent } from "../../landing/ui/map/map.component";
+import { MapComponent } from "@/app/shared/components/map/map.component";
 import { PlacesAutocompleteComponent } from "../../../shared/components/places-autocomplete/places-autocomplete.component";
 import { TopicPreviewComponent } from "./topic-preview/topic-preview.component";
 import { FadeInDirective } from "@/app/shared/animations/fade-in.directive";
