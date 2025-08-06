@@ -14,6 +14,8 @@ import { CategoryFilterMenuComponent } from "@/app/shared/components/category-fi
 import { CategoryFilterSelectionComponent } from "@/app/shared/components/category-filter-menu/category-filter-selection/category-filter-selection.component";
 import { CategoryFilterService } from "@/app/shared/components/category-filter-menu/category-filter.service";
 import { PulsesPaginationService } from "../../services/pulses-pagination.service";
+import { combineLatest, distinctUntilChanged, map } from "rxjs";
+import { PromoteAdsComponent } from "../../ui/promote-ads/promote-ads.component";
 
 @Component({
     selector: "app-pulses",
@@ -30,6 +32,7 @@ import { PulsesPaginationService } from "../../services/pulses-pagination.servic
         ContainerComponent,
         CategoryFilterMenuComponent,
         CategoryFilterSelectionComponent,
+        PromoteAdsComponent,
     ],
     providers: [InfiniteLoaderService, PulsesPaginationService],
 })
@@ -44,6 +47,10 @@ export class PulsesComponent {
     public topics$ = this.pulsesPaginationService.topics$;
     public isInitialLoading$ = this.pulsesPaginationService.initialLoading$;
     public isLoadingMore$ = this.pulsesPaginationService.paginationLoading$;
+    public isEmpty$ = combineLatest([this.isInitialLoading$, this.topics$]).pipe(
+        map(([isLoading, topics]) => !isLoading && topics.length === 0),
+        distinctUntilChanged(),
+    );
 
     public get selectedCategory(): ICategory | null {
         return this.categoryFilterService.activeCategory === "all"

@@ -34,7 +34,7 @@
 }
 
 .pulses__list-wrap {
-    margin-top: 30px;
+    margin-top: 24px;
 }
 
 .pulses__loading {
@@ -42,4 +42,15 @@
     display: flex;
     align-items: center;
     justify-content: center;
+}
+
+.pulses-empty__text {
+    color: var(--dark-grey-color);
+    margin-bottom: 48px;
+}
+
+.pulses-empty__banner {
+    width: 100%;
+    max-width: 400px;
+    margin: 0 auto;
 }
