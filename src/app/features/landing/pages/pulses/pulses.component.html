@@ -2,58 +2,56 @@
     <div class="pulses">
         <main class="pulses__main">
             <div class="pulses__header">
-                <div class="pulses__top">
-                    <h1 class="pulses__title">Trending Topics</h1>
-                    <app-link-button 
-                        class="pulses__top-link" 
-                        [routerLink]="leaderboardRoute">
-                        Global Top 10 Topics
-                    </app-link-button>
-                </div>
-                <app-category-filter-select
-                    class="pulses__filter"
-                    (selectedCategory)="onCategorySelected($event)" />
+                <h1 class="pulses__title">Trending Topics</h1>
                 <div class="pulses__search-wrap">
                     <app-input-search
-                        class="tpulses__search"
-                        [isLoading]="(searchInFocus && (loading$ | async)) || false"
+                        class="pulses__search"
                         (handleValueChange)="onSearchValueChange($event)"
                         (handleFocus)="onSearchFocus()"
                         (handleBlur)="onSearchBlur()" />
-                    <a
-                        [routerLink]="addTopicRoute"
-                        class="add-topic-button">
-                        <svg-icon
-                            src="assets/svg/add.svg"
-                            style="height: 22px" />
-                    </a>
+                    <app-category-filter-menu
+                        class="pulses__filter"
+                        (selectedCategory)="onCategorySelected($event)" />
                 </div>
+                @if (selectedCategory) {
+                    <div class="pulses__selection">
+                        <app-category-filter-selection
+                            [category]="selectedCategory"
+                            (cancelSelection)="onCategorySelected(null)" />
+                    </div>
+                }
             </div>
             <div class="pulses__list-wrap">
-                <app-spinner *ngIf="loading$ | async" />
+                @if (isInitialLoading$ | async) {
+                    <p class="pulses__loading">
+                        <app-loading-indicator />
+                    </p>
+                }
                 <div
                     class="pulses__list"
-                    *ngIf="paginator$ | async as paginator"
                     infiniteScroll
                     [infiniteScrollDistance]="2"
                     [infiniteScrollThrottle]="150"
-                    (scrolled)="loadMore(paginator)">
-                    @for (topic of paginator.items; track topic.id) {
-                    <app-trending-topics-list-item
-                        [data]="topic"
-                        [vote]="(votes$ | async)?.get(topic.id)" />
+                    (scrolled)="loadMore()">
+                    @for (topic of topics$ | async; track topic.id) {
+                        <app-trending-topics-list-item
+                            [data]="topic"
+                            [vote]="(votes$ | async)?.get(topic.id)"
+                            *ngIf="(isInitialLoading$ | async) === false" />
                     }
-                    <p
-                        class="pulses__loading"
-                        *ngIf="loading$ | async">
-                        <app-loading-indicator />
-                    </p>
+                    @if (isLoadingMore$ | async) {
+                        <p class="pulses__loading">
+                            <app-loading-indicator />
+                        </p>
+                    }
                 </div>
+                @if (isEmpty$ | async) {
+                    <p class="pulses-empty__text">No topics found</p>
+                    <div class="pulses-empty__banner">
+                        <app-promote-ads />
+                    </div>
+                }
             </div>
         </main>
-        <aside class="pulses__aside">
-            <app-promote-ads />
-            <app-leaderboard />
-        </aside>
     </div>
 </app-container>

@@ -29,12 +29,8 @@
         class="category-filter-menu"
         (selectedCategory)="onSelectedCategory($event)" />
     <ng-container *ngIf="selectedCategory$ | async as selectedCategory">
-        <div class="categories__selected">
-            {{ selectedCategory.name }}
-            <button (click)="onSelectedCategory(null)">
-                <svg-icon src="assets/svg/close.svg" />
-                <span class="visualy-hidden">Cancel selection</span>
-            </button>
-        </div>
+        <app-category-filter-selection
+            [category]="selectedCategory"
+            (cancelSelection)="onSelectedCategory(null)" />
     </ng-container>
 </div>

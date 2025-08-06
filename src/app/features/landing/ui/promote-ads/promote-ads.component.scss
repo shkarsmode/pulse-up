@@ -1,15 +1,19 @@
+@use "../../../../../styles/mixins" as *;
+
 :host {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-
-    height: 300px;
+    row-gap: 8px;
+    text-align: center;
 
     border-radius: 20px;
 
-    background: linear-gradient(351.8deg,
-            rgba(119, 0, 238, 0.1) 2.14%,
-            rgba(119, 0, 238, 0.04) 98.38%);
+    background: linear-gradient(
+        351.8deg,
+        rgba(119, 0, 238, 0.1) 2.14%,
+        rgba(119, 0, 238, 0.04) 98.38%
+    );
 
     padding: 50px 20px;
     position: relative;
@@ -22,12 +26,27 @@
 
 app-primary-button {
     z-index: 1;
+    margin-top: 16px;
 }
 
 h2 {
     font-size: 32px;
     font-weight: 600;
     line-height: 1.193;
+
+    @include media-xs {
+        font-size: 28px;
+    }
+}
+
+h3 {
+    font-size: 28px;
+    font-weight: 600;
+    line-height: 1.193;
+
+    @include media-xs {
+        font-size: 24px;
+    }
 }
 
 img {

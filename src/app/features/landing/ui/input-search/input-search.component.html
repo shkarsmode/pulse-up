@@ -5,4 +5,16 @@
     (onInput)="handleInputChange($event)"
     (emitFocus)="onFocus()"
     (emitBlur)="onBlur()">
+    <ng-template #contentRight>
+        <button
+            mat-icon-button
+            *ngIf="false"
+            aria-label="Clear search"
+            class="clear-button"
+            (click)="clearInput()">
+            <svg-icon
+                src="assets/svg/close.svg"
+                aria-hidden="true" />
+        </button>
+    </ng-template>
 </app-input>

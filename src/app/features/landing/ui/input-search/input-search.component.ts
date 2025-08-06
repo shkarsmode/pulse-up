@@ -8,13 +8,16 @@ import {
     ThrottleConfig,
 } from "rxjs";
 import { InputComponent } from "@/app/shared/components/ui-kit/input/input.component";
+import { CommonModule } from "@angular/common";
+import { AngularSvgIconModule } from "angular-svg-icon";
+import { MatButtonModule } from "@angular/material/button";
 
 @Component({
     selector: "app-input-search",
     templateUrl: "./input-search.component.html",
     styleUrl: "./input-search.component.scss",
     standalone: true,
-    imports: [InputComponent],
+    imports: [CommonModule, MatButtonModule, InputComponent, AngularSvgIconModule],
 })
 export class InputSearchComponent {
     @Input()
@@ -49,6 +52,10 @@ export class InputSearchComponent {
 
     public onBlur(): void {
         this.handleBlur.emit();
+    }
+
+    public clearInput(): void {
+        this.inputValueChanged$.next("");
     }
 
     private initThrottleInputValueChange(): void {

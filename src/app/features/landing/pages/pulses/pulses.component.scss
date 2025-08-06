@@ -1,72 +1,31 @@
 @use "../../../../../styles/mixins" as *;
 
 .pulses {
-    display: grid;
-    grid-template-columns: 1fr 324px;
-    grid-column-gap: 30px;
-    padding: 20px 0;
-
-    @include media-xl {
-        max-width: 676px;
-        margin: 0 auto;
-        grid-template-columns: 100%;
-    }
+    --padding: 20px;
+    max-width: calc(676px + var(--padding) * 2);
+    padding: var(--padding) 0;
+    margin: 0 auto;
 }
 .pulses__header {
-    display: grid;
-    grid-template-columns: 1fr auto;
-    grid-column-gap: 16px;
-    grid-row-gap: 16px;
-
-    @include media-md {
-        grid-template-columns: 1fr 1fr auto;
-    }
-    @include media-sm {
-        grid-template-columns: 1fr auto;
-    }
-}
-.pulses__top {
     display: flex;
     flex-direction: column;
-    row-gap: 8px;
-
-    @include media-md {
-        grid-column: 1 / 4;
-    }
-    @include media-sm {
-        grid-column: 1 / 3;
-    }
+    row-gap: 16px;
 }
 .pulses__title {
     @include title-32px;
 }
-.pulses__top-link {
-    display: none;
-    @include media-xl {
-        display: block;
-    }
-}
-.pulses__filter {
-    display: flex;
-    align-items: flex-end;
-    width: 300px;
-
-    @include media-md {
-        width: 100%;
-    }
-    @include media-sm {
-        grid-column: 1 / 3;
-    }
-}
 .pulses__search-wrap {
     display: flex;
     column-gap: 16px;
-    grid-column: 1 / 3;
-
-    @include media-md {
-        display: contents;
-        grid-column: unset;
-    }
+}
+.pulses__search {
+    flex-grow: 1;
+}
+.pulses__filter {
+    flex-shrink: 0;
+}
+.pulses__selection {
+    display: flex;
 }
 .pulses__list {
     display: flex;
@@ -75,7 +34,7 @@
 }
 
 .pulses__list-wrap {
-    margin-top: 30px;
+    margin-top: 24px;
 }
 
 .pulses__loading {
@@ -85,32 +44,13 @@
     justify-content: center;
 }
 
-.add-topic-button {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-shrink: 0;
-
-    width: 48px;
-    height: 48px;
-    min-width: 48px;
-
-    background-color: var(--accent-color);
-
-    border-radius: 50%;
-
-    outline: none;
-    border: none;
-
-    cursor: pointer;
+.pulses-empty__text {
+    color: var(--dark-grey-color);
+    margin-bottom: 48px;
 }
 
-.pulses__aside {
-    display: flex;
-    flex-direction: column;
-    row-gap: 30px;
-
-    @include media-xl {
-        display: none;
-    }
+.pulses-empty__banner {
+    width: 100%;
+    max-width: 400px;
+    margin: 0 auto;
 }
