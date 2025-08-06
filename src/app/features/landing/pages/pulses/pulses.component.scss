@@ -43,23 +43,3 @@
     align-items: center;
     justify-content: center;
 }
-
-.add-topic-button {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-shrink: 0;
-
-    width: 48px;
-    height: 48px;
-    min-width: 48px;
-
-    background-color: var(--accent-color);
-
-    border-radius: 50%;
-
-    outline: none;
-    border: none;
-
-    cursor: pointer;
-}

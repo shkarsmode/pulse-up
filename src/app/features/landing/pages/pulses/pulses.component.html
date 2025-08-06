@@ -6,7 +6,6 @@
                 <div class="pulses__search-wrap">
                     <app-input-search
                         class="pulses__search"
-                        [isLoading]="(searchInFocus && (loading$ | async)) || false"
                         (handleValueChange)="onSearchValueChange($event)"
                         (handleFocus)="onSearchFocus()"
                         (handleBlur)="onSearchBlur()" />
@@ -23,26 +22,28 @@
                 }
             </div>
             <div class="pulses__list-wrap">
-                @if ((loading$ | async) === true) {
-                    <app-spinner />
+                @if (isInitialLoading$ | async) {
+                    <p class="pulses__loading">
+                        <app-loading-indicator />
+                    </p>
                 }
                 <div
                     class="pulses__list"
-                    *ngIf="paginator$ | async as paginator"
                     infiniteScroll
                     [infiniteScrollDistance]="2"
                     [infiniteScrollThrottle]="150"
-                    (scrolled)="loadMore(paginator)">
-                    @for (topic of paginator.items; track topic.id) {
+                    (scrolled)="loadMore()">
+                    @for (topic of topics$ | async; track topic.id) {
                         <app-trending-topics-list-item
                             [data]="topic"
-                            [vote]="(votes$ | async)?.get(topic.id)" />
+                            [vote]="(votes$ | async)?.get(topic.id)"
+                            *ngIf="(isInitialLoading$ | async) === false" />
                     }
-                    <p
-                        class="pulses__loading"
-                        *ngIf="loading$ | async">
-                        <app-loading-indicator />
-                    </p>
+                    @if (isLoadingMore$ | async) {
+                        <p class="pulses__loading">
+                            <app-loading-indicator />
+                        </p>
+                    }
                 </div>
             </div>
         </main>
