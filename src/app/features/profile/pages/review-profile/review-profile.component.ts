@@ -15,6 +15,7 @@ import { MenuComponent } from "@/app/shared/components/ui-kit/menu/menu.componen
 import { IconButtonComponent } from "@/app/shared/components/ui-kit/buttons/icon-button/icon-button.component";
 import { MaterialModule } from "@/app/shared/modules/material.module";
 import { AuthenticationService } from "@/app/shared/services/api/authentication.service";
+import { RouterLoadingIndicatorService } from "@/app/shared/components/router-loading-indicator/router-loading-indicator.service";
 
 @Component({
     selector: "app-review-profile",
@@ -40,6 +41,7 @@ export class ReviewProfileComponent {
     private readonly router = inject(Router);
     private readonly profileService = inject(ProfileService);
     private readonly authenticationService = inject(AuthenticationService);
+    private readonly routerLoadingIndicatorService = inject(RouterLoadingIndicatorService);
 
     profile$ = this.profileService.profile$.pipe(filter((profile) => !!profile));
     bio$ = this.profile$.pipe(map((profile) => profile.bio));
@@ -53,6 +55,7 @@ export class ReviewProfileComponent {
     }
 
     public onLogout(): void {
+        this.routerLoadingIndicatorService.setLoading(true);
         this.authenticationService
             .logout()
             .pipe(
@@ -61,8 +64,9 @@ export class ReviewProfileComponent {
                     this.router.navigateByUrl("/" + AppRoutes.Landing.HOME, {
                         replaceUrl: true,
                     });
+                    this.routerLoadingIndicatorService.setLoading(false);
                 }),
-                takeUntilDestroyed(this.destroyRef)
+                takeUntilDestroyed(this.destroyRef),
             )
             .subscribe();
     }
