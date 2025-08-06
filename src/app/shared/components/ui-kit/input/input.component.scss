@@ -36,14 +36,14 @@ input {
     &.icon--start {
         left: 22px;
 
-        & + input {
+        & ~ input {
             padding-left: 54px;
         }
     }
     &.icon--end {
         right: 22px;
 
-        & + input {
+        & ~ input {
             padding-right: 54px;
         }
     }
@@ -58,6 +58,17 @@ app-spinner {
     right: 15px;
     top: 50%;
     transform: translateY(-50%);
+}
+
+.app-ui-input__content-right {
+    position: absolute;
+    right: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+
+    & ~ input {
+        padding-right: 54px;
+    }
 }
 
 .app-ui-input--error {

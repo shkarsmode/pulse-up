@@ -15,6 +15,12 @@
     </div>
 }
 
+@if (contentRight) {
+    <div class="app-ui-input__content-right">
+        <ng-container *ngTemplateOutlet="contentRight" />
+    </div>
+}
+
 <input
     [attr.id]="id"
     [attr.name]="name"
@@ -29,7 +35,7 @@
     [required]="required"
     [min]="min"
     [max]="max"
-    [type]="inputType === 'password' ? isPasswordVisible ? 'text' : 'password' : inputType"
+    [type]="inputType === 'password' ? (isPasswordVisible ? 'text' : 'password') : inputType"
     (focus)="emitFocus.emit(); isOnFocus = true"
     (blur)="emitBlur.emit(); isOnFocus = false"
     (emitAutofill)="onAutoFill($event)"
