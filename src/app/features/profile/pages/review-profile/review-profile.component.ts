@@ -1,4 +1,4 @@
-import { Component, DestroyRef, inject } from "@angular/core";
+import { Component, DestroyRef, inject, OnInit } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { Router, RouterModule } from "@angular/router";
 import { AngularSvgIconModule } from "angular-svg-icon";
@@ -16,6 +16,11 @@ import { IconButtonComponent } from "@/app/shared/components/ui-kit/buttons/icon
 import { MaterialModule } from "@/app/shared/modules/material.module";
 import { AuthenticationService } from "@/app/shared/services/api/authentication.service";
 import { RouterLoadingIndicatorService } from "@/app/shared/components/router-loading-indicator/router-loading-indicator.service";
+import { CopyButtonComponent } from "@/app/shared/components/ui-kit/buttons/copy-button/copy-button.component";
+import { SocialsButtonComponent } from "@/app/shared/components/ui-kit/buttons/socials-button/socials-button.component";
+import { QrcodeButtonComponent } from "@/app/shared/components/ui-kit/buttons/qrcode-button/qrcode-button.component";
+import { SettingsService } from "@/app/shared/services/api/settings.service";
+import { FlatButtonDirective } from "@/app/shared/components/ui-kit/buttons/flat-button/flat-button.directive";
 
 @Component({
     selector: "app-review-profile",
@@ -31,24 +36,41 @@ import { RouterLoadingIndicatorService } from "@/app/shared/components/router-lo
         IconButtonComponent,
         AngularSvgIconModule,
         MaterialModule,
+        CopyButtonComponent,
+        SocialsButtonComponent,
+        QrcodeButtonComponent,
+        FlatButtonDirective,
     ],
     templateUrl: "./review-profile.component.html",
     styleUrl: "./review-profile.component.scss",
     providers: [InfiniteLoaderService],
 })
-export class ReviewProfileComponent {
+export class ReviewProfileComponent implements OnInit {
     private readonly destroyRef = inject(DestroyRef);
     private readonly router = inject(Router);
+    private readonly settingsService = inject(SettingsService);
     private readonly profileService = inject(ProfileService);
     private readonly authenticationService = inject(AuthenticationService);
     private readonly routerLoadingIndicatorService = inject(RouterLoadingIndicatorService);
 
-    profile$ = this.profileService.profile$.pipe(filter((profile) => !!profile));
-    bio$ = this.profile$.pipe(map((profile) => profile.bio));
-    name$ = this.profile$.pipe(map((profile) => profile.name));
-    username$ = this.profile$.pipe(map((profile) => profile.username));
-    picture$ = this.profile$.pipe(map((profile) => profile.picture || ""));
-    editProfileRoute = "/" + AppRoutes.Profile.EDIT;
+    public profile$ = this.profileService.profile$.pipe(filter((profile) => !!profile));
+    public bio$ = this.profile$.pipe(map((profile) => profile.bio));
+    public name$ = this.profile$.pipe(map((profile) => profile.name));
+    public username$ = this.profile$.pipe(map((profile) => profile.username));
+    public picture$ = this.profile$.pipe(map((profile) => profile.picture || ""));
+    public editProfileRoute = "/" + AppRoutes.Profile.EDIT;
+
+    public username = "";
+
+    public get shareProfileUrl(): string {
+        return this.settingsService.shareUserBaseUrl + this.username;
+    }
+
+    public ngOnInit(): void {
+        this.username$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((username) => {
+            this.username = username;
+        });
+    }
 
     public onClickDelete() {
         this.router.navigateByUrl("/" + AppRoutes.Profile.DELETE_ACCOUNT);
@@ -69,5 +91,9 @@ export class ReviewProfileComponent {
                 takeUntilDestroyed(this.destroyRef),
             )
             .subscribe();
+    }
+
+    public onCopyLink(event: MouseEvent) {
+        event.stopPropagation();
     }
 }

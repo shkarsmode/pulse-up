@@ -23,7 +23,7 @@
                     aria-label="logout"
                     fontIcon="logout"></mat-icon>
             </app-icon-button>
-            <app-menu [content]="menuContent">
+            <app-menu [content]="moreMenuContent">
                 <app-icon-button
                     label="More"
                     [size]="32"
@@ -43,13 +43,20 @@
                     Edit Profile
                 </app-primary-button>
             </div>
+            <app-menu [content]="shareMenuContent">
+                <button
+                    flatButton
+                    class="pulse__share-button">
+                    <svg-icon src="assets/svg/icon_share.svg"></svg-icon>
+                </button>
+            </app-menu>
         </div>
     </div>
 
     <app-profile-tabs class="tabs" />
 </div>
 
-<ng-template #menuContent>
+<ng-template #moreMenuContent>
     <div class="profile-menu">
         <button
             mat-menu-item
@@ -59,5 +66,23 @@
                 <span>Delete Account</span>
             </span>
         </button>
+    </div>
+</ng-template>
+
+<ng-template #shareMenuContent>
+    <div class="social-share-menu">
+        <app-copy-button
+            link="{{ shareProfileUrl }}"
+            (handleClick)="onCopyLink($event)" />
+        <app-socials-button
+            [variant]="'facebook'"
+            [url]="shareProfileUrl" />
+        <app-socials-button
+            [variant]="'x'"
+            [url]="shareProfileUrl" />
+        <app-socials-button
+            [variant]="'email'"
+            [url]="shareProfileUrl" />
+        <app-qrcode-button [url]="shareProfileUrl" />
     </div>
 </ng-template>
