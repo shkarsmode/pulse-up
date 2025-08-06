@@ -9,7 +9,7 @@
 
 .header {
     display: grid;
-    grid-template-columns: auto 1fr;
+    grid-template-columns: auto 1fr auto;
     grid-column-gap: 16px;
     grid-row-gap: 16px;
     padding: 0 20px;
@@ -19,13 +19,11 @@
     }
 
     app-user-avatar {
-        width: 160px;
-        height: 160px;
+        width: 80px;
+        height: 80px;
         flex-shrink: 0;
 
         @include media-sm {
-            width: 80px;
-            height: 80px;
             justify-self: center;
         }
     }
@@ -83,6 +81,54 @@
     &::ng-deep {
         .mat-mdc-tab-header {
             padding: 0 20px;
+        }
+    }
+}
+
+.header__icons {
+    display: flex;
+    align-items: flex-start;
+    column-gap: 8px;
+
+    @include media-xs {
+        grid-row: 1 / 2;
+        justify-content: flex-end;
+    }
+}
+
+.logout-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.logout-icon {
+    width: 18px;
+    height: 18px;
+    font-size: 18px;
+}
+
+.profile-menu {
+    .profile-menu__item {
+        display: flex;
+        align-items: center;
+        column-gap: 8px;
+        min-height: 36px;
+        color: var(--error-color);
+
+        svg-icon {
+            width: 20px;
+            height: 20px;
+            color: var(--error-color);
+
+            svg {
+                width: 100%;
+                height: 100%;
+
+                path {
+                    stroke: currentColor;
+                }
+            }
         }
     }
 }
