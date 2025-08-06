@@ -46,10 +46,9 @@
                     }
                 </div>
                 @if (isEmpty$ | async) {
-                    <p class="pulses-empty__text">No topics found</p>
-                    <div class="pulses-empty__banner">
-                        <app-promote-ads />
-                    </div>
+                    <app-topics-empty-list
+                        [searchText]="searchText"
+                        class="pulses__empty-list" />
                 }
             </div>
         </main>

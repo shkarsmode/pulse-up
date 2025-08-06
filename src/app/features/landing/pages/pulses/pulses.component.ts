@@ -1,6 +1,7 @@
 import { Component, inject } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { RouterModule } from "@angular/router";
+import { combineLatest, distinctUntilChanged, map } from "rxjs";
 import { InfiniteScrollDirective } from "ngx-infinite-scroll";
 import { ITopic } from "@/app/shared/interfaces";
 import { InputSearchComponent } from "../../ui/input-search/input-search.component";
@@ -14,8 +15,7 @@ import { CategoryFilterMenuComponent } from "@/app/shared/components/category-fi
 import { CategoryFilterSelectionComponent } from "@/app/shared/components/category-filter-menu/category-filter-selection/category-filter-selection.component";
 import { CategoryFilterService } from "@/app/shared/components/category-filter-menu/category-filter.service";
 import { PulsesPaginationService } from "../../services/pulses-pagination.service";
-import { combineLatest, distinctUntilChanged, map } from "rxjs";
-import { PromoteAdsComponent } from "../../ui/promote-ads/promote-ads.component";
+import { TopicsEmptyListComponent } from "../../ui/topics-empty-list/topics-empty-list.component";
 
 @Component({
     selector: "app-pulses",
@@ -23,17 +23,17 @@ import { PromoteAdsComponent } from "../../ui/promote-ads/promote-ads.component"
     styleUrl: "./pulses.component.scss",
     standalone: true,
     imports: [
-        CommonModule,
-        RouterModule,
-        InfiniteScrollDirective,
-        LoadingIndicatorComponent,
-        InputSearchComponent,
-        TrendingTopicsListItemComponent,
-        ContainerComponent,
-        CategoryFilterMenuComponent,
-        CategoryFilterSelectionComponent,
-        PromoteAdsComponent,
-    ],
+    CommonModule,
+    RouterModule,
+    InfiniteScrollDirective,
+    LoadingIndicatorComponent,
+    InputSearchComponent,
+    TrendingTopicsListItemComponent,
+    ContainerComponent,
+    CategoryFilterMenuComponent,
+    CategoryFilterSelectionComponent,
+    TopicsEmptyListComponent
+],
     providers: [InfiniteLoaderService, PulsesPaginationService],
 })
 export class PulsesComponent {
@@ -51,6 +51,7 @@ export class PulsesComponent {
         map(([isLoading, topics]) => !isLoading && topics.length === 0),
         distinctUntilChanged(),
     );
+    public searchText = "";
 
     public get selectedCategory(): ICategory | null {
         return this.categoryFilterService.activeCategory === "all"
@@ -64,6 +65,7 @@ export class PulsesComponent {
 
     public onSearchValueChange(searchValue: string): void {
         this.pulsesPaginationService.setSearchText(searchValue);
+        this.searchText = searchValue;
     }
 
     public onCategorySelected(category: ICategory | null): void {
