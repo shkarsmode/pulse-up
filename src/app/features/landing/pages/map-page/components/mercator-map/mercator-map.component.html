@@ -1,8 +1,8 @@
 <app-map
     (mapLoaded)="onMapLoaded($event)"
     [markers]="{
-      enabled: true,
-      showTooltip: true,
+        enabled: true,
+        showTooltip: true,
     }"
     [zoom]="zoom"
     [minZoom]="minZoom"
@@ -25,10 +25,16 @@
 </ng-container>
 
 <div class="categories">
-    <app-category-filter-select
-        class="category-filter-select"
-        (selectedCategory)="onSelectedCategory($event)" />
     <app-category-filter-menu
         class="category-filter-menu"
         (selectedCategory)="onSelectedCategory($event)" />
+    <ng-container *ngIf="selectedCategory$ | async as selectedCategory">
+        <div class="categories__selected">
+            {{ selectedCategory.name }}
+            <button (click)="onSelectedCategory(null)">
+                <svg-icon src="assets/svg/close.svg" />
+                <span class="visualy-hidden">Cancel selection</span>
+            </button>
+        </div>
+    </ng-container>
 </div>
