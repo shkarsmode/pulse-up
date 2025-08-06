@@ -4,6 +4,9 @@
     position: absolute;
     top: 30px;
     left: 30px;
+    display: flex;
+    align-items: center;
+    column-gap: 8px;
 
     @include media-sm {
       top: 20px;
@@ -11,15 +14,35 @@
     }
 }
 
-.category-filter-select {
-    @include media-md {
-        display: none;
-    }
-}
+.categories__selected {
+    padding: 8px 32px 8px 16px;
+    border-radius: 16px;
+    color: var(--accent-color);
+    background-color: var(--accent-light-color);
+    border: 1px solid var(--accent-color);
 
-.category-filter-menu {
-    display: none;
-    @include media-md {
-        display: block;
+    button {
+        position: absolute;
+        right: 8px;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 20px;
+        height: 20px;
+        padding: 4px;
+
+        svg-icon {
+            width: 100%;
+            height: 100%;
+            color: var(--accent-color);
+
+            svg {
+                width: 100%;
+                height: 100%;
+
+                path {
+                    fill: currentColor;
+                }
+            }
+        }
     }
 }

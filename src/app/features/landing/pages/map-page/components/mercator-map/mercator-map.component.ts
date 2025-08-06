@@ -1,6 +1,7 @@
 import { Component, effect, EventEmitter, inject, OnDestroy, Output } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { toSignal } from "@angular/core/rxjs-interop";
+import { AngularSvgIconModule } from "angular-svg-icon";
 import { BehaviorSubject } from "rxjs";
 import { IMapMarker } from "@/app/shared/interfaces/map/map-marker.interface";
 import { MediaQueryService } from "@/app/shared/services/core/media-query.service";
@@ -10,10 +11,10 @@ import { MapHexagonsLayerComponent } from "@/app/shared/components/map/map-hexag
 import { MapHeatmapLayerComponent } from "@/app/shared/components/map/map-heatmap-layer/map-heatmap-layer.component";
 import { MapZoomControlsComponent } from "@/app/shared/components/map/map-zoom-controls/map-zoom-controls.component";
 import { MapControlsComponent } from "@/app/shared/components/map/map-controls/map-controls.component";
-import { CategoryFilterSelectComponent } from "@/app/shared/components/category-filter-select/category-filter-select.component";
 import { CategoryFilterMenuComponent } from "@/app/shared/components/category-filter-menu/category-filter-menu.component";
 import { ICategory } from "@/app/shared/interfaces/category.interface";
 import { MapMarkersService } from "@/app/shared/services/map/map-marker.service";
+import { CategoryFilterService } from "@/app/shared/components/category-filter-menu/category-filter.service";
 
 @Component({
     selector: "app-mercator-map",
@@ -27,13 +28,14 @@ import { MapMarkersService } from "@/app/shared/services/map/map-marker.service"
         MapHeatmapLayerComponent,
         MapZoomControlsComponent,
         MapControlsComponent,
-        CategoryFilterSelectComponent,
         CategoryFilterMenuComponent,
+        AngularSvgIconModule,
     ],
 })
 export class MercatorMapComponent implements OnDestroy {
-    private readonly mediaService = inject(MediaQueryService);
-    private readonly mapMarkersService = inject(MapMarkersService);
+    private mediaService = inject(MediaQueryService);
+    private mapMarkersService = inject(MapMarkersService);
+    private categoryFilterService = inject(CategoryFilterService);
 
     @Output() zoomEnd: EventEmitter<number> = new EventEmitter<number>();
     @Output() markerClick: EventEmitter<IMapMarker> = new EventEmitter<IMapMarker>();
@@ -80,8 +82,8 @@ export class MercatorMapComponent implements OnDestroy {
             const config = this.isMobile()
                 ? this.configMap.mobile
                 : this.isLaptop()
-                ? this.configMap.laptop
-                : this.configMap.default;
+                  ? this.configMap.laptop
+                  : this.configMap.default;
 
             this.zoom = config.zoom;
             this.minZoom = config.minZoom;
@@ -90,7 +92,7 @@ export class MercatorMapComponent implements OnDestroy {
         });
     }
 
-    ngOnDestroy(): void {
+    public ngOnDestroy(): void {
         this.mapMarkersService.category = null;
         this.mapMarkersService.clearMarkers();
     }
@@ -110,5 +112,6 @@ export class MercatorMapComponent implements OnDestroy {
     public onSelectedCategory(category: ICategory | null): void {
         this.selectedCategorySubject.next(category);
         this.mapMarkersService.category = category;
+        this.categoryFilterService.activeCategory = category || "all";
     }
 }
