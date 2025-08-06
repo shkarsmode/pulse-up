@@ -17,6 +17,13 @@
             </li>
             <li>
                 <a
+                    [routerLink]="'/' + AppRoutes.Landing.LEADERBOARD"
+                    routerLinkActive="active">
+                    Leaderboard
+                </a>
+            </li>
+            <li>
+                <a
                     [routerLink]="'/' + AppRoutes.Landing.TOPICS"
                     routerLinkActive="active">
                     Topics
@@ -29,44 +36,24 @@
                     About
                 </a>
             </li>
-            @if (isAuthenticated) {
-                <li>
-                    <a
-                        [routerLink]="'/' + AppRoutes.Profile.REVIEW"
-                        routerLinkActive="active">
-                        Profile
-                    </a>
-                </li>
-            }
-            @if (isAuthenticated) {
-                <li>
-                    <button (click)="onSignOut()">Sign Out</button>
-                </li>
-            } @else {
-                <li>
-                    <a
-                        [routerLink]="'/' + AppRoutes.Auth.SIGN_IN"
-                        routerLinkActive="active">
-                        Sign In
-                    </a>
-                </li>
-            }
-            <!-- <li>
-                <a 
-                    routerLink="/login"
-                    routerLinkActive="active"
-                    openComingSoonPopup>
-                    Sign In
+            <li>
+                <a
+                    [routerLink]="'/' + AppRoutes.Profile.REVIEW"
+                    routerLinkActive="active">
+                    <mat-icon
+                        aria-hidden="false"
+                        aria-label="profile"
+                        fontIcon="person_outline"></mat-icon>
                 </a>
-            </li> -->
+            </li>
         </ul>
 
         <div class="buttons">
-            <!-- <app-secondary-button
-                [routerLink]="'/' + AppRoutes.User.Topic.HOW_IT_WORKS"
+            <app-primary-button
+                [routerLink]="'/' + AppRoutes.User.Topic.SUGGEST"
                 routerLinkActive="active">
                 Add a topic
-            </app-secondary-button> -->
+            </app-primary-button>
             <div class="buttons__download">
                 <app-secondary-button
                     openGetAppPopup
@@ -94,7 +81,7 @@
         <app-burger-button (click)="toggleDropdown()" />
     </div>
 
-    <div
+    <button
         class="mobile__dropdown"
         (click)="deligateCloseDropdown($event)"
         [class.active]="isMobileDropdown">
@@ -120,6 +107,13 @@
                     </li>
                     <li>
                         <a
+                            [routerLink]="'/' + AppRoutes.Landing.LEADERBOARD"
+                            routerLinkActive="active">
+                            Leaderboard
+                        </a>
+                    </li>
+                    <li>
+                        <a
                             [routerLink]="'/' + AppRoutes.Landing.TOPICS"
                             routerLinkActive="active">
                             Topics
@@ -134,20 +128,11 @@
                     </li>
                     <li>
                         <a
-                            [routerLink]="'/' + AppRoutes.Auth.SIGN_IN"
+                            [routerLink]="'/' + AppRoutes.Profile.REVIEW"
                             routerLinkActive="active">
-                            {{ isAuthenticated ? "Sign Out" : "Sign In" }}
+                            Profile
                         </a>
                     </li>
-                    @if (isAuthenticated) {
-                        <li>
-                            <a
-                                [routerLink]="'/' + AppRoutes.Profile.REVIEW"
-                                routerLinkActive="active">
-                                Profile
-                            </a>
-                        </li>
-                    }
                     <li>
                         <a
                             [routerLink]="'/' + AppRoutes.Community.TERMS"
@@ -189,8 +174,10 @@
             </div>
 
             @if (isToShowVersionOfApp) {
-            <div class="version">{{ version.major }}.{{ version.minor }}.{{ version.patch }}</div>
+                <div class="version">
+                    {{ version.major }}.{{ version.minor }}.{{ version.patch }}
+                </div>
             }
         </div>
-    </div>
+    </button>
 </header>

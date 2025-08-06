@@ -81,6 +81,7 @@ ul {
     column-gap: 40px;
     row-gap: 10px;
     flex-wrap: wrap;
+    align-items: center;
 
     @include media-lg {
         column-gap: 24px;
@@ -128,6 +129,10 @@ ul {
 
 .buttons__download {
     min-width: 180px;
+
+    @include media-xl {
+        display: none;
+    }
 }
 
 .mobile {

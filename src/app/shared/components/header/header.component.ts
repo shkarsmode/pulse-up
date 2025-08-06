@@ -12,6 +12,7 @@ import { version } from '../../../../assets/data/version';
 import { OpenGetAppPopupDirective } from '../popups/get-app-popup/open-get-app-popup.directive';
 import { AuthenticationService } from '../../services/api/authentication.service';
 import { HeaderService } from './header.service';
+import { MatIcon } from '@angular/material/icon';
 
 @Component({
     selector: 'app-header',
@@ -19,6 +20,7 @@ import { HeaderService } from './header.service';
     imports: [
         CommonModule,
         RouterModule,
+        MatIcon,
         PrimaryButtonComponent,
         SvgIconComponent,
         BurgerButtonComponent,
