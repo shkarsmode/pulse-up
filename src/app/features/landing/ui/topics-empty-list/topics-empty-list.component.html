@@ -8,3 +8,10 @@
     <p>"{{ searchText }}" did not match any topics.</p>
     <p>Would you like to create a new topic?</p>
 </div>
+<div class="empty-actions">
+    <app-primary-button
+        [size]="'large'"
+        [routerLink]="suggestTopicsLink">
+        Start a topic
+    </app-primary-button>
+</div>
