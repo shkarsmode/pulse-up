@@ -11,7 +11,6 @@ import { SecondaryButtonComponent } from "../ui-kit/buttons/secondary-button/sec
 import { version } from '../../../../assets/data/version';
 import { OpenGetAppPopupDirective } from '../popups/get-app-popup/open-get-app-popup.directive';
 import { AuthenticationService } from '../../services/api/authentication.service';
-import { HeaderService } from './header.service';
 import { MatIcon } from '@angular/material/icon';
 
 @Component({
@@ -28,12 +27,10 @@ import { MatIcon } from '@angular/material/icon';
         SecondaryButtonComponent,
         OpenGetAppPopupDirective,
     ],
-    providers: [HeaderService],
     templateUrl: './header.component.html',
     styleUrl: './header.component.scss',
 })
 export class HeaderComponent implements OnInit {
-    private readonly headerService = inject(HeaderService);
     private readonly authService = inject(AuthenticationService);
 
     public isMobileDropdown = false;
@@ -45,11 +42,7 @@ export class HeaderComponent implements OnInit {
         //Called after the constructor, initializing input properties, and the first call to ngOnChanges.
         //Add 'implements OnInit' to the class.
         this.getCurrentVersionOfApplication();
-    }
-
-    public onSignOut(): void {
-        this.headerService.signOut();
-    }   
+    }  
 
     public get isAuthenticated() {
         return !!this.authService.userTokenValue

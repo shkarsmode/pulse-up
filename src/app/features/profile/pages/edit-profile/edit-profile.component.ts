@@ -1,6 +1,5 @@
 import { Component, DestroyRef, inject, OnInit } from "@angular/core";
 import { CommonModule } from "@angular/common";
-import { Router } from "@angular/router";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { AngularSvgIconModule } from "angular-svg-icon";
 import { MatMenuModule } from "@angular/material/menu";
@@ -9,10 +8,7 @@ import { ProfileFormComponent } from "../../ui/profile-form/profile-form.compone
 import { ProfileLayoutComponent } from "../../ui/profile-layout/profile-layout.component";
 import { ProfileService } from "@/app/shared/services/profile/profile.service";
 import { ProfileHeaderComponent } from "../../ui/profile-header/profile-header.component";
-import { IconButtonComponent } from "@/app/shared/components/ui-kit/buttons/icon-button/icon-button.component";
-import { MenuComponent } from "@/app/shared/components/ui-kit/menu/menu.component";
 import { MaterialModule } from "@/app/shared/modules/material.module";
-import { AppRoutes } from "@/app/shared/enums/app-routes.enum";
 
 @Component({
     selector: "app-edit-profile",
@@ -22,9 +18,7 @@ import { AppRoutes } from "@/app/shared/enums/app-routes.enum";
         ProfileFormComponent,
         ProfileLayoutComponent,
         ProfileHeaderComponent,
-        IconButtonComponent,
         AngularSvgIconModule,
-        MenuComponent,
         MatMenuModule,
         MatButtonModule,
         MaterialModule,
@@ -33,7 +27,6 @@ import { AppRoutes } from "@/app/shared/enums/app-routes.enum";
     styleUrl: "./edit-profile.component.scss",
 })
 export class EditProfileComponent implements OnInit {
-    private readonly router = inject(Router);
     private readonly destroyed = inject(DestroyRef);
     public readonly profileService = inject(ProfileService);
     public isLoading = true;
@@ -57,9 +50,5 @@ export class EditProfileComponent implements OnInit {
                 }
                 this.isLoading = false;
             });
-    }
-
-    onClickDelete() {
-        this.router.navigateByUrl("/" + AppRoutes.Profile.DELETE_ACCOUNT);
     }
 }
