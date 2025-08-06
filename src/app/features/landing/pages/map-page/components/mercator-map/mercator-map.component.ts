@@ -15,6 +15,7 @@ import { CategoryFilterMenuComponent } from "@/app/shared/components/category-fi
 import { ICategory } from "@/app/shared/interfaces/category.interface";
 import { MapMarkersService } from "@/app/shared/services/map/map-marker.service";
 import { CategoryFilterService } from "@/app/shared/components/category-filter-menu/category-filter.service";
+import { CategoryFilterSelectionComponent } from "@/app/shared/components/category-filter-menu/category-filter-selection/category-filter-selection.component";
 
 @Component({
     selector: "app-mercator-map",
@@ -24,12 +25,13 @@ import { CategoryFilterService } from "@/app/shared/components/category-filter-m
     imports: [
         CommonModule,
         MapComponent,
+        AngularSvgIconModule,
         MapHexagonsLayerComponent,
         MapHeatmapLayerComponent,
         MapZoomControlsComponent,
         MapControlsComponent,
         CategoryFilterMenuComponent,
-        AngularSvgIconModule,
+        CategoryFilterSelectionComponent,
     ],
 })
 export class MercatorMapComponent implements OnDestroy {

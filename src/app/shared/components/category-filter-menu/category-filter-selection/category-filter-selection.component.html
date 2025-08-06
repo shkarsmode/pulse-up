@@ -1,0 +1,11 @@
+@if (category) {
+    <div class="categories-selection">
+        {{ category.name }}
+        <button
+            class="categories-selection__cancel"
+            (click)="onCancel()">
+            <svg-icon src="assets/svg/close.svg" />
+            <span class="visualy-hidden">Cancel selection</span>
+        </button>
+    </div>
+}

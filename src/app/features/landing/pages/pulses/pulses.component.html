@@ -2,35 +2,30 @@
     <div class="pulses">
         <main class="pulses__main">
             <div class="pulses__header">
-                <div class="pulses__top">
-                    <h1 class="pulses__title">Trending Topics</h1>
-                    <app-link-button 
-                        class="pulses__top-link" 
-                        [routerLink]="leaderboardRoute">
-                        Global Top 10 Topics
-                    </app-link-button>
-                </div>
-                <app-category-filter-select
-                    class="pulses__filter"
-                    (selectedCategory)="onCategorySelected($event)" />
+                <h1 class="pulses__title">Trending Topics</h1>
                 <div class="pulses__search-wrap">
                     <app-input-search
-                        class="tpulses__search"
+                        class="pulses__search"
                         [isLoading]="(searchInFocus && (loading$ | async)) || false"
                         (handleValueChange)="onSearchValueChange($event)"
                         (handleFocus)="onSearchFocus()"
                         (handleBlur)="onSearchBlur()" />
-                    <a
-                        [routerLink]="addTopicRoute"
-                        class="add-topic-button">
-                        <svg-icon
-                            src="assets/svg/add.svg"
-                            style="height: 22px" />
-                    </a>
+                    <app-category-filter-menu
+                        class="pulses__filter"
+                        (selectedCategory)="onCategorySelected($event)" />
                 </div>
+                @if (selectedCategory) {
+                    <div class="pulses__selection">
+                        <app-category-filter-selection
+                            [category]="selectedCategory"
+                            (cancelSelection)="onCategorySelected(null)" />
+                    </div>
+                }
             </div>
             <div class="pulses__list-wrap">
-                <app-spinner *ngIf="loading$ | async" />
+                @if ((loading$ | async) === true) {
+                    <app-spinner />
+                }
                 <div
                     class="pulses__list"
                     *ngIf="paginator$ | async as paginator"
@@ -39,9 +34,9 @@
                     [infiniteScrollThrottle]="150"
                     (scrolled)="loadMore(paginator)">
                     @for (topic of paginator.items; track topic.id) {
-                    <app-trending-topics-list-item
-                        [data]="topic"
-                        [vote]="(votes$ | async)?.get(topic.id)" />
+                        <app-trending-topics-list-item
+                            [data]="topic"
+                            [vote]="(votes$ | async)?.get(topic.id)" />
                     }
                     <p
                         class="pulses__loading"
@@ -51,9 +46,5 @@
                 </div>
             </div>
         </main>
-        <aside class="pulses__aside">
-            <app-promote-ads />
-            <app-leaderboard />
-        </aside>
     </div>
 </app-container>
