@@ -27,10 +27,12 @@
 </ng-container>
 
 <div class="categories">
-    <app-category-filter-select
-        class="category-filter-select"
-        (selectedCategory)="onSelectedCategory($event)" />
     <app-category-filter-menu
         class="category-filter-menu"
         (selectedCategory)="onSelectedCategory($event)" />
+    <ng-container *ngIf="selectedCategory$ | async as selectedCategory">
+        <app-category-filter-selection
+            [category]="selectedCategory"
+            (cancelSelection)="onSelectedCategory(null)" />
+    </ng-container>
 </div>

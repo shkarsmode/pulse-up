@@ -13,9 +13,10 @@ import { MapHeatmapLayerComponent } from "@/app/shared/components/map/map-heatma
 import { MapZoomControlsComponent } from "@/app/shared/components/map/map-zoom-controls/map-zoom-controls.component";
 import { MapControlsComponent } from "@/app/shared/components/map/map-controls/map-controls.component";
 import { MapSpinControlComponent } from "@/app/shared/components/map/map-spin-control/map-spin-control.component";
-import { CategoryFilterSelectComponent } from "@/app/shared/components/category-filter-select/category-filter-select.component";
 import { ICategory } from "@/app/shared/interfaces/category.interface";
 import { CategoryFilterMenuComponent } from "@/app/shared/components/category-filter-menu/category-filter-menu.component";
+import { CategoryFilterService } from "@/app/shared/components/category-filter-menu/category-filter.service";
+import { CategoryFilterSelectionComponent } from "@/app/shared/components/category-filter-menu/category-filter-selection/category-filter-selection.component";
 
 @Component({
     selector: "app-globe-map",
@@ -23,21 +24,22 @@ import { CategoryFilterMenuComponent } from "@/app/shared/components/category-fi
     styleUrl: "./globe-map.component.scss",
     standalone: true,
     imports: [
-        CommonModule,
-        MapComponent,
-        MapHexagonsLayerComponent,
-        MapHeatmapLayerComponent,
-        MapZoomControlsComponent,
-        MapControlsComponent,
-        MapSpinControlComponent,
-        CategoryFilterSelectComponent,
-        CategoryFilterMenuComponent,
-    ],
+    CommonModule,
+    MapComponent,
+    MapHexagonsLayerComponent,
+    MapHeatmapLayerComponent,
+    MapZoomControlsComponent,
+    MapControlsComponent,
+    MapSpinControlComponent,
+    CategoryFilterMenuComponent,
+    CategoryFilterSelectionComponent
+],
 })
 export class GlobeMapComponent implements OnDestroy {
     private readonly mediaService = inject(MediaQueryService);
     private readonly mapEventListenerService = inject(MapEventListenerService);
     private readonly mapMarkersService = inject(MapMarkersService);
+    private categoryFilterService = inject(CategoryFilterService);
 
     private isMobile = toSignal(this.mediaService.mediaQuery("max", "SM"));
     private isMobileLandscape = toSignal(
@@ -168,6 +170,7 @@ export class GlobeMapComponent implements OnDestroy {
     public onSelectedCategory(category: ICategory | null): void {
         this.selectedCategorySubject.next(category);
         this.mapMarkersService.category = category;
+        this.categoryFilterService.activeCategory = category || "all";
     }
 
     private flyToCoordinates() {
