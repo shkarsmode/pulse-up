@@ -15,7 +15,7 @@ export class LeaderboardService {
     private pulseService = inject(PulseService);
     
     public readonly startDate = new Date();
-    public readonly startTimeframe: LeaderboardTimeframe = "Day";
+    public readonly startTimeframe: LeaderboardTimeframe = "Month";
 
     private readonly count = 10;
     private filterSubject = new BehaviorSubject<ILeaderboardFilter>({

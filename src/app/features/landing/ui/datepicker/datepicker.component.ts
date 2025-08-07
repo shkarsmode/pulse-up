@@ -70,7 +70,7 @@ export class CustomDatepickerComponent {
 
     @Input() text = "";
     @Input() date: Date | null = null;
-    @Input() timeframe: LeaderboardTimeframe = "Day";
+    @Input() timeframe: LeaderboardTimeframe = "Month";
 
     @Output() dateChange = new EventEmitter<Date | null>();
     @Output() timeframeChange = new EventEmitter<LeaderboardTimeframe>();
