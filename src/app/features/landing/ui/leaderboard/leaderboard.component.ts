@@ -88,7 +88,7 @@ export class LeaderboardComponent {
     public onConfirm() {
         if (!this.selectedDate) return;
         this.leaderboardService.setFilter({
-            date: this.selectedDate.toISOString(),
+            date: this.selectedDate.toDateString(),
             timeframe: this.timeframe,
         });
     }
