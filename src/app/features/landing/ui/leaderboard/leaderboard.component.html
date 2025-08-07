@@ -4,43 +4,46 @@
         <app-datepicker
             [text]="(datepickerButtonText$ | async) || ''"
             [date]="selectedDate"
-            [timeframe]="timeframe"
+            [timeframe]="selectedTimeframe"
             (dateChange)="onDateSelected($event)"
             (timeframeChange)="onTimeframeChange($event)"
             (confirm)="onConfirm()" />
     </div>
-    <div class="leaderboard-header__actions">
-        <app-link-button
-            class="leaderboard-header__action"
-            (handleClick)="openInfoPopup()">
-            <span class="visualy-hidden">More information</span>
-            <svg-icon
-                src="assets/svg/info.svg"
-                class="leaderboard-header__action-icon" />
-        </app-link-button>
-        <!-- <app-link-button class="leaderboard-header__action leaderboard-header__action--search">
-            <span class="visualy-hidden">Search by location</span>
-            <svg-icon
-                src="assets/svg/search.svg"
-                class="leaderboard-header__action-icon" />
-        </app-link-button> -->
+</div>
+
+<div
+    *ngIf="!isInitialLoading && hint"
+    class="leaderboard-hint"
+    [class.leaderboard-hint--active]="isActiveTimerange">
+    <div class="leaderboard-hint__text">
+        {{ hint }}
     </div>
+    @if (isActiveTimerange) {
+        <app-progress-bar
+            class="leaderboard-hint__progress"
+            [percentage]="elapsedTimePercentage" />
+    }
+    <app-link-button
+        class="leaderboard-action"
+        (handleClick)="openInfoPopup()">
+        <span class="visualy-hidden">More information</span>
+        <svg-icon src="assets/svg/info.svg" />
+    </app-link-button>
 </div>
 
 @if (isLoading) {
-<app-spinner class="leaderboard__spinner"></app-spinner>
+    <app-spinner class="leaderboard__spinner"></app-spinner>
 }
 
 <ul class="leaderboard__list">
-    @for(topicData of topics$ | async; track topicData.topic.id) {
-    <li *ngIf="!isLoading">
-        <app-leaderboard-list-item
-            [topic]="topicData.topic"
-            [votes]="topicData.votes"
-            [users]="topicData.uniqueUsers"
-            [selectedDate]="selectedDate"
-            [selectedTimeframe]="timeframe"
-        />
-    </li>
+    @for (topicData of topics$ | async; track topicData.topic.id) {
+        <li *ngIf="!isLoading">
+            <app-leaderboard-list-item
+                [topic]="topicData.topic"
+                [votes]="topicData.votes"
+                [users]="topicData.uniqueUsers"
+                [selectedDate]="selectedDate"
+                [selectedTimeframe]="selectedTimeframe" />
+        </li>
     }
 </ul>
