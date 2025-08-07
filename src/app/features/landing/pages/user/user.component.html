@@ -1,69 +1,68 @@
 @if (!user) {
-<app-spinner />
+    <app-spinner />
 } @else {
-<app-container
-    size="md"
-    fadeIn
-    [childrenFadeIn]="true"
-    *ngIf="user">
-    <div class="user-header">
-        <div class="user-header__top">
-            <div class="user-header__back">
-                <app-back-button />
-            </div>
-            <div class="user-header__share-btn">
-                <app-menu [content]="menuContent">
-                    <button flatButton>
-                        <svg-icon src="assets/svg/icon_share.svg" />
-                    </button>
-                </app-menu>
-            </div>
-            <div class="user-header__info">
-                <app-user-avatar
-                    [url]="user.picture"
-                    [name]="user.name"
-                    [width]="80"
-                    [height]="80"
-                    class="user-header__avatar" />
-                <div class="user-header__text">
-                    <h1 class="user-header__name">{{ user.name }}</h1>
-                    <div class="user-header__username">&#64;{{ user.username }}</div>
+    <app-container
+        size="md"
+        fadeIn
+        [childrenFadeIn]="true"
+        *ngIf="user">
+        <div class="user-header">
+            <div class="user-header__top">
+                <div class="user-header__back">
+                    <app-back-button />
                 </div>
-                <div
-                    class="user-header__bio"
-                    *ngIf="user.bio">
-                    {{ user.bio }}
+                <div class="user-header__share-btn">
+                    <app-menu [content]="menuContent">
+                        <button flatButton>
+                            <svg-icon src="assets/svg/icon_share.svg" />
+                        </button>
+                    </app-menu>
+                </div>
+                <div class="user-header__info">
+                    <app-user-avatar
+                        [url]="user.picture"
+                        [name]="user.name"
+                        [width]="80"
+                        [height]="80"
+                        class="user-header__avatar" />
+                    <div class="user-header__text">
+                        <h1 class="user-header__name">{{ user.name }}</h1>
+                        <div class="user-header__username">&#64;{{ user.username }}</div>
+                    </div>
+                    <div
+                        class="user-header__bio"
+                        *ngIf="user.bio"
+                        [innerHtml]="user.bio | linkify"></div>
                 </div>
             </div>
         </div>
-    </div>
-    <div class="user-header__topics">
-        {{ topics.length | formatNumber }}
-        {{ topics.length === 1 ? "topic" : "topics" }} started
-    </div>
-    <div
-        class="user-topics"
-        *ngIf="paginator$ | async as paginator"
-        infiniteScroll
-        [infiniteScrollDistance]="2"
-        [infiniteScrollThrottle]="150"
-        (scrolled)="loadMore(paginator)">
-        <ul class="user-topics__list">
-            @for (topic of paginator.items; track topic.id) {
-            <li>
-                <app-user-topics-list-item
-                    [data]="topic"
-                    [vote]="(votes$ | async)?.get(topic.id)" />
-            </li>
-            }
-        </ul>
-        <p
-            class="user-topics__loading"
-            *ngIf="loading$ | async">
-            <app-loading-indicator />
-        </p>
-    </div>
-</app-container>
+        <div class="user-header__topics">
+            {{ topics.length | formatNumber }}
+            {{ topics.length === 1 ? "topic" : "topics" }} started
+        </div>
+        <div
+            class="user-topics"
+            *ngIf="paginator$ | async as paginator"
+            infiniteScroll
+            [infiniteScrollDistance]="2"
+            [infiniteScrollThrottle]="150"
+            (scrolled)="loadMore(paginator)">
+            <ul class="user-topics__list">
+                @for (topic of paginator.items; track topic.id) {
+                    <li>
+                        <app-user-topics-list-item
+                            [data]="topic"
+                            [vote]="(votes$ | async)?.get(topic.id)" />
+                    </li>
+                }
+            </ul>
+            <p
+                class="user-topics__loading"
+                *ngIf="loading$ | async">
+                <app-loading-indicator />
+            </p>
+        </div>
+    </app-container>
 }
 
 <ng-template #menuContent>

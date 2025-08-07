@@ -1,3 +1,10 @@
+import { Component, DestroyRef, inject, OnInit } from "@angular/core";
+import { CommonModule, Location } from "@angular/common";
+import { ActivatedRoute, ParamMap, Router } from "@angular/router";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
+import { SvgIconComponent } from "angular-svg-icon";
+import { map, Observable, switchMap, take, tap } from "rxjs";
+import { InfiniteScrollDirective } from "ngx-infinite-scroll";
 import { FadeInDirective } from "@/app/shared/animations/fade-in.directive";
 import { LoadingIndicatorComponent } from "@/app/shared/components/loading-indicator/loading-indicator.component";
 import { CopyButtonComponent } from "@/app/shared/components/ui-kit/buttons/copy-button/copy-button.component";
@@ -8,17 +15,11 @@ import { ContainerComponent } from "@/app/shared/components/ui-kit/container/con
 import { MenuComponent } from "@/app/shared/components/ui-kit/menu/menu.component";
 import { SpinnerComponent } from "@/app/shared/components/ui-kit/spinner/spinner.component";
 import { AppConstants } from "@/app/shared/constants/app.constants";
-import { IAuthor, IPaginator, ITopic } from "@/app/shared/interfaces";
+import { IPaginator, IProfile, ITopic } from "@/app/shared/interfaces";
 import { FormatNumberPipe } from "@/app/shared/pipes/format-number.pipe";
 import { SettingsService } from "@/app/shared/services/api/settings.service";
 import { UserService } from "@/app/shared/services/api/user.service";
 import { DialogService } from "@/app/shared/services/core/dialog.service";
-import { CommonModule, Location } from "@angular/common";
-import { Component, DestroyRef, inject, OnInit } from "@angular/core";
-import { ActivatedRoute, ParamMap, Router } from "@angular/router";
-import { SvgIconComponent } from "angular-svg-icon";
-import { InfiniteScrollDirective } from "ngx-infinite-scroll";
-import { map, Observable, take } from "rxjs";
 import { TopicQRCodePopupData } from "../../helpers/interfaces/topic-qrcode-popup-data.interface";
 import { InfiniteLoaderService } from "../../services/infinite-loader.service";
 import { TopicQrcodePopupComponent } from "../../ui/topic-qrcode-popup/topic-qrcode-popup.component";
@@ -26,6 +27,7 @@ import { UserAvatarComponent } from "../../ui/user-avatar/user-avatar.component"
 import { BackButtonComponent } from "@/app/shared/components/ui-kit/buttons/back-button/back-button.component";
 import { VotesService } from "@/app/shared/services/votes/votes.service";
 import { UserTopicsListItemComponent } from "../../ui/user-topics-list-item/user-topics-list-item.component";
+import { LinkifyPipe } from "@/app/shared/pipes/linkify.pipe";
 
 @Component({
     selector: "app-author",
@@ -33,23 +35,24 @@ import { UserTopicsListItemComponent } from "../../ui/user-topics-list-item/user
     styleUrl: "./user.component.scss",
     standalone: true,
     imports: [
-    CommonModule,
-    InfiniteScrollDirective,
-    SvgIconComponent,
-    LoadingIndicatorComponent,
-    SpinnerComponent,
-    ContainerComponent,
-    UserAvatarComponent,
-    MenuComponent,
-    CopyButtonComponent,
-    SocialsButtonComponent,
-    FadeInDirective,
-    FlatButtonDirective,
-    FormatNumberPipe,
-    QrcodeButtonComponent,
-    BackButtonComponent,
-    UserTopicsListItemComponent
-],
+        CommonModule,
+        InfiniteScrollDirective,
+        SvgIconComponent,
+        LoadingIndicatorComponent,
+        SpinnerComponent,
+        ContainerComponent,
+        UserAvatarComponent,
+        MenuComponent,
+        CopyButtonComponent,
+        SocialsButtonComponent,
+        FadeInDirective,
+        FlatButtonDirective,
+        FormatNumberPipe,
+        QrcodeButtonComponent,
+        BackButtonComponent,
+        UserTopicsListItemComponent,
+        LinkifyPipe,
+    ],
     providers: [InfiniteLoaderService],
 })
 export class UserComponent implements OnInit {
@@ -63,14 +66,13 @@ export class UserComponent implements OnInit {
     private readonly infiniteLoaderService = inject(InfiniteLoaderService<ITopic>);
     private readonly votesService = inject(VotesService);
 
-    public user: IAuthor | null = null;
+    public user: IProfile | null = null;
     public topics: ITopic[] = [];
     public isLoading = true;
     public pulseId = "";
     public paginator$: Observable<IPaginator<ITopic>>;
     public loading$: Observable<boolean>;
     public votes$ = this.votesService.votesByTopicId$;
-    public loadMore = this.infiniteLoaderService.loadMore.bind(this.infiniteLoaderService);
 
     constructor() {
         this.pulseId = this.router.getCurrentNavigation()?.extras?.state?.["pulseId"] || "";
@@ -80,8 +82,12 @@ export class UserComponent implements OnInit {
         this.initUserIdListener();
     }
 
+    public loadMore = this.infiniteLoaderService.loadMore.bind(this.infiniteLoaderService);
+
     private initUserIdListener(): void {
-        this.route.paramMap.pipe(take(1)).subscribe(this.handlePulseUrlIdListener.bind(this));
+        this.route.paramMap
+            .pipe(takeUntilDestroyed(this.destroyRef))
+            .subscribe((data) => this.handlePulseUrlIdListener(data));
     }
 
     private handlePulseUrlIdListener(data: ParamMap): void {
@@ -89,23 +95,29 @@ export class UserComponent implements OnInit {
         this.user = null;
         this.topics = [];
         this.isLoading = true;
-        this.userService
-            .getProfileByUsername(username)
-            .pipe(take(1))
-            .subscribe((user) => {
-                this.userService
-                    .getAllTopics(user.id)
-                    .pipe(take(1))
-                    .subscribe((topics) => {
-                        this.topics = topics.map((topic) => ({
-                            ...topic,
-                            author: { ...topic.author, name: this.user?.name || "" },
-                        }));
-                        this.loadTopics(user.id);
-                        this.user = user;
-                        this.isLoading = false;
-                    });
-            });
+        this.userService.getProfileByUsername(username).pipe(
+            switchMap((user) => {
+                return this.userService.getAllTopics(user.id).pipe(
+                    take(1),
+                    map((topics) => {
+                        return {
+                            user,
+                            topics,
+                        };
+                    }),
+                );
+            }),
+            tap(({ user, topics }) => {
+                this.topics = topics.map((topic) => ({
+                    ...topic,
+                    author: { ...topic.author, name: user.name || "" },
+                }));
+                this.loadTopics(user.id);
+                this.user = user;
+                this.isLoading = false;
+            }),
+            takeUntilDestroyed(this.destroyRef),
+        ).subscribe()
     }
 
     private loadTopics(userId: string) {
@@ -138,7 +150,7 @@ export class UserComponent implements OnInit {
         this.loading$ = this.infiniteLoaderService.loading$;
     }
 
-    get shareProfileUrl(): string {
+    public get shareProfileUrl(): string {
         return this.settingsService.shareUserBaseUrl + this.user?.username;
     }
 
@@ -156,7 +168,7 @@ export class UserComponent implements OnInit {
         event.stopPropagation();
     }
 
-    openQrCodePopup(): void {
+    public openQrCodePopup(): void {
         this.dialogService.open<TopicQrcodePopupComponent, TopicQRCodePopupData>(
             TopicQrcodePopupComponent,
             {
