@@ -25,6 +25,7 @@ import {
 import { CalendarHeaderComponent } from "./calendar-header/calendar-header.component";
 import { LeaderboardTimeframe } from "../../interface/leaderboard-timeframe.interface";
 import { PrimaryButtonComponent } from "@/app/shared/components/ui-kit/buttons/primary-button/primary-button.component";
+import { MaterialModule } from "@/app/shared/modules/material.module";
 
 @Injectable()
 export class WeekRangeSelectionStrategy<D = Date> implements MatDateRangeSelectionStrategy<D> {
@@ -54,7 +55,13 @@ export class WeekRangeSelectionStrategy<D = Date> implements MatDateRangeSelecti
     templateUrl: "./datepicker.component.html",
     styleUrls: ["./datepicker.component.scss"],
     standalone: true,
-    imports: [CommonModule, MatCalendar, CalendarHeaderComponent, PrimaryButtonComponent],
+    imports: [
+        CommonModule,
+        MatCalendar,
+        CalendarHeaderComponent,
+        PrimaryButtonComponent,
+        MaterialModule,
+    ],
     providers: [
         {
             provide: MAT_DATE_RANGE_SELECTION_STRATEGY,
@@ -70,7 +77,7 @@ export class CustomDatepickerComponent {
 
     @Input() text = "";
     @Input() date: Date | null = null;
-    @Input() timeframe: LeaderboardTimeframe = "Day";
+    @Input() timeframe: LeaderboardTimeframe = "Month";
 
     @Output() dateChange = new EventEmitter<Date | null>();
     @Output() timeframeChange = new EventEmitter<LeaderboardTimeframe>();

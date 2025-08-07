@@ -58,36 +58,6 @@
     margin-top: 16px;
     counter-reset: rate;
 }
-.leaderboard__item {
-    padding: 6px;
-    &::ng-deep {
-        .card-top {
-            grid-column-gap: 8px;
-        }
-    }
-}
-
-.card-heading-title {
-    &::ng-deep {
-        .card-title {
-            font-size: 16px;
-            line-height: 19px;
-        }
-    }
-}
-
-.card-heading-meta {
-    display: flex;
-    flex-direction: column;
-    row-gap: 6px;
-    margin-top: 6px;
-
-    &::ng-deep {
-        .card-meta-text {
-            font-size: 12px;
-        }
-    }
-}
 
 .leaderboard__calendar-button {
     &::ng-deep {

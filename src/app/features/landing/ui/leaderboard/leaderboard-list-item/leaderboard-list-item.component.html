@@ -1,0 +1,41 @@
+<app-large-pulse
+    [pulse]="topic"
+    class="leaderboard-item"
+    [showArrow]="false">
+    <app-large-pulse-icon
+        [src]="topic.icon"
+        size="md"
+        [label]="topic.title"
+        ngProjectAs="card-icon" />
+    <div ngProjectAs="card-heading">
+        <app-large-pulse-title class="card-heading-title">
+            {{ topic.title }}
+        </app-large-pulse-title>
+        <div class="card-heading-meta">
+            @if (isActiveTimerange && (isActiveVote$ | async)) {
+                <app-large-pulse-meta
+                    [text]="'Pulses: ' + (votes | formatNumber)"
+                    label="number of pulses">
+                    <ng-template #iconTemplate>
+                        <div class="meta-icon-wrap">
+                            <svg-icon
+                                appVawesAnimation
+                                src="assets/svg/logo/logo-v2.svg"
+                                ariaLabel="pulse icon"
+                                class="card-footer-icon" />
+                        </div>
+                    </ng-template>
+                </app-large-pulse-meta>
+            } @else {
+                <app-large-pulse-meta
+                    [text]="'Pulses: ' + (votes | formatNumber)"
+                    icon="assets/svg/pulse.svg"
+                    label="number of pulses" />
+            }
+            <app-large-pulse-meta
+                [text]="'Supporters: ' + (users | formatNumber)"
+                icon="assets/svg/user.svg"
+                label="number of supporters" />
+        </div>
+    </div>
+</app-large-pulse>

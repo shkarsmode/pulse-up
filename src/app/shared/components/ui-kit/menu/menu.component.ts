@@ -25,6 +25,6 @@ import { CommonModule } from '@angular/common';
     styleUrl: './menu.component.scss',
 })
 export class MenuComponent {
-    @Input() content!: TemplateRef<any>;
+    @Input() content!: TemplateRef<unknown>;
     @ViewChild('trigger', { read: ElementRef }) triggerRef!: ElementRef;
 }
