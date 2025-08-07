@@ -10,12 +10,16 @@
     @include title-32px;
 }
 
-.leaderboard-header__actions {
-    display: flex;
-    align-items: center;
-    padding-top: 4px;
-}
-.leaderboard-header__action {
+.leaderboard-action {
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+
+    @include media-sm {
+        right: 4px;
+    }
+
     &::ng-deep {
         .mat-mdc-button {
             min-width: 0;
@@ -27,6 +31,39 @@
 .leaderboard-header__action--search {
     display: block;
     transform: scaleX(-1);
+}
+
+.leaderboard-hint {
+    position: relative;
+    width: 100%;
+    padding: 12px 64px;
+    display: flex;
+    flex-direction: column;
+    row-gap: 8px;
+    background-color: var(--light-grey-color);
+
+    @include media-sm {
+        row-gap: 6px;
+        padding: 12px 40px;
+    }
+
+    &.leaderboard-hint--active {
+        background-color: #ffe27d;
+    }
+}
+
+.leaderboard-hint__text {
+    text-align: center;
+
+    @include media-sm {
+        @include text-14px;
+    }
+}
+
+.leaderboard-hint__progress {
+    width: 100%;
+    height: 12px;
+    margin: 0 auto;
 }
 
 .leaderboard__calendar {

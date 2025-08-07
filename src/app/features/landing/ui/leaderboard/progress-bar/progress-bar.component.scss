@@ -1,0 +1,44 @@
+.progress-bar {
+    height: 100%;
+    width: 100%;
+    background-color: rgba(131, 134, 165, 0.3);
+    border-radius: 9999px;
+    overflow: hidden;
+}
+
+.progress-bar--line {
+    height: 100%;
+    border-radius: inherit;
+    // background-color: #5e00cc;
+    background: linear-gradient(90deg, #4c00a3, #a857f8, #4d00a5);
+    background-size: 200% 100%;
+    animation: fillBar 1s ease-out forwards, gradientFlow 2s linear infinite;
+}
+
+.progress-bar--not-fulled {
+    height: 100%;
+    // border-radius: 9999px;
+    background: linear-gradient(90deg, #4c00a3, #a857f8, #4d00a5);
+    background-size: 200% 100%;
+    animation: gradientFlow 2s linear infinite;
+}
+
+@keyframes gradientFlow {
+    0% {
+        background-position: 0% 0%;
+    }
+
+    100% {
+        background-position: -200% 0%;
+    }
+}
+
+@keyframes fillBar {
+    from {
+        width: 0;
+    }
+
+    to {
+        width: var(--fill-width);
+    }
+}
