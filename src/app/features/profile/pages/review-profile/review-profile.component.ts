@@ -21,6 +21,7 @@ import { SocialsButtonComponent } from "@/app/shared/components/ui-kit/buttons/s
 import { QrcodeButtonComponent } from "@/app/shared/components/ui-kit/buttons/qrcode-button/qrcode-button.component";
 import { SettingsService } from "@/app/shared/services/api/settings.service";
 import { FlatButtonDirective } from "@/app/shared/components/ui-kit/buttons/flat-button/flat-button.directive";
+import { LinkifyPipe } from "@/app/shared/pipes/linkify.pipe";
 
 @Component({
     selector: "app-review-profile",
@@ -40,6 +41,7 @@ import { FlatButtonDirective } from "@/app/shared/components/ui-kit/buttons/flat
         SocialsButtonComponent,
         QrcodeButtonComponent,
         FlatButtonDirective,
+        LinkifyPipe,
     ],
     templateUrl: "./review-profile.component.html",
     styleUrl: "./review-profile.component.scss",
