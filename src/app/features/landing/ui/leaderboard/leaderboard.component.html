@@ -34,27 +34,13 @@
 <ul class="leaderboard__list">
     @for(topicData of topics$ | async; track topicData.topic.id) {
     <li *ngIf="!isLoading">
-        <app-large-pulse
-            [pulse]="topicData.topic"
-            class="leaderboard__item"
-            [showArrow]="false">
-            <app-large-pulse-icon
-                [src]="topicData.topic.icon"
-                size="md"
-                [label]="topicData.topic.title"
-                ngProjectAs="card-icon" />
-            <div ngProjectAs="card-heading">
-                <app-large-pulse-title class="card-heading-title">
-                    {{ topicData.topic.title }}
-                </app-large-pulse-title>
-                <div class="card-heading-meta">
-                    <app-large-pulse-meta
-                        [text]="'Pulses: ' + (topicData.votes | formatNumber)"
-                        icon="assets/svg/pulse.svg"
-                        label="number of pulses" />
-                </div>
-            </div>
-        </app-large-pulse>
+        <app-leaderboard-list-item
+            [topic]="topicData.topic"
+            [votes]="topicData.votes"
+            [users]="topicData.uniqueUsers"
+            [selectedDate]="selectedDate"
+            [selectedTimeframe]="timeframe"
+        />
     </li>
     }
 </ul>

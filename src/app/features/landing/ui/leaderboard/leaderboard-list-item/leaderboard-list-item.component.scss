@@ -1,0 +1,52 @@
+@use "../../../../../../styles/mixins" as *;
+
+.leaderboard-item {
+    padding: 6px;
+    &::ng-deep {
+        .card-top {
+            grid-column-gap: 8px;
+        }
+    }
+}
+
+.card-heading-title {
+    &::ng-deep {
+        .card-title {
+            font-size: 16px;
+            line-height: 19px;
+        }
+    }
+}
+
+.card-heading-meta {
+    display: flex;
+    flex-direction: column;
+    row-gap: 6px;
+    margin-top: 6px;
+
+    &::ng-deep {
+        .card-meta-text {
+            @include text-12px;
+        }
+    }
+}
+
+.meta-icon-wrap {
+    position: relative;
+    width: 22px;
+    height: 22px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(#5e00cc, 0.1);
+    border-radius: 50%;
+
+    svg {
+        width: 16px;
+        height: 16px;
+    }
+
+    .card-footer-icon {
+        filter: none;
+    }
+}

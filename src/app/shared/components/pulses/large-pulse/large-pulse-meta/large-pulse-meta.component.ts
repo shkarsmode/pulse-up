@@ -1,5 +1,5 @@
 import { CommonModule } from "@angular/common";
-import { Component, Input } from "@angular/core";
+import { Component, ContentChild, Input, TemplateRef } from "@angular/core";
 import { AngularSvgIconModule } from "angular-svg-icon";
 
 @Component({
@@ -13,4 +13,6 @@ export class LargePulseMetaComponent {
     @Input() icon?: string;
     @Input({ required: true }) label: string;
     @Input({ required: true }) text: string;
+
+    @ContentChild("iconTemplate") iconTemplate: TemplateRef<unknown> | null = null;
 }
