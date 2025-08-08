@@ -19,11 +19,10 @@ import { SvgIconComponent } from 'angular-svg-icon';
       display: flex;
       justify-content: center;
       align-items: center;
-      width: 24px;
-      height: 24px;
     }
 
     button {
+      padding: 8px;
       cursor: pointer;
     }
   `,
