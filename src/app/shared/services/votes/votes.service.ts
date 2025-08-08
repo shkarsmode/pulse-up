@@ -8,6 +8,7 @@ import {
     takeWhile,
     BehaviorSubject,
     tap,
+    catchError,
 } from "rxjs";
 import { VoteService } from "../api/vote.service";
 import { IVote } from "../../interfaces/vote.interface";
@@ -48,6 +49,7 @@ export class VotesService {
         this.voteService
             .getMyVotes({ take, skip })
             .pipe(
+                catchError(() => of([])),
                 expand((batch) => {
                     if (batch.length < take) {
                         return of([]);

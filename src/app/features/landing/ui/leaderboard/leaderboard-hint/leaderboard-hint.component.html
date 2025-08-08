@@ -1,0 +1,20 @@
+@if (!!hint()) {
+    <div
+        class="leaderboard-hint"
+        [class.leaderboard-hint--active]="isActiveTimerange">
+        <div class="leaderboard-hint__text">
+            {{ hint() }}
+        </div>
+        @if (isActiveTimerange) {
+            <app-progress-bar
+                class="leaderboard-hint__progress"
+                [percentage]="elapsedTimePercentage" />
+        }
+        <app-link-button
+            class="leaderboard-action"
+            (handleClick)="openInfoPopup()">
+            <span class="visualy-hidden">More information</span>
+            <svg-icon src="assets/svg/info.svg" />
+        </app-link-button>
+    </div>
+}

@@ -11,7 +11,10 @@ import { IH3Votes } from "@/app/shared/interfaces/map/h3-votes.interface";
 import { IGetLeaderboardTopicsRequest } from "../../interfaces/topic/get-leaderboard-topics-request.interface";
 import { IGetLeaderboardTopicsResponse } from "../../interfaces/topic/get-leaderboard-topics-response.interface";
 
-type RequestParams = Record<string, string | number | boolean | readonly (string | number | boolean)[]>;
+type RequestParams = Record<
+    string,
+    string | number | boolean | readonly (string | number | boolean)[]
+>;
 
 @Injectable({
     providedIn: "root",
@@ -64,7 +67,7 @@ export class PulseService {
     ) {
         return this.http
             .get<ITopic[]>(`${this.apiUrl}/topics/my`, { params })
-            .pipe(map((pulses) => pulses.map((pulse) => this.syncPendingTopics(pulse))),);
+            .pipe(map((pulses) => pulses.map((pulse) => this.syncPendingTopics(pulse))));
     }
 
     public create(params: {
@@ -141,10 +144,9 @@ export class PulseService {
         resolution = 1,
     ): Observable<IH3Votes> {
         return this.http
-            .get<{ id: string; votes: number; children: any }[]>(
-                this.apiUrl +
-                    `/map?NE.latitude=${NElatitude}&NE.longitude=${NElongitude}&SW.latitude=${SWlatitude}&SW.longitude=${SWlongitude}&resolution=${resolution}`,
-            )
+            .get<
+                { id: string; votes: number; children: any }[]
+            >(this.apiUrl + `/map?NE.latitude=${NElatitude}&NE.longitude=${NElongitude}&SW.latitude=${SWlatitude}&SW.longitude=${SWlongitude}&resolution=${resolution}`)
             .pipe(
                 map((response) => {
                     const votesPerCells = response.reduce(
