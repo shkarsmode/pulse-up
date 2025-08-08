@@ -20,20 +20,17 @@
                 [text]="data.stats?.lastDayVotes || 0 | formatNumber"
                 [accent]="isVoteActive">
                 @if (isVoteActive) {
-                <div class="card-footer-icon-wrap card-footer-icon-wrap--active">
-                    <svg-icon
-                        appVawesAnimation
-                        src="assets/svg/logo/logo-v2.svg"
-                        ariaLabel="pulse icon"
-                        class="card-footer-icon" />
-                </div>
+                    <div class="card-footer-icon-wrap card-footer-icon-wrap--active">
+                        <svg-icon
+                            appVawesAnimation
+                            src="assets/svg/logo/logo-v2.svg"
+                            ariaLabel="pulse icon"
+                            class="card-footer-icon" />
+                    </div>
                 } @else {
-                <div class="card-footer-icon-wrap">
                     <svg-icon
-                        src="assets/svg/logo/logo-v2.svg"
-                        ariaLabel="pulse icon"
-                        class="card-footer-icon" />
-                </div>
+                        src="assets/svg/pulse.svg"
+                        ariaLabel="pulse icon" />
                 }
             </app-large-pulse-metric>
             <app-large-pulse-metric
