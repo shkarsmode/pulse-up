@@ -212,7 +212,7 @@ export class ProfileFormComponent implements OnInit {
                         this.form.markAsUntouched();
                         this.isPicturePristine = true;
                         this.notificationService.success("Profile updated successfully.");
-                        this.router.navigateByUrl("/" + AppRoutes.Profile.REVIEW);
+                        this.router.navigateByUrl("/" + AppRoutes.Profile.OVERVIEW);
                     },
                     error: () => {
                         this.submitting = false;
@@ -227,7 +227,7 @@ export class ProfileFormComponent implements OnInit {
     }
 
     public onCancel(): void {
-        this.router.navigateByUrl("/" + AppRoutes.Profile.REVIEW);
+        this.router.navigateByUrl("/" + AppRoutes.Profile.OVERVIEW);
     }
 
     public getErrorMessage(name: string): string | null {

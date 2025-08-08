@@ -43,11 +43,11 @@ import { LinkifyPipe } from "@/app/shared/pipes/linkify.pipe";
         FlatButtonDirective,
         LinkifyPipe,
     ],
-    templateUrl: "./review-profile.component.html",
-    styleUrl: "./review-profile.component.scss",
+    templateUrl: "./overview-profile.component.html",
+    styleUrl: "./overview-profile.component.scss",
     providers: [InfiniteLoaderService],
 })
-export class ReviewProfileComponent implements OnInit {
+export class OverviewProfileComponent implements OnInit {
     private readonly destroyRef = inject(DestroyRef);
     private readonly router = inject(Router);
     private readonly settingsService = inject(SettingsService);
