@@ -13,7 +13,7 @@ interface ILeaderboardFilter {
 })
 export class LeaderboardService {
     private pulseService = inject(PulseService);
-    
+
     public readonly startDate = new Date();
     public readonly startTimeframe: LeaderboardTimeframe = "Month";
 
@@ -22,20 +22,16 @@ export class LeaderboardService {
         date: this.startDate.toISOString(),
         timeframe: this.startTimeframe,
     });
-    private _isLoading = false;
-    private _isError = false;
-    
-    public get isLoading() {
-        return this._isLoading;
-    }
-    public get isError() {
-        return this._isError;
-    }
+    private isLoadingSubject = new BehaviorSubject<boolean>(false);
+    private isErrorSubject = new BehaviorSubject<boolean>(false);
+
+    public isLoading$ = this.isLoadingSubject.asObservable();
+    public isError$ = this.isErrorSubject.asObservable();
     public filter$ = this.filterSubject.asObservable();
     public topics$ = this.filter$.pipe(
         tap(() => {
-            this._isLoading = true;
-            this._isError = false;
+            this.isLoadingSubject.next(true);
+            this.isErrorSubject.next(false);
         }),
         switchMap((filter) => {
             return this.pulseService.getLeaderboardTopics({
@@ -46,12 +42,12 @@ export class LeaderboardService {
             });
         }),
         catchError(() => {
-            this._isError = true;
-            this._isLoading = false;
+            this.isErrorSubject.next(true);
+            this.isLoadingSubject.next(false);
             return of(null);
         }),
         tap(() => {
-            this._isLoading = false;
+            this.isLoadingSubject.next(false);
         }),
         map((data) => data?.results || null),
     );
