@@ -90,6 +90,6 @@ export class GetLocationPopupComponent implements OnInit {
         this.isError = true;
         return throwError(() => error);
       }),
-    );
+    ).subscribe();
   }
 }

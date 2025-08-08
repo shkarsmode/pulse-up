@@ -28,6 +28,9 @@ export class GeolocationService {
     }
 
     getCurrentGeolocation(options?: GetCurrentGeolocationOptions): Observable<IGeolocation> {
+        console.log("Geolocation service getCurrentGeolocation called", options);
+        console.log({ isSupported: this.isSupported, isDev: this.isDev });
+
         const { enableHighAccuracy = true } = options || {};
 
         if (!this.isSupported) {
@@ -47,9 +50,8 @@ export class GeolocationService {
         this.statusSubject.next("pending");
 
         const geolocationPosition$ = new Observable<IGeolocationPosition>((observer) => {
-
             if (this.isDev) {
-                const mockLocation = this.devSettingsService.mockLocation
+                const mockLocation = this.devSettingsService.mockLocation;
                 if (mockLocation) {
                     const position: IGeolocationPosition = {
                         coords: mockLocation,
@@ -62,6 +64,7 @@ export class GeolocationService {
 
             navigator.geolocation.getCurrentPosition(
                 (position) => {
+                    console.log({ position });
                     const accuracy = position.coords.accuracy;
                     if (enableHighAccuracy && accuracy > 100) {
                         this.statusSubject.next("error");
@@ -119,7 +122,7 @@ export class GeolocationService {
                     }),
                     catchError((error) => {
                         console.log("Geolocation service error:", error);
-                        
+
                         this.statusSubject.next("error");
                         return throwError(() => new Error("Failed to retrieve location details."));
                     }),
