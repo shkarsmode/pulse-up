@@ -30,7 +30,7 @@ export enum TopicRoutes {
 }
 
 enum ProfileRoutes {
-    REVIEW = 'profile/review',
+    OVERVIEW = 'profile/overview',
     EDIT = 'profile/edit',
     CHANGE_EMAIL = 'profile/change-email',
     VERIFY_EMAIL = 'profile/verify-email',

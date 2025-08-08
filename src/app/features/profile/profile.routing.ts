@@ -11,9 +11,9 @@ const routes: Routes = [
         component: ProfileComponent,
         children: [
             {
-                path: AppRoutes.Profile.REVIEW,
+                path: AppRoutes.Profile.OVERVIEW,
                 loadComponent: () =>
-                    import("./pages/review-profile/review-profile.component").then((m) => m.ReviewProfileComponent),
+                    import("./pages/overview-profile/overview-profile.component").then((m) => m.OverviewProfileComponent),
                 canActivate: [PrivatePageGuard, RequiredPersonalInformationGuard],
             },
             {
