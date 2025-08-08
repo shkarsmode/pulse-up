@@ -1,28 +1,55 @@
-import { Component, inject } from "@angular/core";
+import { Component, DestroyRef, inject } from "@angular/core";
 import { Router } from "@angular/router";
 import { SvgIconComponent } from "angular-svg-icon";
+import { catchError, of, tap } from "rxjs";
 import { AppRoutes } from "@/app/shared/enums/app-routes.enum";
 import { SignInFormService } from "@/app/shared/services/core/sign-in-form.service";
 import { LinkButtonComponent } from "@/app/shared/components/ui-kit/buttons/link-button/link-button.component";
 import { AuthFormComponent } from "@/app/shared/components/auth-form/auth-form.component";
 import { AuthDisclaimerComponent } from "@/app/shared/components/auth-disclaimer/auth-disclaimer.component";
 import { AuthLayoutComponent } from "../../ui/auth-layout/auth-layout.component";
-import { AnonymousSigninService } from "../../services/anonymous-signin.service";
+import { AuthenticationService } from "@/app/shared/services/api/authentication.service";
+import { NotificationService } from "@/app/shared/services/core/notification.service";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
+import { RouterLoadingIndicatorService } from "@/app/shared/components/router-loading-indicator/router-loading-indicator.service";
 
 @Component({
     selector: "app-sign-in",
     standalone: true,
-    imports: [SvgIconComponent, AuthLayoutComponent, LinkButtonComponent, AuthFormComponent, AuthDisclaimerComponent],
-    providers: [SignInFormService, AnonymousSigninService],
+    imports: [
+        SvgIconComponent,
+        AuthLayoutComponent,
+        LinkButtonComponent,
+        AuthFormComponent,
+        AuthDisclaimerComponent,
+    ],
+    providers: [SignInFormService],
     templateUrl: "./sign-in.component.html",
     styleUrl: "./sign-in.component.scss",
 })
 export class SignInComponent {
     private router = inject(Router);
-    private anonymousSigninService = inject(AnonymousSigninService);
+    private destroyRef = inject(DestroyRef);
+    private authenticationService = inject(AuthenticationService);
+    private notificationService = inject(NotificationService);
+    private loadingService = inject(RouterLoadingIndicatorService);
 
     public onClickGuest() {
-        this.anonymousSigninService.loginAsAnonymous();
+        this.loadingService.setLoading(true);
+        this.authenticationService
+            .loginAsAnonymousThroughTheFirebase()
+            .pipe(
+                catchError(() => {
+                    this.notificationService.error("Failed to sign in as guest");
+                    return of(null);
+                }),
+                tap(() => {
+                    this.router.navigate([AppRoutes.Landing.MAP]);
+                    this.loadingService.setLoading(false);
+                }),
+                takeUntilDestroyed(this.destroyRef),
+            )
+            .subscribe();
     }
 
     public navigateToConfirmPage() {
