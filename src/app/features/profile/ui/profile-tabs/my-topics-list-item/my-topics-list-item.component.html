@@ -9,7 +9,7 @@
             {{ data.title }}
         </app-large-pulse-title>
         <app-large-pulse-meta
-            [text]="'Created: ' + (data.createdAt | date : 'MMM d, y') || ''"
+            [text]="'Created: ' + (data.createdAt | date: 'MMM d, y') || ''"
             class="card-heading-meta"
             label="created at" />
     </div>
@@ -23,15 +23,19 @@
             <app-large-pulse-metric
                 [text]="data.stats?.lastDayVotes || 0 | formatNumber"
                 [accent]="isVoteActive">
-                <div
-                    class="card-footer-icon-wrap"
-                    [class.card-footer-icon-wrap--active]="isVoteActive">
+                @if (isVoteActive) {
+                    <div class="card-footer-icon-wrap card-footer-icon-wrap--active">
+                        <svg-icon
+                            appVawesAnimation
+                            src="assets/svg/logo/logo-v2.svg"
+                            ariaLabel="pulse icon"
+                            class="card-footer-icon" />
+                    </div>
+                } @else {
                     <svg-icon
-                        appVawesAnimation
-                        src="assets/svg/logo/logo-v2.svg"
-                        ariaLabel="pulse icon"
-                        class="card-footer-icon" />
-                </div>
+                        src="assets/svg/pulse.svg"
+                        ariaLabel="pulse icon" />
+                }
             </app-large-pulse-metric>
             <app-large-pulse-metric
                 [text]="data.stats?.totalVotes || 0 | formatNumber"
