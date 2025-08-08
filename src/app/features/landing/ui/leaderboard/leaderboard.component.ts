@@ -9,6 +9,7 @@ import { LeaderboardTimeframe } from "../../interface/leaderboard-timeframe.inte
 import { CustomDatepickerComponent } from "../datepicker/datepicker.component";
 import { LeaderboardListItemComponent } from "./leaderboard-list-item/leaderboard-list-item.component";
 import { LeaderboardHintComponent } from "./leaderboard-hint/leaderboard-hint.component";
+import { ITopic } from "@/app/shared/interfaces";
 
 const dateFormats: Record<LeaderboardTimeframe, string> = {
     Day: "MMMM d, y",
@@ -41,19 +42,35 @@ export class LeaderboardComponent {
     private isErrorTopics$ = this.leaderboardService.isError$;
     public selectedDate: Date | null = this.leaderboardService.startDate;
     public selectedTimeframe = this.leaderboardService.startTimeframe;
-    public topics$ = this.leaderboardService.topics$;
+    public topics$ = this.leaderboardService.topics$.pipe(
+        map(
+            () =>
+                [] as {
+                    topic: ITopic;
+                    votes: number;
+                    uniqueUsers: number;
+                    lastVoteTime: number;
+                }[],
+        ),
+    );
     public isSpinnerVisible$ = combineLatest([this.isLoadingTopics$, this.isErrorTopics$]).pipe(
         map(([isLoading, isError]) => isLoading && !isError),
     );
-    public isContentVisible$ = combineLatest([this.isLoadingTopics$, this.isErrorTopics$]).pipe(
-        map(([isLoading, isError]) => !isLoading && !isError),
+    public isContentVisible$ = combineLatest([
+        this.isLoadingTopics$,
+        this.isErrorTopics$,
+        this.topics$,
+    ]).pipe(
+        map(
+            ([isLoading, isError, topics]) => !isLoading && !isError && topics && topics.length > 0,
+        ),
     );
     public isErrorVisible$ = combineLatest([this.isLoadingTopics$, this.isErrorTopics$]).pipe(
         map(([isLoading, isError]) => !isLoading && isError),
     );
     public isEmpty$ = combineLatest([this.topics$, this.isLoadingTopics$]).pipe(
         map(([topics, isLoading]) => !isLoading && topics && topics.length === 0),
-    )
+    );
     public datepickerButtonText$ = this.leaderboardService.filter$.pipe(
         map(({ date, timeframe }) => {
             switch (timeframe) {

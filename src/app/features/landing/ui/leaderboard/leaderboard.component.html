@@ -15,24 +15,23 @@
     <app-spinner class="leaderboard__spinner"></app-spinner>
 }
 
-@if ((isContentVisible$ | async) && (isEmpty$ | async) === false) {
+@if ((isContentVisible$ | async)) {
     <app-leaderboard-hint
         [selectedDate]="selectedDate"
         [selectedTimeframe]="selectedTimeframe" />
+    <ul class="leaderboard__list">
+        @for (topicData of topics$ | async; track topicData.topic.id) {
+            <li>
+                <app-leaderboard-list-item
+                    [topic]="topicData.topic"
+                    [votes]="topicData.votes"
+                    [users]="topicData.uniqueUsers"
+                    [selectedDate]="selectedDate"
+                    [selectedTimeframe]="selectedTimeframe" />
+            </li>
+        }
+    </ul>
 }
-
-<ul class="leaderboard__list">
-    @for (topicData of topics$ | async; track topicData.topic.id) {
-        <li *ngIf="(isContentVisible$ | async) && (isEmpty$ | async) === false">
-            <app-leaderboard-list-item
-                [topic]="topicData.topic"
-                [votes]="topicData.votes"
-                [users]="topicData.uniqueUsers"
-                [selectedDate]="selectedDate"
-                [selectedTimeframe]="selectedTimeframe" />
-        </li>
-    }
-</ul>
 
 @if (isEmpty$ | async) {
     <div class="info-message">No topics found for the selected time range.</div>
