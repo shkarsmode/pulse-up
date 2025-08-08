@@ -38,7 +38,7 @@
             </li>
             <li>
                 <a
-                    [routerLink]="'/' + AppRoutes.Profile.OVERVIEW"
+                    [routerLink]="'/' + (isAuthenticated ? AppRoutes.Profile.OVERVIEW : AppRoutes.Auth.SIGN_IN)"
                     routerLinkActive="active">
                     <mat-icon
                         aria-hidden="false"
@@ -126,13 +126,23 @@
                             About
                         </a>
                     </li>
-                    <li>
-                        <a
-                            [routerLink]="'/' + AppRoutes.Profile.OVERVIEW"
-                            routerLinkActive="active">
-                            Profile
-                        </a>
-                    </li>
+                    @if (isAuthenticated) {
+                        <li>
+                            <a
+                                [routerLink]="'/' + AppRoutes.Profile.OVERVIEW"
+                                routerLinkActive="active">
+                                Profile
+                            </a>
+                        </li>
+                    } @else {
+                        <li>
+                            <a
+                                [routerLink]="'/' + AppRoutes.Auth.SIGN_IN"
+                                routerLinkActive="active">
+                                Login
+                            </a>
+                        </li>
+                    }
                     <li>
                         <a
                             [routerLink]="'/' + AppRoutes.Community.TERMS"
