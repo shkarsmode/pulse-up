@@ -2,17 +2,18 @@ import { Component, DestroyRef, EventEmitter, inject, Output, ViewChild, OnInit 
 import { FormControl, ReactiveFormsModule } from "@angular/forms";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { MatSelect } from "@angular/material/select";
+import { CommonModule } from "@angular/common";
+import { MatFormField } from "@angular/material/form-field";
+import { MatOption } from "@angular/material/core";
 import { ReplaySubject, take, tap } from "rxjs";
 import { NgxMatSelectSearchModule } from "ngx-mat-select-search";
-import { MaterialModule } from "../../modules/material.module";
 import { ICategory } from "../../interfaces/category.interface";
 import { PulseService } from "../../services/api/pulse.service";
-import { CommonModule } from "@angular/common";
 
 @Component({
     selector: "app-category-filter-select",
     standalone: true,
-    imports: [CommonModule, NgxMatSelectSearchModule, MaterialModule, ReactiveFormsModule],
+    imports: [CommonModule, NgxMatSelectSearchModule, ReactiveFormsModule, MatFormField, MatOption],
     templateUrl: "./category-filter-select.component.html",
     styleUrl: "./category-filter-select.component.scss",
 })

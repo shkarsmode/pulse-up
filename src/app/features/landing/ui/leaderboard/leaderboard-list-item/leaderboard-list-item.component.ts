@@ -14,7 +14,6 @@ import { VoteUtils } from "@/app/shared/helpers/vote-utils";
 import { SettingsService } from "@/app/shared/services/api/settings.service";
 import { AngularSvgIconModule } from "angular-svg-icon";
 import { WaveAnimationDirective } from "@/app/shared/directives/wave-animation/wave-animation.directive";
-import { MaterialModule } from "@/app/shared/modules/material.module";
 
 @Component({
     selector: "app-leaderboard-list-item",
@@ -28,7 +27,6 @@ import { MaterialModule } from "@/app/shared/modules/material.module";
         FormatNumberPipe,
         AngularSvgIconModule,
         WaveAnimationDirective,
-        MaterialModule,
     ],
     templateUrl: "./leaderboard-list-item.component.html",
     styleUrl: "./leaderboard-list-item.component.scss",
