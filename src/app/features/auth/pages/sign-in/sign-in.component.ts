@@ -2,6 +2,7 @@ import { Component, DestroyRef, inject } from "@angular/core";
 import { Router } from "@angular/router";
 import { SvgIconComponent } from "angular-svg-icon";
 import { catchError, of, tap } from "rxjs";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { AppRoutes } from "@/app/shared/enums/app-routes.enum";
 import { SignInFormService } from "@/app/shared/services/core/sign-in-form.service";
 import { LinkButtonComponent } from "@/app/shared/components/ui-kit/buttons/link-button/link-button.component";
@@ -10,7 +11,6 @@ import { AuthDisclaimerComponent } from "@/app/shared/components/auth-disclaimer
 import { AuthLayoutComponent } from "../../ui/auth-layout/auth-layout.component";
 import { AuthenticationService } from "@/app/shared/services/api/authentication.service";
 import { NotificationService } from "@/app/shared/services/core/notification.service";
-import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { RouterLoadingIndicatorService } from "@/app/shared/components/router-loading-indicator/router-loading-indicator.service";
 
 @Component({

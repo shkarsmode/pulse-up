@@ -9,6 +9,7 @@ import { MapMarkersLayerComponent } from "./map-markers-layer/map-markers-layer.
 import { IMapMarker } from "../../interfaces/map/map-marker.interface";
 import { IMapClickEvent } from "@/app/features/landing/helpers/interfaces/map-click-event.interface";
 import { MapWeightsLayerComponent } from "./map-weights-layer/map-weights-layer.component";
+import { environment } from "@/environments/environment";
 
 interface MarkersSettings {
     enabled?: boolean;
@@ -62,6 +63,7 @@ export class MapComponent {
     }
 
     map: mapboxgl.Map | null = null;
+    mapboxAccessToken = environment.mapboxToken;
 
     onMapLoad({ target: map }: mapboxgl.MapboxEvent<undefined> & mapboxgl.EventData) {
         this.map = map;
