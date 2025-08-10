@@ -9,7 +9,6 @@ import {
 import { filter, map, Observable } from "rxjs";
 import { AppRoutes } from "../../enums/app-routes.enum";
 import { AuthenticationService } from "../../services/api/authentication.service";
-import { LoadingService } from "../../services/core/loading.service";
 import { AppInitializerService } from "../../services/core/app-initializer.service";
 
 @Injectable({
@@ -17,7 +16,6 @@ import { AppInitializerService } from "../../services/core/app-initializer.servi
 })
 export class PrivatePageGuard implements CanActivate {
     private readonly router: Router = inject(Router);
-    private readonly loadingService: LoadingService = inject(LoadingService);
     private readonly appInitializerService: AppInitializerService = inject(AppInitializerService);
     private readonly authenticationService: AuthenticationService = inject(AuthenticationService);
 
@@ -30,7 +28,6 @@ export class PrivatePageGuard implements CanActivate {
         const userToken = this.authenticationService.userTokenValue;
 
         if (userToken) {
-            this.loadingService.isLoading = true;
             this.appInitializerService.loadInitialData();
             return this.appInitializerService.initialized$.pipe(
                 filter((initialized) => initialized),

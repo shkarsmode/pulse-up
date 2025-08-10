@@ -1,4 +1,5 @@
 import { Component, inject, OnDestroy, OnInit } from "@angular/core";
+import { CommonModule } from "@angular/common";
 import { Router } from "@angular/router";
 import { BehaviorSubject, catchError, map, Subject, take, takeUntil, tap, throwError } from "rxjs";
 import mapboxgl from "mapbox-gl";
@@ -10,11 +11,17 @@ import { MapUtils } from "@/app/shared/services/map/map-utils.service";
 import { GeolocationService } from "@/app/shared/services/core/geolocation.service";
 import { TopicLocation } from "../../interfaces/topic-location.interface";
 import { UnavailableGeolocationPopupComponent } from "../../ui/unavailable-geolocation-popup/unavailable-geolocation-popup.component";
+import { MapComponent } from "@/app/shared/components/map/map.component";
+import { PrimaryButtonComponent } from "@/app/shared/components/ui-kit/buttons/primary-button/primary-button.component";
+import { AngularSvgIconModule } from "angular-svg-icon";
+import { SpinnerComponent } from "@/app/shared/components/ui-kit/spinner/spinner.component";
 
 @Component({
     selector: "app-pick-location",
     templateUrl: "./pick-location.component.html",
     styleUrl: "./pick-location.component.scss",
+    standalone: true,
+    imports: [CommonModule, MapComponent, PrimaryButtonComponent, AngularSvgIconModule, SpinnerComponent],
 })
 export class PickLocationComponent implements OnInit, OnDestroy {
     private readonly router = inject(Router);

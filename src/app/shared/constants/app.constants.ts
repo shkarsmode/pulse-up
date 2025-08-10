@@ -1,3 +1,5 @@
+import mapboxgl from "mapbox-gl";
+
 const PHONE_LINE_TYPES = {
     landline: "landline",
     mobile: "mobile",

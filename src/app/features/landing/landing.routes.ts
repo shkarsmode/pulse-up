@@ -1,5 +1,5 @@
 import { Routes } from "@angular/router";
-// import { LandingComponent } from "./landing.component";
+import { LandingComponent } from "./landing.component";
 import { AppRoutes } from "@/app/shared/enums/app-routes.enum";
 import { HeaderGuard } from "@/app/shared/components/header/header.guard";
 import { PublicPageGuard } from "@/app/shared/helpers/guards/public-page.guard";
@@ -14,7 +14,7 @@ const Landing = AppRoutes.Landing;
 export const LANDING_ROUTES: Routes = [
     {
         path: "",
-        // component: LandingComponent,
+        component: LandingComponent,
         children: [
             {
                 path: Landing.HOME,

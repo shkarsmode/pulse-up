@@ -1,4 +1,5 @@
 import { Component } from "@angular/core";
+import { RouterOutlet } from "@angular/router";
 
 @Component({
     selector: "app-auth",
@@ -8,5 +9,7 @@ import { Component } from "@angular/core";
             <div id="recaptcha-container"></div>
         </div>
     `,
+    standalone: true,
+    imports: [RouterOutlet],
 })
 export class AuthComponent { }

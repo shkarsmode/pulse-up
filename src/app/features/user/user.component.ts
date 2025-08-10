@@ -1,6 +1,8 @@
 import { Component, DestroyRef, inject, OnInit } from "@angular/core";
-import { ActivatedRoute } from "@angular/router";
+import { ActivatedRoute, RouterOutlet } from "@angular/router";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
+import { HeaderComponent } from "@/app/shared/components/header/header.component";
+import { FooterComponent } from "@/app/shared/components/footer/footer.component";
 
 @Component({
     selector: "app-user",
@@ -26,6 +28,8 @@ import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 
         @media screen and (max-width: 650px) {.user-page { padding: 24px 20px }}
     `,
+    standalone: true,
+    imports: [RouterOutlet, HeaderComponent, FooterComponent],
 })
 export class UserComponent implements OnInit {
     public isToShowFooter = true;
