@@ -4,6 +4,7 @@ import { Router, RouterModule } from "@angular/router";
 import { AngularSvgIconModule } from "angular-svg-icon";
 import { MatMenuModule } from "@angular/material/menu";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
+import { MatIcon } from "@angular/material/icon";
 import { filter, map, switchMap, tap } from "rxjs";
 import { UserAvatarComponent } from "../../../landing/ui/user-avatar/user-avatar.component";
 import { PrimaryButtonComponent } from "@/app/shared/components/ui-kit/buttons/primary-button/primary-button.component";
@@ -13,7 +14,6 @@ import { ProfileService } from "@/app/shared/services/profile/profile.service";
 import { ProfileTabsComponent } from "../../ui/profile-tabs/profile-tabs.component";
 import { MenuComponent } from "@/app/shared/components/ui-kit/menu/menu.component";
 import { IconButtonComponent } from "@/app/shared/components/ui-kit/buttons/icon-button/icon-button.component";
-import { MaterialModule } from "@/app/shared/modules/material.module";
 import { AuthenticationService } from "@/app/shared/services/api/authentication.service";
 import { RouterLoadingIndicatorService } from "@/app/shared/components/router-loading-indicator/router-loading-indicator.service";
 import { CopyButtonComponent } from "@/app/shared/components/ui-kit/buttons/copy-button/copy-button.component";
@@ -36,12 +36,12 @@ import { LinkifyPipe } from "@/app/shared/pipes/linkify.pipe";
         MenuComponent,
         IconButtonComponent,
         AngularSvgIconModule,
-        MaterialModule,
         CopyButtonComponent,
         SocialsButtonComponent,
         QrcodeButtonComponent,
         FlatButtonDirective,
         LinkifyPipe,
+        MatIcon,
     ],
     templateUrl: "./overview-profile.component.html",
     styleUrl: "./overview-profile.component.scss",

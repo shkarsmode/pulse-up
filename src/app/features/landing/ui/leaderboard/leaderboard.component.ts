@@ -4,7 +4,6 @@ import { AngularSvgIconModule } from "angular-svg-icon";
 import { combineLatest, map } from "rxjs";
 import { LeaderboardService } from "../../services/leaderboard.service";
 import { SpinnerComponent } from "@/app/shared/components/ui-kit/spinner/spinner.component";
-import { MaterialModule } from "@/app/shared/modules/material.module";
 import { LeaderboardTimeframe } from "../../interface/leaderboard-timeframe.interface";
 import { CustomDatepickerComponent } from "../datepicker/datepicker.component";
 import { LeaderboardListItemComponent } from "./leaderboard-list-item/leaderboard-list-item.component";
@@ -22,7 +21,6 @@ const dateFormats: Record<LeaderboardTimeframe, string> = {
     imports: [
         CommonModule,
         SpinnerComponent,
-        MaterialModule,
         AngularSvgIconModule,
         CustomDatepickerComponent,
         LeaderboardListItemComponent,

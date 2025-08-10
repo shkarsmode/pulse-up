@@ -2,6 +2,7 @@
     class="map-container"
     [class.map-container_rounded]="isRounded"
     [class.map-container_preview]="isPreview"
+    [accessToken]="mapboxAccessToken"
     [style]="mapStylesUrl"
     [center]="center"
     [interactive]="!isPreview"

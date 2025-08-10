@@ -1,5 +1,6 @@
 import { Component, EventEmitter, inject, Output, OnInit } from "@angular/core";
-import { FormGroup } from "@angular/forms";
+import { FormGroup, ReactiveFormsModule } from "@angular/forms";
+import { CommonModule } from "@angular/common";
 import { MatDialog } from "@angular/material/dialog";
 import { map, Observable, take } from "rxjs";
 import { AppRoutes } from "@/app/shared/enums/app-routes.enum";
@@ -14,6 +15,14 @@ import {
 import { CropResult } from "../../interfaces/crop-result.interface";
 import { NotificationService } from "@/app/shared/services/core/notification.service";
 import { TopicLocationInfoPopupComponent } from "../topic-location-info-popup/topic-location-info-popup.component";
+import { PicturePickerComponent } from "@/app/shared/components/ui-kit/picture-picker/picture-picker.component";
+import { TopicInfoComponent } from "./topic-info/topic-info.component";
+import { InputComponent } from "@/app/shared/components/ui-kit/input/input.component";
+import { SelectComponent } from "@/app/shared/components/ui-kit/select/select.component";
+import { TopicDescriptionComponent } from "./topic-description/topic-description.component";
+import { ChipsInputComponent } from "@/app/shared/components/ui-kit/chips-input/chips-input.component";
+import { LocationPickerComponent } from "./location-picker/location-picker.component";
+import { PrimaryButtonComponent } from "@/app/shared/components/ui-kit/buttons/primary-button/primary-button.component";
 
 interface Topic {
     name: string;
@@ -25,6 +34,19 @@ interface Topic {
     selector: "app-topic-form",
     templateUrl: "./topic-form.component.html",
     styleUrl: "./topic-form.component.scss",
+    standalone: true,
+    imports: [
+        CommonModule,
+        ReactiveFormsModule,
+        PicturePickerComponent,
+        TopicInfoComponent,
+        InputComponent,
+        SelectComponent,
+        TopicDescriptionComponent,
+        ChipsInputComponent,
+        LocationPickerComponent,
+        PrimaryButtonComponent,
+    ],
 })
 export class TopicFormComponent implements OnInit {
     @Output() public submit = new EventEmitter<void>();
@@ -84,7 +106,7 @@ export class TopicFormComponent implements OnInit {
                     },
                 },
             );
-            dialogRef.afterClosed().pipe(take(1)).subscribe(this.onCroppedImage);
+            dialogRef.afterClosed().pipe(take(1)).subscribe((result) => this.onCroppedImage(result));
         }
     }
 

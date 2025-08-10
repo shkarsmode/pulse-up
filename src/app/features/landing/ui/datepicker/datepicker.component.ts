@@ -15,6 +15,7 @@ import { CommonModule } from "@angular/common";
 import { TemplatePortal } from "@angular/cdk/portal";
 import { Overlay, OverlayRef } from "@angular/cdk/overlay";
 import { DateAdapter, provideNativeDateAdapter } from "@angular/material/core";
+import { MatIcon } from "@angular/material/icon";
 import {
     DateRange,
     MAT_DATE_RANGE_SELECTION_STRATEGY,
@@ -25,7 +26,6 @@ import {
 import { CalendarHeaderComponent } from "./calendar-header/calendar-header.component";
 import { LeaderboardTimeframe } from "../../interface/leaderboard-timeframe.interface";
 import { PrimaryButtonComponent } from "@/app/shared/components/ui-kit/buttons/primary-button/primary-button.component";
-import { MaterialModule } from "@/app/shared/modules/material.module";
 
 @Injectable()
 export class WeekRangeSelectionStrategy<D = Date> implements MatDateRangeSelectionStrategy<D> {
@@ -56,12 +56,12 @@ export class WeekRangeSelectionStrategy<D = Date> implements MatDateRangeSelecti
     styleUrls: ["./datepicker.component.scss"],
     standalone: true,
     imports: [
-        CommonModule,
-        MatCalendar,
-        CalendarHeaderComponent,
-        PrimaryButtonComponent,
-        MaterialModule,
-    ],
+    CommonModule,
+    MatCalendar,
+    CalendarHeaderComponent,
+    PrimaryButtonComponent,
+    MatIcon
+],
     providers: [
         {
             provide: MAT_DATE_RANGE_SELECTION_STRATEGY,

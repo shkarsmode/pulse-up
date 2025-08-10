@@ -1,11 +1,13 @@
 import { Component, inject } from "@angular/core";
-import { ActivatedRoute, Router } from "@angular/router";
+import { ActivatedRoute, Router, RouterOutlet } from "@angular/router";
 import { MetadataService } from "./shared/services/core/metadata.service";
 import { environment } from "@/environments/environment";
 
 @Component({
     selector: "app-root",
     templateUrl: "./app.component.html",
+    standalone: true,
+    imports: [RouterOutlet],
 })
 export class AppComponent {
     private router: Router = inject(Router);

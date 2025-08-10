@@ -18,14 +18,14 @@ import { GlobeSpinnerService } from "@/app/shared/services/map/globe-spinner.ser
     styleUrls: ["./main-hero.component.scss"],
     standalone: true,
     imports: [
-    CommonModule,
-    RouterModule,
-    PrimaryButtonComponent,
-    SecondaryButtonComponent,
-    MapComponent,
-    MapHexagonsLayerComponent,
-    MapHeatmapLayerComponent
-],
+        CommonModule,
+        RouterModule,
+        PrimaryButtonComponent,
+        SecondaryButtonComponent,
+        MapComponent,
+        MapHexagonsLayerComponent,
+        MapHeatmapLayerComponent,
+    ],
 })
 export class MainHeroComponent implements AfterViewInit {
     private router = inject(Router);

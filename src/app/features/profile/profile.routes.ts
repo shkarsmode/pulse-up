@@ -1,53 +1,52 @@
-import { NgModule } from "@angular/core";
-import { RouterModule, Routes } from "@angular/router";
-import { AppRoutes } from "@/app/shared/enums/app-routes.enum";
+
+import { Routes } from "@angular/router";
 import { PrivatePageGuard } from "@/app/shared/helpers/guards/private-page.guard";
 import { ProfileComponent } from "./profile.component";
 import { RequiredPersonalInformationGuard } from "./guards/required-personal-information.guard";
 
-const routes: Routes = [
+export const PROFILE_ROUTES: Routes = [
     {
         path: "",
         component: ProfileComponent,
         children: [
             {
-                path: AppRoutes.Profile.OVERVIEW,
+                path: "overview",
                 loadComponent: () =>
                     import("./pages/overview-profile/overview-profile.component").then((m) => m.OverviewProfileComponent),
                 canActivate: [PrivatePageGuard, RequiredPersonalInformationGuard],
             },
             {
-                path: AppRoutes.Profile.EDIT,
+                path: "edit",
                 loadComponent: () =>
                     import("./pages/edit-profile/edit-profile.component").then((m) => m.EditProfileComponent),
                 canActivate: [PrivatePageGuard],
             },
             {
-                path: AppRoutes.Profile.CHANGE_EMAIL,
+                path: "change-email",
                 loadComponent: () =>
                     import("./pages/change-email/change-email.component").then((m) => m.ChangeEmailComponent),
                 canActivate: [PrivatePageGuard],
             },
             {
-                path: AppRoutes.Profile.VERIFY_EMAIL,
+                path: "verify-email",
                 loadComponent: () =>
                     import("./pages/verify-email/verify-email.component").then((m) => m.VerifyEmailComponent),
                 canActivate: [PrivatePageGuard],
             },
             {
-                path: AppRoutes.Profile.CHANGE_PHONE_NUMBER,
+                path: "change-phone-number",
                 loadComponent: () =>
                     import("./pages/change-phone-number/change-phone-number.component").then((m) => m.ChangePhoneNumberComponent),
                 canActivate: [PrivatePageGuard],
             },
             {
-                path: AppRoutes.Profile.CONFIRM_PHONE_NUMBER,
+                path: "confirm-phone-number",
                 loadComponent: () =>
                     import("./pages/confirm-phone-number/confirm-phone-number.component").then((m) => m.ConfirmPhoneNumberComponent),
                 canActivate: [PrivatePageGuard],
             },
             {
-                path: AppRoutes.Profile.DELETE_ACCOUNT,
+                path: "delete-account",
                 loadComponent: () =>
                     import("./pages/delete-account/delete-account.component").then((m) => m.DeleteAccountComponent),
                 canActivate: [PrivatePageGuard],
@@ -55,8 +54,3 @@ const routes: Routes = [
         ],
     },
 ];
-@NgModule({
-    imports: [RouterModule.forChild(routes)],
-    exports: [RouterModule],
-})
-export class ProfileRoutingModule {}

@@ -1,34 +1,30 @@
-import { NgModule } from "@angular/core";
-import { RouterModule, Routes } from "@angular/router";
-import { HowItWorksComponent } from "./how-it-works/how-it-works.component";
-import { SubmittedComponent } from "./submitted/submitted.component";
-import { SuggestComponent } from "./suggest/suggest.component";
+import { Routes } from "@angular/router";
 import { TopicComponent } from "./topic.component";
 import { PrivatePageGuard } from "@/app/shared/helpers/guards/private-page.guard";
 import { SuggestGuard } from "../guards/suggest.guard";
-import { PickLocationComponent } from "./pick-location/pick-location.component";
 import { HowItWorksGuard } from "../guards/how-it-works.guard";
-import { TopicPreviewComponent } from "./topic-preview/topic-preview.component";
 import { CreateTopicGuard } from "../guards/create-topic.guard";
 import { PreviewTopicCanActiveGuard } from "../guards/preview-topic-can-active.guard";
 import { PreviewTopicCanDeactiveGuard } from "../guards/preview-topic-can-deactive.guard";
 import { RequiredPersonalInformationGuard } from "../guards/required-personal-information.guard";
 import { ActiveTopicsLimitGuard } from "../guards/active-topics-limit.guard";
 
-const routes: Routes = [
+export const TOPIC_ROUTES: Routes = [
     {
         path: "",
         component: TopicComponent,
         children: [
             {
                 path: "how-it-works",
-                component: HowItWorksComponent,
+                loadComponent: () =>
+                    import("./how-it-works/how-it-works.component").then((m) => m.HowItWorksComponent),
                 canActivate: [PrivatePageGuard, RequiredPersonalInformationGuard],
                 canDeactivate: [HowItWorksGuard],
             },
             {
                 path: "suggest",
-                component: SuggestComponent,
+                loadComponent: () =>
+                    import("./suggest/suggest.component").then((m) => m.SuggestComponent),
                 canActivate: [
                     PrivatePageGuard,
                     SuggestGuard,
@@ -39,26 +35,23 @@ const routes: Routes = [
             },
             {
                 path: "preview",
-                component: TopicPreviewComponent,
+                loadComponent: () =>
+                    import("./topic-preview/topic-preview.component").then((m) => m.TopicPreviewComponent),
                 canActivate: [PrivatePageGuard, PreviewTopicCanActiveGuard],
                 canDeactivate: [PreviewTopicCanDeactiveGuard],
             },
             {
                 path: "submitted",
-                component: SubmittedComponent,
+                loadComponent: () =>
+                    import("./submitted/submitted.component").then((m) => m.SubmittedComponent),
                 canActivate: [PrivatePageGuard],
             },
             {
                 path: "pick-location",
-                component: PickLocationComponent,
+                loadComponent: () =>
+                    import("./pick-location/pick-location.component").then((m) => m.PickLocationComponent),
                 canActivate: [PrivatePageGuard],
             },
         ],
     },
 ];
-
-@NgModule({
-    imports: [RouterModule.forChild(routes)],
-    exports: [RouterModule],
-})
-export class TopicRoutingModule {}

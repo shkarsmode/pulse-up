@@ -3,8 +3,8 @@ import { FormBuilder, FormGroup, ReactiveFormsModule } from "@angular/forms";
 import { CommonModule } from "@angular/common";
 import { MatExpansionModule } from "@angular/material/expansion";
 import { MatButtonModule } from "@angular/material/button";
+import { MatFormField, MatLabel } from "@angular/material/form-field";
 import { DevSettingsService } from "../../services/core/dev-settings.service";
-import { MaterialModule } from "../../modules/material.module";
 
 @Component({
     selector: "app-dev-menu",
@@ -14,7 +14,8 @@ import { MaterialModule } from "../../modules/material.module";
         ReactiveFormsModule,
         MatExpansionModule,
         MatButtonModule,
-        MaterialModule,
+        MatFormField,
+        MatLabel,
     ],
     templateUrl: "./dev-menu.component.html",
     styleUrls: ["./dev-menu.component.scss"],

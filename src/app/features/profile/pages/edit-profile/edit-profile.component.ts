@@ -8,7 +8,6 @@ import { ProfileFormComponent } from "../../ui/profile-form/profile-form.compone
 import { ProfileLayoutComponent } from "../../ui/profile-layout/profile-layout.component";
 import { ProfileService } from "@/app/shared/services/profile/profile.service";
 import { ProfileHeaderComponent } from "../../ui/profile-header/profile-header.component";
-import { MaterialModule } from "@/app/shared/modules/material.module";
 
 @Component({
     selector: "app-edit-profile",
@@ -21,7 +20,6 @@ import { MaterialModule } from "@/app/shared/modules/material.module";
         AngularSvgIconModule,
         MatMenuModule,
         MatButtonModule,
-        MaterialModule,
     ],
     templateUrl: "./edit-profile.component.html",
     styleUrl: "./edit-profile.component.scss",
