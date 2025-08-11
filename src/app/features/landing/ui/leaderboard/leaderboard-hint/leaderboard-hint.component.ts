@@ -10,7 +10,7 @@ import {
 } from "@angular/core";
 import { AngularSvgIconModule } from "angular-svg-icon";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
-import { tap } from "rxjs";
+import { interval, tap } from "rxjs";
 import { LeaderboardService } from "../../../services/leaderboard.service";
 import { LeaderboardTimeframe } from "../../../interface/leaderboard-timeframe.interface";
 import { getRemainingTimeToEnd } from "../../../helpers/getRemainingTimeToEnd";
@@ -39,7 +39,7 @@ export class LeaderboardHintComponent implements OnInit {
     private leaderboardService = inject(LeaderboardService);
 
     public isVisible = signal(false);
-    public remainingTime = 0;
+    public remainingTime = signal(0);
     public elapsedTimePercentage = 0;
     public labels: Record<LeaderboardTimeframe, string> = {
         Day: "today",
@@ -77,11 +77,13 @@ export class LeaderboardHintComponent implements OnInit {
         const days = Math.floor(minutesTotal / (60 * 24));
         const hours = Math.floor((minutesTotal % (60 * 24)) / 60);
         const minutes = minutesTotal % 60;
+        const seconds = Math.floor((ms % (1000 * 60)) / 1000);
 
         const parts: string[] = [];
         if (days) parts.push(`${days} days`);
         if (hours) parts.push(`${hours}h`);
-        if (minutes && this.selectedTimeframe !== "Month") parts.push(`${minutes}m`);
+        if (this.selectedTimeframe !== "Month") parts.push(`${minutes}m`);
+        if (this.selectedTimeframe !== "Month") parts.push(`${seconds}s`);
 
         return parts.length > 0 ? parts.join(" ") : "0h 0m";
     }
@@ -89,11 +91,19 @@ export class LeaderboardHintComponent implements OnInit {
 
     private updateRemainingTime() {
         if (this.timeframeStatus !== "Active" || !this.selectedDate) {
-            this.remainingTime = 0;
+            this.remainingTime.set(0);
             return;
         }
 
-        this.remainingTime = getRemainingTimeToEnd(this.selectedDate, this.selectedTimeframe);
+        this.remainingTime.set(getRemainingTimeToEnd(this.selectedDate, this.selectedTimeframe));
+        interval(1000)
+            .pipe(
+                tap(() => {
+                    this.remainingTime.set(this.remainingTime() - 1000);
+                }),
+                takeUntilDestroyed(this.destroyRef),
+            )
+            .subscribe();
     }
 
     private updateElapsedTimePercentage() {
