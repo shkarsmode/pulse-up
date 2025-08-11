@@ -11,7 +11,7 @@ import { AngularSvgIconModule } from "angular-svg-icon";
 })
 export class LargePulseMetaComponent {
     @Input() icon?: string;
-    @Input({ required: true }) label: string;
+    @Input() label?: string;
     @Input({ required: true }) text: string;
 
     @ContentChild("iconTemplate") iconTemplate: TemplateRef<unknown> | null = null;

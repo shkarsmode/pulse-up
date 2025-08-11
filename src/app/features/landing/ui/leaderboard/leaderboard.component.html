@@ -18,7 +18,8 @@
 @if ((isContentVisible$ | async)) {
     <app-leaderboard-hint
         [selectedDate]="selectedDate"
-        [selectedTimeframe]="selectedTimeframe" />
+        [selectedTimeframe]="selectedTimeframe"
+        [timeframeStatus]="timeframeStatus" />
     <ul class="leaderboard__list">
         @for (topicData of topics$ | async; track topicData.topic.id) {
             <li>
@@ -26,6 +27,7 @@
                     [topic]="topicData.topic"
                     [votes]="topicData.votes"
                     [users]="topicData.uniqueUsers"
+                    [lastPulse]="isActiveTimeframe ? topicData.lastVoteTime : undefined"
                     [selectedDate]="selectedDate"
                     [selectedTimeframe]="selectedTimeframe" />
             </li>
