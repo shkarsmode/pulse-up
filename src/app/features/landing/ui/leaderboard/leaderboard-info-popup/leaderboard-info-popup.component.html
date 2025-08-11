@@ -1,43 +1,84 @@
-<app-popup>
-    <app-popup-subtitle>ℹ️ How It Works</app-popup-subtitle>
-    <app-popup-text>
-        This leaderboard shows the top topics based on pulses (support taps) during the selected
-        month.
-    </app-popup-text>
-    <ul class="leaderboard-info-popup__list">
-        <li>
-            <app-popup-text> You can pulse a topic once every 24 hours. </app-popup-text>
-        </li>
-        <li>
-            <app-popup-text>
-                Topics are ranked by the total number of pulses received within the month.
-            </app-popup-text>
-        </li>
-        <li>
-            <app-popup-text>
-                In case of a tie, the topic with the most recent pulse ranks higher.
-            </app-popup-text>
-        </li>
-        <li>
-            <app-popup-text>
-                Use the dropdown to explore rankings from previous months.
-            </app-popup-text>
-        </li>
-    </ul>
-    <div class="leaderboard-info-popup__note">
+@if (data.type === "Active") {
+    <app-popup>
+        <app-popup-subtitle>ℹ️ How It Works</app-popup-subtitle>
         <app-popup-text>
-            <strong>Note:</strong> Consistent daily support makes a difference.
+            This leaderboard shows the top topics based on pulses (support taps) during the selected
+            month.
         </app-popup-text>
+        <ul class="leaderboard-info-popup__list">
+            <li>
+                <app-popup-text> You can pulse a topic once every 24 hours. </app-popup-text>
+            </li>
+            <li>
+                <app-popup-text>
+                    Topics are ranked by the total number of pulses received within the month.
+                </app-popup-text>
+            </li>
+            <li>
+                <app-popup-text>
+                    In case of a tie, the topic with the most recent pulse ranks higher.
+                </app-popup-text>
+            </li>
+            <li>
+                <app-popup-text>
+                    Use the dropdown to explore rankings from previous months.
+                </app-popup-text>
+            </li>
+        </ul>
         <app-popup-text>
-            A topic backed by a few passionate supporters pulsing every day can outrank one with
-            many who only pulse once. The leaderboard reflects both reach and sustained commitment.
+            <strong>Note:</strong> We use Coordinated Universal Time (UTC) to track dates. This
+            means the time periods here may start or end earlier or later than in your local time
+            zone.
         </app-popup-text>
-    </div>
-    <app-popup-footer>
-        <app-primary-button
-            size="medium"
-            (handleClick)="closePopup()">
-            Ok
-        </app-primary-button>
-    </app-popup-footer>
-</app-popup>
+        <div class="leaderboard-info-popup__note">
+            <app-popup-text> Consistent daily support makes a difference. </app-popup-text>
+            <app-popup-text>
+                A topic backed by a few passionate supporters pulsing every day can outrank one with
+                many who only pulse once. The leaderboard reflects both reach and sustained
+                commitment.
+            </app-popup-text>
+        </div>
+        <app-popup-footer>
+            <app-primary-button
+                [fullWidth]="true"
+                size="medium"
+                (handleClick)="closePopup()"
+                class="leaderboard-info-popup__button">
+                Ok
+            </app-primary-button>
+        </app-popup-footer>
+    </app-popup>
+} @else if (data.type === "Ended") {
+    <app-popup>
+        <app-popup-subtitle>Ranking Updates Continue</app-popup-subtitle>
+        <app-popup-text textAlign="center">
+            This period is over, but your pulses can still impact the current rankings
+        </app-popup-text>
+        <app-popup-footer>
+            <app-primary-button
+                [fullWidth]="true"
+                size="medium"
+                (handleClick)="closePopup()"
+                class="leaderboard-info-popup__button">
+                Ok
+            </app-primary-button>
+        </app-popup-footer>
+    </app-popup>
+} @else if (data.type === "Upcoming") {
+    <app-popup>
+        <app-popup-subtitle>Pulsing Start Time</app-popup-subtitle>
+        <app-popup-text textAlign="center">
+            We use UTC to track dates. In your local time, the selected date may have started, but
+            in UTC it’s still the previous day. Pulsing will be available once the UTC date changes.
+        </app-popup-text>
+        <app-popup-footer>
+            <app-primary-button
+                [fullWidth]="true"
+                size="medium"
+                (handleClick)="closePopup()"
+                class="leaderboard-info-popup__button">
+                Ok
+            </app-primary-button>
+        </app-popup-footer>
+    </app-popup>
+}

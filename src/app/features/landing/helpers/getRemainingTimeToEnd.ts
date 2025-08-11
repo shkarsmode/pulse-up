@@ -33,15 +33,10 @@ export const getRemainingTimeToEnd = (
     }
 
     if (end.getTime() < now.getTime()) {
-        return { days: 0, hours: 0, minutes: 0 };
+        return 0;
     }
 
     const diffMs = end.getTime() - now.getTime();
 
-    const minutesTotal = Math.floor(diffMs / (1000 * 60));
-    const days = Math.floor(minutesTotal / (60 * 24));
-    const hours = Math.floor((minutesTotal % (60 * 24)) / 60);
-    const minutes = minutesTotal % 60;
-    
-    return { days, hours, minutes };
+    return diffMs;
 };
