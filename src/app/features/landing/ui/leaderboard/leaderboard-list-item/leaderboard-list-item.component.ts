@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, inject, Input, OnInit } from "@angular/core";
 import { CommonModule } from "@angular/common";
-import { filter, map, Observable } from "rxjs";
+import { combineLatest, filter, map, Observable } from "rxjs";
 import { LargePulseComponent } from "@/app/shared/components/pulses/large-pulse/large-pulse.component";
 import { LargePulseIconComponent } from "@/app/shared/components/pulses/large-pulse/large-pulse-icon/large-pulse-icon.component";
 import { LargePulseTitleComponent } from "@/app/shared/components/pulses/large-pulse/large-pulse-title/large-pulse-title.component";
@@ -49,10 +49,16 @@ export class LeaderboardListItemComponent implements OnInit {
         this.isActiveTimerange =
             !!this.selectedDate &&
             isCurrentTimeframeActive(this.selectedDate, this.selectedTimeframe);
-        this.isActiveVote$ = this.votesService.votesByTopicId$.pipe(
-            map((votes) => votes.get(this.topic.id)),
-            filter((vote) => vote !== undefined),
-            map((vote) => VoteUtils.isActiveVote(vote, this.settingsService.minVoteInterval)),
+        this.isActiveVote$ = combineLatest([
+            this.votesService.votesByTopicId$.pipe(
+                map((votes) => votes.get(this.topic.id)),
+                filter((vote) => !!vote),
+            ),
+            this.settingsService.settings$,
+        ]).pipe(
+            map(([vote, settings]) => {
+                return VoteUtils.isActiveVote(vote, settings.minVoteInterval);
+            }),
         );
     }
 }

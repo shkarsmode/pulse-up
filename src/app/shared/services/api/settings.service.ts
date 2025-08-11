@@ -1,6 +1,6 @@
 import { inject, Injectable } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
-import { BehaviorSubject, first, tap } from "rxjs";
+import { BehaviorSubject, first, shareReplay, tap } from "rxjs";
 import { ISettings } from "../../interfaces";
 import { API_URL } from "../../tokens/tokens";
 
@@ -23,6 +23,10 @@ export class SettingsService {
     public minVoteInterval: number;
     public shareTopicBaseUrl: string;
     public shareUserBaseUrl: string;
+
+    public settings$ = this.http
+        .get<ISettings>(`${this.apiUrl}/settings`)
+        .pipe(shareReplay({ bufferSize: 1, refCount: true }));
 
     public updateSettings(): void {
         this.loaded.next(false);

@@ -99,6 +99,10 @@ export class PulsePageComponent implements OnInit, AfterViewInit, OnDestroy {
     isActiveVote = false;
     lastVoteInfo = "";
     map: mapboxgl.Map | null = null;
+    globalSettings = {
+        shareTopicBaseUrl: "",
+        minVoteInterval: 0,
+    };
 
     get isAnonymousUser() {
         return !!this.authService.anonymousUserValue;
@@ -108,6 +112,7 @@ export class PulsePageComponent implements OnInit, AfterViewInit, OnDestroy {
         this.getInitialData();
         this.listenToUserChanges();
         this.openJustCreatedTopicPopup();
+        this.loadGlobalSettings();
     }
 
     ngAfterViewInit(): void {
@@ -181,6 +186,13 @@ export class PulsePageComponent implements OnInit, AfterViewInit, OnDestroy {
                 takeUntilDestroyed(this.destroyRef),
             )
             .subscribe();
+    }
+
+    private loadGlobalSettings(): void {
+        this.settingsService.settings$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((settings) => {
+            this.globalSettings.shareTopicBaseUrl = settings.shareTopicBaseUrl;
+            this.globalSettings.minVoteInterval = settings.minVoteInterval;
+        });
     }
 
     private loadTopicData({ topicId, shareKey = "" }: { topicId?: number; shareKey?: string }) {
@@ -278,13 +290,13 @@ export class PulsePageComponent implements OnInit, AfterViewInit, OnDestroy {
     private updateTopicData(topic: ITopic): void {
         this.topic = topic;
         this.shortPulseDescription = topic.description.replace(/\n/g, " ");
-        this.topicUrl = this.settingsService.shareTopicBaseUrl + topic.shareKey;
+        this.topicUrl = this.globalSettings.shareTopicBaseUrl + topic.shareKey;
         this.isArchived = topic.state === TopicState.Archived;
     }
 
     private updateVoteData(vote: IVote): void {
         this.vote = vote;
-        this.isActiveVote = VoteUtils.isActiveVote(vote, this.settingsService.minVoteInterval);
+        this.isActiveVote = VoteUtils.isActiveVote(vote, this.globalSettings.minVoteInterval);
         this.lastVoteInfo = VoteUtils.parseVoteInfo(vote);
     }
 

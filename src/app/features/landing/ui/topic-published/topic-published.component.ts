@@ -7,9 +7,11 @@ import { MenuComponent } from "@/app/shared/components/ui-kit/menu/menu.componen
 import { PulseService } from "@/app/shared/services/api/pulse.service";
 import { SettingsService } from "@/app/shared/services/api/settings.service";
 import { DialogService } from "@/app/shared/services/core/dialog.service";
-import { Component, inject } from "@angular/core";
+import { Component, DestroyRef, inject, OnInit } from "@angular/core";
+import { CommonModule } from "@angular/common";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
-import { delay, take } from "rxjs";
+import { delay, map, Observable, take } from "rxjs";
 import { TopicQRCodePopupData } from "../../helpers/interfaces/topic-qrcode-popup-data.interface";
 import { TopicQrcodePopupComponent } from "../topic-qrcode-popup/topic-qrcode-popup.component";
 
@@ -17,6 +19,7 @@ import { TopicQrcodePopupComponent } from "../topic-qrcode-popup/topic-qrcode-po
     selector: "app-topic-published",
     standalone: true,
     imports: [
+        CommonModule,
         CloseButtonComponent,
         PrimaryButtonComponent,
         MenuComponent,
@@ -27,14 +30,25 @@ import { TopicQrcodePopupComponent } from "../topic-qrcode-popup/topic-qrcode-po
     templateUrl: "./topic-published.component.html",
     styleUrl: "./topic-published.component.scss",
 })
-export class TopicPublishedComponent {
+export class TopicPublishedComponent implements OnInit {
+    private readonly destroyRef = inject(DestroyRef);
     private readonly dialogRef = inject(MatDialogRef<TopicPublishedComponent>);
     private readonly dialogService = inject(DialogService);
     private readonly pulseService = inject(PulseService);
     private readonly settingsService = inject(SettingsService);
     private readonly data: { shareKey: string } = inject(MAT_DIALOG_DATA);
-    link = this.settingsService.shareTopicBaseUrl + this.data.shareKey;
+    public link = "";
+    public link$: Observable<string>;
     copied = false;
+
+    ngOnInit(): void {
+        this.link$ = this.settingsService.settings$.pipe(
+            map((settings) => settings.shareTopicBaseUrl + this.data.shareKey),
+        );
+        this.link$
+            .pipe(takeUntilDestroyed(this.destroyRef))
+            .subscribe((link) => (this.link = link));
+    }
 
     onCloseDialog(): void {
         this.dialogRef.close();
@@ -71,5 +85,5 @@ export class TopicPublishedComponent {
                     },
                 );
             });
-    }
+    };
 }
