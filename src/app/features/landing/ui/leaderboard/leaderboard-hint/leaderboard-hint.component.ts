@@ -8,6 +8,8 @@ import {
     OnInit,
     signal,
 } from "@angular/core";
+import { AngularSvgIconModule } from "angular-svg-icon";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { tap } from "rxjs";
 import { LeaderboardService } from "../../../services/leaderboard.service";
 import { LeaderboardTimeframe } from "../../../interface/leaderboard-timeframe.interface";
@@ -18,8 +20,7 @@ import { ProgressBarComponent } from "../progress-bar/progress-bar.component";
 import { LinkButtonComponent } from "@/app/shared/components/ui-kit/buttons/link-button/link-button.component";
 import { DialogService } from "@/app/shared/services/core/dialog.service";
 import { LeaderboardInfoPopupComponent } from "../leaderboard-info-popup/leaderboard-info-popup.component";
-import { AngularSvgIconModule } from "angular-svg-icon";
-import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
+import { isTimeframeInFutureUTC } from "../../../helpers/isTimeframeInFuture";
 
 const hintLabels: Record<LeaderboardTimeframe, string> = {
     Day: "today",
@@ -56,7 +57,7 @@ export class LeaderboardHintComponent implements OnInit {
                         this.updateHintText();
                         this.updateElapsedTimePercentage();
                     } else {
-                        this.hint.set("")
+                        this.hint.set("");
                     }
                 }),
                 takeUntilDestroyed(this.destroyRef),
@@ -75,7 +76,17 @@ export class LeaderboardHintComponent implements OnInit {
     }
 
     private updateHintText() {
-        if (!this.isActiveTimerange || !this.selectedDate) {
+        if (!this.selectedDate) {
+            this.hint.set("Pulsing ended for this period");
+            return;
+        }
+
+        if (!this.isActiveTimerange && isTimeframeInFutureUTC(this.selectedDate)) {
+            this.hint.set("Pulsing for this period hasn't started");
+            return;
+        }
+
+        if (!this.isActiveTimerange) {
             this.hint.set("Pulsing ended for this period");
             return;
         }

@@ -3,7 +3,8 @@ import { FormBuilder, FormGroup, ReactiveFormsModule } from "@angular/forms";
 import { CommonModule } from "@angular/common";
 import { MatExpansionModule } from "@angular/material/expansion";
 import { MatButtonModule } from "@angular/material/button";
-import { MatFormField, MatLabel } from "@angular/material/form-field";
+import { MatLabel, MatFormFieldModule } from "@angular/material/form-field";
+import { MatInputModule } from "@angular/material/input";
 import { DevSettingsService } from "../../services/core/dev-settings.service";
 
 @Component({
@@ -11,11 +12,12 @@ import { DevSettingsService } from "../../services/core/dev-settings.service";
     standalone: true,
     imports: [
         CommonModule,
+        MatInputModule,
+        MatFormFieldModule,
         ReactiveFormsModule,
+        MatLabel,
         MatExpansionModule,
         MatButtonModule,
-        MatFormField,
-        MatLabel,
     ],
     templateUrl: "./dev-menu.component.html",
     styleUrls: ["./dev-menu.component.scss"],

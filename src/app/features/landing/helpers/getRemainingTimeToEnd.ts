@@ -1,10 +1,11 @@
 import { LeaderboardTimeframe } from "../interface/leaderboard-timeframe.interface";
+import { dateToUTC } from "./dateToUTC";
 
 export const getRemainingTimeToEnd = (
     selectedDate: Date,
     selectedTimeframe: LeaderboardTimeframe,
 ) => {
-    const now = new Date();
+    const now = dateToUTC(new Date());
     const start = new Date(selectedDate);
 
     let end: Date;
@@ -31,7 +32,7 @@ export const getRemainingTimeToEnd = (
             throw new Error("Invalid timeframe");
     }
 
-    if (end < now) {
+    if (end.getTime() < now.getTime()) {
         return { days: 0, hours: 0, minutes: 0 };
     }
 
@@ -41,10 +42,6 @@ export const getRemainingTimeToEnd = (
     const days = Math.floor(minutesTotal / (60 * 24));
     const hours = Math.floor((minutesTotal % (60 * 24)) / 60);
     const minutes = minutesTotal % 60;
-
-    return {
-        days,
-        hours,
-        minutes,
-    };
+    
+    return { days, hours, minutes };
 };
