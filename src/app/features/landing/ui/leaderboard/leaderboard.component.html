@@ -19,7 +19,8 @@
     <app-leaderboard-hint
         [selectedDate]="selectedDate"
         [selectedTimeframe]="selectedTimeframe"
-        [timeframeStatus]="timeframeStatus" />
+        [timeframeStatus]="timeframeStatus"
+        (counterStopped)="updateTimeframeStatus()" />
     <ul class="leaderboard__list">
         @for (topicData of topics$ | async; track topicData.topic.id) {
             <li>
