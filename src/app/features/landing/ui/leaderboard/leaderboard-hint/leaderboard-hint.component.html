@@ -1,11 +1,19 @@
-@if (!!hint()) {
+@if (isVisible()) {
     <div
         class="leaderboard-hint"
         [class.leaderboard-hint--active]="timeframeStatus === 'Active'">
-        <div class="leaderboard-hint__text">
-            {{ hint() }}
-        </div>
-        @if (timeframeStatus === 'Active') {
+        @if (timeframeStatus === "Upcoming") {
+            <div class="leaderboard-hint__text">Pulsing hasn't started for this period yet.</div>
+        }
+        @if (timeframeStatus === "Ended") {
+            <div class="leaderboard-hint__text">Pulsing ended for this period.</div>
+        }
+        @if (timeframeStatus === "Active") {
+            <div class="leaderboard-hint__text">
+                {{ formatTime(remainingTime) }} remaining to pulse {{ labels[selectedTimeframe] }}.
+            </div>
+        }
+        @if (timeframeStatus === "Active") {
             <app-progress-bar
                 class="leaderboard-hint__progress"
                 [percentage]="elapsedTimePercentage" />

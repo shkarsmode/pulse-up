@@ -24,12 +24,6 @@ import { isTimeframeInFutureUTC } from "../../../helpers/isTimeframeInFuture";
 
 type TimeframeStatus = "Active" | "Upcoming" | "Ended";
 
-const hintLabels: Record<LeaderboardTimeframe, string> = {
-    Day: "today",
-    Week: "this week",
-    Month: "this month",
-};
-
 @Component({
     selector: "app-leaderboard-hint",
     standalone: true,
@@ -46,9 +40,15 @@ export class LeaderboardHintComponent implements OnInit {
     private dialogService = inject(DialogService);
     private leaderboardService = inject(LeaderboardService);
 
-    public hint = signal("");
+    public isVisible = signal(false);
     public timeframeStatus: TimeframeStatus = "Active";
+    public remainingTime = 0;
     public elapsedTimePercentage = 0;
+    public labels: Record<LeaderboardTimeframe, string> = {
+        Day: "today",
+        Week: "this week",
+        Month: "this month",
+    };
 
     public ngOnInit() {
         this.leaderboardService.topics$
@@ -56,10 +56,11 @@ export class LeaderboardHintComponent implements OnInit {
                 tap((topics) => {
                     if (topics) {
                         this.updateTimeframeStatus();
-                        this.updateHintText();
+                        this.updateRemainingTime();
                         this.updateElapsedTimePercentage();
+                        this.isVisible.set(true);
                     } else {
-                        this.hint.set("");
+                        this.isVisible.set(false);
                     }
                 }),
                 takeUntilDestroyed(this.destroyRef),
@@ -75,6 +76,20 @@ export class LeaderboardHintComponent implements OnInit {
         });
     }
 
+    public formatTime(ms: number) {
+        const minutesTotal = Math.floor(ms / (1000 * 60));
+        const days = Math.floor(minutesTotal / (60 * 24));
+        const hours = Math.floor((minutesTotal % (60 * 24)) / 60);
+        const minutes = minutesTotal % 60;
+
+        const parts: string[] = [];
+        if (days) parts.push(`${days} days`);
+        if (hours) parts.push(`${hours}h`);
+        if (minutes && this.selectedTimeframe !== "Month") parts.push(`${minutes}m`);
+
+        return parts.length > 0 ? parts.join(" ") : "0h 0m";
+    }
+
     private updateTimeframeStatus() {
         const isActive =
             !!this.selectedDate &&
@@ -87,36 +102,17 @@ export class LeaderboardHintComponent implements OnInit {
         this.timeframeStatus = isUpcoming ? "Upcoming" : isActive ? "Active" : "Ended";
     }
 
-    private updateHintText() {
-        if (this.timeframeStatus === "Upcoming") {
-            this.hint.set("Pulsing hasn't started for this period yet");
+    private updateRemainingTime() {
+        if (this.timeframeStatus !== "Active" || !this.selectedDate) {
+            this.remainingTime = 0;
             return;
         }
 
-        if (this.timeframeStatus === "Ended") {
-            this.hint.set("Pulsing ended for this period");
-            return;
-        }
-
-        if (!this.selectedDate) return;
-
-        const label = hintLabels[this.selectedTimeframe];
-        const { days, hours, minutes } = getRemainingTimeToEnd(
-            this.selectedDate,
-            this.selectedTimeframe,
-        );
-        const parts: string[] = [];
-        if (days) parts.push(`${days} days`);
-        if (hours) parts.push(`${hours}h`);
-        if (minutes && this.selectedTimeframe !== "Month") parts.push(`${minutes}m`);
-
-        const timeText = parts.length > 0 ? parts.join(" ") : "0m";
-
-        this.hint.set(`${timeText} remaining to pulse ${label}`);
+        this.remainingTime = getRemainingTimeToEnd(this.selectedDate, this.selectedTimeframe);
     }
 
     private updateElapsedTimePercentage() {
-        if (this.selectedDate) {
+        if (this.timeframeStatus === "Active" && this.selectedDate) {
             this.elapsedTimePercentage = Math.ceil(
                 getElapsedTimePercentage(this.selectedDate, this.selectedTimeframe),
             );
