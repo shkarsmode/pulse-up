@@ -74,6 +74,10 @@ export class UserComponent implements OnInit {
     public loading$: Observable<boolean>;
     public votes$ = this.votesService.votesByTopicId$;
 
+    public shareProfileUrl$ = this.settingsService.settings$.pipe(
+        map((settings) => settings.shareUserBaseUrl + this.user?.username),
+    );
+
     constructor() {
         this.pulseId = this.router.getCurrentNavigation()?.extras?.state?.["pulseId"] || "";
     }
@@ -95,29 +99,32 @@ export class UserComponent implements OnInit {
         this.user = null;
         this.topics = [];
         this.isLoading = true;
-        this.userService.getProfileByUsername(username).pipe(
-            switchMap((user) => {
-                return this.userService.getAllTopics(user.id).pipe(
-                    take(1),
-                    map((topics) => {
-                        return {
-                            user,
-                            topics,
-                        };
-                    }),
-                );
-            }),
-            tap(({ user, topics }) => {
-                this.topics = topics.map((topic) => ({
-                    ...topic,
-                    author: { ...topic.author, name: user.name || "" },
-                }));
-                this.loadTopics(user.id);
-                this.user = user;
-                this.isLoading = false;
-            }),
-            takeUntilDestroyed(this.destroyRef),
-        ).subscribe()
+        this.userService
+            .getProfileByUsername(username)
+            .pipe(
+                switchMap((user) => {
+                    return this.userService.getAllTopics(user.id).pipe(
+                        take(1),
+                        map((topics) => {
+                            return {
+                                user,
+                                topics,
+                            };
+                        }),
+                    );
+                }),
+                tap(({ user, topics }) => {
+                    this.topics = topics.map((topic) => ({
+                        ...topic,
+                        author: { ...topic.author, name: user.name || "" },
+                    }));
+                    this.loadTopics(user.id);
+                    this.user = user;
+                    this.isLoading = false;
+                }),
+                takeUntilDestroyed(this.destroyRef),
+            )
+            .subscribe();
     }
 
     private loadTopics(userId: string) {
@@ -150,10 +157,6 @@ export class UserComponent implements OnInit {
         this.loading$ = this.infiniteLoaderService.loading$;
     }
 
-    public get shareProfileUrl(): string {
-        return this.settingsService.shareUserBaseUrl + this.user?.username;
-    }
-
     public goBack(): void {
         if (!this.pulseId) {
             this.router.navigateByUrl("/", {
@@ -169,15 +172,19 @@ export class UserComponent implements OnInit {
     }
 
     public openQrCodePopup(): void {
-        this.dialogService.open<TopicQrcodePopupComponent, TopicQRCodePopupData>(
-            TopicQrcodePopupComponent,
-            {
-                width: "400px",
-                data: {
-                    link: this.shareProfileUrl,
-                    type: "profile",
-                },
-            },
-        );
+        this.shareProfileUrl$
+            .pipe(takeUntilDestroyed(this.destroyRef))
+            .subscribe((shareProfileUrl) => {
+                this.dialogService.open<TopicQrcodePopupComponent, TopicQRCodePopupData>(
+                    TopicQrcodePopupComponent,
+                    {
+                        width: "400px",
+                        data: {
+                            link: shareProfileUrl,
+                            type: "profile",
+                        },
+                    },
+                );
+            });
     }
 }
