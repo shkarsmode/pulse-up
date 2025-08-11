@@ -36,6 +36,7 @@ export class LeaderboardListItemComponent implements OnInit {
     @Input() topic: ITopic;
     @Input() votes: number;
     @Input() users: number;
+    @Input() lastPulse?: string;
     @Input() selectedDate: Date | null;
     @Input() selectedTimeframe: LeaderboardTimeframe;
 

@@ -34,8 +34,12 @@
             }
             <app-large-pulse-meta
                 [text]="'Supporters: ' + (users | formatNumber)"
-                icon="assets/svg/user.svg"
+                icon="assets/svg/fans.svg"
                 label="number of supporters" />
+            @if (lastPulse) {
+                <app-large-pulse-meta
+                    [text]="'Last pulse: ' + (lastPulse | date: 'MMMM dd hh:mm a')" />
+            }
         </div>
     </div>
 </app-large-pulse>

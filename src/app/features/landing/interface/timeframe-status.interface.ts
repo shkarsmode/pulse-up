@@ -1,0 +1,1 @@
+export type TimeframeStatus = "Active" | "Upcoming" | "Ended";

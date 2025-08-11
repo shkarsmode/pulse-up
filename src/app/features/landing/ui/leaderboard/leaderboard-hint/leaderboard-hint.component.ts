@@ -13,16 +13,13 @@ import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { tap } from "rxjs";
 import { LeaderboardService } from "../../../services/leaderboard.service";
 import { LeaderboardTimeframe } from "../../../interface/leaderboard-timeframe.interface";
-import { isCurrentTimeframeActive } from "../../../helpers/isCurrentTimeframeActive";
 import { getRemainingTimeToEnd } from "../../../helpers/getRemainingTimeToEnd";
 import { getElapsedTimePercentage } from "../../../helpers/getElapsedTimePercentage";
 import { ProgressBarComponent } from "../progress-bar/progress-bar.component";
 import { LinkButtonComponent } from "@/app/shared/components/ui-kit/buttons/link-button/link-button.component";
 import { DialogService } from "@/app/shared/services/core/dialog.service";
 import { LeaderboardInfoPopupComponent } from "../leaderboard-info-popup/leaderboard-info-popup.component";
-import { isTimeframeInFutureUTC } from "../../../helpers/isTimeframeInFuture";
-
-type TimeframeStatus = "Active" | "Upcoming" | "Ended";
+import { TimeframeStatus } from "../../../interface/timeframe-status.interface";
 
 @Component({
     selector: "app-leaderboard-hint",
@@ -35,13 +32,13 @@ type TimeframeStatus = "Active" | "Upcoming" | "Ended";
 export class LeaderboardHintComponent implements OnInit {
     @Input() public selectedDate: Date | null;
     @Input() public selectedTimeframe: LeaderboardTimeframe;
+    @Input() public timeframeStatus: TimeframeStatus;
 
     private destroyRef = inject(DestroyRef);
     private dialogService = inject(DialogService);
     private leaderboardService = inject(LeaderboardService);
 
     public isVisible = signal(false);
-    public timeframeStatus: TimeframeStatus = "Active";
     public remainingTime = 0;
     public elapsedTimePercentage = 0;
     public labels: Record<LeaderboardTimeframe, string> = {
@@ -55,7 +52,6 @@ export class LeaderboardHintComponent implements OnInit {
             .pipe(
                 tap((topics) => {
                     if (topics) {
-                        this.updateTimeframeStatus();
                         this.updateRemainingTime();
                         this.updateElapsedTimePercentage();
                         this.isVisible.set(true);
@@ -90,17 +86,6 @@ export class LeaderboardHintComponent implements OnInit {
         return parts.length > 0 ? parts.join(" ") : "0h 0m";
     }
 
-    private updateTimeframeStatus() {
-        const isActive =
-            !!this.selectedDate &&
-            isCurrentTimeframeActive(this.selectedDate, this.selectedTimeframe);
-        const isUpcoming =
-            !!this.selectedDate &&
-            this.selectedTimeframe === "Day" &&
-            isActive &&
-            isTimeframeInFutureUTC(this.selectedDate);
-        this.timeframeStatus = isUpcoming ? "Upcoming" : isActive ? "Active" : "Ended";
-    }
 
     private updateRemainingTime() {
         if (this.timeframeStatus !== "Active" || !this.selectedDate) {

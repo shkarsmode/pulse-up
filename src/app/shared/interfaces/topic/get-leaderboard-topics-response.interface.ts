@@ -8,6 +8,6 @@ export interface IGetLeaderboardTopicsResponse {
         topic: ITopic;
         votes: number;
         uniqueUsers: number;
-        lastVoteTime: number;
+        lastVoteTime: string;
     }[];
 }
