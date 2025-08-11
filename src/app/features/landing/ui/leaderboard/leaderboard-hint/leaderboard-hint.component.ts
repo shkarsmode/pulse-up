@@ -3,9 +3,11 @@ import {
     ChangeDetectionStrategy,
     Component,
     DestroyRef,
+    EventEmitter,
     inject,
     Input,
     OnInit,
+    Output,
     signal,
 } from "@angular/core";
 import { AngularSvgIconModule } from "angular-svg-icon";
@@ -33,6 +35,8 @@ export class LeaderboardHintComponent implements OnInit {
     @Input() public selectedDate: Date | null;
     @Input() public selectedTimeframe: LeaderboardTimeframe;
     @Input() public timeframeStatus: TimeframeStatus;
+
+    @Output() public counterStopped = new EventEmitter<void>();
 
     private destroyRef = inject(DestroyRef);
     private dialogService = inject(DialogService);
@@ -88,22 +92,13 @@ export class LeaderboardHintComponent implements OnInit {
         return parts.length > 0 ? parts.join(" ") : "0h 0m";
     }
 
-
     private updateRemainingTime() {
         if (this.timeframeStatus !== "Active" || !this.selectedDate) {
             this.remainingTime.set(0);
             return;
         }
-
         this.remainingTime.set(getRemainingTimeToEnd(this.selectedDate, this.selectedTimeframe));
-        interval(1000)
-            .pipe(
-                tap(() => {
-                    this.remainingTime.set(this.remainingTime() - 1000);
-                }),
-                takeUntilDestroyed(this.destroyRef),
-            )
-            .subscribe();
+        this.startCounter();
     }
 
     private updateElapsedTimePercentage() {
@@ -112,5 +107,22 @@ export class LeaderboardHintComponent implements OnInit {
                 getElapsedTimePercentage(this.selectedDate, this.selectedTimeframe),
             );
         }
+    }
+
+    private startCounter() {
+        interval(1000)
+            .pipe(
+                tap(() => {
+                    const time = this.remainingTime() - 1000;
+                    if (time <= 0) {
+                        this.remainingTime.set(0);
+                        this.counterStopped.emit();
+                        return;
+                    }
+                    this.remainingTime.set(time);
+                }),
+                takeUntilDestroyed(this.destroyRef),
+            )
+            .subscribe();
     }
 }

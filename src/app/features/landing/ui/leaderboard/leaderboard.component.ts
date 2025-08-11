@@ -105,7 +105,7 @@ export class LeaderboardComponent {
         });
     }
 
-    private updateTimeframeStatus() {
+    public updateTimeframeStatus() {
         const isActive =
             !!this.selectedDate &&
             isCurrentTimeframeActive(this.selectedDate, this.selectedTimeframe);
