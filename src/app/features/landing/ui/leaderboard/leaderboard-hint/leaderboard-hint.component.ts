@@ -22,6 +22,8 @@ import { DialogService } from "@/app/shared/services/core/dialog.service";
 import { LeaderboardInfoPopupComponent } from "../leaderboard-info-popup/leaderboard-info-popup.component";
 import { isTimeframeInFutureUTC } from "../../../helpers/isTimeframeInFuture";
 
+type TimeframeStatus = "Active" | "Upcoming" | "Ended";
+
 const hintLabels: Record<LeaderboardTimeframe, string> = {
     Day: "today",
     Week: "this week",
@@ -45,7 +47,7 @@ export class LeaderboardHintComponent implements OnInit {
     private leaderboardService = inject(LeaderboardService);
 
     public hint = signal("");
-    public isActiveTimerange = true;
+    public timeframeStatus: TimeframeStatus = "Active";
     public elapsedTimePercentage = 0;
 
     public ngOnInit() {
@@ -53,7 +55,7 @@ export class LeaderboardHintComponent implements OnInit {
             .pipe(
                 tap((topics) => {
                     if (topics) {
-                        this.updateIsActiveTimerange();
+                        this.updateTimeframeStatus();
                         this.updateHintText();
                         this.updateElapsedTimePercentage();
                     } else {
@@ -66,30 +68,37 @@ export class LeaderboardHintComponent implements OnInit {
     }
 
     public openInfoPopup() {
-        this.dialogService.open(LeaderboardInfoPopupComponent);
+        this.dialogService.open(LeaderboardInfoPopupComponent, {
+            data: {
+                type: this.timeframeStatus,
+            },
+        });
     }
 
-    private updateIsActiveTimerange() {
-        this.isActiveTimerange =
+    private updateTimeframeStatus() {
+        const isActive =
             !!this.selectedDate &&
             isCurrentTimeframeActive(this.selectedDate, this.selectedTimeframe);
+        const isUpcoming =
+            !!this.selectedDate &&
+            this.selectedTimeframe === "Day" &&
+            isActive &&
+            isTimeframeInFutureUTC(this.selectedDate);
+        this.timeframeStatus = isUpcoming ? "Upcoming" : isActive ? "Active" : "Ended";
     }
 
     private updateHintText() {
-        if (!this.selectedDate) {
+        if (this.timeframeStatus === "Upcoming") {
+            this.hint.set("Pulsing hasn't started for this period yet");
+            return;
+        }
+
+        if (this.timeframeStatus === "Ended") {
             this.hint.set("Pulsing ended for this period");
             return;
         }
 
-        if (!this.isActiveTimerange && isTimeframeInFutureUTC(this.selectedDate)) {
-            this.hint.set("Pulsing for this period hasn't started");
-            return;
-        }
-
-        if (!this.isActiveTimerange) {
-            this.hint.set("Pulsing ended for this period");
-            return;
-        }
+        if (!this.selectedDate) return;
 
         const label = hintLabels[this.selectedTimeframe];
         const { days, hours, minutes } = getRemainingTimeToEnd(

@@ -1,11 +1,11 @@
 @if (!!hint()) {
     <div
         class="leaderboard-hint"
-        [class.leaderboard-hint--active]="isActiveTimerange">
+        [class.leaderboard-hint--active]="timeframeStatus === 'Active'">
         <div class="leaderboard-hint__text">
             {{ hint() }}
         </div>
-        @if (isActiveTimerange) {
+        @if (timeframeStatus === 'Active') {
             <app-progress-bar
                 class="leaderboard-hint__progress"
                 [percentage]="elapsedTimePercentage" />

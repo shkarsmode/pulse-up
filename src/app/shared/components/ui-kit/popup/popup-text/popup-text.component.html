@@ -1,3 +1,7 @@
-<p class="popup-text">
+<p
+    class="popup-text"
+    [class.popup-text--centered]="textAlign === 'center'"
+    [class.popup-text--right]="textAlign === 'right'"
+    [class.popup-text--left]="textAlign === 'left'">
     <ng-content></ng-content>
 </p>
