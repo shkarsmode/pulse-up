@@ -1,7 +1,7 @@
 import { Directive, ElementRef, inject, Renderer2 } from "@angular/core";
 
 @Directive({
-    selector: "[appVawesAnimation]",
+    selector: "[appWavesAnimation]",
     standalone: true,
 })
 export class WaveAnimationDirective {

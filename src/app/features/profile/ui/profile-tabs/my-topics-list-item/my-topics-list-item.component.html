@@ -26,15 +26,13 @@
                 @if (isVoteActive) {
                     <div class="card-footer-icon-wrap card-footer-icon-wrap--active">
                         <svg-icon
-                            appVawesAnimation
+                            appWavesAnimation
                             src="assets/svg/logo/logo-v2.svg"
                             ariaLabel="pulse icon"
                             class="card-footer-icon" />
                     </div>
                 } @else {
-                    <svg-icon
-                        src="assets/svg/pulse.svg"
-                        ariaLabel="pulse icon" />
+                    <app-pulse-icon />
                 }
             </app-large-pulse-metric>
             <app-large-pulse-metric

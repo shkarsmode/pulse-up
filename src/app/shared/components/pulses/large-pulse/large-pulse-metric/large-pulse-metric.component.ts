@@ -1,5 +1,5 @@
 import { CommonModule } from "@angular/common";
-import { Component, HostBinding, Input, ViewEncapsulation } from "@angular/core";
+import { Component, HostBinding, Input } from "@angular/core";
 import { AngularSvgIconModule } from "angular-svg-icon";
 
 @Component({
@@ -8,7 +8,6 @@ import { AngularSvgIconModule } from "angular-svg-icon";
     imports: [CommonModule, AngularSvgIconModule],
     templateUrl: "./large-pulse-metric.component.html",
     styleUrl: "./large-pulse-metric.component.scss",
-    encapsulation: ViewEncapsulation.ShadowDom, // to avoid svg icons to be rendered wrongly
 })
 export class LargePulseMetricComponent {
     @Input({ required: true }) text: string;
