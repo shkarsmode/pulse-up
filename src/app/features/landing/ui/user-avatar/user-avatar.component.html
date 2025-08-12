@@ -1,14 +1,15 @@
 <div class="user-avatar">
-    @if (pictureUrl) {
-    <img
-        class="user-avatar__img"
-        src="{{ pictureUrl }}"
-        [width]="width"
-        [height]="height"
-        alt="{{ name }}" />
-    } @else {
-    <div class="user-avatar__placeholder">
-        <svg-icon src="assets/svg/user-placeholder.svg" />
-    </div>
-    }
+    <ng-container *ngIf="pictureUrl$ | async as pictureUrl; else placeholder">
+        <img
+            class="user-avatar__img"
+            [src]="pictureUrl"
+            [width]="width"
+            [height]="height"
+            [alt]="name" />
+    </ng-container>
+    <ng-template #placeholder>
+        <div class="user-avatar__placeholder">
+            <svg-icon src="assets/svg/user-placeholder.svg" />
+        </div>
+    </ng-template>
 </div>

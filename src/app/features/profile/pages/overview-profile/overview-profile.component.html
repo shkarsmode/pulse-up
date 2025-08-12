@@ -8,7 +8,9 @@
         <div class="header__text">
             <h1 class="header__name">{{ name$ | async }}</h1>
             <div class="header__username">&#64;{{ username$ | async }}</div>
-            <div class="header__bio" [innerHTML]="bio$ | async | linkify"></div>
+            <div
+                class="header__bio"
+                [innerHTML]="bio$ | async | linkify"></div>
         </div>
         <div class="header__icons">
             <app-icon-button
@@ -71,18 +73,20 @@
 
 <ng-template #shareMenuContent>
     <div class="social-share-menu">
-        <app-copy-button
-            link="{{ shareProfileUrl }}"
-            (handleClick)="onCopyLink($event)" />
-        <app-socials-button
-            [variant]="'facebook'"
-            [url]="shareProfileUrl" />
-        <app-socials-button
-            [variant]="'x'"
-            [url]="shareProfileUrl" />
-        <app-socials-button
-            [variant]="'email'"
-            [url]="shareProfileUrl" />
-        <app-qrcode-button [url]="shareProfileUrl" />
+        <ng-container *ngIf="shareProfileUrl$ | async as shareProfileUrl">
+            <app-copy-button
+                link="{{ shareProfileUrl }}"
+                (handleClick)="onCopyLink($event)" />
+            <app-socials-button
+                [variant]="'facebook'"
+                [url]="shareProfileUrl" />
+            <app-socials-button
+                [variant]="'x'"
+                [url]="shareProfileUrl" />
+            <app-socials-button
+                [variant]="'email'"
+                [url]="shareProfileUrl" />
+            <app-qrcode-button [url]="shareProfileUrl" />
+        </ng-container>
     </div>
 </ng-template>

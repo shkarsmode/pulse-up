@@ -1,6 +1,18 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, inject, Input, Output, OnInit, OnDestroy } from "@angular/core";
+import {
+    ChangeDetectionStrategy,
+    ChangeDetectorRef,
+    Component,
+    EventEmitter,
+    inject,
+    Input,
+    Output,
+    OnInit,
+    OnDestroy,
+    DestroyRef,
+} from "@angular/core";
 import { CommonModule } from "@angular/common";
-import { interval, Subscription } from "rxjs";
+import { interval, map, Subscription, tap } from "rxjs";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { IVote } from "@/app/shared/interfaces/vote.interface";
 import { SettingsService } from "@/app/shared/services/api/settings.service";
 
@@ -16,13 +28,22 @@ export class VoteTimeLeftComponent implements OnInit, OnDestroy {
     @Output() expired = new EventEmitter<void>();
 
     private cdr = inject(ChangeDetectorRef);
+    private destroyRef = inject(DestroyRef);
     private settingsService = inject(SettingsService);
 
     private timerSub?: Subscription;
-    private readonly intervalMinutes = this.settingsService.minVoteInterval;
-    time = "";
+    private intervalMinutes = 1440;
+    public time = "";
 
     ngOnInit(): void {
+        this.settingsService.settings$
+            .pipe(
+                map((settings) => settings.minVoteInterval),
+                tap((interval) => (this.intervalMinutes = interval)),
+                takeUntilDestroyed(this.destroyRef)
+            )
+            .subscribe();
+
         this.updateTimeLeft();
         this.timerSub = interval(1000).subscribe(() => {
             this.updateTimeLeft();

@@ -6,7 +6,7 @@
             id="profilePicture"
             name="profilePicture"
             label="Profile picture"
-            [previewUrl]="previewUrl"
+            [previewUrl]="(previewUrl$ | async) || ''"
             [picture]="profilePicture"
             (pictureSelected)="onSelectPicture($event)"
             (pictureDeleted)="onDeletePicture()" />

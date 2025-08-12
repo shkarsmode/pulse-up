@@ -64,9 +64,9 @@ export class OverviewProfileComponent implements OnInit {
 
     public username = "";
 
-    public get shareProfileUrl(): string {
-        return this.settingsService.shareUserBaseUrl + this.username;
-    }
+    public shareProfileUrl$ = this.settingsService.settings$.pipe(
+        map((settings) => settings.shareUserBaseUrl + this.username)
+    )
 
     public ngOnInit(): void {
         this.username$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((username) => {
