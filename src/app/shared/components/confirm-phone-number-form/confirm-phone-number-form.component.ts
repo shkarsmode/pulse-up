@@ -5,7 +5,10 @@ import {
     inject,
     Input,
     Output,
-    ViewChild, OnInit, AfterViewInit, OnDestroy,
+    ViewChild,
+    OnInit,
+    AfterViewInit,
+    OnDestroy,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
@@ -93,6 +96,9 @@ export class ConfirmPhoneNumberFormComponent implements OnInit, AfterViewInit, O
 
     ngAfterViewInit(): void {
         this.confirmPhoneNumberService.onAfterViewInit(this.ngOtpInput);
+        setTimeout(() => {
+            this.ngOtpInput.focusTo(this.ngOtpInput.getBoxId(0));
+        }, 200);
     }
 
     ngOnDestroy() {

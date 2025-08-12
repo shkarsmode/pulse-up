@@ -31,18 +31,18 @@ export class ConfirmPhoneNumberPopupComponent {
     private readonly notificationService = inject(NotificationService);
     private readonly votingService = inject(VotingService);
 
-    closeDialog() {
+    public closeDialog() {
         this.hideRecaptcha();
         this.dialogRef.close();
     }
 
-    onCodeConfirm() {
+    public onCodeConfirm() {
         this.closeDialog();
         this.notificationService.success("You have successfully logged in.");
         this.votingService.setIsAnonymousUserSignedIn(true);
     }
 
-    onError = (error: unknown) => {
+    public onError = (error: unknown) => {
         if (error instanceof AuthenticationError) {
             if (
                 error.code === AuthenticationErrorCode.INVALID_CREDENTIALS ||
@@ -62,15 +62,15 @@ export class ConfirmPhoneNumberPopupComponent {
         this.notificationService.error(message);
     };
 
+    public back() {
+        this.closeDialog();
+        this.votingService.backToWelcomePopup();
+    }
+
     private hideRecaptcha() {
         const recaptchaContainer = document.getElementById("recaptcha-container");
         if (recaptchaContainer) {
             recaptchaContainer.innerHTML = "";
         }
-    }
-
-    back() {
-        this.closeDialog();
-        this.votingService.backToWelcomePopup();
     }
 }
