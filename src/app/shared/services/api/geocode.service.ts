@@ -35,8 +35,6 @@ export class GeocodeService {
     };
 
     public getPlaceByCoordinates = (lng: number, lat: number): Observable<TopicLocation> => {
-        console.log("getPlaceByCoordinates called with:", lng, lat);
-        
         const params = new URLSearchParams({
             access_token: this.accessToken,
             longitude: lng.toString(),
