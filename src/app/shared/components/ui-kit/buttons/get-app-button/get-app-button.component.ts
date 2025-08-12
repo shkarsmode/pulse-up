@@ -1,15 +1,14 @@
 import { CommonModule } from "@angular/common";
 import { Component, inject, Input, OnInit } from "@angular/core";
 import { SvgIconComponent } from "angular-svg-icon";
-import { RippleEffectDirective } from "@/app/shared/directives/ripple-effect";
+import { map } from "rxjs";
 import { PlatformService } from "@/app/shared/services/core/platform.service";
 import { SettingsService } from "@/app/shared/services/api/settings.service";
-import { map } from "rxjs";
 
 @Component({
     selector: "app-get-app-button",
     standalone: true,
-    imports: [CommonModule, SvgIconComponent, RippleEffectDirective],
+    imports: [CommonModule, SvgIconComponent],
     templateUrl: "./get-app-button.component.html",
     styleUrl: "./get-app-button.component.scss",
 })
@@ -37,10 +36,5 @@ export class GetAppButtonComponent implements OnInit {
         if (this.isOnePlatform) {
             this.classes["get-app-button--" + this.platform] = true;
         }
-    }
-
-    public onClick(): void {
-        if (this.platformService.value == "iOS") window.open(this.settingsService.appStoreUrl);
-        else window.open(this.settingsService.googlePlayUrl);
     }
 }
