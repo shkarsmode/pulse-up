@@ -20,7 +20,7 @@
     [ngClass]="classes">
     <a
         class="btn btn--{{ theme }}"
-        [href]="appStoreUrl"
+        [href]="appStoreUrl$ | async"
         target="_blank">
         <svg-icon
             src="assets/svg/a-store.svg"
@@ -32,7 +32,7 @@
     </a>
 
     <a
-        [href]="googlePlayUrl"
+        [href]="googlePlayUrl$ | async"
         class="btn btn--{{ theme }}"
         target="_blank">
         <svg-icon

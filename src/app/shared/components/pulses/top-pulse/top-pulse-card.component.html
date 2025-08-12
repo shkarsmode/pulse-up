@@ -9,7 +9,7 @@
         </div>
         }
         <img
-            [src]="topicIcon"
+            [src]="topicIcon$ | async"
             width="68"
             height="68"
             [alt]="pulse.title" />

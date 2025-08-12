@@ -22,8 +22,8 @@
         <div class="card-footer__left">
             <app-large-pulse-metric
                 [text]="data.stats?.lastDayVotes || 0 | formatNumber"
-                [accent]="isVoteActive">
-                @if (isVoteActive) {
+                [accent]="isVoteActive$ | async">
+                @if (isVoteActive$ | async) {
                     <div class="card-footer-icon-wrap card-footer-icon-wrap--active">
                         <svg-icon
                             appWavesAnimation
@@ -49,22 +49,26 @@
                         ariaLabel="share icon" />
                 </button>
             </app-menu>
-            <app-copy-topic-button [topicUrl]="topicUrl" />
+            <app-copy-topic-button
+                *ngIf="topicUrl$ | async as topicUrl"
+                [topicUrl]="topicUrl" />
         </div>
     </div>
 </app-large-pulse>
 
 <ng-template #menuContent>
     <div class="card-footer__socials">
-        <app-socials-button
-            [variant]="'facebook'"
-            [url]="topicUrl" />
-        <app-socials-button
-            [variant]="'x'"
-            [url]="topicUrl" />
-        <app-socials-button
-            [variant]="'email'"
-            [url]="topicUrl" />
-        <app-qrcode-button [url]="topicUrl" />
+        <ng-container *ngIf="topicUrl$ | async as topicUrl">
+            <app-socials-button
+                [variant]="'facebook'"
+                [url]="topicUrl" />
+            <app-socials-button
+                [variant]="'x'"
+                [url]="topicUrl" />
+            <app-socials-button
+                [variant]="'email'"
+                [url]="topicUrl" />
+            <app-qrcode-button [url]="topicUrl" />
+        </ng-container>
     </div>
 </ng-template>

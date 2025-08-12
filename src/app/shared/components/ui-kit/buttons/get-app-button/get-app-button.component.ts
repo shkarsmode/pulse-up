@@ -4,6 +4,7 @@ import { SvgIconComponent } from "angular-svg-icon";
 import { RippleEffectDirective } from "@/app/shared/directives/ripple-effect";
 import { PlatformService } from "@/app/shared/services/core/platform.service";
 import { SettingsService } from "@/app/shared/services/api/settings.service";
+import { map } from "rxjs";
 
 @Component({
     selector: "app-get-app-button",
@@ -25,12 +26,12 @@ export class GetAppButtonComponent implements OnInit {
         ["get-app-button--" + this.platform]: false,
     };
 
-    get appStoreUrl(): string {
-        return this.settingsService.appStoreUrl;
-    }
-    get googlePlayUrl(): string {
-        return this.settingsService.googlePlayUrl;
-    }
+    public appStoreUrl$ = this.settingsService.settings$.pipe(
+        map((settings) => settings.appStoreUrl)
+    );
+    public googlePlayUrl$ = this.settingsService.settings$.pipe(
+        map((settings) => settings.googlePlayUrl)
+    );
 
     ngOnInit(): void {
         if (this.isOnePlatform) {
