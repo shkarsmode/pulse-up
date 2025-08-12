@@ -1,0 +1,33 @@
+:host {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+a {
+    position: relative;
+    font-size: 18px;
+    color: var(--black-color);
+    font-weight: 400;
+
+    &:before {
+        content: "";
+        position: absolute;
+        display: block;
+        height: 2px;
+        width: 0%;
+        background-color: var(--accent-color);
+        transition: all 0.3s;
+
+        bottom: -8px;
+        text-align: right;
+    }
+
+    &.active:before {
+        width: 100%;
+    }
+
+    &.accent {
+        color: var(--accent-color);
+        font-weight: 600;
+    }
+}

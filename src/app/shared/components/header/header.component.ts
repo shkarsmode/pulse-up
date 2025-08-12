@@ -15,6 +15,7 @@ import { PlatformService } from "../../services/core/platform.service";
 import { SettingsService } from "../../services/api/settings.service";
 import { DownloadAppButtonComponent } from "./download-app-button/download-app-button.component";
 import { SecondaryButtonComponent } from "../ui-kit/buttons/secondary-button/secondary-button.component";
+import { DropdownLinkComponent } from "./dropdown-link/dropdown-link.component";
 
 @Component({
     selector: "app-header",
@@ -29,6 +30,7 @@ import { SecondaryButtonComponent } from "../ui-kit/buttons/secondary-button/sec
         OpenGetAppPopupDirective,
         DownloadAppButtonComponent,
         SecondaryButtonComponent,
+        DropdownLinkComponent,
     ],
     templateUrl: "./header.component.html",
     styleUrl: "./header.component.scss",
@@ -77,16 +79,6 @@ export class HeaderComponent implements OnInit {
 
     private enableDocumentScroll(): void {
         document.body.classList.remove("no-scroll");
-    }
-
-    public deligateCloseDropdown(event: Event) {
-        const targetElement = event.target as HTMLElement;
-
-        // Check if the click occurred on an anchor tag (logo or menu links)
-        if (targetElement.tagName === "A") {
-            this.isMobileDropdown = false;
-            this.enableDocumentScroll();
-        }
     }
 
     public closeDropdown() {
