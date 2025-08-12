@@ -1,5 +1,5 @@
 import { inject, Injectable } from "@angular/core";
-import { BehaviorSubject, catchError, switchMap, tap, throwError } from "rxjs";
+import { BehaviorSubject, catchError, switchMap, take, tap, throwError } from "rxjs";
 import { GeolocationService } from "./geolocation.service";
 import { AuthenticationService } from "../api/authentication.service";
 import { VotingError, VotingErrorCode } from "../../helpers/errors/voting-error";
@@ -132,7 +132,7 @@ export class VotingService {
 
     private showWelcomePopup() {
         const dialogRef = this.dialogService.open(WelcomePopupComponent);
-        dialogRef.afterClosed().subscribe((result) => {
+        dialogRef.afterClosed().pipe(take(1)).subscribe((result) => {
             if (result?.stopSignInProcess) {
                 this.isGeolocationRetrieved = false;
             }
@@ -141,7 +141,7 @@ export class VotingService {
 
     private showConfirmPhoneNumberPopup() {
         const dialogRef = this.dialogService.open(ConfirmPhoneNumberPopupComponent);
-         dialogRef.afterClosed().subscribe((result) => {
+         dialogRef.afterClosed().pipe(take(1)).subscribe((result) => {
             if (result?.stopSignInprocess) {
                 this.authService.stopSignInProcess();
                 this.isGeolocationRetrieved = false;
