@@ -15,11 +15,14 @@ import { SocialsButtonComponent } from "@/app/shared/components/ui-kit/buttons/s
 import { QrcodeButtonComponent } from "@/app/shared/components/ui-kit/buttons/qrcode-button/qrcode-button.component";
 import { FormatNumberPipe } from "@/app/shared/pipes/format-number.pipe";
 import { WaveAnimationDirective } from "@/app/shared/directives/wave-animation/wave-animation.directive";
+import { map } from "rxjs";
+import { CommonModule } from "@angular/common";
 
 @Component({
     selector: "app-user-topics-list-item",
     standalone: true,
     imports: [
+        CommonModule,
         LargePulseComponent,
         LargePulseIconComponent,
         LargePulseTitleComponent,
@@ -42,12 +45,10 @@ export class UserTopicsListItemComponent {
     @Input({ required: true }) data: ITopic;
     @Input() vote?: IVote | null = null;
 
-    public get topicUrl() {
-        return this.settingsService.shareTopicBaseUrl + this.data.shareKey;
-    }
-    public get isVoteActive() {
-        return (
-            !!this.vote && VoteUtils.isActiveVote(this.vote, this.settingsService.minVoteInterval)
-        );
-    }
+    public topicUrl$ = this.settingsService.settings$.pipe(
+        map((settings) => settings.shareTopicBaseUrl + this.data.shareKey)
+    )
+    public isVoteActive$ = this.settingsService.settings$.pipe(
+        map((settings) => !!this.vote && VoteUtils.isActiveVote(this.vote, settings.minVoteInterval))
+    )
 }

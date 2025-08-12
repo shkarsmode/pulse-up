@@ -1,6 +1,8 @@
 import { Component, inject, Input } from "@angular/core";
+import { CommonModule } from "@angular/common";
 import { AngularSvgIconModule } from "angular-svg-icon";
 import { MatButtonModule } from "@angular/material/button";
+import { map } from "rxjs";
 import { LargePulseComponent } from "@/app/shared/components/pulses/large-pulse/large-pulse.component";
 import { LargePulseIconComponent } from "@/app/shared/components/pulses/large-pulse/large-pulse-icon/large-pulse-icon.component";
 import { FormatNumberPipe } from "@/app/shared/pipes/format-number.pipe";
@@ -22,6 +24,7 @@ import { WaveAnimationDirective } from "@/app/shared/directives/wave-animation/w
     selector: "app-trending-topics-list-item",
     standalone: true,
     imports: [
+        CommonModule,
         LargePulseComponent,
         LargePulseIconComponent,
         FormatNumberPipe,
@@ -46,12 +49,10 @@ export class TrendingTopicsListItemComponent {
     @Input({ required: true }) data: ITopic;
     @Input() vote?: IVote | null = null;
 
-    public get topicUrl() {
-        return this.settingsService.shareTopicBaseUrl + this.data.shareKey;
-    }
-    public get isVoteActive() {
-        return (
-            !!this.vote && VoteUtils.isActiveVote(this.vote, this.settingsService.minVoteInterval)
-        );
-    }
+    public topicUrl$ = this.settingsService.settings$.pipe(
+        map(settings => `${settings.shareTopicBaseUrl}${this.data.shareKey}`)
+    );
+    public isVoteActive$ = this.settingsService.settings$.pipe(
+        map(settings => !!this.vote && VoteUtils.isActiveVote(this.vote, settings.minVoteInterval))
+    );
 }

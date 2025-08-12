@@ -3,7 +3,7 @@ import { CommonModule } from "@angular/common";
 import { Router, RouterModule } from "@angular/router";
 import { MatDialog } from "@angular/material/dialog";
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
-import { take } from "rxjs";
+import { map, take } from "rxjs";
 import { InputComponent } from "@/app/shared/components/ui-kit/input/input.component";
 import { atLeastOneLetterValidator } from "@/app/shared/helpers/validators/at-least-one-letter.validator";
 import { usernameUniqueValidator } from "@/app/shared/helpers/validators/username-unique.validator";
@@ -137,12 +137,16 @@ export class ProfileFormComponent implements OnInit {
         };
     }
 
-    public get previewUrl(): string {
-        if (this.initialValues.picture) {
-            return `${this.settingsService.blobUrlPrefix}${this.initialValues.picture}`;
-        }
-        return "assets/svg/plus-placeholder.svg";
-    }
+    public previewUrl$ = this.settingsService.settings$.pipe(
+        map((settings) => {
+            console.log({initialValues: this.initialValues});
+            
+            if (this.initialValues.picture) {
+                return `${settings.blobUrlPrefix}${this.initialValues.picture}`;
+            }
+            return "assets/svg/plus-placeholder.svg";
+        })
+    )
 
     private disabled = false;
 
