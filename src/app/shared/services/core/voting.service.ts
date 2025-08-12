@@ -48,9 +48,6 @@ export class VotingService {
             );
         }
 
-        console.log("vote called with topicId:", topicId);
-        
-
         this.isVoting.next(true);
 
         return this.geolocationService.getCurrentGeolocation().pipe(
@@ -65,8 +62,6 @@ export class VotingService {
                 );
             }),
             switchMap((geolocation) => {
-                console.log("this.voteService.sendVote");
-                
                 return this.voteService.sendVote({
                     topicId,
                     location: {

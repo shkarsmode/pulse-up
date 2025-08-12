@@ -44,6 +44,7 @@ import { VoteButtonComponent } from "../../ui/vote-button/vote-button.component"
 import { PulseCampaignComponent } from "./pulse-campaign/pulse-campaign.component";
 import { VotesService } from "@/app/shared/services/votes/votes.service";
 import { MapHeatmapLayerComponent } from "@/app/shared/components/map/map-heatmap-layer/map-heatmap-layer.component";
+import { WaveAnimationDirective } from "@/app/shared/directives/wave-animation/wave-animation.directive";
 
 @Component({
     selector: "app-pulse-page",
@@ -69,6 +70,7 @@ import { MapHeatmapLayerComponent } from "@/app/shared/components/map/map-heatma
         QrcodeButtonComponent,
         PulseCampaignComponent,
         MapHeatmapLayerComponent,
+        WaveAnimationDirective,
     ],
 })
 export class PulsePageComponent implements OnInit, AfterViewInit, OnDestroy {

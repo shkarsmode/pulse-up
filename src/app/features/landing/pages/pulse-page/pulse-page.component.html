@@ -27,21 +27,35 @@
             <div class="pulse__stats-wrap">
                 <div>
                     <span class="pulse__stats-title">Supporters</span>
-                    <svg-icon src="assets/svg/fans.svg" />
+                    <div class="pulse__stats-icon">
+                        <svg-icon src="assets/svg/fans.svg" />
+                    </div>
                     <span class="pulse__stats-count">
                         {{ topic.stats?.totalUniqueUsers || 0 | formatNumber }}
                     </span>
                 </div>
                 <div>
                     <span class="pulse__stats-title">Lifetime</span>
-                    <svg-icon src="assets/svg/chart-simple.svg" />
+                    <div class="pulse__stats-icon">
+                        <svg-icon src="assets/svg/chart-simple.svg" />
+                    </div>
                     <span class="pulse__stats-count">
                         {{ topic.stats?.totalVotes || 0 | formatNumber }}
                     </span>
                 </div>
                 <div>
                     <span class="pulse__stats-title">24 hours</span>
-                    <svg-icon src="assets/svg/pulse.svg" />
+                    @if (isActiveVote) {
+                        <div class="pulse__stats-icon pulse__stats-icon--active">
+                            <svg-icon
+                                appWavesAnimation
+                                src="assets/svg/logo/logo-v2.svg"
+                                ariaLabel="pulse icon"
+                                class="card-footer-icon" />
+                        </div>
+                    } @else {
+                        <svg-icon src="assets/svg/pulse.svg" />
+                    }
                     <span class="pulse__stats-count">
                         {{ topic.stats?.lastDayVotes || 0 | formatNumber }}
                     </span>
