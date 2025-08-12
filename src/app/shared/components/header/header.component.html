@@ -38,7 +38,10 @@
             </li>
             <li>
                 <a
-                    [routerLink]="'/' + (isAuthenticated ? AppRoutes.Profile.OVERVIEW : AppRoutes.Auth.SIGN_IN)"
+                    [routerLink]="
+                        '/' +
+                        (isAuthenticated ? AppRoutes.Profile.OVERVIEW : AppRoutes.Auth.SIGN_IN)
+                    "
                     routerLinkActive="active">
                     <mat-icon
                         aria-hidden="false"
@@ -56,8 +59,8 @@
             </app-primary-button> -->
             <div class="buttons__download">
                 <app-secondary-button
-                    openGetAppPopup
-                    [fullWidth]="true">
+                    [fullWidth]="true"
+                    openGetAppPopup>
                     Download App
                 </app-secondary-button>
             </div>
@@ -166,7 +169,7 @@
                     </li>
                 </ul>
 
-                <div>
+                <div class="footer-buttons">
                     <!-- <app-secondary-button
                         [class.scale]="!isMobileDropdown"
                         [routerLink]="'/' + AppRoutes.User.Topic.HOW_IT_WORKS"
@@ -174,12 +177,9 @@
                         routerLinkActive="active">
                         Add a topic
                     </app-secondary-button> -->
-                    <app-primary-button
-                        [class.scale]="!isMobileDropdown"
-                        (click)="toggleDropdown()"
-                        openGetAppPopup>
-                        Download App
-                    </app-primary-button>
+                    <app-download-app-button
+                        [link]="(onlineStoreLink$ | async) || ''"
+                        (handleClick)="closeDropdown()" />
                 </div>
             </div>
 
