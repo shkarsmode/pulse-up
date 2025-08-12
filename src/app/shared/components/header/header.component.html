@@ -84,9 +84,8 @@
         <app-burger-button (click)="toggleDropdown()" />
     </div>
 
-    <button
+    <div
         class="mobile__dropdown"
-        (click)="deligateCloseDropdown($event)"
         [class.active]="isMobileDropdown">
         <div
             class="mobile__dropdown-container"
@@ -102,70 +101,76 @@
 
                 <ul [class.scale]="!isMobileDropdown">
                     <li>
-                        <a
-                            [routerLink]="'/' + AppRoutes.Landing.MAP"
-                            routerLinkActive="active">
+                        <app-dropdown-link
+                            [link]="'/' + AppRoutes.Landing.MAP"
+                            [accent]="true"
+                            (handleclick)="closeDropdown()">
                             Map
-                        </a>
+                        </app-dropdown-link>
                     </li>
                     <li>
-                        <a
-                            [routerLink]="'/' + AppRoutes.Landing.LEADERBOARD"
-                            routerLinkActive="active">
+                        <app-dropdown-link
+                            [link]="'/' + AppRoutes.Landing.LEADERBOARD"
+                            [accent]="true"
+                            (handleclick)="closeDropdown()">
                             Leaderboard
-                        </a>
+                        </app-dropdown-link>
                     </li>
                     <li>
-                        <a
-                            [routerLink]="'/' + AppRoutes.Landing.TOPICS"
-                            routerLinkActive="active">
+                        <app-dropdown-link
+                            [link]="'/' + AppRoutes.Landing.TOPICS"
+                            [accent]="true"
+                            (handleclick)="closeDropdown()">
                             Topics
-                        </a>
+                        </app-dropdown-link>
                     </li>
                     <li>
-                        <a
-                            [routerLink]="'/' + AppRoutes.Landing.ABOUT"
-                            routerLinkActive="active">
+                        <app-dropdown-link
+                            [link]="'/' + AppRoutes.Landing.ABOUT"
+                            [accent]="true"
+                            (handleclick)="closeDropdown()">
                             About
-                        </a>
+                        </app-dropdown-link>
                     </li>
                     @if (isAuthenticated) {
                         <li>
-                            <a
-                                [routerLink]="'/' + AppRoutes.Profile.OVERVIEW"
-                                routerLinkActive="active">
+                            <app-dropdown-link
+                                [link]="'/' + AppRoutes.Profile.OVERVIEW"
+                                [accent]="true"
+                                (handleclick)="closeDropdown()">
                                 Profile
-                            </a>
+                            </app-dropdown-link>
                         </li>
                     } @else {
                         <li>
-                            <a
-                                [routerLink]="'/' + AppRoutes.Auth.SIGN_IN"
-                                routerLinkActive="active">
+                            <app-dropdown-link
+                                [link]="'/' + AppRoutes.Auth.SIGN_IN"
+                                [accent]="true"
+                                (handleclick)="closeDropdown()">
                                 Login
-                            </a>
+                            </app-dropdown-link>
                         </li>
                     }
                     <li>
-                        <a
-                            [routerLink]="'/' + AppRoutes.Community.TERMS"
-                            routerLinkActive="active">
+                        <app-dropdown-link
+                            [link]="'/' + AppRoutes.Community.TERMS"
+                            (handleclick)="closeDropdown()">
                             Terms of Use
-                        </a>
+                        </app-dropdown-link>
                     </li>
                     <li>
-                        <a
-                            [routerLink]="'/' + AppRoutes.Community.PRIVACY"
-                            routerLinkActive="active">
+                        <app-dropdown-link
+                            [link]="'/' + AppRoutes.Community.PRIVACY"
+                            (handleclick)="closeDropdown()">
                             Privacy Policy
-                        </a>
+                        </app-dropdown-link>
                     </li>
                     <li>
-                        <a
-                            [routerLink]="'/' + AppRoutes.Community.SUPPORT"
-                            routerLinkActive="active">
+                        <app-dropdown-link
+                            [link]="'/' + AppRoutes.Community.SUPPORT"
+                            (handleclick)="closeDropdown()">
                             Support
-                        </a>
+                        </app-dropdown-link>
                     </li>
                 </ul>
 
@@ -189,5 +194,5 @@
                 </div>
             }
         </div>
-    </button>
+    </div>
 </header>

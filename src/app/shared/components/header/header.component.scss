@@ -259,35 +259,7 @@ ul {
                         user-select: none;
 
                         li {
-                            font-size: 18px;
-                            color: var(--black-color);
-                            font-weight: 400;
-
-                            &:not(:nth-child(5) ~ li) {
-                                color: var(--accent-color);
-                                font-weight: 600;
-                            }
-
-                            a {
-                                position: relative;
-
-                                &:before {
-                                    content: "";
-                                    position: absolute;
-                                    display: block;
-                                    height: 2px;
-                                    width: 0%;
-                                    background-color: var(--accent-color);
-                                    transition: all 0.3s;
-
-                                    bottom: -8px;
-                                    text-align: right;
-                                }
-
-                                &.active:before {
-                                    width: 100%;
-                                }
-                            }
+                            width: 100%;;
                         }
                     }
 
