@@ -71,7 +71,8 @@ export class LeaderboardHintComponent implements OnInit {
     public openInfoPopup() {
         this.dialogService.open(LeaderboardInfoPopupComponent, {
             data: {
-                type: this.timeframeStatus,
+                timeframe: this.selectedTimeframe,
+                status: this.timeframeStatus,
             },
         });
     }

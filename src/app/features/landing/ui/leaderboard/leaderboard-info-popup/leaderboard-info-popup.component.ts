@@ -5,9 +5,17 @@ import { PopupTextComponent } from "@/app/shared/components/ui-kit/popup/popup-t
 import { PopupSubtitleComponent } from "@/app/shared/components/ui-kit/popup/popup-subtitle/popup-subtitle.component";
 import { PopupFooterComponent } from "@/app/shared/components/ui-kit/popup/popup-footer/popup-footer.component";
 import { PrimaryButtonComponent } from "@/app/shared/components/ui-kit/buttons/primary-button/primary-button.component";
+import { LeaderboardTimeframe } from "../../../interface/leaderboard-timeframe.interface";
+
+const timeframeLabels: Record<LeaderboardTimeframe, string> = {
+    Day: "day",
+    Week: "week",
+    Month: "month",
+}
 
 interface LeaderboardInfoPopupData {
-    type: "Active" | "Upcoming" | "Ended";
+    timeframe: LeaderboardTimeframe;
+    status: "Active" | "Upcoming" | "Ended";
 }
 
 @Component({
@@ -27,7 +35,9 @@ export class LeaderboardInfoPopupComponent {
     private readonly dialogRef = inject(MatDialogRef<LeaderboardInfoPopupComponent>);
     public readonly data: LeaderboardInfoPopupData = inject(MAT_DIALOG_DATA);
 
-    closePopup() {
+    public timeframeLabel = timeframeLabels[this.data.timeframe];
+
+    public closePopup() {
         this.dialogRef.close();
     }
 }
