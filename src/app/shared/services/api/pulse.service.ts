@@ -311,7 +311,7 @@ export class PulseService {
         }
 
         const isUpdated =
-            topic.stats?.totalVotes && topic.stats.totalVotes >= pendingTopic.stats.totalVotes;
+            !!topic.stats?.totalVotes && topic.stats.totalVotes >= pendingTopic.stats.totalVotes;
 
         if (isUpdated) {
             this.pendingTopicsService.remove(topic.id);

@@ -12,9 +12,10 @@ import {
     tap,
     withLatestFrom,
 } from "rxjs";
-import { AppConstants } from "@/app/shared/constants";
 import { ITopic } from "@/app/shared/interfaces";
 import { ICategory } from "@/app/shared/interfaces/category.interface";
+
+const ITEMS_PER_PAGE = 50;
 
 @Injectable()
 export class PulsesPaginationService {
@@ -50,13 +51,19 @@ export class PulsesPaginationService {
                 .get({
                     keyword: searchText,
                     category: category ? category.name : undefined,
-                    take: AppConstants.PULSES_PER_PAGE,
-                    skip: AppConstants.PULSES_PER_PAGE * (currentPage - 1),
+                    take: ITEMS_PER_PAGE,
+                    skip: ITEMS_PER_PAGE * (currentPage - 1),
                 })
                 .pipe(
                     tap((topics) => {
-                        this.hasMorePages = topics.length === AppConstants.PULSES_PER_PAGE;
+                        this.hasMorePages = topics.length === ITEMS_PER_PAGE;
                         this.loadingSubject.next(false);
+                    }),
+                    map((topics) => {
+                        if (category) {
+                            return this.sortByVotes(topics);
+                        }
+                        return topics;
                     }),
                 );
         }),
@@ -100,5 +107,13 @@ export class PulsesPaginationService {
     public setCategoryFilter(category: ICategory | null): void {
         this.categoryFilterSubject.next(category);
         this.currentPageSubject.next(1);
+    }
+
+    private sortByVotes(topics: ITopic[]): ITopic[] {
+        return topics.sort((a, b) => {
+            const aVotes = a.stats?.lastDayVotes || 0;
+            const bVotes = b.stats?.lastDayVotes || 0;
+            return bVotes - aVotes;
+        });
     }
 }
