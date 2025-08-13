@@ -1,4 +1,4 @@
-import { Injectable, inject } from "@angular/core";
+import { DestroyRef, Injectable, inject } from "@angular/core";
 import {
     Observable,
     of,
@@ -9,15 +9,20 @@ import {
     BehaviorSubject,
     tap,
     catchError,
+    distinctUntilChanged,
 } from "rxjs";
 import { VoteService } from "../api/vote.service";
 import { IVote } from "../../interfaces/vote.interface";
+import { AuthenticationService } from "../api/authentication.service";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 
 @Injectable({
     providedIn: "root",
 })
 export class VotesService {
+    private readonly destroyRef = inject(DestroyRef);
     private readonly voteService = inject(VoteService);
+    private readonly authenticationService = inject(AuthenticationService);
 
     private readonly votesSubject = new BehaviorSubject<IVote[]>([]);
     public readonly votes$: Observable<IVote[]> = this.votesSubject.asObservable();
@@ -36,7 +41,15 @@ export class VotesService {
     private initialized = false;
 
     constructor() {
-        this.loadAllVotes();
+        this.authenticationService.userToken
+            .pipe(distinctUntilChanged(), takeUntilDestroyed(this.destroyRef))
+            .subscribe((token) => {
+                if (token) {
+                    this.loadAllVotes();
+                } else {
+                    this.clearVotes();
+                }
+            });
     }
 
     private loadAllVotes(): void {
@@ -67,5 +80,9 @@ export class VotesService {
     public addVote(vote: IVote): void {
         const currentVotes = this.votesSubject.getValue();
         this.votesSubject.next([vote, ...currentVotes]);
+    }
+
+    private clearVotes(): void {
+        this.votesSubject.next([]);
     }
 }
