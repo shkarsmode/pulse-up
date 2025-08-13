@@ -164,7 +164,16 @@ export class CustomDatepickerComponent {
         }
     }
 
+    public closeMultiYearView(): void {
+        if (this.dayCalendar) this.dayCalendar.currentView = "month";
+        if (this.weekCalendar) this.weekCalendar.currentView = "month";
+        if (this.monthCalendar) this.monthCalendar.currentView = "year";
+    }
+
     public onViewChanged(view: MatCalendarView): void {
+        if (view !== 'multi-year') {
+            this.closeMultiYearView();
+        }
         this.currentView = view;
         this.dateChange.emit(null);
         this.selectedDateRange = this.getStartWeekRange();

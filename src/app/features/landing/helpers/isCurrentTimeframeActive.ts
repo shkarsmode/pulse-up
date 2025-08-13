@@ -4,7 +4,7 @@ import isSameOrBefore from "dayjs/plugin/isSameOrBefore";
 import weekday from "dayjs/plugin/weekday";
 import utc from 'dayjs/plugin/utc';
 import { LeaderboardTimeframe } from "../interface/leaderboard-timeframe.interface";
-// import { dateToUTC } from "./dateToUTC";
+import { dateToUTC } from "./dateToUTC";
 
 dayjs.extend(isSameOrAfter);
 dayjs.extend(isSameOrBefore);
@@ -12,8 +12,7 @@ dayjs.extend(weekday);
 dayjs.extend(utc);
 
 export function isCurrentTimeframeActive(selectedDate: Date, timeframe: LeaderboardTimeframe): boolean {
-    // const today = dayjs(dateToUTC(new Date()));
-    const today = dayjs().utc();
+    const today = dayjs(dateToUTC(new Date()));
     const selected = dayjs(selectedDate);
 
     switch (timeframe) {
