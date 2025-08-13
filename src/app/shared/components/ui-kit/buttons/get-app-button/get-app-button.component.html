@@ -1,26 +1,9 @@
-@if (design === 'old') {
-<button
-    (click)="onClick()"
-    appRippleEffect>
-    @if (platformService.value === "iOS") {
-    <svg-icon
-        src="assets/svg/a-store.svg"
-        id="icon" />
-    <span> Download on the App Store </span>
-    } @else {
-    <svg-icon
-        src="assets/svg/g-play.svg"
-        id="icon" />
-    <span> Get it on Google Play </span>
-    }
-</button>
-} @else {
 <div
     class="get-app-button"
     [ngClass]="classes">
     <a
         class="btn btn--{{ theme }}"
-        [href]="appStoreUrl"
+        [href]="appStoreUrl$ | async"
         target="_blank">
         <svg-icon
             src="assets/svg/a-store.svg"
@@ -32,7 +15,7 @@
     </a>
 
     <a
-        [href]="googlePlayUrl"
+        [href]="googlePlayUrl$ | async"
         class="btn btn--{{ theme }}"
         target="_blank">
         <svg-icon
@@ -44,4 +27,3 @@
         </p>
     </a>
 </div>
-}

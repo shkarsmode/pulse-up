@@ -1,5 +1,6 @@
 import { Component, inject, Input } from "@angular/core";
-import { DatePipe } from "@angular/common";
+import { CommonModule, DatePipe } from "@angular/common";
+import { map } from "rxjs";
 import { SettingsService } from "@/app/shared/services/api/settings.service";
 import { ITopic } from "@/app/shared/interfaces";
 import { IVote } from "@/app/shared/interfaces/vote.interface";
@@ -23,6 +24,7 @@ import { PulseIconComponent } from "../../pulse-icon/pulse-icon.component";
     selector: "app-my-topics-list-item",
     standalone: true,
     imports: [
+        CommonModule,
         LargePulseComponent,
         LargePulseIconComponent,
         LargePulseTitleComponent,
@@ -48,12 +50,11 @@ export class MyTopicsListItemComponent {
     @Input({ required: true }) data: ITopic;
     @Input() vote?: IVote | null = null;
 
-    public get topicUrl() {
-        return this.settingsService.shareTopicBaseUrl + this.data.shareKey;
-    }
-    public get isVoteActive() {
-        return (
-            !!this.vote && VoteUtils.isActiveVote(this.vote, this.settingsService.minVoteInterval)
-        );
-    }
+    public topicUrl$ = this.settingsService.settings$.pipe(
+        map(settings => settings.shareTopicBaseUrl + this.data.shareKey)
+    )
+
+    public isVoteActive$ = this.settingsService.settings$.pipe(
+        map(settings => !!this.vote && VoteUtils.isActiveVote(this.vote, settings.minVoteInterval))
+    );
 }

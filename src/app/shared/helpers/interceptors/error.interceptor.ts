@@ -1,9 +1,9 @@
 import { HttpEvent, HttpHandlerFn, HttpInterceptorFn, HttpRequest } from "@angular/common/http";
 import { inject } from "@angular/core";
+import { Router } from "@angular/router";
 import { BehaviorSubject, Observable, throwError } from "rxjs";
 import { catchError, filter, switchMap, take } from "rxjs/operators";
 import { AuthenticationService } from "../../services/api/authentication.service";
-import { Router } from "@angular/router";
 import { AppRoutes } from "../../enums/app-routes.enum";
 
 export const errorInterceptor: HttpInterceptorFn = (req, next) => {
@@ -51,6 +51,7 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
 
     return next(requestWithAuthToken).pipe(
         catchError((error) => {
+            console.log("Error in error interceptor:", error);
             if (error.status === 504) {
                 return throwError(() => error);
             } else if (error.status === 401 || error?.error?.error == "unauthorized_client") {

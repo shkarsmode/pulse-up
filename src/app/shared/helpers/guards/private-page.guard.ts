@@ -6,17 +6,15 @@ import {
     RouterStateSnapshot,
     UrlTree,
 } from "@angular/router";
-import { filter, map, Observable } from "rxjs";
+import { Observable } from "rxjs";
 import { AppRoutes } from "../../enums/app-routes.enum";
 import { AuthenticationService } from "../../services/api/authentication.service";
-import { AppInitializerService } from "../../services/core/app-initializer.service";
 
 @Injectable({
     providedIn: "root",
 })
 export class PrivatePageGuard implements CanActivate {
     private readonly router: Router = inject(Router);
-    private readonly appInitializerService: AppInitializerService = inject(AppInitializerService);
     private readonly authenticationService: AuthenticationService = inject(AuthenticationService);
 
     private readonly appRoutes = AppRoutes;
@@ -28,14 +26,10 @@ export class PrivatePageGuard implements CanActivate {
         const userToken = this.authenticationService.userTokenValue;
 
         if (userToken) {
-            this.appInitializerService.loadInitialData();
-            return this.appInitializerService.initialized$.pipe(
-                filter((initialized) => initialized),
-                map(() => true)
-            );
+            return true;
         }
 
-        this.router.navigateByUrl(`${this.appRoutes.Auth.SIGN_IN}?redirect=${state.url}`);
+        this.router.parseUrl(`/${this.appRoutes.Auth.SIGN_IN}?redirect=${state.url}`);
         return false;
     }
 }
