@@ -23,17 +23,17 @@ import { TopicsEmptyListComponent } from "../../ui/topics-empty-list/topics-empt
     styleUrl: "./pulses.component.scss",
     standalone: true,
     imports: [
-    CommonModule,
-    RouterModule,
-    InfiniteScrollDirective,
-    LoadingIndicatorComponent,
-    InputSearchComponent,
-    TrendingTopicsListItemComponent,
-    ContainerComponent,
-    CategoryFilterMenuComponent,
-    CategoryFilterSelectionComponent,
-    TopicsEmptyListComponent
-],
+        CommonModule,
+        RouterModule,
+        InfiniteScrollDirective,
+        LoadingIndicatorComponent,
+        InputSearchComponent,
+        TrendingTopicsListItemComponent,
+        ContainerComponent,
+        CategoryFilterMenuComponent,
+        CategoryFilterSelectionComponent,
+        TopicsEmptyListComponent,
+    ],
     providers: [InfiniteLoaderService, PulsesPaginationService],
 })
 export class PulsesComponent {
