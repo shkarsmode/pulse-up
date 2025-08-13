@@ -22,6 +22,7 @@ import { LinkButtonComponent } from "@/app/shared/components/ui-kit/buttons/link
 import { DialogService } from "@/app/shared/services/core/dialog.service";
 import { LeaderboardInfoPopupComponent } from "../leaderboard-info-popup/leaderboard-info-popup.component";
 import { TimeframeStatus } from "../../../interface/timeframe-status.interface";
+import { formatRemainingTime } from "../../../helpers/formatRemainingTime";
 
 @Component({
     selector: "app-leaderboard-hint",
@@ -70,6 +71,7 @@ export class LeaderboardHintComponent implements OnInit {
 
     public openInfoPopup() {
         this.dialogService.open(LeaderboardInfoPopupComponent, {
+            width: "600px",
             data: {
                 timeframe: this.selectedTimeframe,
                 status: this.timeframeStatus,
@@ -78,19 +80,7 @@ export class LeaderboardHintComponent implements OnInit {
     }
 
     public formatTime(ms: number) {
-        const minutesTotal = Math.floor(ms / (1000 * 60));
-        const days = Math.floor(minutesTotal / (60 * 24));
-        const hours = Math.floor((minutesTotal % (60 * 24)) / 60);
-        const minutes = minutesTotal % 60;
-        const seconds = Math.floor((ms % (1000 * 60)) / 1000);
-
-        const parts: string[] = [];
-        if (days) parts.push(`${days} days`);
-        if (hours) parts.push(`${hours}h`);
-        if (this.selectedTimeframe !== "Month") parts.push(`${minutes}m`);
-        if (this.selectedTimeframe !== "Month") parts.push(`${seconds}s`);
-
-        return parts.length > 0 ? parts.join(" ") : "0h 0m";
+        return formatRemainingTime(ms, this.selectedTimeframe);
     }
 
     private updateRemainingTime() {
