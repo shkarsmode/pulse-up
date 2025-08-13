@@ -25,6 +25,7 @@ export class PendingTopicsService {
     }
 
     add(topic: ITopic): void {
+        
         const newPendingTopic: IPendingTopic = {
             id: topic.id,
             stats: topic.stats || {
@@ -33,10 +34,11 @@ export class PendingTopicsService {
                 lastDayVotes: 0,
             },
         };
-
-        this.pendingTopics = this.pendingTopics.filter((topic) => topic.id !== topic.id);
+        
+        this.pendingTopics = this.pendingTopics.filter((pendingTopic) => {
+            return pendingTopic.id !== topic.id
+        });
         this.pendingTopics.push(newPendingTopic);
-
         this.saveToStorage();
     }
 
