@@ -1,5 +1,4 @@
 import {
-    APP_INITIALIZER,
     ApplicationConfig,
     provideZoneChangeDetection,
 } from "@angular/core";
@@ -25,11 +24,6 @@ import { jwtInterceptor } from "./shared/helpers/interceptors/jwt.interceptor";
 import { errorInterceptor } from "./shared/helpers/interceptors/error.interceptor";
 import { APP_ROUTES } from "./app.routes";
 import { WindowService } from "./shared/services/core/window.service";
-import { SettingsService } from "./shared/services/api/settings.service";
-
-function initializeApp(settingsService: SettingsService) {
-    return () => settingsService.settings$;
-}
 
 export const appConfig: ApplicationConfig = {
     providers: [
@@ -46,12 +40,6 @@ export const appConfig: ApplicationConfig = {
                 popper: popperVariation,
             },
         }),
-        {
-            provide: APP_INITIALIZER,
-            useFactory: initializeApp,
-            deps: [SettingsService],
-            multi: true,
-        },
         {
             provide: API_URL,
             useValue: environment.apiUrl,

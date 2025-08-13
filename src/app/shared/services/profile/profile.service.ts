@@ -15,9 +15,11 @@ export class ProfileService {
         switchMap(() => {
             if (this.cachedProfile) return of(this.cachedProfile);
 
-            return this.userService
-                .getOwnProfile()
-                .pipe(tap((profile) => (this.cachedProfile = profile)));
+            return this.userService.getOwnProfile().pipe(
+                tap((profile) => {
+                    this.cachedProfile = profile;
+                }),
+            );
         }),
         shareReplay({ refCount: true, bufferSize: 1 }),
     );

@@ -201,7 +201,7 @@ export class PulsePageComponent implements OnInit, AfterViewInit, OnDestroy {
         if (topicId) {
             return forkJoin({
                 topic: this.getTopic(topicId),
-                votes: this.getVote(topicId),
+                votes: this.getVotes(topicId),
             }).pipe(
                 tap(({ topic, votes }) => {
                     this.updateTopicData(topic);
@@ -220,10 +220,10 @@ export class PulsePageComponent implements OnInit, AfterViewInit, OnDestroy {
                     this.createLink(topic);
                     this.updateSuggestions();
                     this.updateMetadata(topic);
-                    return this.getVote(topic.id).pipe(
-                        tap((vote) => {
-                            if (vote && vote[0]) {
-                                this.updateVoteData(vote[0]);
+                    return this.getVotes(topic.id).pipe(
+                        tap((votes) => {
+                            if (votes && votes[0]) {
+                                this.updateVoteData(votes[0]);
                             }
                         }),
                         map((votes) => ({
@@ -236,13 +236,15 @@ export class PulsePageComponent implements OnInit, AfterViewInit, OnDestroy {
         }
     }
 
-    private getVote(topicId: number) {
+    private getVotes(topicId: number) {
         if (this.isAnonymousUser) {
+            console.log("Anonymous user, skipping vote fetch");
             return of(null);
         }
         return this.voteService.getMyVotes({ topicId }).pipe(
             first(),
-            catchError(() => {
+            catchError((error: unknown) => {
+                console.error("Failed to fetch votes:", error);
                 this.notificationService.error(
                     "Failed to fetch your vote. Please reload the page.",
                 );
