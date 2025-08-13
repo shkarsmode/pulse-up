@@ -42,7 +42,20 @@
     flex-direction: column;
     row-gap: 16px;
     margin-top: 16px;
-    counter-reset: rate;
+    counter-reset: rate-counter;
+    list-style: none;
+
+    li {
+        display: flex;
+        align-items: center;
+        column-gap: 16px;
+        counter-increment: rate-counter;
+        &::before {
+            content: counter(rate-counter);
+            font-weight: bold;
+            color: #555;
+        }
+    }
 }
 
 .leaderboard__calendar-button {
