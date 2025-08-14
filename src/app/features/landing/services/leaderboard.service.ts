@@ -2,11 +2,28 @@ import { inject, Injectable } from "@angular/core";
 import { BehaviorSubject, catchError, map, of, switchMap, tap } from "rxjs";
 import { PulseService } from "@/app/shared/services/api/pulse.service";
 import { LeaderboardTimeframe } from "../interface/leaderboard-timeframe.interface";
+import { getTimeframeStatus } from "../helpers/getTimeframeStatus";
+import { LeaderboardTimeframeStatus } from "../interface/leaderboard-timeframe-status.interface";
 
-interface ILeaderboardFilter {
-    date: string;
+interface ILeaderboardTempFilter {
+    date: Date | null;
     timeframe: LeaderboardTimeframe;
 }
+
+interface ILeaderboardFilter {
+    date: Date;
+    timeframe: LeaderboardTimeframe;
+}
+
+const initialTempFilter: ILeaderboardTempFilter = {
+    date: new Date(),
+    timeframe: "Month",
+};
+
+const initialFilter: ILeaderboardFilter = {
+    date: new Date(),
+    timeframe: "Month",
+};
 
 @Injectable({
     providedIn: "root",
@@ -14,21 +31,19 @@ interface ILeaderboardFilter {
 export class LeaderboardService {
     private pulseService = inject(PulseService);
 
-    public readonly startDate = new Date();
-    public readonly startTimeframe: LeaderboardTimeframe = "Month";
-
     private readonly count = 10;
-    private filterSubject = new BehaviorSubject<ILeaderboardFilter>({
-        date: this.startDate.toISOString(),
-        timeframe: this.startTimeframe,
-    });
+    private tempFilters = new BehaviorSubject<ILeaderboardTempFilter>(initialTempFilter);
+    private filters = new BehaviorSubject<ILeaderboardFilter>(initialFilter);
+    private timeframeStatus = new BehaviorSubject<LeaderboardTimeframeStatus | null>(null);
     private isLoadingSubject = new BehaviorSubject<boolean>(false);
     private isErrorSubject = new BehaviorSubject<boolean>(false);
 
     public isLoading$ = this.isLoadingSubject.asObservable();
     public isError$ = this.isErrorSubject.asObservable();
-    public filter$ = this.filterSubject.asObservable();
-    public topics$ = this.filter$.pipe(
+    public filters$ = this.filters.asObservable();
+    public tempFilters$ = this.tempFilters.asObservable();
+    public timeframeStatus$ = this.timeframeStatus.asObservable();
+    public topics$ = this.filters.pipe(
         tap(() => {
             this.isLoadingSubject.next(true);
             this.isErrorSubject.next(false);
@@ -36,7 +51,7 @@ export class LeaderboardService {
         switchMap((filter) => {
             return this.pulseService.getLeaderboardTopics({
                 count: this.count,
-                date: filter.date,
+                date: filter.date.toISOString(),
                 timeframe: filter.timeframe,
                 includeTopicDetails: true,
             });
@@ -48,11 +63,34 @@ export class LeaderboardService {
         }),
         tap(() => {
             this.isLoadingSubject.next(false);
+            this.updateTimeframeStatus();
         }),
         map((data) => data?.results || null),
     );
 
-    public setFilter(filter: Partial<ILeaderboardFilter>) {
-        this.filterSubject.next({ ...this.filterSubject.getValue(), ...filter });
+    public setDate(date: Date | null) {
+        this.tempFilters.next({
+            ...this.tempFilters.getValue(),
+            date,
+        });
+    }
+
+    public setTimeframe(timeframe: LeaderboardTimeframe) {
+        this.tempFilters.next({
+            ...this.tempFilters.getValue(),
+            timeframe,
+        });
+    }
+
+    public applyFilters() {
+        const { date, timeframe } = this.tempFilters.getValue();
+        if (!date) return;
+        this.filters.next({ date, timeframe });
+    }
+
+    public updateTimeframeStatus() {
+        const { date, timeframe } = this.filters.getValue();
+        const status = getTimeframeStatus(date, timeframe)
+        this.timeframeStatus.next(status);
     }
 }

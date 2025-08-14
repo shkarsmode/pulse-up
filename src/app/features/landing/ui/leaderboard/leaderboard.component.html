@@ -3,9 +3,9 @@
         <h2 class="leaderboard__title">Global Top 10</h2>
         <app-datepicker
             [text]="(datepickerButtonText$ | async) || ''"
-            [date]="selectedDate"
-            [timeframe]="selectedTimeframe"
-            (dateChange)="onDateSelected($event)"
+            [date]="tempDate$ | async"
+            [timeframe]="(tempTimeframe$ | async)!"
+            (dateChange)="onDateChange($event)"
             (timeframeChange)="onTimeframeChange($event)"
             (confirm)="onConfirm()" />
     </div>
@@ -17,9 +17,9 @@
 
 @if ((isContentVisible$ | async)) {
     <app-leaderboard-hint
-        [selectedDate]="selectedDate"
-        [selectedTimeframe]="selectedTimeframe"
-        [timeframeStatus]="timeframeStatus"
+        [selectedDate]="date$ | async"
+        [selectedTimeframe]="(timeframe$ | async)!"
+        [timeframeStatus]="(timeframeStatus$ | async)!"
         (counterStopped)="updateTimeframeStatus()" />
     <ul class="leaderboard__list">
         @for (topicData of topics$ | async; track topicData.topic.id) {
@@ -28,9 +28,8 @@
                     [topic]="topicData.topic"
                     [votes]="topicData.votes"
                     [users]="topicData.uniqueUsers"
-                    [lastPulse]="isActiveTimeframe ? topicData.lastVoteTime : undefined"
-                    [selectedDate]="selectedDate"
-                    [selectedTimeframe]="selectedTimeframe" />
+                    [lastPulse]="(isActiveTimeframe$ | async) ? topicData.lastVoteTime : undefined"
+                    [isActiveTimeframe]="(isActiveTimeframe$ | async) || false" />
             </li>
         }
     </ul>

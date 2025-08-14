@@ -8,8 +8,8 @@ const formatDayTime = (ms: number): string => {
 
     const parts: string[] = [];
     if (hours) parts.push(`${hours}h`);
-    if (minutes) parts.push(`${minutes}m`);
-    if (seconds) parts.push(`${seconds}s`);
+    parts.push(`${minutes}m`);
+    parts.push(`${seconds}s`);
 
     return parts.length > 0 ? parts.join(" ") : "0h 0m 0s";
 };

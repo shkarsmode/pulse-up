@@ -12,7 +12,7 @@
             {{ topic.title }}
         </app-large-pulse-title>
         <div class="card-heading-meta">
-            @if (isActiveTimerange && (isActiveVote$ | async)) {
+            @if (isActiveTimeframe && (isActiveVote$ | async)) {
                 <app-large-pulse-meta
                     [text]="'Pulses: ' + (votes | formatNumber)"
                     label="number of pulses">

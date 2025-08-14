@@ -21,7 +21,7 @@ import { ProgressBarComponent } from "../progress-bar/progress-bar.component";
 import { LinkButtonComponent } from "@/app/shared/components/ui-kit/buttons/link-button/link-button.component";
 import { DialogService } from "@/app/shared/services/core/dialog.service";
 import { LeaderboardInfoPopupComponent } from "../leaderboard-info-popup/leaderboard-info-popup.component";
-import { TimeframeStatus } from "../../../interface/timeframe-status.interface";
+import { LeaderboardTimeframeStatus } from "../../../interface/leaderboard-timeframe-status.interface";
 import { formatRemainingTime } from "../../../helpers/formatRemainingTime";
 
 @Component({
@@ -35,7 +35,7 @@ import { formatRemainingTime } from "../../../helpers/formatRemainingTime";
 export class LeaderboardHintComponent implements OnInit {
     @Input() public selectedDate: Date | null;
     @Input() public selectedTimeframe: LeaderboardTimeframe;
-    @Input() public timeframeStatus: TimeframeStatus;
+    @Input() public timeframeStatus: LeaderboardTimeframeStatus;
 
     @Output() public counterStopped = new EventEmitter<void>();
 

@@ -1,0 +1,1 @@
+export type LeaderboardTimeframeStatus = "Active" | "Upcoming" | "Ended";
