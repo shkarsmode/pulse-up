@@ -1,5 +1,5 @@
 import { inject, Injectable } from "@angular/core";
-import { BehaviorSubject, catchError, map, of, switchMap, tap } from "rxjs";
+import { BehaviorSubject, catchError, map, of, shareReplay, switchMap, tap } from "rxjs";
 import { PulseService } from "@/app/shared/services/api/pulse.service";
 import { LeaderboardTimeframe, LeaderboardTimeframeStatus } from "@/app/shared/interfaces";
 import { getTimeframeStatus } from "../helpers/getTimeframeStatus";
@@ -65,6 +65,7 @@ export class LeaderboardService {
             this.updateTimeframeStatus();
         }),
         map((data) => data?.results || null),
+        shareReplay({ bufferSize: 1, refCount: true }),
     );
 
     public setDate(date: Date | null) {
