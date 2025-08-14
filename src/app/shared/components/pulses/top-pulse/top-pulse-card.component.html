@@ -12,30 +12,30 @@
             [src]="topicIcon$ | async"
             width="68"
             height="68"
-            [alt]="pulse.title" />
+            [alt]="data.topic.title" />
     </div>
     <div class="stats">
         <div>
             <!-- <span class="title">Supporters</span> -->
             <svg-icon class="stats__icon" src="assets/svg/fans.svg" />
-            <span class="count">{{ pulse.stats?.totalUniqueUsers || 0 | formatNumber }}</span>
+            <span class="count">{{ data.uniqueUsers | formatNumber }}</span>
         </div>
-        <div>
+        <!-- <div> -->
             <!-- <span class="title">Lifetime</span> -->
-            <svg-icon src="assets/svg/chart-simple.svg" />
-            <span class="count">{{ pulse.stats?.totalVotes || 0 | formatNumber }}</span>
-        </div>
+            <!-- <svg-icon src="assets/svg/chart-simple.svg" /> -->
+            <!-- <span class="count">{{ pulse.stats?.totalVotes || 0 | formatNumber }}</span> -->
+        <!-- </div> -->
         <div>
             <!-- <span class="title">24 hour</span> -->
             <svg-icon src="assets/svg/pulse.svg" />
-            <span class="count">{{ pulse.stats?.lastDayVotes || 0 | formatNumber }}</span>
+            <span class="count">{{ data.votes | formatNumber }}</span>
         </div>
     </div>
 </div>
 
 <div class="bottom">
-    <h3>{{ pulse.title }}</h3>
+    <h3>{{ data.topic }}</h3>
     <div>
-        {{ pulse.author.name }}
+        {{ data.topic.author.name }}
     </div>
 </div>

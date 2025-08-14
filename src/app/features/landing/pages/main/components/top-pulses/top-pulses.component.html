@@ -1,14 +1,15 @@
 <h2>What’s Trending Right Now?</h2>
 
 <div class="pulses">
-    @for (pulse of pulses; track pulse.id; let i = $index) {
-    <app-top-pulse-card [pulse]="pulse" [index]="i + 1">
-    </app-top-pulse-card>
+    @for (topicData of data$ | async; track topicData.topic.id; let i = $index) {
+        <app-top-pulse-card
+            [data]="topicData"
+            [index]="i + 1" />
     }
 </div>
 
 <div class="pulses__button">
-    <app-secondary-button 
+    <app-secondary-button
         [routerLink]="'/' + AppRoutes.Landing.TOPICS"
         routerLinkActive="active"
         [fullWidth]="true"

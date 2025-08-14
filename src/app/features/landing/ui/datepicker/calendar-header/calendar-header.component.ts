@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, EventEmitter, inject, Input, Output
 import { AngularSvgIconModule } from "angular-svg-icon";
 import { MatButtonToggleChange, MatButtonToggleModule } from "@angular/material/button-toggle";
 import { CommonModule } from "@angular/common";
-import { LeaderboardTimeframe } from "../../../interface/leaderboard-timeframe.interface";
+import { LeaderboardTimeframe } from "../../../../../shared/interfaces/topic/leaderboard-timeframe.interface";
 
 interface RangeItem {
     value: LeaderboardTimeframe;

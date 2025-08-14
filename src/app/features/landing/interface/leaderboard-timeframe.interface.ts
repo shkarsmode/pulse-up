@@ -1,1 +1,0 @@
-export type LeaderboardTimeframe = "Day" | "Week" | "Month";

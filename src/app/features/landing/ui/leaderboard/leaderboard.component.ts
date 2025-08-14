@@ -4,7 +4,7 @@ import { AngularSvgIconModule } from "angular-svg-icon";
 import { combineLatest, map } from "rxjs";
 import { LeaderboardService } from "../../services/leaderboard.service";
 import { SpinnerComponent } from "@/app/shared/components/ui-kit/spinner/spinner.component";
-import { LeaderboardTimeframe } from "../../interface/leaderboard-timeframe.interface";
+import { LeaderboardTimeframe } from "../../../../shared/interfaces/topic/leaderboard-timeframe.interface";
 import { CustomDatepickerComponent } from "../datepicker/datepicker.component";
 import { LeaderboardListItemComponent } from "./leaderboard-list-item/leaderboard-list-item.component";
 import { LeaderboardHintComponent } from "./leaderboard-hint/leaderboard-hint.component";

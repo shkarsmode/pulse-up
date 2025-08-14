@@ -14,7 +14,7 @@ import { AngularSvgIconModule } from "angular-svg-icon";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { interval, tap } from "rxjs";
 import { LeaderboardService } from "../../../services/leaderboard.service";
-import { LeaderboardTimeframe } from "../../../interface/leaderboard-timeframe.interface";
+import { LeaderboardTimeframe } from "../../../../../shared/interfaces/topic/leaderboard-timeframe.interface";
 import { getRemainingTimeToEnd } from "../../../helpers/getRemainingTimeToEnd";
 import { getElapsedTimePercentage } from "../../../helpers/getElapsedTimePercentage";
 import { ProgressBarComponent } from "../progress-bar/progress-bar.component";
