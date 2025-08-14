@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, inject, Input } from "@angular/core";
 import { CommonModule } from "@angular/common";
-import { map, tap } from "rxjs";
+import { map } from "rxjs";
 import { SettingsService } from "@/app/shared/services/api/settings.service";
 
 @Component({
@@ -19,6 +19,5 @@ export class SmallPulseIconComponent {
 
     public topicIcon$ = this.settingsService.settings$.pipe(
         map((settings) => settings.blobUrlPrefix + this.url),
-        tap((iconUrl) => console.log("Topic icon URL:", iconUrl)),
     );
 }
