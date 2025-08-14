@@ -14,10 +14,10 @@
                     </app-small-pulse-icon>
                     <app-small-pulse-stats>
                         <app-small-pulse-stats-item
-                            [value]="topicData.uniqueUsers.toString()"
+                            [value]="topicData.uniqueUsers | formatNumber"
                             icon="assets/svg/fans.svg" />
                         <app-small-pulse-stats-item
-                            [value]="topicData.votes.toString()"
+                            [value]="topicData.votes | formatNumber"
                             icon="assets/svg/pulse.svg" />
                     </app-small-pulse-stats>
                 </app-small-pulse-header>

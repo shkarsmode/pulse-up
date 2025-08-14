@@ -15,6 +15,7 @@ import {
     SmallPulseTitleComponent,
 } from "@/app/shared/components/pulses/small-pulse";
 import { TopTopicsService } from "@/app/shared/services/topic/topTopics.service";
+import { FormatNumberPipe } from "@/app/shared/pipes/format-number.pipe";
 
 @Component({
     selector: "app-top-pulses",
@@ -33,6 +34,7 @@ import { TopTopicsService } from "@/app/shared/services/topic/topTopics.service"
         SmallPulseStatsItemComponent,
         SmallPulseTitleComponent,
         SmallPulseSubtitleComponent,
+        FormatNumberPipe,
     ],
 })
 export class TopPulsesComponent {
