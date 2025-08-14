@@ -1,38 +1,42 @@
-<h2>What’s Trending Right Now?</h2>
+<ng-container *ngIf="(topics$ | async)?.length">
+    <h2>What’s Trending Right Now?</h2>
 
-<div class="pulses">
-    @for (topicData of data$ | async; track topicData.topic.id; let i = $index) {
-        <app-small-pulse class="pulses__item">
-            <app-small-pulse-header>
-                <app-small-pulse-icon
-                    [url]="topicData.topic.icon"
-                    [label]="topicData.topic.title">
-                    <app-small-pulse-badge
-                        [text]="(i + 1).toString()"
-                        [leftIcon]="i === 0 ? 'assets/svg/cup.svg' : undefined" />
-                </app-small-pulse-icon>
-                <app-small-pulse-stats>
-                    <app-small-pulse-stats-item
-                        [value]="topicData.uniqueUsers.toString()"
-                        icon="assets/svg/fans.svg" />
-                    <app-small-pulse-stats-item
-                        [value]="topicData.votes.toString()"
-                        icon="assets/svg/pulse.svg" />
-                </app-small-pulse-stats>
-            </app-small-pulse-header>
-            <app-small-pulse-title>{{ topicData.topic.title }}</app-small-pulse-title>
-            <app-small-pulse-subtitle>{{ topicData.topic.author.name }}</app-small-pulse-subtitle>
-        </app-small-pulse>
-    }
-</div>
+    <div class="pulses">
+        @for (topicData of topics$ | async; track topicData.topic.id; let i = $index) {
+            <app-small-pulse class="pulses__item">
+                <app-small-pulse-header>
+                    <app-small-pulse-icon
+                        [url]="topicData.topic.icon"
+                        [label]="topicData.topic.title">
+                        <app-small-pulse-badge
+                            [text]="(i + 1).toString()"
+                            [leftIcon]="i === 0 ? 'assets/svg/cup.svg' : undefined" />
+                    </app-small-pulse-icon>
+                    <app-small-pulse-stats>
+                        <app-small-pulse-stats-item
+                            [value]="topicData.uniqueUsers.toString()"
+                            icon="assets/svg/fans.svg" />
+                        <app-small-pulse-stats-item
+                            [value]="topicData.votes.toString()"
+                            icon="assets/svg/pulse.svg" />
+                    </app-small-pulse-stats>
+                </app-small-pulse-header>
+                <app-small-pulse-title>{{ topicData.topic.title }}</app-small-pulse-title>
+                <app-small-pulse-subtitle>{{
+                    topicData.topic.author.name
+                }}</app-small-pulse-subtitle>
+            </app-small-pulse>
+        }
+    </div>
 
-<div class="pulses__button">
-    <app-secondary-button
-        [routerLink]="'/' + AppRoutes.Landing.TOPICS"
-        routerLinkActive="active"
-        [fullWidth]="true"
-        size="large"
-        [color]="buttonColor">
-        See more
-    </app-secondary-button>
-</div>
+    <div class="pulses__button">
+        <app-secondary-button
+            [routerLink]="'/' + AppRoutes.Landing.TOPICS"
+            routerLinkActive="active"
+            [fullWidth]="true"
+            size="large"
+            [color]="buttonColor">
+            See more
+        </app-secondary-button>
+    </div>
+</ng-container>

@@ -1,9 +1,6 @@
-import { Component, DestroyRef, inject } from "@angular/core";
+import { Component, inject } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { RouterModule } from "@angular/router";
-import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
-import { map } from "rxjs";
-import { PulseService } from "@/app/shared/services/api/pulse.service";
 import { AppRoutes } from "@/app/shared/enums/app-routes.enum";
 import { Colors } from "@/app/shared/enums/colors.enum";
 import { SecondaryButtonComponent } from "@/app/shared/components/ui-kit/buttons/secondary-button/secondary-button.component";
@@ -17,6 +14,7 @@ import {
     SmallPulseSubtitleComponent,
     SmallPulseTitleComponent,
 } from "@/app/shared/components/pulses/small-pulse";
+import { TopTopicsService } from "@/app/shared/services/topic/topTopics.service";
 
 @Component({
     selector: "app-top-pulses",
@@ -38,19 +36,9 @@ import {
     ],
 })
 export class TopPulsesComponent {
-    private readonly destroyRef = inject(DestroyRef);
-    private readonly pulseService: PulseService = inject(PulseService);
+    private topTopicsService = inject(TopTopicsService);
 
-    public data$ = this.pulseService
-        .getLeaderboardTopics({
-            count: 3,
-            timeframe: "last24Hours",
-            includeTopicDetails: true,
-        })
-        .pipe(
-            map((response) => response.results),
-            takeUntilDestroyed(this.destroyRef),
-        );
+    public topics$ = this.topTopicsService.topics$;
     public AppRoutes = AppRoutes;
     public buttonColor = Colors.BLACK;
 }
