@@ -1,4 +1,7 @@
+@use "../../../../../../styles/mixins" as *;
+
 .card-description {
+    @include text-16px;
     overflow: hidden;
     text-overflow: ellipsis;
     display: -webkit-box;
