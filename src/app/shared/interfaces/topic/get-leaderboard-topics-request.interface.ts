@@ -1,8 +1,8 @@
-import { LeaderboardTimeframe } from "@/app/features/landing/interface/leaderboard-timeframe.interface";
+import { LeaderboardTimeframe } from "@/app/shared/interfaces";
 
 export interface IGetLeaderboardTopicsRequest {
     count?: number;
     date?: string;
-    timeframe?: LeaderboardTimeframe;
+    timeframe?: LeaderboardTimeframe | "last24Hours";
     includeTopicDetails?: boolean;
 }

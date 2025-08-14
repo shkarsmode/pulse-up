@@ -25,8 +25,8 @@ import {
 } from "@angular/material/datepicker";
 import dayjs from "dayjs";
 import { CalendarHeaderComponent } from "./calendar-header/calendar-header.component";
-import { LeaderboardTimeframe } from "../../interface/leaderboard-timeframe.interface";
 import { PrimaryButtonComponent } from "@/app/shared/components/ui-kit/buttons/primary-button/primary-button.component";
+import { LeaderboardTimeframe } from "@/app/shared/interfaces";
 
 @Injectable()
 export class WeekRangeSelectionStrategy<D = Date> implements MatDateRangeSelectionStrategy<D> {

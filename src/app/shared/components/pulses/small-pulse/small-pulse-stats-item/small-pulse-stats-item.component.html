@@ -1,0 +1,6 @@
+<span class="small-pulse-stats-text">{{ title }}</span>
+<ng-container *ngIf="icon">
+    <svg-icon [src]="icon" />
+</ng-container>
+<ng-content></ng-content>
+<span class="small-pulse-stats-text small-pulse-stats-text--value">{{ value }}</span>

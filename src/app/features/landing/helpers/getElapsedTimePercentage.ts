@@ -1,4 +1,4 @@
-import { LeaderboardTimeframe } from "../interface/leaderboard-timeframe.interface";
+import { LeaderboardTimeframe } from "@/app/shared/interfaces";
 
 export function getElapsedTimePercentage(
     selectedDate: Date,

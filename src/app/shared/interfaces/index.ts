@@ -8,3 +8,8 @@ export * from './profile.interface';
 export * from './map/mapbox.interface';
 export * from './geolocation.interface';
 
+export * from './topic/get-leaderboard-topics-request.interface';
+export * from './topic/get-leaderboard-topics-response.interface';
+export * from './topic/leaderboard-timeframe-status.interface';
+export * from './topic/leaderboard-timeframe.interface';
+

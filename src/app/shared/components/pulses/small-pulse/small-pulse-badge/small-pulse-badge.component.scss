@@ -1,0 +1,25 @@
+:host {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    left: 0;
+    top: 0;
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--white-color);
+    min-width: 20px;
+    padding: 4px 5px;
+    background-color: var(--accent-color);
+    border-bottom-right-radius: 8px;
+    z-index: 1;
+
+    svg-icon {
+        height: 11px;
+        margin-right: 4px;
+
+        svg path {
+            fill: currentColor;
+        }
+    }
+}

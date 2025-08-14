@@ -1,4 +1,4 @@
-import { LeaderboardTimeframe } from "../interface/leaderboard-timeframe.interface";
+import { LeaderboardTimeframe } from "@/app/shared/interfaces";
 
 const formatDayTime = (ms: number): string => {
     const minutesTotal = Math.floor(ms / (1000 * 60));
