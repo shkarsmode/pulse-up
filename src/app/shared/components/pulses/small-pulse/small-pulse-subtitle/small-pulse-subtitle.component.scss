@@ -1,0 +1,8 @@
+@use "../../../../../../styles/mixins" as *;
+
+:host {
+    @include text-14px;
+    display: block;
+    color: var(--dark-grey-color);
+    margin-top: 10px;
+}

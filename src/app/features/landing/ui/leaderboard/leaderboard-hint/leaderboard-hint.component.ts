@@ -14,14 +14,13 @@ import { AngularSvgIconModule } from "angular-svg-icon";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { interval, tap } from "rxjs";
 import { LeaderboardService } from "../../../services/leaderboard.service";
-import { LeaderboardTimeframe } from "../../../../../shared/interfaces/topic/leaderboard-timeframe.interface";
+import { LeaderboardTimeframe, LeaderboardTimeframeStatus } from "@/app/shared/interfaces";
 import { getRemainingTimeToEnd } from "../../../helpers/getRemainingTimeToEnd";
 import { getElapsedTimePercentage } from "../../../helpers/getElapsedTimePercentage";
 import { ProgressBarComponent } from "../progress-bar/progress-bar.component";
 import { LinkButtonComponent } from "@/app/shared/components/ui-kit/buttons/link-button/link-button.component";
 import { DialogService } from "@/app/shared/services/core/dialog.service";
 import { LeaderboardInfoPopupComponent } from "../leaderboard-info-popup/leaderboard-info-popup.component";
-import { LeaderboardTimeframeStatus } from "../../../interface/leaderboard-timeframe-status.interface";
 import { formatRemainingTime } from "../../../helpers/formatRemainingTime";
 
 @Component({

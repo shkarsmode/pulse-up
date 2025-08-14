@@ -4,6 +4,11 @@ h2 {
     @include title-32px;
     text-align: center;
     margin-bottom: 24px;
+
+    @media screen and (max-width: 500px) {
+        @include title-20px;
+        margin-bottom: 16px;
+    }
 }
 
 .pulses {
@@ -11,6 +16,15 @@ h2 {
     justify-content: center;
     flex-wrap: wrap;
     gap: 30px;
+
+    @media screen and (max-width: 1080px) {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    @media screen and (max-width: 500px) {
+        gap: 16px;
+    }
 }
 
 .pulses__button {
@@ -22,20 +36,11 @@ h2 {
     }
 }
 
-@media screen and (max-width: 500px) {
-    h2 {
-        @include title-20px;
-        margin-bottom: 16px;
-    }
+.pulses__item {
+    flex: 1 1 0;
 
-    .pulses {
-        gap: 16px;
-    }
-}
-
-@media screen and (max-width: 1080px) {
-    .pulses {
-        flex-direction: column;
-        align-items: center;
+    @media screen and (max-width: 1080px) {
+        width: 100%;
+        max-width: 320px;
     }
 }

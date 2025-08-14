@@ -1,0 +1,15 @@
+@use "../../../../../../styles/mixins" as *;
+
+:host {
+    display: block;
+    margin-top: 16px;
+
+    h3 {
+        @include title-20px;
+        display: -webkit-box;
+        -webkit-line-clamp: 5;
+        line-clamp: 5;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+}

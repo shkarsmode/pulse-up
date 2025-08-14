@@ -1,9 +1,8 @@
 import { inject, Injectable } from "@angular/core";
 import { BehaviorSubject, catchError, map, of, switchMap, tap } from "rxjs";
 import { PulseService } from "@/app/shared/services/api/pulse.service";
-import { LeaderboardTimeframe } from "../interface/leaderboard-timeframe.interface";
+import { LeaderboardTimeframe, LeaderboardTimeframeStatus } from "@/app/shared/interfaces";
 import { getTimeframeStatus } from "../helpers/getTimeframeStatus";
-import { LeaderboardTimeframeStatus } from "../interface/leaderboard-timeframe-status.interface";
 
 interface ILeaderboardTempFilter {
     date: Date | null;

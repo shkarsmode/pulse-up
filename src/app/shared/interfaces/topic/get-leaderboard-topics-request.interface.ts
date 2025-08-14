@@ -1,4 +1,4 @@
-import { LeaderboardTimeframe } from "@/app/shared/interfaces/topic/leaderboard-timeframe.interface";
+import { LeaderboardTimeframe } from "@/app/shared/interfaces";
 
 export interface IGetLeaderboardTopicsRequest {
     count?: number;

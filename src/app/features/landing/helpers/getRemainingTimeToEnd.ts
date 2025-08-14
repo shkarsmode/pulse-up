@@ -1,6 +1,6 @@
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
-import { LeaderboardTimeframe } from "@/app/shared/interfaces/topic/leaderboard-timeframe.interface";
+import { LeaderboardTimeframe } from "@/app/shared/interfaces";
 
 dayjs.extend(utc);
 

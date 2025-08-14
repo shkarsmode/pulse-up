@@ -7,14 +7,33 @@ import { PulseService } from "../../../../../../shared/services/api/pulse.servic
 import { AppRoutes } from "@/app/shared/enums/app-routes.enum";
 import { Colors } from "@/app/shared/enums/colors.enum";
 import { SecondaryButtonComponent } from "@/app/shared/components/ui-kit/buttons/secondary-button/secondary-button.component";
-import { TopPulseCardComponent } from "@/app/shared/components/pulses/top-pulse/top-pulse-card.component";
+import { SmallPulseComponent } from "@/app/shared/components/pulses/small-pulse/small-pulse.component";
+import { SmallPulseHeaderComponent } from "@/app/shared/components/pulses/small-pulse/small-pulse-header/small-pulse-header.component";
+import { SmallPulseIconComponent } from "@/app/shared/components/pulses/small-pulse/small-pulse-icon/small-pulse-icon.component";
+import { SmallPulseBadgeComponent } from "@/app/shared/components/pulses/small-pulse/small-pulse-badge/small-pulse-badge.component";
+import { SmallPulseStatsComponent } from "@/app/shared/components/pulses/small-pulse/small-pulse-stats/small-pulse-stats.component";
+import { SmallPulseStatsItemComponent } from "@/app/shared/components/pulses/small-pulse/small-pulse-stats-item/small-pulse-stats-item.component";
+import { SmallPulseTitleComponent } from "@/app/shared/components/pulses/small-pulse/small-pulse-title/small-pulse-title.component";
+import { SmallPulseSubtitleComponent } from "@/app/shared/components/pulses/small-pulse/small-pulse-subtitle/small-pulse-subtitle.component";
 
 @Component({
     selector: "app-top-pulses",
     templateUrl: "./top-pulses.component.html",
     styleUrl: "./top-pulses.component.scss",
     standalone: true,
-    imports: [CommonModule, RouterModule, SecondaryButtonComponent, TopPulseCardComponent],
+    imports: [
+        CommonModule,
+        RouterModule,
+        SecondaryButtonComponent,
+        SmallPulseComponent,
+        SmallPulseHeaderComponent,
+        SmallPulseIconComponent,
+        SmallPulseBadgeComponent,
+        SmallPulseStatsComponent,
+        SmallPulseStatsItemComponent,
+        SmallPulseTitleComponent,
+        SmallPulseSubtitleComponent,
+    ],
 })
 export class TopPulsesComponent {
     private readonly destroyRef = inject(DestroyRef);

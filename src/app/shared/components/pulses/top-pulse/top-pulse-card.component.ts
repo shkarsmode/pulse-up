@@ -1,11 +1,11 @@
 import { Component, HostBinding, HostListener, inject, Input } from "@angular/core";
-import { CommonModule } from "@angular/common";
 import { Router } from "@angular/router";
+import { CommonModule } from "@angular/common";
 import { SvgIconComponent } from "angular-svg-icon";
-import { map } from "rxjs";
+import { ITopic } from "../../../interfaces";
 import { FormatNumberPipe } from "../../../pipes/format-number.pipe";
 import { SettingsService } from "@/app/shared/services/api/settings.service";
-import { ILeaderboardTopicData } from "@/app/shared/interfaces/topic/get-leaderboard-topics-response.interface";
+import { map } from "rxjs";
 
 @Component({
     selector: "app-top-pulse-card",
@@ -15,7 +15,7 @@ import { ILeaderboardTopicData } from "@/app/shared/interfaces/topic/get-leaderb
     styleUrl: "./top-pulse-card.component.scss",
 })
 export class TopPulseCardComponent {
-    @Input() public data: ILeaderboardTopicData;
+    @Input() public pulse: ITopic;
     @Input() public index: number;
     @Input() public interactive = true;
 
@@ -28,13 +28,13 @@ export class TopPulseCardComponent {
     }
 
     public topicIcon$ = this.settingsService.settings$.pipe(
-        map((settings) => settings.blobUrlPrefix + this.data.topic.icon),
+        map((settings) => settings.blobUrlPrefix + this.pulse.icon),
     );
 
     @HostListener("click")
     public onPulseClick(): void {
         if (this.interactive) {
-            this.router.navigateByUrl(`topic/${this.data.topic.id}`);
+            this.router.navigateByUrl(`topic/${this.pulse.id}`);
         }
     }
 }
