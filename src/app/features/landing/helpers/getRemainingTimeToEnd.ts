@@ -1,42 +1,41 @@
+import dayjs from "dayjs";
+import utc from "dayjs/plugin/utc";
 import { LeaderboardTimeframe } from "../interface/leaderboard-timeframe.interface";
-import { dateToUTC } from "./dateToUTC";
+
+dayjs.extend(utc);
 
 export const getRemainingTimeToEnd = (
     selectedDate: Date,
     selectedTimeframe: LeaderboardTimeframe,
 ) => {
-    const now = dateToUTC(new Date());
-    const start = new Date(selectedDate);
+    const nowUTC = dayjs().utc();
+    const selectedUTC = dayjs(selectedDate).utc();
 
-    let end: Date;
+    let endUTC: dayjs.Dayjs;
 
     switch (selectedTimeframe) {
         case "Day":
-            end = new Date(start);
-            end.setHours(23, 59, 59, 999);
+            endUTC = selectedUTC.endOf("day");
             break;
-        case "Week": {
-            // Sunday-based week, get Sunday after selectedDate
-            const dayOfWeek = start.getDay(); // 0 = Sunday ... 6 = Saturday
-            const diffToSunday = 7 - dayOfWeek; // days to next Sunday
-            end = new Date(start);
-            end.setDate(start.getDate() + diffToSunday);
-            end.setHours(23, 59, 59, 999);
+
+        case "Week":
+            // Sunday-based week
+            endUTC = selectedUTC.endOf("week");
             break;
-        }
+
         case "Month":
-            end = new Date(start.getFullYear(), start.getMonth() + 1, 0); // last day of month
-            end.setHours(23, 59, 59, 999);
+            endUTC = selectedUTC.endOf("month");
             break;
+
         default:
             throw new Error("Invalid timeframe");
     }
 
-    if (end.getTime() < now.getTime()) {
+    // console.log({selectedTimeframe, endUTC});
+    
+    if (endUTC.isBefore(nowUTC)) {
         return 0;
     }
 
-    const diffMs = end.getTime() - now.getTime();
-
-    return diffMs;
+    return endUTC.diff(nowUTC); // milliseconds
 };

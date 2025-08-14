@@ -23,6 +23,7 @@ import {
     MatCalendarView,
     MatDateRangeSelectionStrategy,
 } from "@angular/material/datepicker";
+import dayjs from "dayjs";
 import { CalendarHeaderComponent } from "./calendar-header/calendar-header.component";
 import { LeaderboardTimeframe } from "../../interface/leaderboard-timeframe.interface";
 import { PrimaryButtonComponent } from "@/app/shared/components/ui-kit/buttons/primary-button/primary-button.component";
@@ -55,13 +56,7 @@ export class WeekRangeSelectionStrategy<D = Date> implements MatDateRangeSelecti
     templateUrl: "./datepicker.component.html",
     styleUrls: ["./datepicker.component.scss"],
     standalone: true,
-    imports: [
-    CommonModule,
-    MatCalendar,
-    CalendarHeaderComponent,
-    PrimaryButtonComponent,
-    MatIcon
-],
+    imports: [CommonModule, MatCalendar, CalendarHeaderComponent, PrimaryButtonComponent, MatIcon],
     providers: [
         {
             provide: MAT_DATE_RANGE_SELECTION_STRATEGY,
@@ -171,7 +166,7 @@ export class CustomDatepickerComponent {
     }
 
     public onViewChanged(view: MatCalendarView): void {
-        if (view !== 'multi-year') {
+        if (view !== "multi-year") {
             this.closeMultiYearView();
         }
         this.currentView = view;
@@ -181,28 +176,19 @@ export class CustomDatepickerComponent {
 
     public onWeekSelected(date: Date): void {
         if (!date) return;
-
-        const selectedDate = new Date(date);
-        const day = selectedDate.getDay();
-
-        const startOfWeek = new Date(selectedDate);
-        startOfWeek.setDate(selectedDate.getDate() - day);
-
-        const endOfWeek = new Date(startOfWeek);
-        endOfWeek.setDate(startOfWeek.getDate() + 6);
-        endOfWeek.setHours(23, 59, 59, 999);
-
-        this.selectedDateRange = new DateRange(startOfWeek, endOfWeek);
-
-        this.dateChange.emit(endOfWeek);
+        const selected = dayjs(date);
+        const startOfWeek = selected.startOf("week"); // Sunday-based week
+        const endOfWeek = selected.endOf("week");
+        this.selectedDateRange = new DateRange(startOfWeek.toDate(), endOfWeek.toDate());
+        this.dateChange.emit(endOfWeek.toDate());
     }
 
     public onDaySelected(date: Date) {
-        this.dateChange.emit(date);
+        this.dateChange.emit(dayjs(date).endOf("day").toDate());
     }
 
     public onMonthSelected(date: Date) {
-        this.dateChange.emit(date);
+        this.dateChange.emit(dayjs(date).endOf("month").toDate());
         this.overlayRef?.dispose();
         this.onConfirm();
     }
