@@ -1,5 +1,5 @@
 import { inject } from "@angular/core";
-import { HttpInterceptorFn } from "@angular/common/http";
+import { HttpHeaders, HttpInterceptorFn } from "@angular/common/http";
 import { AuthenticationService } from "../../services/api/authentication.service";
 
 export const jwtInterceptor: HttpInterceptorFn = (req, next) => {
@@ -10,13 +10,19 @@ export const jwtInterceptor: HttpInterceptorFn = (req, next) => {
     const token = userToken || anonymousToken;
     const authToken = req.headers.get("Authorization");
 
-    if (token) {
-        const clonedRequest = req.clone({
-            setHeaders: {
-                Authorization: authToken || `Bearer ${token}`,
-            },
+    if (authToken) {
+        const headers = new HttpHeaders().set('Authorization', authToken);
+        const authReq = req.clone({
+            headers: headers,
         });
-        return next(clonedRequest);
+        return next(authReq);
+    }
+
+    if (token) {
+        const authReq = req.clone({
+            headers: req.headers.set("Authorization", `Bearer ${token}`),
+        });
+        return next(authReq);
     }
 
     return next(req);
