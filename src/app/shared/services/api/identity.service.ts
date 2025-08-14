@@ -19,7 +19,7 @@ export class IdentityService {
                 phoneNumber,
             })
             .pipe(
-                map((response) => true),
+                map(() => true),
                 catchError(() => of(false)),
             );
     }
@@ -32,7 +32,6 @@ export class IdentityService {
                 },
             })
             .pipe(
-                map((response) => response),
                 catchError(() => {
                     console.log("Error fetching profile by token");
                     return of(null);
@@ -52,7 +51,6 @@ export class IdentityService {
                 },
             )
             .pipe(
-                map((response) => response),
                 catchError(() => {
                     console.log("Error creating profile with token");
                     return of(null);

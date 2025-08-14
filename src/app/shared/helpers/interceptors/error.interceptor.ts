@@ -7,6 +7,11 @@ import { AuthenticationService } from "../../services/api/authentication.service
 import { AppRoutes } from "../../enums/app-routes.enum";
 
 export const errorInterceptor: HttpInterceptorFn = (req, next) => {
+    // Skip error interceptor for identity requests
+    if (req.url.endsWith("/identity")) {
+        return next(req);
+    }
+    
     const router = inject(Router);
     const authenticationService = inject(AuthenticationService);
 
