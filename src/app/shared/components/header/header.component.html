@@ -37,17 +37,7 @@
                 </a>
             </li>
             <li>
-                <a
-                    [routerLink]="
-                        '/' +
-                        (isAuthenticated ? AppRoutes.Profile.OVERVIEW : AppRoutes.Auth.SIGN_IN)
-                    "
-                    routerLinkActive="active">
-                    <mat-icon
-                        aria-hidden="false"
-                        aria-label="profile"
-                        fontIcon="person_outline"></mat-icon>
-                </a>
+                <app-profile-button />
             </li>
         </ul>
 
