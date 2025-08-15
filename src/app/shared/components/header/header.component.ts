@@ -3,7 +3,6 @@ import { Component, inject, OnInit } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { RouterModule } from "@angular/router";
 import { SvgIconComponent } from "angular-svg-icon";
-import { MatIcon } from "@angular/material/icon";
 import { map } from "rxjs";
 import { AppRoutes } from "../../enums/app-routes.enum";
 import { BurgerButtonComponent } from "../ui-kit/buttons/burger-button/burger-button.component";
@@ -16,6 +15,7 @@ import { SettingsService } from "../../services/api/settings.service";
 import { DownloadAppButtonComponent } from "./download-app-button/download-app-button.component";
 import { SecondaryButtonComponent } from "../ui-kit/buttons/secondary-button/secondary-button.component";
 import { DropdownLinkComponent } from "./dropdown-link/dropdown-link.component";
+import { ProfileButtonComponent } from "./profile-button/profile-button.component";
 
 @Component({
     selector: "app-header",
@@ -23,7 +23,6 @@ import { DropdownLinkComponent } from "./dropdown-link/dropdown-link.component";
     imports: [
         CommonModule,
         RouterModule,
-        MatIcon,
         SvgIconComponent,
         BurgerButtonComponent,
         FormsModule,
@@ -31,6 +30,7 @@ import { DropdownLinkComponent } from "./dropdown-link/dropdown-link.component";
         DownloadAppButtonComponent,
         SecondaryButtonComponent,
         DropdownLinkComponent,
+        ProfileButtonComponent,
     ],
     templateUrl: "./header.component.html",
     styleUrl: "./header.component.scss",

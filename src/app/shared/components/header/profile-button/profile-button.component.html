@@ -1,0 +1,27 @@
+<app-secondary-button
+    [matMenuTriggerFor]="isAuthenticated ? menu : null"
+    [routerLink]="isAuthenticated ? null : loginRoute"
+    class="profile-button">
+    <svg-icon
+        src="assets/svg/profile.svg"
+        class="profile-button__icon" />
+</app-secondary-button>
+
+<mat-menu
+    #menu="matMenu"
+    class="floating-menu">
+    <ng-template matMenuContent>
+        <button
+            mat-menu-item
+            [routerLink]="profileRoute">
+            <svg-icon src="assets/svg/profile.svg" />
+            <span>My Profile</span>
+        </button>
+        <button
+            mat-menu-item
+            (click)="logout()">
+            <svg-icon src="assets/svg/signout.svg" />
+            <span>Sign Out</span>
+        </button>
+    </ng-template>
+</mat-menu>

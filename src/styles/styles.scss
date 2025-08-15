@@ -1,4 +1,4 @@
-@use '@angular/material' as mat;
+@use "@angular/material" as mat;
 @import url("./_reset.scss");
 @import url("./_fonts.scss");
 @import url("./_variables.scss");
@@ -306,4 +306,35 @@ html {
 .social-share-menu {
     display: flex;
     column-gap: 12px;
+}
+
+// Floating menu
+.floating-menu {
+    @include mat.menu-overrides(
+        (
+            item-with-icon-leading-spacing: 16px,
+
+            container-color: var(--white-color),
+
+            item-label-text-color: var(--black-color),
+            item-label-text-size: 16px,
+
+            item-icon-size: 24px,
+            item-icon-color: var(--black-color),
+        )
+    );
+    &.mat-mdc-menu-panel {
+        min-width: 200px;
+        border-radius: 10px;
+        box-shadow: 0px 3px 10px 0px #0000002E;
+        margin-top: 16px;
+    }
+    .mat-mdc-menu-item {
+        min-height: 40px;
+    }
+    .mat-mdc-menu-item-text {
+        display: flex;
+        align-items: center;
+        column-gap: 8px;
+    }
 }
