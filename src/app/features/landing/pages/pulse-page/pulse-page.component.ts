@@ -191,10 +191,12 @@ export class PulsePageComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     private loadGlobalSettings(): void {
-        this.settingsService.settings$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((settings) => {
-            this.globalSettings.shareTopicBaseUrl = settings.shareTopicBaseUrl;
-            this.globalSettings.minVoteInterval = settings.minVoteInterval;
-        });
+        this.settingsService.settings$
+            .pipe(takeUntilDestroyed(this.destroyRef))
+            .subscribe((settings) => {
+                this.globalSettings.shareTopicBaseUrl = settings.shareTopicBaseUrl;
+                this.globalSettings.minVoteInterval = settings.minVoteInterval;
+            });
     }
 
     private loadTopicData({ topicId, shareKey = "" }: { topicId?: number; shareKey?: string }) {
@@ -407,11 +409,11 @@ export const topicActivePartialProgress: ITopic | any = {
     state: TopicState.Active,
     campaign: {
         id: "1",
-        endsAt: "2025-07-30T23:59:59.999Z",
+        endsAt: "2025-10-30T23:59:59.999Z",
         sponsorLink: "https://pulseup.com",
         sponsorLogo: "",
         sponsoredBy: "pulseup.com",
-        startsAt: "2025-04-10T00:00:00.000Z",
+        startsAt: "2025-09-10T00:00:00.000Z",
         accomplishedGoals: ["2025-04-11T00:00:00.000Z"],
         goals: [
             { reward: "$100 donation to U24", supporters: 100 },
@@ -432,9 +434,9 @@ export const topicActiveAllCompleted: ITopic = {
     campaign: {
         ...topicActivePartialProgress.campaign!,
         accomplishedGoals: [
-            "2025-04-11T00:00:00.000Z",
-            "2025-04-12T00:00:00.000Z",
-            "2025-04-13T00:00:00.000Z",
+            // "2025-04-11T00:00:00.000Z",
+            // "2025-04-12T00:00:00.000Z",
+            // "2025-04-13T00:00:00.000Z",
         ],
     },
 };

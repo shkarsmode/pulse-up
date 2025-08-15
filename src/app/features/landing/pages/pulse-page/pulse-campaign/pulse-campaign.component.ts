@@ -1,7 +1,8 @@
 import { Campaign, ITopicStats } from '@/app/shared/interfaces';
 import { ChangeDetectionStrategy, Component, HostListener, inject, Input } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
 import { PulseCampaignModalComponent } from '../pulse-campaign-modal/pulse-campaign-modal.component';
+import { DialogService } from '@/app/shared/services/core/dialog.service';
+import { getCampaignGoalName } from '../../../helpers/getCampaignGoalName';
 
 enum CampaignState {
     NOT_STARTED = "not_started",
@@ -24,11 +25,12 @@ export class PulseCampaignComponent {
 
     public CampaignState: typeof CampaignState = CampaignState;
 
-    private readonly dialog = inject(MatDialog);
+    private readonly dialogService = inject(DialogService);
 
     @HostListener('click')
     public onHostClick(): void {
-        this.dialog.open(PulseCampaignModalComponent, {
+        this.dialogService.open(PulseCampaignModalComponent, {
+            width: '335px',
             data: {
                 campaign: this.campaign,
                 stats: this.stats,
@@ -36,17 +38,12 @@ export class PulseCampaignComponent {
         });
     }
 
-    public get currentGoal(): number {
-        if (!this.campaign || !this.campaign.goals.length) {
-            return 0;
-        }
-        const currentGoalObj = this.campaign.goals[
-            this.campaign.accomplishedGoals.length
-        ];
+    public get currentGoal(): string {
+        return getCampaignGoalName(this.campaign);
+    }
 
-        return currentGoalObj?.supporters ??
-            currentGoalObj?.lifetimeVotes ??
-            currentGoalObj?.dailyVotes ?? 0;
+    public get currentGoalReward(): string {
+        return this.campaign.goals[this.campaign.accomplishedGoals?.length || 0].reward;
     }
 
     public get currentGoalInPercent(): number {
@@ -55,7 +52,7 @@ export class PulseCampaignComponent {
         }
 
         const currentGoalObj = this.campaign.goals[
-            this.campaign.accomplishedGoals.length
+            this.campaign.accomplishedGoals?.length || 0
         ];
 
         const { totalUniqueUsers, lastDayVotes, totalVotes } = this.stats || {};
@@ -79,7 +76,7 @@ export class PulseCampaignComponent {
         const startsAt = new Date(this.campaign.startsAt);
         const endsAt = new Date(this.campaign.endsAt);
         const totalGoals = this.campaign.goals.length;
-        const completedGoals = this.campaign.accomplishedGoals.length;
+        const completedGoals = this.campaign.accomplishedGoals?.length || 0;
 
         if (completedGoals === totalGoals) {
             return CampaignState.COMPLETED_SUCCESS;

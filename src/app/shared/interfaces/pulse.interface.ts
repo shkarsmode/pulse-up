@@ -20,11 +20,10 @@ export interface ITopic {
     campaign?: Campaign;
 }
 
-export interface ILeaderboardTopic
-    extends Pick<
-        ITopic,
-        "id" | "icon" | "title" | "shareKey" | "authorId" | "author" | "startsAt" | "endsAt"
-    > {}
+export type ILeaderboardTopic = Pick<
+    ITopic,
+    "id" | "icon" | "title" | "shareKey" | "authorId" | "author" | "startsAt" | "endsAt"
+>;
 
 export enum TopicState {
     Active = "Active",
@@ -55,7 +54,7 @@ export interface Campaign {
     description: string;
     endsAt: string; // ISO timestamp
     goals: CampaignGoal[];
-    accomplishedGoals: string[]; // ISO timestamps
+    accomplishedGoals?: string[]; // ISO timestamps
     sponsorLink: string;
     sponsorLogo: string;
     sponsoredBy: string;
