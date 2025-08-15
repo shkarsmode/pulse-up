@@ -1,16 +1,11 @@
 import { Component, EventEmitter, Input, Output } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
-import {
-    asyncScheduler,
-    debounceTime,
-    distinctUntilChanged,
-    Subject,
-    ThrottleConfig,
-} from "rxjs";
+import { asyncScheduler, debounceTime, distinctUntilChanged, Subject, ThrottleConfig } from "rxjs";
 import { InputComponent } from "@/app/shared/components/ui-kit/input/input.component";
 import { CommonModule } from "@angular/common";
 import { AngularSvgIconModule } from "angular-svg-icon";
 import { MatButtonModule } from "@angular/material/button";
+import { StringUtils } from "@/app/shared/helpers/string-utils";
 
 @Component({
     selector: "app-input-search",
@@ -63,13 +58,15 @@ export class InputSearchComponent {
             this.inputValueChanged$
                 .pipe(
                     debounceTime(400, asyncScheduler),
-                    distinctUntilChanged(),
+                    distinctUntilChanged((prev, curr) => {
+                        return StringUtils.normalizeWhitespace(prev) === StringUtils.normalizeWhitespace(curr);
+                    }),
                     takeUntilDestroyed(),
                 )
                 .subscribe(this.handleInputValue.bind(this));
     }
 
     private handleInputValue(value: string): void {
-        this.handleValueChange.emit(value);
+        this.handleValueChange.emit(StringUtils.normalizeWhitespace(value));
     }
 }
