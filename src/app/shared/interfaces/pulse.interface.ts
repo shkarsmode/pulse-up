@@ -20,11 +20,10 @@ export interface ITopic {
     campaign?: Campaign;
 }
 
-export interface ILeaderboardTopic
-    extends Pick<
-        ITopic,
-        "id" | "icon" | "title" | "shareKey" | "authorId" | "author" | "startsAt" | "endsAt"
-    > {}
+export type ILeaderboardTopic = Pick<
+    ITopic,
+    "id" | "icon" | "title" | "shareKey" | "authorId" | "author" | "startsAt" | "endsAt"
+>;
 
 export enum TopicState {
     Active = "Active",

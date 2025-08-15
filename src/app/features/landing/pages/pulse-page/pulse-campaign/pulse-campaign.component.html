@@ -23,7 +23,7 @@
         }
         @case (CampaignState.NOT_STARTED) {
             <div class="campaign__title campaign__title--info">
-                Raise $10k by getting 1000 pulses in a day
+                {{ campaign.description }}
             </div>
             <div class="campaign__goal">
                 Current Goal: Get {{ currentGoal }}
@@ -31,7 +31,7 @@
         }
         @case (CampaignState.COMPLETED_SUCCESS) {
             <div class="campaign__title campaign__title--info">
-                Raise $10k by getting 1000 pulses in a day
+                {{ campaign.description }}
             </div>
             <div class="campaign__title campaign__title--success">
                 Campaign Successfully Completed
@@ -39,7 +39,7 @@
         }
         @case (CampaignState.COMPLETED_FAIL) {
             <div class="campaign__title campaign__title--info">
-                Raise $10k by getting 1000 pulses in a day
+                {{ campaign.description }}
             </div>
             <div class="campaign__title campaign__title--fail">
                 Campaign Closed
@@ -51,9 +51,10 @@
             Sponsored by
             @if (campaign.sponsorLogo) {
                 <img
+                    width="100"
+                    height="30"
                     [src]="campaign.sponsorLogo"
-                    alt="sponsor logo"
-                    style="max-height: 30px;" />
+                    alt="sponsor logo" />
             } @else {
                 <span>
                     {{ campaign.sponsoredBy }}

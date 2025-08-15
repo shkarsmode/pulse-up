@@ -1,48 +1,15 @@
-.modal {
-    width: 335px;
-    background: #ffffff;
-    border-radius: 10px;
-    padding: 48px 24px;
-    box-shadow: 0px 12px 40px rgba(0, 0, 0, 0.12);
-    font-family: 'Inter', sans-serif;
-    color: #1e1e1e;
-    box-sizing: border-box;
-}
-
-.modal__header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 20px;
-
-    h2 {
-        font-size: 18px;
-        font-weight: 700;
-        line-height: 24px;
-        text-align: center;
-        margin: 0 auto;
-        flex: 1;
-    }
-
-    .modal__close {
-        position: absolute;
-        top: 10px;
-        right: 15px;
-        font-size: 20px;
-        font-weight: 400;
-        color: #9ca3af;
-        border: none;
-        background: transparent;
-        cursor: pointer;
-        padding: 0;
-        line-height: 1;
-    }
+.modal__inner {
+    width: 100%;
 }
 
 .modal__goal {
     margin-bottom: 20px;
 
     &-title {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        column-gap: 8px;
         font-size: 14px;
         font-weight: 700;
         line-height: 20px;
@@ -50,6 +17,11 @@
         margin-bottom: 8px;
 
         text-align: center;
+
+        svg {
+            width: 14px;
+            height: 14px;
+        }
     }
 
     .modal__progress-bar {
@@ -128,10 +100,6 @@
         padding-top: 12px;
 
         span {
-            color: #131420;
-        }
-
-        a {
             color: #5E00CC;
             text-decoration: none;
             font-weight: 600;
@@ -139,6 +107,13 @@
             &:hover {
                 text-decoration: underline;
             }
+        }
+
+        img {
+            width: 100px;
+            height: 30px;
+            object-fit: contain;
+            background-color: var(--white-popup);
         }
     }
 }

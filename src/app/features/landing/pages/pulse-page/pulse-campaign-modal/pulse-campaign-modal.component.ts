@@ -1,24 +1,36 @@
-import { Campaign, ITopicStats } from '@/app/shared/interfaces';
-import { DatePipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { Campaign, ITopicStats } from "@/app/shared/interfaces";
+import { CommonModule, DatePipe } from "@angular/common";
+import { ChangeDetectionStrategy, Component, inject } from "@angular/core";
+import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
+import { PopupLayoutComponent } from "@/app/shared/components/ui-kit/popup/popup.component";
+import { PopupCloseButtonComponent } from "@/app/shared/components/ui-kit/popup/popup-close-button/popup-close-button.component";
+import { PopupSubtitleComponent } from "@/app/shared/components/ui-kit/popup/popup-subtitle/popup-subtitle.component";
+import { CampaignGoalStatus } from "../../../helpers/interfaces/campaign-goal-status.interface";
+import { AngularSvgIconModule } from "angular-svg-icon";
 
 @Component({
-    selector: 'app-pulse-campaign-modal',
-    templateUrl: './pulse-campaign-modal.component.html',
-    styleUrl: './pulse-campaign-modal.component.scss',
+    selector: "app-pulse-campaign-modal",
+    templateUrl: "./pulse-campaign-modal.component.html",
+    styleUrl: "./pulse-campaign-modal.component.scss",
     standalone: true,
-    imports: [DatePipe],
-    changeDetection: ChangeDetectionStrategy.OnPush
+    imports: [
+        CommonModule,
+        DatePipe,
+        PopupLayoutComponent,
+        PopupCloseButtonComponent,
+        PopupSubtitleComponent,
+        AngularSvgIconModule,
+    ],
+    changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PulseCampaignModalComponent {
     public campaign: Campaign;
     public stats?: ITopicStats;
 
-    public readonly data: { campaign: Campaign, stats: ITopicStats } = inject(MAT_DIALOG_DATA);
+    public readonly data: { campaign: Campaign; stats: ITopicStats } = inject(MAT_DIALOG_DATA);
     public readonly dialogRef: MatDialogRef<PulseCampaignModalComponent> = inject(MatDialogRef);
 
-    constructor () {
+    constructor() {
         this.campaign = this.data.campaign;
         this.stats = this.data.stats;
     }
@@ -33,7 +45,7 @@ export class PulseCampaignModalComponent {
 
     public get formattedDate(): string {
         const end = new Date(this.campaign.endsAt);
-        const options = { year: 'numeric', month: 'long', day: 'numeric' } as const;
+        const options = { year: "numeric", month: "long", day: "numeric" } as const;
         return end.toLocaleDateString(undefined, options);
     }
 
@@ -63,11 +75,11 @@ export class PulseCampaignModalComponent {
 
         switch (true) {
             case !!goal?.supporters:
-                return (totalUniqueUsers ?? 0) + ' supporters' ;
+                return (totalUniqueUsers ?? 0) + " supporters";
             case !!goal?.dailyVotes:
-                return (lastDayVotes ?? 0) + ' daily pulses';
+                return (lastDayVotes ?? 0) + " daily pulses";
             case !!goal?.lifetimeVotes:
-                return (totalVotes ?? 0) + ' lifetime pulses';
+                return (totalVotes ?? 0) + " lifetime pulses";
             default:
                 return 0;
         }
@@ -81,8 +93,20 @@ export class PulseCampaignModalComponent {
     public getGoalColor(goalIndex: number): string {
         const progress = this.getGoalProgress(goalIndex);
         if (progress >= 100) {
-            return '#00C105';
+            return "#00C105";
         }
-        return '#5E00CC';
+        return "#5E00CC";
+    }
+
+    public isGoalCompleted(goalIndex: number): boolean {
+        return this.getGoalStatus(goalIndex) === CampaignGoalStatus.Completed;
+    }
+
+    private getGoalStatus(goalIndex: number): CampaignGoalStatus {
+        const progress = this.getGoalProgress(goalIndex);
+        if (progress >= 100) {
+            return CampaignGoalStatus.Completed;
+        }
+        return CampaignGoalStatus.InProgress;
     }
 }

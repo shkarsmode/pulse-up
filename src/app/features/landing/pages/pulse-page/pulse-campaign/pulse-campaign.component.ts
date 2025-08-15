@@ -1,7 +1,7 @@
 import { Campaign, ITopicStats } from '@/app/shared/interfaces';
 import { ChangeDetectionStrategy, Component, HostListener, inject, Input } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
 import { PulseCampaignModalComponent } from '../pulse-campaign-modal/pulse-campaign-modal.component';
+import { DialogService } from '@/app/shared/services/core/dialog.service';
 
 enum CampaignState {
     NOT_STARTED = "not_started",
@@ -24,11 +24,12 @@ export class PulseCampaignComponent {
 
     public CampaignState: typeof CampaignState = CampaignState;
 
-    private readonly dialog = inject(MatDialog);
+    private readonly dialogService = inject(DialogService);
 
     @HostListener('click')
     public onHostClick(): void {
-        this.dialog.open(PulseCampaignModalComponent, {
+        this.dialogService.open(PulseCampaignModalComponent, {
+            width: '335px',
             data: {
                 campaign: this.campaign,
                 stats: this.stats,
