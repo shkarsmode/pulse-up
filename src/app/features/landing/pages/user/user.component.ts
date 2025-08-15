@@ -3,7 +3,7 @@ import { CommonModule, Location } from "@angular/common";
 import { ActivatedRoute, ParamMap, Router } from "@angular/router";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { SvgIconComponent } from "angular-svg-icon";
-import { map, Observable, switchMap, take, tap } from "rxjs";
+import { catchError, map, Observable, of, switchMap, take, tap } from "rxjs";
 import { InfiniteScrollDirective } from "ngx-infinite-scroll";
 import { FadeInDirective } from "@/app/shared/animations/fade-in.directive";
 import { LoadingIndicatorComponent } from "@/app/shared/components/loading-indicator/loading-indicator.component";
@@ -28,6 +28,8 @@ import { BackButtonComponent } from "@/app/shared/components/ui-kit/buttons/back
 import { VotesService } from "@/app/shared/services/votes/votes.service";
 import { UserTopicsListItemComponent } from "../../ui/user-topics-list-item/user-topics-list-item.component";
 import { LinkifyPipe } from "@/app/shared/pipes/linkify.pipe";
+import { AppRoutes } from "@/app/shared/enums/app-routes.enum";
+import { isHttpErrorResponse } from "@/app/shared/helpers/errors/isHttpErrorResponse";
 
 @Component({
     selector: "app-author",
@@ -121,6 +123,14 @@ export class UserComponent implements OnInit {
                     this.loadTopics(user.id);
                     this.user = user;
                     this.isLoading = false;
+                }),
+                catchError((error: unknown) => {    
+                    console.log("Error fetching user profile:", error);
+                    this.isLoading = false;
+                    if (isHttpErrorResponse(error) && error.status === 404) {
+                        this.router.navigateByUrl("/" + AppRoutes.Community.INVALID_LINK);
+                    }
+                    return of(error);
                 }),
                 takeUntilDestroyed(this.destroyRef),
             )

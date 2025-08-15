@@ -45,6 +45,7 @@ import { PulseCampaignComponent } from "./pulse-campaign/pulse-campaign.componen
 import { VotesService } from "@/app/shared/services/votes/votes.service";
 import { MapHeatmapLayerComponent } from "@/app/shared/components/map/map-heatmap-layer/map-heatmap-layer.component";
 import { WaveAnimationDirective } from "@/app/shared/directives/wave-animation/wave-animation.directive";
+import { isHttpErrorResponse } from "@/app/shared/helpers/errors/isHttpErrorResponse";
 
 @Component({
     selector: "app-pulse-page",
@@ -259,7 +260,9 @@ export class PulsePageComponent implements OnInit, AfterViewInit, OnDestroy {
         return this.pulseService.getById(id).pipe(
             first(),
             catchError((error: unknown) => {
-                this.router.navigateByUrl("/" + AppRoutes.Community.INVALID_LINK);
+                if (isHttpErrorResponse(error) && error.status === 404) {
+                    this.router.navigateByUrl("/" + AppRoutes.Community.INVALID_LINK);
+                }
                 return of(error);
             }),
         ) as Observable<ITopic>;
