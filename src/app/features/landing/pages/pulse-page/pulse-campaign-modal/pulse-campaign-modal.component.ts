@@ -40,7 +40,10 @@ export class PulseCampaignModalComponent {
     }
 
     public get isCampaignSuccessful(): boolean {
-        return this.campaign.accomplishedGoals.length === this.campaign.goals.length;
+        return (
+            !!this.campaign.accomplishedGoals &&
+            this.campaign.accomplishedGoals.length === this.campaign.goals.length
+        );
     }
 
     public get formattedDate(): string {

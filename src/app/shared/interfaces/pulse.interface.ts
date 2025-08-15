@@ -54,7 +54,7 @@ export interface Campaign {
     description: string;
     endsAt: string; // ISO timestamp
     goals: CampaignGoal[];
-    accomplishedGoals: string[]; // ISO timestamps
+    accomplishedGoals?: string[]; // ISO timestamps
     sponsorLink: string;
     sponsorLogo: string;
     sponsoredBy: string;

@@ -1,11 +1,7 @@
 <div class="pulse__campaign campaign">
     @switch (campaignState) {
         @case (CampaignState.ACTIVE) {
-            <div class="campaign__title">
-                🎯 Goal: {{
-                    campaign.goals[campaign.accomplishedGoals.length].reward
-                }}
-            </div>
+            <div class="campaign__title">🎯 Goal: {{ currentGoalReward }}</div>
             <div class="campaign__progress">
                 <div class="campaign__progress-title">Progress</div>
                 <div class="campaign__progress-bar">
@@ -13,8 +9,9 @@
                         [style.width.%]="currentGoalInPercent"
                         class="campaign__progress-bar--line"
                         style="--fill-width: {{ currentGoalInPercent }}%"
-                        [class.campaign__progress-bar--not-fulled]="currentGoalInPercent < 100">
-                    </div>
+                        [class.campaign__progress-bar--not-fulled]="
+                            currentGoalInPercent < 100
+                        "></div>
                 </div>
                 <div class="campaign__progress-count">
                     {{ currentGoal }}
@@ -25,9 +22,7 @@
             <div class="campaign__title campaign__title--info">
                 {{ campaign.description }}
             </div>
-            <div class="campaign__goal">
-                Current Goal: Get {{ currentGoal }}
-            </div>
+            <div class="campaign__goal">Current Goal: Get {{ currentGoal }}</div>
         }
         @case (CampaignState.COMPLETED_SUCCESS) {
             <div class="campaign__title campaign__title--info">
@@ -41,25 +36,25 @@
             <div class="campaign__title campaign__title--info">
                 {{ campaign.description }}
             </div>
-            <div class="campaign__title campaign__title--fail">
-                Campaign Closed
-            </div>
+            <div class="campaign__title campaign__title--fail">Campaign Closed</div>
         }
     }
-    <div class="campaign__sponsored">
-        <a [href]="campaign.sponsorLink" target="_blank">
-            Sponsored by
-            @if (campaign.sponsorLogo) {
-                <img
-                    width="100"
-                    height="30"
-                    [src]="campaign.sponsorLogo"
-                    alt="sponsor logo" />
-            } @else {
-                <span>
-                    {{ campaign.sponsoredBy }}
-                </span>
-            }
-        </a>
-    </div>
+    <a
+        class="campaign__sponsored"
+        [href]="campaign.sponsorLink"
+        target="_blank"
+        (click)="$event.stopPropagation()">
+        Sponsored by
+        @if (campaign.sponsorLogo) {
+            <img
+                width="100"
+                height="30"
+                [src]="campaign.sponsorLogo"
+                alt="sponsor logo" />
+        } @else {
+            <span>
+                {{ campaign.sponsoredBy }}
+            </span>
+        }
+    </a>
 </div>
