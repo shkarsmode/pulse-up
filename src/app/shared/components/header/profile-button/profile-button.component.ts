@@ -25,7 +25,9 @@ export class ProfileButtonComponent {
 
     public profileRoute = '/' + AppRoutes.Profile.OVERVIEW;
     public loginRoute = '/' + AppRoutes.Auth.SIGN_IN;
-    public isAuthenticated = !!this.authenticationService.userTokenValue;
+    public get isAuthenticated(): boolean {
+        return !!this.authenticationService.userTokenValue;
+    }
 
     public logout(): void {
         this.routerLoadingIndicatorService.setLoading(true);
