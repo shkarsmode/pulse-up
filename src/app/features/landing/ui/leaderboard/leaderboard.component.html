@@ -15,12 +15,15 @@
     <app-spinner class="leaderboard__spinner"></app-spinner>
 }
 
-@if ((isContentVisible$ | async)) {
+@if ((isLoading$ | async) === false && (isError$ | async) === false && (topics$ | async)) {
     <app-leaderboard-hint
         [selectedDate]="date$ | async"
         [selectedTimeframe]="(timeframe$ | async)!"
         [timeframeStatus]="(timeframeStatus$ | async)!"
         (counterStopped)="updateTimeframeStatus()" />
+}
+
+@if (isContentVisible$ | async) {
     <ul class="leaderboard__list">
         @for (topicData of topics$ | async; track topicData.topic.id) {
             <li>

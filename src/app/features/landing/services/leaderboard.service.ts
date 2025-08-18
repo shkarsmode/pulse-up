@@ -50,7 +50,7 @@ export class LeaderboardService {
         switchMap((filter) => {
             return this.pulseService.getLeaderboardTopics({
                 count: this.count,
-                date: filter.date.toISOString(),
+                date: filter.date.toDateString(),
                 timeframe: filter.timeframe,
                 includeTopicDetails: true,
             });

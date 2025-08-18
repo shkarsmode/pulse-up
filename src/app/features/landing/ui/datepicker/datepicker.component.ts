@@ -184,7 +184,7 @@ export class CustomDatepickerComponent {
     }
 
     public onDaySelected(date: Date) {
-        this.dateChange.emit(dayjs(date).endOf("day").toDate());
+        this.dateChange.emit(date);
     }
 
     public onMonthSelected(date: Date) {
