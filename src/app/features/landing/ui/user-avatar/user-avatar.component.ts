@@ -32,7 +32,7 @@ export class UserAvatarComponent {
             if (url) {
                 return `${blobUrlPrefix}${url}`;
             }
-            return "assets/svg/plus-placeholder.svg";
+            return null;
         }),
     );
 }
