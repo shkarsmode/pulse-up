@@ -1,9 +1,6 @@
 @use "../../../../../styles/mixins" as *;
 
 .leaderboard-header {
-    display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
 }
 
 .leaderboard__title {
@@ -92,4 +89,20 @@
     text-align: center;
     color: var(--dark-grey-color);
     margin: 16px 0;
+}
+
+.leaderboard-header__options {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    column-gap: 16px;
+    margin-top: 16px;
+    margin-bottom: 16px;
+
+    @include media-xs {
+        flex-direction: column-reverse;
+        align-items: flex-end;
+        row-gap: 8px;
+    }
 }

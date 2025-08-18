@@ -15,7 +15,6 @@ import { CommonModule } from "@angular/common";
 import { TemplatePortal } from "@angular/cdk/portal";
 import { Overlay, OverlayRef } from "@angular/cdk/overlay";
 import { DateAdapter, provideNativeDateAdapter } from "@angular/material/core";
-import { MatIcon } from "@angular/material/icon";
 import {
     DateRange,
     MAT_DATE_RANGE_SELECTION_STRATEGY,
@@ -23,10 +22,12 @@ import {
     MatCalendarView,
     MatDateRangeSelectionStrategy,
 } from "@angular/material/datepicker";
+import { AngularSvgIconModule } from "angular-svg-icon";
 import dayjs from "dayjs";
 import { CalendarHeaderComponent } from "./calendar-header/calendar-header.component";
 import { PrimaryButtonComponent } from "@/app/shared/components/ui-kit/buttons/primary-button/primary-button.component";
-import { LeaderboardTimeframe } from "@/app/shared/interfaces";
+import { LeaderboardTimeframeExtended } from "@/app/shared/interfaces";
+import { SecondaryButtonComponent } from "@/app/shared/components/ui-kit/buttons/secondary-button/secondary-button.component";
 
 @Injectable()
 export class WeekRangeSelectionStrategy<D = Date> implements MatDateRangeSelectionStrategy<D> {
@@ -56,7 +57,14 @@ export class WeekRangeSelectionStrategy<D = Date> implements MatDateRangeSelecti
     templateUrl: "./datepicker.component.html",
     styleUrls: ["./datepicker.component.scss"],
     standalone: true,
-    imports: [CommonModule, MatCalendar, CalendarHeaderComponent, PrimaryButtonComponent, MatIcon],
+    imports: [
+        CommonModule,
+        MatCalendar,
+        CalendarHeaderComponent,
+        PrimaryButtonComponent,
+        AngularSvgIconModule,
+        SecondaryButtonComponent,
+    ],
     providers: [
         {
             provide: MAT_DATE_RANGE_SELECTION_STRATEGY,
@@ -72,10 +80,10 @@ export class CustomDatepickerComponent {
 
     @Input() text = "";
     @Input() date: Date | null = null;
-    @Input() timeframe: LeaderboardTimeframe = "Month";
+    @Input() timeframe: LeaderboardTimeframeExtended;
 
     @Output() dateChange = new EventEmitter<Date | null>();
-    @Output() timeframeChange = new EventEmitter<LeaderboardTimeframe>();
+    @Output() timeframeChange = new EventEmitter<LeaderboardTimeframeExtended>();
     @Output() confirm = new EventEmitter<void>();
 
     @ViewChild("calendarPortal") calendarPortal!: TemplateRef<void>;
@@ -91,7 +99,7 @@ export class CustomDatepickerComponent {
     public selectedDateRange: DateRange<Date> = this.getStartWeekRange();
 
     public get isMonthView(): boolean {
-        return this.timeframe === "Month";
+        return this.timeframe === "Month" || this.timeframe === "last24Hours";
     }
     public get isWeekView(): boolean {
         return this.timeframe === "Week";
@@ -120,15 +128,15 @@ export class CustomDatepickerComponent {
             .withPush(true)
             .withPositions([
                 {
-                    originX: "start",
+                    originX: "end",
                     originY: "bottom",
-                    overlayX: "start",
+                    overlayX: "end",
                     overlayY: "top",
                 },
                 {
-                    originX: "start",
+                    originX: "end",
                     originY: "top",
-                    overlayX: "start",
+                    overlayX: "end",
                     overlayY: "bottom",
                 },
             ]);
@@ -190,12 +198,19 @@ export class CustomDatepickerComponent {
     public onMonthSelected(date: Date) {
         this.dateChange.emit(dayjs(date).endOf("month").toDate());
         this.overlayRef?.dispose();
-        this.onConfirm();
+        this.confirmAndClose();
     }
 
-    public onTimeframeChange(range: LeaderboardTimeframe) {
+    public onTimeframeChange(range: LeaderboardTimeframeExtended) {
         this.timeframeChange.emit(range);
+
+        if (range === "last24Hours") {
+            this.dateChange.emit(new Date());
+            return this.confirmAndClose();
+        }
+
         this.dateChange.emit(null);
+
         this.selectedDateRange = this.getStartWeekRange();
         setTimeout(() => {
             switch (range) {
@@ -212,7 +227,7 @@ export class CustomDatepickerComponent {
         }, 0);
     }
 
-    public onConfirm() {
+    public confirmAndClose() {
         this.confirm.emit();
         this.overlayRef?.dispose();
     }

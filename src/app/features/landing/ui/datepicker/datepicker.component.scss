@@ -3,7 +3,7 @@
 }
 
 .datepicker {
-    width: 300px;
+    width: 330px;
     background: var(--white-color);
     border: 1px solid var(--light-grey-color);
     border-radius: 8px;
@@ -26,13 +26,27 @@
     }
 }
 
-.datepicker__trigger {
-    display: flex;
-    align-items: center;
-    column-gap: 4px;
-    padding: 8px 0;
-    color: var(--accent-color);
-    font-weight: 600;
+.datepicker-trigger {
+    &::ng-deep {
+        button.secondary-button {
+            min-height: unset;
+            padding: 6px;
+        }
+    }
+}
+
+.datepicker-trigger-icon {
+    width: 18px;
+    height: 18px;
+
+    svg {
+        width: 100%;
+        height: 100%;
+
+        path {
+            stroke: var(--accent-color);
+        }
+    }
 }
 
 .datepicker__footer {

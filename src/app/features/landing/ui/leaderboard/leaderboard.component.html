@@ -1,7 +1,19 @@
+<!-- @let timeframe = (timeframe$ | async)!; -->
+
 <div class="leaderboard-header">
-    <div>
-        <h2 class="leaderboard__title">Global Top 10</h2>
+    <h2 class="leaderboard__title">Global Top 10</h2>
+    <div class="leaderboard-header__options">
+        <div>
+            @if (isQuickDatesVisible()) {
+                <app-leaderboard-quick-dates
+                    [timeframe]="(timeframe$ | async)!"
+                    (selected)="onQuickDateSelected($event)" />
+            } @else {
+                <span>{{ datepickerButtonText$ | async }}</span>
+            }
+        </div>
         <app-datepicker
+            class="leaderboard-header__datepicker"
             [text]="(datepickerButtonText$ | async) || ''"
             [date]="tempDate$ | async"
             [timeframe]="(tempTimeframe$ | async)!"
@@ -15,10 +27,16 @@
     <app-spinner class="leaderboard__spinner"></app-spinner>
 }
 
-@if ((isLoading$ | async) === false && (isError$ | async) === false && (topics$ | async)) {
+@if (
+    (isLoading$ | async) === false &&
+    (isError$ | async) === false &&
+    (topics$ | async) &&
+    (timeframe$ | async)! !== "last24Hours"
+) {
     <app-leaderboard-hint
+        *ngIf="(timeframe$ | async) !== 'last24Hours' as timeframe"
         [selectedDate]="date$ | async"
-        [selectedTimeframe]="(timeframe$ | async)!"
+        [selectedTimeframe]="(hintTimeframe$ | async)!"
         [timeframeStatus]="(timeframeStatus$ | async)!"
         (counterStopped)="updateTimeframeStatus()" />
 }

@@ -1,27 +1,27 @@
 import { inject, Injectable } from "@angular/core";
 import { BehaviorSubject, catchError, map, of, shareReplay, switchMap, tap } from "rxjs";
 import { PulseService } from "@/app/shared/services/api/pulse.service";
-import { LeaderboardTimeframe, LeaderboardTimeframeStatus } from "@/app/shared/interfaces";
+import { LeaderboardTimeframeExtended, LeaderboardTimeframeStatus } from "@/app/shared/interfaces";
 import { getTimeframeStatus } from "../helpers/getTimeframeStatus";
 
 interface ILeaderboardTempFilter {
     date: Date | null;
-    timeframe: LeaderboardTimeframe;
+    timeframe: LeaderboardTimeframeExtended;
 }
 
 interface ILeaderboardFilter {
     date: Date;
-    timeframe: LeaderboardTimeframe;
+    timeframe: LeaderboardTimeframeExtended;
 }
 
 const initialTempFilter: ILeaderboardTempFilter = {
-    date: new Date(),
-    timeframe: "Month",
+    date: null,
+    timeframe: "last24Hours",
 };
 
 const initialFilter: ILeaderboardFilter = {
     date: new Date(),
-    timeframe: "Month",
+    timeframe: "last24Hours",
 };
 
 @Injectable({
@@ -75,7 +75,7 @@ export class LeaderboardService {
         });
     }
 
-    public setTimeframe(timeframe: LeaderboardTimeframe) {
+    public setTimeframe(timeframe: LeaderboardTimeframeExtended) {
         this.tempFilters.next({
             ...this.tempFilters.getValue(),
             timeframe,

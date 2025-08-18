@@ -16,13 +16,13 @@
         class="calendar-header__ranges-toggle"
         [hideSingleSelectionIndicator]="true"
         (change)="onRangeChange($event)">
-        @for(rangeItem of ranges; track rangeItem.value) {
-        <mat-button-toggle
-            mat-button
-            [value]="rangeItem.value"
-            [checked]="rangeItem.value === range">
-            {{ rangeItem.label }}
-        </mat-button-toggle>
+        @for (rangeItem of ranges; track rangeItem.value) {
+            <mat-button-toggle
+                mat-button
+                [value]="rangeItem.value"
+                [checked]="rangeItem.value === range">
+                {{ rangeItem.label }}
+            </mat-button-toggle>
         }
     </mat-button-toggle-group>
 </div>

@@ -1,13 +1,15 @@
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
-import { LeaderboardTimeframe, LeaderboardTimeframeStatus } from "@/app/shared/interfaces";
+import { LeaderboardTimeframeExtended, LeaderboardTimeframeStatus } from "@/app/shared/interfaces";
 
 dayjs.extend(utc);
 
 export function getTimeframeStatus(
     selectedDate: Date,
-    timeframe: LeaderboardTimeframe,
+    timeframe: LeaderboardTimeframeExtended,
 ): LeaderboardTimeframeStatus {
+    if (timeframe === "last24Hours") return "Active";
+
     const timezone = selectedDate.getTimezoneOffset();
     const selectedUTC =
         timezone > 0
