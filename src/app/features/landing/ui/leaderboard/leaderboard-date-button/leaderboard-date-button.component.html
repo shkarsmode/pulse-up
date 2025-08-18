@@ -1,0 +1,7 @@
+<app-secondary-button
+    size="small"
+    class="leaderboard-header__date-button"
+    [class.leaderboard-header__date-button--active]="isActive"
+    (handleClick)="onClick()">
+    <ng-content></ng-content>
+</app-secondary-button>

@@ -1,0 +1,13 @@
+.leaderboard-header__date-button {
+    width: 100%;
+    &::ng-deep button {
+        width: 100%;
+    }
+    
+    &.leaderboard-header__date-button--active {
+        &::ng-deep button {
+            color: var(--white-color);
+            background-color: var(--accent-color);
+        }
+    }
+}

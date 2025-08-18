@@ -1,12 +1,10 @@
-<button
-    #triggerButton
-    class="datepicker__trigger"
-    (click)="openCalendar()">
-    {{ text }}
-    <mat-icon
-        fontIcon="arrow_drop_down"
-        aria-hidden="true"></mat-icon>
-</button>
+<div #triggerButton>
+    <app-secondary-button class="datepicker-trigger" (handleClick)="openCalendar()">
+        <svg-icon
+            src="assets/svg/calendar.svg"
+            class="datepicker-trigger-icon"></svg-icon>
+    </app-secondary-button>
+</div>
 
 <ng-template #calendarPortal>
     <div class="datepicker">
@@ -48,7 +46,7 @@
             <app-primary-button
                 [fullWidth]="true"
                 [disabled]="!isConfirmAllowed"
-                (handleClick)="onConfirm()">
+                (handleClick)="confirmAndClose()">
                 Select
             </app-primary-button>
         </div>
