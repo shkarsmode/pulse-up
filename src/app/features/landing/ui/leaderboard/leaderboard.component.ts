@@ -37,9 +37,9 @@ export class LeaderboardComponent {
 
     private filter$ = this.leaderboardService.filters$;
     private tempFilter$ = this.leaderboardService.tempFilters$;
-    private isLoadingTopics$ = this.leaderboardService.isLoading$;
-    private isErrorTopics$ = this.leaderboardService.isError$;
-
+    
+    public isLoading$ = this.leaderboardService.isLoading$;
+    public isError$ = this.leaderboardService.isError$;
     public topics$ = this.leaderboardService.topics$;
     public timeframeStatus$ = this.leaderboardService.timeframeStatus$;
     public date$ = this.filter$.pipe(
@@ -55,22 +55,22 @@ export class LeaderboardComponent {
         map((tempFilter) => tempFilter.timeframe),
     );
 
-    public isSpinnerVisible$ = combineLatest([this.isLoadingTopics$, this.isErrorTopics$]).pipe(
+    public isSpinnerVisible$ = combineLatest([this.isLoading$, this.isError$]).pipe(
         map(([isLoading, isError]) => isLoading && !isError),
     );
     public isContentVisible$ = combineLatest([
-        this.isLoadingTopics$,
-        this.isErrorTopics$,
+        this.isLoading$,
+        this.isError$,
         this.topics$,
     ]).pipe(
         map(
             ([isLoading, isError, topics]) => !isLoading && !isError && topics && topics.length > 0,
         ),
     );
-    public isErrorVisible$ = combineLatest([this.isLoadingTopics$, this.isErrorTopics$]).pipe(
+    public isErrorVisible$ = combineLatest([this.isLoading$, this.isError$]).pipe(
         map(([isLoading, isError]) => !isLoading && isError),
     );
-    public isEmpty$ = combineLatest([this.topics$, this.isLoadingTopics$]).pipe(
+    public isEmpty$ = combineLatest([this.topics$, this.isLoading$]).pipe(
         map(([topics, isLoading]) => !isLoading && topics && topics.length === 0),
     );
     public datepickerButtonText$ = this.filter$.pipe(

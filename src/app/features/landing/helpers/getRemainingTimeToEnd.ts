@@ -9,7 +9,11 @@ export const getRemainingTimeToEnd = (
     selectedTimeframe: LeaderboardTimeframe,
 ) => {
     const nowUTC = dayjs().utc();
-    const selectedUTC = dayjs(selectedDate).utc();
+    const timezone = selectedDate.getTimezoneOffset();
+    const selectedUTC =
+        timezone > 0
+            ? dayjs(selectedDate).startOf("day").utc()
+            : dayjs(selectedDate).endOf("day").utc();
 
     let endUTC: dayjs.Dayjs;
 
@@ -31,8 +35,6 @@ export const getRemainingTimeToEnd = (
             throw new Error("Invalid timeframe");
     }
 
-    // console.log({selectedTimeframe, endUTC});
-    
     if (endUTC.isBefore(nowUTC)) {
         return 0;
     }

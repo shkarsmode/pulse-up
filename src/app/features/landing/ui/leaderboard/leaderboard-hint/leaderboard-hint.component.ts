@@ -50,7 +50,7 @@ export class LeaderboardHintComponent implements OnInit {
         Week: "this week",
         Month: "this month",
     };
-
+    
     public ngOnInit() {
         this.leaderboardService.topics$
             .pipe(

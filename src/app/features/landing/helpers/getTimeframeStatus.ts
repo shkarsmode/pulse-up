@@ -4,9 +4,15 @@ import { LeaderboardTimeframe, LeaderboardTimeframeStatus } from "@/app/shared/i
 
 dayjs.extend(utc);
 
-
-export function getTimeframeStatus(selectedDate: Date, timeframe: LeaderboardTimeframe): LeaderboardTimeframeStatus {
-    const selectedUTC = dayjs(selectedDate).utc();
+export function getTimeframeStatus(
+    selectedDate: Date,
+    timeframe: LeaderboardTimeframe,
+): LeaderboardTimeframeStatus {
+    const timezone = selectedDate.getTimezoneOffset();
+    const selectedUTC =
+        timezone > 0
+            ? dayjs(selectedDate).startOf("day").utc()
+            : dayjs(selectedDate).endOf("day").utc();
 
     let startUTC: dayjs.Dayjs;
     let endUTC: dayjs.Dayjs;
