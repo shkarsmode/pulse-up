@@ -9,7 +9,8 @@
 <ng-template #calendarPortal>
     <div class="datepicker">
         <app-calendar-header
-            [range]="timeframe"
+            [range]="selectedTimeframe"
+            [ranges]="timeframes"
             (rangeChange)="onTimeframeChange($event)"
             (backClick)="openMultiYearView()" />
         <mat-calendar

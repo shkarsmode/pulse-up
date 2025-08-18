@@ -101,8 +101,15 @@
     margin-bottom: 16px;
 
     @include media-xs {
-        flex-direction: column-reverse;
-        align-items: flex-end;
-        row-gap: 8px;
+        align-items: center;
+        column-gap: 12px;
+    }
+
+    &.leaderboard-header__options--quick-dates {
+        @include media-xs {
+            flex-direction: column-reverse;
+            align-items: flex-end;
+            row-gap: 12px;
+        }
     }
 }

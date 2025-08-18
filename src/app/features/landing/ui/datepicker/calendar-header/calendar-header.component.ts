@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output, OnInit } from "@angular/core";
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from "@angular/core";
 import { AngularSvgIconModule } from "angular-svg-icon";
 import { MatButtonToggleChange, MatButtonToggleModule } from "@angular/material/button-toggle";
 import { CommonModule } from "@angular/common";
@@ -9,12 +9,12 @@ interface RangeItem {
     label: string;
 }
 
-const ranges: RangeItem[] = [
-    { value: "last24Hours", label: "Last 24 Hours" },
-    { value: "Day", label: "Day" },
-    { value: "Week", label: "Week" },
-    { value: "Month", label: "Month" },
-];
+const ranges: Record<LeaderboardTimeframeExtended, RangeItem> = {
+    last24Hours: { value: "last24Hours", label: "Last 24 Hours" },
+    Day: { value: "Day", label: "Day" },
+    Week: { value: "Week", label: "Week" },
+    Month: { value: "Month", label: "Month" },
+};
 
 @Component({
     selector: "app-calendar-header",
@@ -24,20 +24,15 @@ const ranges: RangeItem[] = [
     styleUrl: "./calendar-header.component.scss",
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class CalendarHeaderComponent implements OnInit {
+export class CalendarHeaderComponent {
     @Input() range: LeaderboardTimeframeExtended;
+    @Input({
+        transform: (value: LeaderboardTimeframeExtended[]) => value.map((range) => ranges[range]),
+    })
+    ranges: RangeItem[];
 
     @Output() backClick = new EventEmitter<void>();
     @Output() rangeChange = new EventEmitter<LeaderboardTimeframeExtended>();
-
-    public ranges: RangeItem[];
-
-    ngOnInit(): void {
-        this.ranges =
-        this.range === "last24Hours"
-            ? ranges.filter((range) => range.value !== "last24Hours")
-            : ranges;
-    }
 
     public onBackClick(): void {
         this.backClick.emit();

@@ -2,7 +2,9 @@
 
 <div class="leaderboard-header">
     <h2 class="leaderboard__title">Global Top 10</h2>
-    <div class="leaderboard-header__options">
+    <div
+        class="leaderboard-header__options"
+        [class.leaderboard-header__options--quick-dates]="isQuickDatesVisible()">
         <div>
             @if (isQuickDatesVisible()) {
                 <app-leaderboard-quick-dates
@@ -16,7 +18,8 @@
             class="leaderboard-header__datepicker"
             [text]="(datepickerButtonText$ | async) || ''"
             [date]="tempDate$ | async"
-            [timeframe]="(tempTimeframe$ | async)!"
+            [selectedTimeframe]="(tempTimeframe$ | async)!"
+            [timeframes]="datepickerTimeframes()"
             (dateChange)="onDateChange($event)"
             (timeframeChange)="onTimeframeChange($event)"
             (confirm)="onConfirm()" />

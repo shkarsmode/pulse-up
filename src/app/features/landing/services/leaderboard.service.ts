@@ -1,5 +1,5 @@
 import { inject, Injectable } from "@angular/core";
-import { BehaviorSubject, catchError, map, of, shareReplay, switchMap, tap } from "rxjs";
+import { BehaviorSubject, catchError, distinctUntilChanged, map, of, shareReplay, switchMap, tap } from "rxjs";
 import { PulseService } from "@/app/shared/services/api/pulse.service";
 import { LeaderboardTimeframeExtended, LeaderboardTimeframeStatus } from "@/app/shared/interfaces";
 import { getTimeframeStatus } from "../helpers/getTimeframeStatus";
@@ -43,6 +43,10 @@ export class LeaderboardService {
     public tempFilters$ = this.tempFilters.asObservable();
     public timeframeStatus$ = this.timeframeStatus.asObservable();
     public topics$ = this.filters.pipe(
+        distinctUntilChanged(
+            (prev, curr) =>
+                prev.date.getTime() === curr.date.getTime() || prev.timeframe === curr.timeframe,
+        ),
         tap(() => {
             this.isLoadingSubject.next(true);
             this.isErrorSubject.next(false);
@@ -90,7 +94,7 @@ export class LeaderboardService {
 
     public updateTimeframeStatus() {
         const { date, timeframe } = this.filters.getValue();
-        const status = getTimeframeStatus(date, timeframe)
+        const status = getTimeframeStatus(date, timeframe);
         this.timeframeStatus.next(status);
     }
 }

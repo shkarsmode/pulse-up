@@ -80,7 +80,8 @@ export class CustomDatepickerComponent {
 
     @Input() text = "";
     @Input() date: Date | null = null;
-    @Input() timeframe: LeaderboardTimeframeExtended;
+    @Input() selectedTimeframe: LeaderboardTimeframeExtended;
+    @Input() timeframes: LeaderboardTimeframeExtended[];
 
     @Output() dateChange = new EventEmitter<Date | null>();
     @Output() timeframeChange = new EventEmitter<LeaderboardTimeframeExtended>();
@@ -99,13 +100,13 @@ export class CustomDatepickerComponent {
     public selectedDateRange: DateRange<Date> = this.getStartWeekRange();
 
     public get isMonthView(): boolean {
-        return this.timeframe === "Month" || this.timeframe === "last24Hours";
+        return this.selectedTimeframe === "Month" || this.selectedTimeframe === "last24Hours";
     }
     public get isWeekView(): boolean {
-        return this.timeframe === "Week";
+        return this.selectedTimeframe === "Week";
     }
     public get isDayView(): boolean {
-        return this.timeframe === "Day";
+        return this.selectedTimeframe === "Day";
     }
     public get isConfirmAllowed() {
         return !!(
@@ -154,7 +155,7 @@ export class CustomDatepickerComponent {
         this.overlayRef.backdropClick().subscribe(() => this.overlayRef?.dispose());
     }
     public openMultiYearView(): void {
-        switch (this.timeframe) {
+        switch (this.selectedTimeframe) {
             case "Day":
                 this.dayCalendar.currentView = "multi-year";
                 break;
