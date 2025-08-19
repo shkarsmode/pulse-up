@@ -9,6 +9,7 @@ import { CustomDatepickerComponent } from "../datepicker/datepicker.component";
 import { LeaderboardListItemComponent } from "./leaderboard-list-item/leaderboard-list-item.component";
 import { LeaderboardHintComponent } from "./leaderboard-hint/leaderboard-hint.component";
 import { LeaderboardQuickDatesComponent } from "./leaderboard-quick-dates/leaderboard-quick-dates.component";
+import { LeaderboardQuickDatesSelectComponent } from "./leaderboard-quick-dates-select/leaderboard-quick-dates-select.component";
 
 const dateFormats: Record<LeaderboardTimeframe, string> = {
     Day: "MMMM d, y",
@@ -27,6 +28,7 @@ const dateFormats: Record<LeaderboardTimeframe, string> = {
         LeaderboardListItemComponent,
         LeaderboardHintComponent,
         LeaderboardQuickDatesComponent,
+        LeaderboardQuickDatesSelectComponent,
     ],
     providers: [DatePipe],
     templateUrl: "./leaderboard.component.html",
