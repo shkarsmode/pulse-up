@@ -5,7 +5,6 @@ import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
 import { PopupLayoutComponent } from "@/app/shared/components/ui-kit/popup/popup.component";
 import { PopupCloseButtonComponent } from "@/app/shared/components/ui-kit/popup/popup-close-button/popup-close-button.component";
 import { PopupSubtitleComponent } from "@/app/shared/components/ui-kit/popup/popup-subtitle/popup-subtitle.component";
-import { CampaignGoalStatus } from "../../../helpers/interfaces/campaign-goal-status.interface";
 import { AngularSvgIconModule } from "angular-svg-icon";
 
 @Component({
@@ -57,6 +56,8 @@ export class PulseCampaignModalComponent {
             return 0;
         }
 
+        if(this.isGoalCompleted(goalIndex)) return 100;
+
         const goal = this.campaign.goals[goalIndex];
         const { totalUniqueUsers, lastDayVotes, totalVotes } = this.stats || {};
 
@@ -102,14 +103,6 @@ export class PulseCampaignModalComponent {
     }
 
     public isGoalCompleted(goalIndex: number): boolean {
-        return this.getGoalStatus(goalIndex) === CampaignGoalStatus.Completed;
-    }
-
-    private getGoalStatus(goalIndex: number): CampaignGoalStatus {
-        const progress = this.getGoalProgress(goalIndex);
-        if (progress >= 100) {
-            return CampaignGoalStatus.Completed;
-        }
-        return CampaignGoalStatus.InProgress;
+        return !!this.campaign?.accomplishedGoals && !!this.campaign.accomplishedGoals[goalIndex];
     }
 }
