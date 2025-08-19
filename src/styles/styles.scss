@@ -16,6 +16,8 @@
 *,
 html {
     scroll-behavior: smooth;
+    --mat-select-panel-background-color: var(--white-color);
+    --mat-option-selected-state-layer-color: var(--light-grey-color);
 }
 
 html {
@@ -337,4 +339,9 @@ html {
         align-items: center;
         column-gap: 8px;
     }
+}
+
+// select 
+div.mat-mdc-select-panel {
+    background-color: var(--white-color);
 }

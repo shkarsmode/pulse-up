@@ -1,0 +1,50 @@
+@use "@angular/material" as mat;
+
+:host {
+    display: block;
+}
+.select-field {
+    width: 100%;
+    @include mat.select-overrides(
+        (
+            panel-background-color: var(--white-color),
+            enabled-arrow-color: var(--black-color),
+            focused-arrow-color: var(--accent-color),
+            trigger-text-size: 16px,
+        )
+    );
+
+    &.select-field--small {
+        @include mat.select-overrides(
+            (
+                trigger-text-size: 14px,
+            )
+        );
+
+        &::ng-deep {
+            --mdc-outlined-text-field-container-shape: 10px;
+            --mat-form-field-container-vertical-padding: 6px;
+        }
+    }
+    &.select-field--accent {
+        @include mat.select-overrides(
+            (
+                enabled-trigger-text-color: var(--accent-color),
+                enabled-arrow-color: var(--accent-color),
+            )
+        );
+        &::ng-deep {
+            --mdc-outlined-text-field-outline-color: var(--accent-color);
+        }
+    }
+
+    &::ng-deep {
+        --mdc-outlined-text-field-container-shape: 10px;
+        --mat-form-field-container-vertical-padding: 8px;
+        --mat-form-field-container-height: auto;
+
+        --mdc-outlined-text-field-outline-color: var(--block-color);
+        --mdc-outlined-text-field-focus-outline-color: var(--accent-color);
+        --mdc-outlined-text-field-hover-outline-color: var(--accent-color);
+    }
+}

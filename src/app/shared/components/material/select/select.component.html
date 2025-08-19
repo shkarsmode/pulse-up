@@ -1,0 +1,16 @@
+<mat-form-field
+    appearance="outline"
+    floatLabel="auto"
+    class="select-field select-field--small select-field--accent"
+    subscriptSizing="dynamic">
+    @if (label) {
+        <mat-label>{{ label }}</mat-label>
+    }
+    <mat-select
+        [formControl]="control"
+        required>
+        @for (option of options; track option.value) {
+            <mat-option [value]="option.value">{{ option.label }}</mat-option>
+        }
+    </mat-select>
+</mat-form-field>

@@ -9,6 +9,7 @@ import { CustomDatepickerComponent } from "../datepicker/datepicker.component";
 import { LeaderboardListItemComponent } from "./leaderboard-list-item/leaderboard-list-item.component";
 import { LeaderboardHintComponent } from "./leaderboard-hint/leaderboard-hint.component";
 import { LeaderboardQuickDatesComponent } from "./leaderboard-quick-dates/leaderboard-quick-dates.component";
+import { LeaderboardQuickDatesSelectComponent } from "./leaderboard-quick-dates-select/leaderboard-quick-dates-select.component";
 
 const dateFormats: Record<LeaderboardTimeframe, string> = {
     Day: "MMMM d, y",
@@ -27,6 +28,7 @@ const dateFormats: Record<LeaderboardTimeframe, string> = {
         LeaderboardListItemComponent,
         LeaderboardHintComponent,
         LeaderboardQuickDatesComponent,
+        LeaderboardQuickDatesSelectComponent,
     ],
     providers: [DatePipe],
     templateUrl: "./leaderboard.component.html",
@@ -42,6 +44,7 @@ export class LeaderboardComponent {
     private datepickerTimeframe: LeaderboardTimeframeExtended | null = null;
 
     public isQuickDatesVisible = signal(true);
+    public datepickerTimeframes = signal<LeaderboardTimeframeExtended[]>(["Day", "Week", "Month"]);
     public isLoading$ = this.leaderboardService.isLoading$;
     public isError$ = this.leaderboardService.isError$;
     public topics$ = this.leaderboardService.topics$;
@@ -105,6 +108,11 @@ export class LeaderboardComponent {
 
     public onConfirm() {
         this.isQuickDatesVisible.set(this.datepickerTimeframe === "last24Hours");
+        this.datepickerTimeframes.set(
+            this.isQuickDatesVisible()
+                ? ["Day", "Week", "Month"]
+                : ["last24Hours", "Day", "Week", "Month"],
+        );
         this.leaderboardService.applyFilters();
     }
 
@@ -115,6 +123,7 @@ export class LeaderboardComponent {
         date: Date;
         timeframe: LeaderboardTimeframeExtended;
     }) {
+        this.datepickerTimeframes.set(["Day", "Week", "Month"]);
         this.leaderboardService.setDate(date);
         this.leaderboardService.setTimeframe(timeframe);
         this.leaderboardService.applyFilters();

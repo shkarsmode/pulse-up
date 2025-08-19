@@ -45,12 +45,13 @@
     li {
         display: flex;
         align-items: center;
-        column-gap: 16px;
+        column-gap: 12px;
         counter-increment: rate-counter;
         &::before {
             content: counter(rate-counter);
             font-weight: bold;
             color: #555;
+            min-width: 20px;
         }
     }
 }
@@ -101,8 +102,24 @@
     margin-bottom: 16px;
 
     @include media-xs {
-        flex-direction: column-reverse;
-        align-items: flex-end;
-        row-gap: 8px;
+        align-items: center;
+    }
+}
+
+.leaderboard-header__dates {
+    flex: 1;
+}
+
+.leaderboard-header__quick-dates {
+    @include media-xs {
+        display: none;
+    }
+}
+
+.leaderboard-header__quick-dates-select {
+    display: none;
+
+    @include media-xs {
+        display: block;
     }
 }

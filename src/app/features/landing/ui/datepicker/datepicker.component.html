@@ -9,7 +9,8 @@
 <ng-template #calendarPortal>
     <div class="datepicker">
         <app-calendar-header
-            [range]="timeframe"
+            [range]="selectedTimeframe"
+            [ranges]="timeframes"
             (rangeChange)="onTimeframeChange($event)"
             (backClick)="openMultiYearView()" />
         <mat-calendar
@@ -41,14 +42,6 @@
                 startView="year"
                 (monthSelected)="onMonthSelected($event)"
                 (viewChanged)="onViewChanged($event)" />
-        </div>
-        <div class="datepicker__footer">
-            <app-primary-button
-                [fullWidth]="true"
-                [disabled]="!isConfirmAllowed"
-                (handleClick)="confirmAndClose()">
-                Select
-            </app-primary-button>
         </div>
     </div>
 </ng-template>

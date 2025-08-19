@@ -1,3 +1,5 @@
+@use "../../../../../styles/mixins" as *;
+
 :host {
     position: relative;
 }
@@ -31,6 +33,10 @@
         button.secondary-button {
             min-height: unset;
             padding: 6px;
+
+            @include media-xs {
+                padding: 8px;
+            }
         }
     }
 }
@@ -47,8 +53,4 @@
             stroke: var(--accent-color);
         }
     }
-}
-
-.datepicker__footer {
-    padding: 16px;
 }
