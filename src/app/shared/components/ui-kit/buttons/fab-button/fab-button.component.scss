@@ -1,0 +1,21 @@
+@use "../../../../../../styles/mixins" as *;
+
+.fab-button {
+    --mdc-extended-fab-container-height: auto;
+
+    min-height: 48px;
+    padding-top: 12px;
+    padding-bottom: 12px;
+
+    &::ng-deep {
+        .mdc-button__label {
+            @include link-16px;
+        }
+    }
+
+    &.fab-button--small {
+        min-height: 40px;
+        padding-top: 8px;
+        padding-bottom: 8px;
+    }
+}

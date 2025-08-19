@@ -1,5 +1,7 @@
 <div class="review-profile">
-    <div class="header">
+    <app-profile-card />
+    <app-profile-tabs class="tabs" />
+    <!-- <div class="header">
         <app-user-avatar
             [width]="80"
             [height]="80"
@@ -53,12 +55,10 @@
                 </button>
             </app-menu>
         </div>
-    </div>
-
-    <app-profile-tabs class="tabs" />
+    </div> -->
 </div>
 
-<ng-template #moreMenuContent>
+<!-- <ng-template #moreMenuContent>
     <div class="profile-menu">
         <button
             mat-menu-item
@@ -89,4 +89,4 @@
             <app-qrcode-button [url]="shareProfileUrl" />
         </ng-container>
     </div>
-</ng-template>
+</ng-template> -->

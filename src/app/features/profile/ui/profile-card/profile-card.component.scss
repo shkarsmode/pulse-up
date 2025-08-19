@@ -1,0 +1,85 @@
+@use "../../../../../styles/mixins" as *;
+
+:host {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    row-gap: 20px;
+    padding: 20px;
+    border-radius: 20px;
+    background-color: var(--white-popup);
+}
+
+.profile-main-info {
+    display: flex;
+    align-items: center;
+    column-gap: 16px;
+}
+
+.profile-main-info__avatar {
+    width: 140px;
+    height: 140px;
+    flex-shrink: 0;
+
+    @include media-sm {
+        justify-self: center;
+    }
+}
+
+.profile-main-info__placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--white-color);
+}
+
+.profile-main-info__text {
+    display: flex;
+    flex-direction: column;
+    row-gap: 4px;
+
+    @include media-xs {
+        text-align: center;
+    }
+}
+
+.profile-main-info__name {
+    @include title-32px;
+    word-break: break-word;
+}
+.profile-main-info__username {
+    width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    color: var(--dark-grey-color);
+}
+
+.profile__bio {
+    @include text-16px;
+    color: var(--dark-grey-color);
+}
+
+.profile__footer {
+    display: flex;
+    column-gap: 8px;
+    padding-top: 16px;
+}
+
+.profile-button__icon {
+    width: 20px;
+    height: 20px;
+
+    svg {
+        width: 100%;
+        height: 100%;
+    }
+}
+
+.profile-button__inner {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    column-gap: 8px;
+}

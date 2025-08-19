@@ -1,4 +1,4 @@
-import { Component, inject, Input } from "@angular/core";
+import { Component, ContentChild, ElementRef, inject, Input } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { SvgIconComponent } from "angular-svg-icon";
 import { BehaviorSubject, combineLatest, map } from "rxjs";
@@ -15,13 +15,19 @@ export class UserAvatarComponent {
     @Input() public name = "";
     @Input() public width = 80;
     @Input() public height = 80;
+    @Input() public roundSize = 8;
     @Input()
     set url(value: string | undefined) {
         this.url$.next(value || "");
     }
+    @ContentChild("placeholder", { static: false }) placeholderContent: ElementRef<HTMLElement>;
 
     private readonly settingsService: SettingsService = inject(SettingsService);
-    
+
+    public get hasCustomPlaceholder(): boolean {
+        return !!this.placeholderContent;
+    }
+
     private url$ = new BehaviorSubject<string>("");
     private blobUrlPrefix$ = this.settingsService.settings$.pipe(
         map((settings) => settings.blobUrlPrefix),

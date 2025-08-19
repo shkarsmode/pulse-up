@@ -1,0 +1,34 @@
+<div class="profile-main-info">
+    <app-user-avatar
+        [width]="140"
+        [height]="140"
+        [roundSize]="16"
+        [url]="(picture$ | async) || ''"
+        [name]="(name$ | async) || ''"
+        class="profile-main-info__avatar">
+        <div
+            placeholder
+            class="profile-main-info__placeholder">
+            <svg-icon src="assets/svg/user-placeholder.svg" />
+        </div>
+    </app-user-avatar>
+    <div class="profile-main-info__text">
+        <h1 class="profile-main-info__name">{{ name$ | async }}</h1>
+        <div class="profile-main-info__username">&#64;{{ username$ | async }}</div>
+    </div>
+</div>
+
+<div
+    class="profile__bio"
+    [innerHTML]="bio$ | async | linkify"></div>
+
+<div class="profile__footer">
+    <app-fab-button class="profile-button">
+        <div class="profile-button__inner">
+            <svg-icon
+                src="assets/svg/user-placeholder.svg"
+                class="profile-button__icon" />
+            <span>Edit</span>
+        </div>
+    </app-fab-button>
+</div>
