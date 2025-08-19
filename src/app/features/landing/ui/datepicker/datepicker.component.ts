@@ -10,6 +10,7 @@ import {
     ChangeDetectionStrategy,
     Injectable,
     inject,
+    DestroyRef,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { TemplatePortal } from "@angular/cdk/portal";
@@ -25,9 +26,9 @@ import {
 import { AngularSvgIconModule } from "angular-svg-icon";
 import dayjs from "dayjs";
 import { CalendarHeaderComponent } from "./calendar-header/calendar-header.component";
-import { PrimaryButtonComponent } from "@/app/shared/components/ui-kit/buttons/primary-button/primary-button.component";
 import { LeaderboardTimeframeExtended } from "@/app/shared/interfaces";
 import { SecondaryButtonComponent } from "@/app/shared/components/ui-kit/buttons/secondary-button/secondary-button.component";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 
 @Injectable()
 export class WeekRangeSelectionStrategy<D = Date> implements MatDateRangeSelectionStrategy<D> {
@@ -61,7 +62,6 @@ export class WeekRangeSelectionStrategy<D = Date> implements MatDateRangeSelecti
         CommonModule,
         MatCalendar,
         CalendarHeaderComponent,
-        PrimaryButtonComponent,
         AngularSvgIconModule,
         SecondaryButtonComponent,
     ],
@@ -76,6 +76,7 @@ export class WeekRangeSelectionStrategy<D = Date> implements MatDateRangeSelecti
 })
 export class CustomDatepickerComponent {
     private overlay = inject(Overlay);
+    private destroyRef = inject(DestroyRef);
     private viewContainerRef = inject(ViewContainerRef);
 
     @Input() text = "";
@@ -107,14 +108,6 @@ export class CustomDatepickerComponent {
     }
     public get isDayView(): boolean {
         return this.selectedTimeframe === "Day";
-    }
-    public get isConfirmAllowed() {
-        return !!(
-            this.date &&
-            ((this.currentView === "month" && this.isDayView) ||
-                (this.currentView === "month" && this.isWeekView) ||
-                (this.currentView === "year" && this.isMonthView))
-        );
     }
 
     public openCalendar(): void {
@@ -152,7 +145,10 @@ export class CustomDatepickerComponent {
         const portal = new TemplatePortal(this.calendarPortal, this.viewContainerRef);
         this.overlayRef.attach(portal);
 
-        this.overlayRef.backdropClick().subscribe(() => this.overlayRef?.dispose());
+        this.overlayRef
+            .backdropClick()
+            .pipe(takeUntilDestroyed(this.destroyRef))
+            .subscribe(() => this.overlayRef?.dispose());
     }
     public openMultiYearView(): void {
         switch (this.selectedTimeframe) {
@@ -190,16 +186,17 @@ export class CustomDatepickerComponent {
         const endOfWeek = selected.endOf("week");
         this.selectedDateRange = new DateRange(startOfWeek.toDate(), endOfWeek.toDate());
         this.dateChange.emit(endOfWeek.toDate());
+        this.confirmAndClose();
     }
 
     public onDaySelected(date: Date) {
         this.dateChange.emit(date);
+        this.confirmAndClose();
     }
 
     public onMonthSelected(date: Date) {
         this.dateChange.emit(dayjs(date).endOf("month").toDate());
         this.timeframeChange.emit("Month");
-        this.overlayRef?.dispose();
         this.confirmAndClose();
     }
 

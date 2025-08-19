@@ -8,6 +8,7 @@ import {
     OnInit,
     Input,
     OnChanges,
+    SimpleChanges,
 } from "@angular/core";
 import { SelectComponent } from "@/app/shared/components/material/select/select.component";
 import { FormControl } from "@angular/forms";
@@ -57,8 +58,10 @@ export class LeaderboardQuickDatesSelectComponent implements OnInit, OnChanges {
             });
     }
 
-    public ngOnChanges() {
-        this.control.setValue(this.timeframe);
+    public ngOnChanges(changes: SimpleChanges) {
+        if (changes['timeframe'] && !changes['timeframe'].firstChange) {
+            this.control.setValue(this.timeframe);
+        }
     }
 
     private getDateRange(timeframe: LeaderboardTimeframeExtended) {

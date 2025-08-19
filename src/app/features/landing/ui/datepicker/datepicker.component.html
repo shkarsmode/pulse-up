@@ -43,13 +43,5 @@
                 (monthSelected)="onMonthSelected($event)"
                 (viewChanged)="onViewChanged($event)" />
         </div>
-        <div class="datepicker__footer">
-            <app-primary-button
-                [fullWidth]="true"
-                [disabled]="!isConfirmAllowed"
-                (handleClick)="confirmAndClose()">
-                Select
-            </app-primary-button>
-        </div>
     </div>
 </ng-template>
