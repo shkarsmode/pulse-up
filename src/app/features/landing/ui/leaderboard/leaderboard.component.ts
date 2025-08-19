@@ -105,8 +105,6 @@ export class LeaderboardComponent {
     }
 
     public onConfirm() {
-        console.log("Confirm");
-
         this.isQuickDatesVisible.set(this.datepickerTimeframe === "last24Hours");
         this.datepickerTimeframes.set(
             this.isQuickDatesVisible()

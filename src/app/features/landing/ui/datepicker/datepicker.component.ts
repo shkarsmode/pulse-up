@@ -198,6 +198,7 @@ export class CustomDatepickerComponent {
 
     public onMonthSelected(date: Date) {
         this.dateChange.emit(dayjs(date).endOf("month").toDate());
+        this.timeframeChange.emit("Month");
         this.overlayRef?.dispose();
         this.confirmAndClose();
     }
