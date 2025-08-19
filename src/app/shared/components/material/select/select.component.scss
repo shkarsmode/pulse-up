@@ -1,6 +1,10 @@
 @use "@angular/material" as mat;
 
+:host {
+    display: block;
+}
 .select-field {
+    width: 100%;
     @include mat.select-overrides(
         (
             panel-background-color: var(--white-color),
