@@ -23,12 +23,68 @@
     [innerHTML]="bio$ | async | linkify"></div>
 
 <div class="profile__footer">
-    <app-fab-button class="profile-button">
-        <div class="profile-button__inner">
-            <svg-icon
-                src="assets/svg/user-placeholder.svg"
-                class="profile-button__icon" />
-            <span>Edit</span>
-        </div>
+    <app-fab-button
+        class="profile-button"
+        icon="assets/svg/edit.svg"
+        [routerLink]="editProfileRoute">
+        <span>Edit</span>
+    </app-fab-button>
+    <app-menu [content]="shareMenuContent">
+        <app-fab-button
+            class="profile-button"
+            icon="assets/svg/share.svg">
+            <span>Share</span>
+        </app-fab-button>
+    </app-menu>
+    <app-fab-button
+        class="profile-button profile-button--signout"
+        icon="assets/svg/signout.svg">
+        <span>Sign Out</span>
+    </app-fab-button>
+    <app-fab-button
+        class="profile-button profile-button--more"
+        icon="assets/svg/more-dots.svg"
+        label="More options"
+        [matMenuTriggerFor]="menu">
     </app-fab-button>
 </div>
+
+<mat-menu
+    #menu="matMenu"
+    class="floating-menu">
+    <ng-template matMenuContent>
+        <button
+            mat-menu-item
+            (click)="logout()"
+            class="profile-menu-button--logout">
+            <svg-icon src="assets/svg/signout.svg" />
+            <span>Sign Out</span>
+        </button>
+        <button
+            mat-menu-item
+            [routerLink]="deleteAccountRoute">
+            <svg-icon src="assets/svg/trash-delete.svg" />
+            <span>Delete Account</span>
+        </button>
+    </ng-template>
+</mat-menu>
+
+<ng-template #shareMenuContent>
+    <div class="social-share-menu">
+        <ng-container *ngIf="shareProfileUrl$ | async as shareProfileUrl">
+            <app-copy-button
+                link="{{ shareProfileUrl }}"
+                (handleClick)="onCopyLink($event)" />
+            <app-socials-button
+                [variant]="'facebook'"
+                [url]="shareProfileUrl" />
+            <app-socials-button
+                [variant]="'x'"
+                [url]="shareProfileUrl" />
+            <app-socials-button
+                [variant]="'email'"
+                [url]="shareProfileUrl" />
+            <app-qrcode-button [url]="shareProfileUrl" />
+        </ng-container>
+    </div>
+</ng-template>

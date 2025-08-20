@@ -1,12 +1,19 @@
-import { ChangeDetectionStrategy, Component } from "@angular/core";
+import { CommonModule } from "@angular/common";
+import { ChangeDetectionStrategy, Component, Input } from "@angular/core";
 import { MatButtonModule } from "@angular/material/button";
+import {MatRippleModule} from '@angular/material/core';
+import { AngularSvgIconModule } from "angular-svg-icon";
 
 @Component({
     selector: "app-fab-button",
     standalone: true,
-    imports: [MatButtonModule],
+    imports: [CommonModule, MatButtonModule, AngularSvgIconModule, MatRippleModule],
     templateUrl: "./fab-button.component.html",
     styleUrl: "./fab-button.component.scss",
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class FabButtonComponent {}
+export class FabButtonComponent {
+    @Input() color: "light" | "accent" = "light";
+    @Input() icon: string | null = null;
+    @Input() label: string | null = null;
+}

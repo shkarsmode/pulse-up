@@ -1,6 +1,15 @@
 <button
-    mat-fab
-    extended
-    class="fab-button">
+    class="fab-button"
+    [ngClass]="{
+        'fab-button--light': color === 'light',
+        'fab-button--accent': color === 'accent',
+    }"
+    matRipple
+    [attr.aria-label]="label">
+    @if (icon) {
+        <svg-icon
+            [src]="icon"
+            class="fab-button__icon" />
+    }
     <ng-content></ng-content>
 </button>
