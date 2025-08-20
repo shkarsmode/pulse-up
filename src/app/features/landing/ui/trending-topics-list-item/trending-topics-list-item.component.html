@@ -56,6 +56,13 @@
                 *ngIf="topicUrl$ | async as topicUrl"
                 [topicUrl]="topicUrl" />
         </div>
+        @if (data.campaign?.description) {
+            <div class="card-footer__campaign">
+                <div class="card-footer-campaign">
+                    {{ data.campaign?.description }}
+                </div>
+            </div>
+        }
     </div>
 </app-large-pulse>
 
