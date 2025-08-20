@@ -1,3 +1,5 @@
+@use "../../../../../styles/mixins" as mixins;
+
 .card-heading-meta {
     display: flex;
     flex-direction: column;
@@ -9,6 +11,7 @@
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     grid-column-gap: 16px;
+    grid-row-gap: 8px;
 }
 
 .card-footer__left {
@@ -70,4 +73,16 @@
 .card-footer__socials {
     display: flex;
     column-gap: 12px;
+}
+
+.card-footer__campaign {
+    grid-column: 1 / 3;
+}
+
+.card-footer-campaign {
+    @include mixins.link-14px;
+    padding: 8px 16px;
+    text-align: center;
+    border-radius: 10px;
+    background-color: #F6F085;
 }
