@@ -18,9 +18,11 @@
     </div>
 </div>
 
-<div
-    class="profile__bio"
-    [innerHTML]="bio$ | async | linkify"></div>
+@if (bio$ | async) {
+    <div
+        class="profile__bio"
+        [innerHTML]="bio$ | async | linkify"></div>
+}
 
 <div class="profile__footer">
     <app-fab-button

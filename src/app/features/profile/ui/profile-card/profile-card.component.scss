@@ -80,7 +80,6 @@
 .profile__footer {
     display: flex;
     column-gap: 16px;
-    padding-top: 16px;
 
     @include media-sm {
         justify-content: center;
