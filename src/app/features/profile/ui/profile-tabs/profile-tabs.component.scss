@@ -1,4 +1,14 @@
+@use "@angular/material" as mat;
+
 .profile-tabs {
+    @include mat.tabs-overrides(
+        (
+            active-label-text-color: var(--accent-color),
+            active-focus-label-text-color: var(--accent-color),
+            active-hover-label-text-color: var(--accent-color),
+            label-text-weight: 600,
+        )
+    );
     --mdc-tab-indicator-active-indicator-color: var(--accent-color);
     --mat-tab-header-active-hover-indicator-color: var(--accent-color);
     --mat-tab-header-active-focus-indicator-color: var(--accent-color);
