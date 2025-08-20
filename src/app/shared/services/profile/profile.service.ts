@@ -44,8 +44,8 @@ export class ProfileService {
     }
     updateProfile(data: IProfile): Observable<IProfile> {
         return this.userService.updateOwnProfile(data).pipe(
-            tap(() => {
-                this.cachedProfile = null;
+            tap((profile) => {
+                this.cachedProfile = profile;
                 this.loadTrigger$.next();
             }),
         );
