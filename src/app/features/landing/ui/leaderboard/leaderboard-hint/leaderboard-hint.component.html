@@ -16,7 +16,7 @@
         @if (timeframeStatus === "Active") {
             <app-progress-bar
                 class="leaderboard-hint__progress"
-                [percentage]="elapsedTimePercentage" />
+                [percentage]="elapsedTimePercentage()" />
         }
         <app-link-button
             class="leaderboard-action"

@@ -1,6 +1,10 @@
 @use "../../../../../styles/mixins" as *;
 
 .leaderboard-header {
+    display: flex;
+    flex-direction: column;
+    row-gap: 16px;
+    margin-bottom: 24px;
 }
 
 .leaderboard__title {

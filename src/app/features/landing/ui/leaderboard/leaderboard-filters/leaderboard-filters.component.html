@@ -1,0 +1,15 @@
+<app-select
+    [control]="timeframeControl"
+    [options]="timeframeOptions"
+    leftIconUrl="assets/svg/clock-arrow-back.svg"
+    class="leaderboard-filters__select">
+</app-select>
+
+@if (datepickerButtonVisible$ | async) {
+    <app-leaderboard-datepicker
+        class="leaderboard-header__datepicker"
+        [buttonText]="(buttonText$ | async)!"
+        [date]="date$ | async"
+        [timeframe]="(timeframe$ | async)!"
+        (dateChange)="onDateChange($event)" />
+}
