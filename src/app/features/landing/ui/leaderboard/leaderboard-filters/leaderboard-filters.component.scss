@@ -1,0 +1,24 @@
+@use "../../../../../../styles/mixins" as mixins;
+
+:host {
+    --button-width: 220px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    column-gap: 16px;
+    row-gap: 16px;
+
+    @include mixins.media-sm {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+}
+
+.leaderboard-filters__select,
+.leaderboard-header__datepicker {
+    min-width: var(--button-width);
+
+    @include mixins.media-xs {
+        min-width: 100%;
+    }
+}

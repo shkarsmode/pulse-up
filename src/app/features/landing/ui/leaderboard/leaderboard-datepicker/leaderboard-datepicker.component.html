@@ -1,18 +1,21 @@
 <div #triggerButton>
-    <app-secondary-button class="datepicker-trigger" (handleClick)="openCalendar()">
+    <button
+        class="datepicker-trigger-button"
+        (click)="openCalendar()">
         <svg-icon
             src="assets/svg/calendar.svg"
-            class="datepicker-trigger-icon"></svg-icon>
-    </app-secondary-button>
+            class="datepicker-trigger-button__icon"
+            aria-hidden="true" />
+        <span>{{ buttonText }}</span>
+        <svg-icon
+            src="assets/svg/arrow-left.svg"
+            class="datepicker-trigger-button__arrow"
+            aria-hidden="true" />
+    </button>
 </div>
 
 <ng-template #calendarPortal>
     <div class="datepicker">
-        <app-calendar-header
-            [range]="selectedTimeframe"
-            [ranges]="timeframes"
-            (rangeChange)="onTimeframeChange($event)"
-            (backClick)="openMultiYearView()" />
         <mat-calendar
             *ngIf="isDayView"
             #dayCalendar

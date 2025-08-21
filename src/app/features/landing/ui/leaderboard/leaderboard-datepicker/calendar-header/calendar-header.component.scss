@@ -20,21 +20,3 @@
         @include link-16px;
     }
 }
-
-.calendar-header__ranges {
-    display: flex;
-    justify-content: center;
-    padding: 12px 20px 0;
-    border-top: 1px solid var(--light-grey-color);
-}
-
-.calendar-header__ranges-toggle {
-    width: 100%;
-
-    &::ng-deep {
-        .mat-button-toggle {
-            flex: 1;
-            border-radius: 8px;
-        }
-    }
-}

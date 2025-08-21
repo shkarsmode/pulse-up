@@ -1,21 +1,13 @@
-import { ChangeDetectionStrategy, Component, inject, signal } from "@angular/core";
-import { CommonModule, DatePipe } from "@angular/common";
+import { ChangeDetectionStrategy, Component, inject } from "@angular/core";
+import { CommonModule } from "@angular/common";
 import { AngularSvgIconModule } from "angular-svg-icon";
 import { combineLatest, filter, map } from "rxjs";
 import { LeaderboardService } from "../../services/leaderboard.service";
 import { SpinnerComponent } from "@/app/shared/components/ui-kit/spinner/spinner.component";
-import { LeaderboardTimeframe, LeaderboardTimeframeExtended } from "@/app/shared/interfaces";
-import { CustomDatepickerComponent } from "../datepicker/datepicker.component";
 import { LeaderboardListItemComponent } from "./leaderboard-list-item/leaderboard-list-item.component";
 import { LeaderboardHintComponent } from "./leaderboard-hint/leaderboard-hint.component";
-import { LeaderboardQuickDatesComponent } from "./leaderboard-quick-dates/leaderboard-quick-dates.component";
-import { LeaderboardQuickDatesSelectComponent } from "./leaderboard-quick-dates-select/leaderboard-quick-dates-select.component";
+import { LeaderboardFiltersComponent } from "./leaderboard-filters/leaderboard-filters.component";
 
-const dateFormats: Record<LeaderboardTimeframe, string> = {
-    Day: "MMMM d, y",
-    Week: "MMMM d, y",
-    Month: "MMMM y",
-};
 
 @Component({
     selector: "app-leaderboard",
@@ -24,27 +16,20 @@ const dateFormats: Record<LeaderboardTimeframe, string> = {
         CommonModule,
         SpinnerComponent,
         AngularSvgIconModule,
-        CustomDatepickerComponent,
         LeaderboardListItemComponent,
         LeaderboardHintComponent,
-        LeaderboardQuickDatesComponent,
-        LeaderboardQuickDatesSelectComponent,
+        LeaderboardFiltersComponent,
     ],
-    providers: [DatePipe],
     templateUrl: "./leaderboard.component.html",
     styleUrl: "./leaderboard.component.scss",
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class LeaderboardComponent {
-    private datePipe = inject(DatePipe);
     private leaderboardService = inject(LeaderboardService);
 
     private filter$ = this.leaderboardService.filters$;
     private tempFilter$ = this.leaderboardService.tempFilters$;
-    private datepickerTimeframe: LeaderboardTimeframeExtended | null = null;
 
-    public isQuickDatesVisible = signal(true);
-    public datepickerTimeframes = signal<LeaderboardTimeframeExtended[]>(["Day", "Week", "Month"]);
     public isLoading$ = this.leaderboardService.isLoading$;
     public isError$ = this.leaderboardService.isError$;
     public topics$ = this.leaderboardService.topics$;
@@ -71,61 +56,12 @@ export class LeaderboardComponent {
     public isEmpty$ = combineLatest([this.topics$, this.isLoading$]).pipe(
         map(([topics, isLoading]) => !isLoading && topics && topics.length === 0),
     );
-    public datepickerButtonText$ = this.filter$.pipe(
-        map(({ date, timeframe }) => {
-            switch (timeframe) {
-                case "Day":
-                    return this.datePipe.transform(date, dateFormats.Day) ?? "";
-                case "Week":
-                    return `Week ending ${this.datePipe.transform(date, dateFormats.Day) ?? ""}`;
-                case "Month":
-                    return this.datePipe.transform(date, dateFormats.Month) ?? "";
-                default:
-                    return "";
-            }
-        }),
-    );
-
-    public startView$ = this.filter$.pipe(
-        map(({ timeframe }) => (timeframe === "Month" ? "year" : "month")),
-    );
+    
     public isActiveTimeframe$ = this.leaderboardService.timeframeStatus$.pipe(
         map((status) => status === "Active"),
     );
 
-    public onDateChange(date: Date | null) {
-        this.leaderboardService.setDate(date);
-    }
-
-    public onTimeframeChange(timeframe: LeaderboardTimeframeExtended) {
-        this.datepickerTimeframe = timeframe;
-        this.leaderboardService.setTimeframe(timeframe);
-    }
-
     public updateTimeframeStatus() {
         this.leaderboardService.updateTimeframeStatus();
-    }
-
-    public onConfirm() {
-        this.isQuickDatesVisible.set(this.datepickerTimeframe === "last24Hours");
-        this.datepickerTimeframes.set(
-            this.isQuickDatesVisible()
-                ? ["Day", "Week", "Month"]
-                : ["last24Hours", "Day", "Week", "Month"],
-        );
-        this.leaderboardService.applyFilters();
-    }
-
-    public onQuickDateSelected({
-        date,
-        timeframe,
-    }: {
-        date: Date;
-        timeframe: LeaderboardTimeframeExtended;
-    }) {
-        this.datepickerTimeframes.set(["Day", "Week", "Month"]);
-        this.leaderboardService.setDate(date);
-        this.leaderboardService.setTimeframe(timeframe);
-        this.leaderboardService.applyFilters();
     }
 }

@@ -1,7 +1,13 @@
 <mat-form-field
     appearance="outline"
     floatLabel="auto"
-    class="select-field select-field--small select-field--accent"
+    class="select-field"
+    [ngClass]="{
+        'select-field--small': size === 'small',
+        'select-field--medium': size === 'medium',
+        'select-field--accent': accent,
+        'select-field--with-icon': leftIconUrl !== null,
+    }"
     subscriptSizing="dynamic">
     @if (label) {
         <mat-label>{{ label }}</mat-label>
@@ -14,3 +20,19 @@
         }
     </mat-select>
 </mat-form-field>
+@if (leftIconUrl) {
+    <svg-icon
+        [src]="leftIconUrl"
+        class="select-field__icon"
+        [ngClass]="{
+            'select-field__icon--accent': accent,
+        }"
+        aria-hidden="true" />
+}
+<svg-icon
+    src="assets/svg/arrow-left.svg"
+    class="select-field__arrow"
+    [ngClass]="{
+        'select-field__arrow--accent': accent,
+    }"
+    aria-hidden="true" />

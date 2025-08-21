@@ -2,6 +2,7 @@
 
 :host {
     display: block;
+    position: relative;
 }
 .select-field {
     width: 100%;
@@ -38,13 +39,86 @@
         }
     }
 
+    &.select-field--with-icon {
+        &::ng-deep {
+            .mdc-text-field {
+                padding-left: 48px;
+            }
+        }
+    }
+
     &::ng-deep {
-        --mdc-outlined-text-field-container-shape: 10px;
-        --mat-form-field-container-vertical-padding: 8px;
+        --mdc-outlined-text-field-container-shape: 25px;
+        --mat-form-field-container-vertical-padding: 12px;
         --mat-form-field-container-height: auto;
 
-        --mdc-outlined-text-field-outline-color: var(--block-color);
-        --mdc-outlined-text-field-focus-outline-color: var(--accent-color);
-        --mdc-outlined-text-field-hover-outline-color: var(--accent-color);
+        --mdc-outlined-text-field-outline-color: var(--light-grey-color);
+        --mdc-outlined-text-field-focus-outline-color: var(--dark-grey-color);
+        --mdc-outlined-text-field-hover-outline-color: var(--dark-grey-color);
+
+        .mat-mdc-form-field-infix {
+            width: 100%;
+        }
+        .mat-mdc-select-trigger {
+            column-gap: 8px;
+        }
+
+        .mat-mdc-select-arrow {
+            opacity: 0;
+        }
+    }
+}
+
+.select-field__arrow {
+    position: absolute;
+    top: 50%;
+    right: 16px;
+    transform: translateY(-50%) rotate(-90deg);
+    width: 14px;
+    height: 14px;
+    pointer-events: none;
+
+    svg {
+        width: 100%;
+        height: 100%;
+
+        path {
+            fill: var(--dark-grey-color);
+        }
+    }
+
+    &.select-field__arrow--accent {
+        svg {
+            path {
+                fill: var(--accent-color);
+            }
+        }
+    }
+}
+
+.select-field__icon {
+    position: absolute;
+    top: 50%;
+    left: 16px;
+    transform: translateY(-50%);
+    width: 22px;
+    height: 22px;
+    pointer-events: none;
+
+    svg {
+        width: 100%;
+        height: 100%;
+
+        path {
+            fill: currentColor;
+        }
+    }
+
+    &.select-field__icon--accent {
+        svg {
+            path {
+                fill: var(--accent-color);
+            }
+        }
     }
 }
