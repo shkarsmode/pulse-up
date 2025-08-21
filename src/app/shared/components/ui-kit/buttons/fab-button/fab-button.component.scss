@@ -17,13 +17,23 @@
 
     &:hover {
         box-shadow: 0px 3px 14px 0px #00000026;
-        background-color: var(--background-color-hover)
+        background-color: var(--background-color-hover);
+    }
+
+    &.fab-button--circle {
+        width: 48px;
+        padding: 12px;
     }
 
     &.fab-button--small {
         @include text-14px;
         min-height: 40px;
         padding: 8px 24px;
+
+        &.fab-button--circle {
+            width: 40px;
+            padding: 8px;
+        }
     }
 
     &.fab-button--light {

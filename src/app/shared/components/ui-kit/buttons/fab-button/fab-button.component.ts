@@ -16,4 +16,5 @@ export class FabButtonComponent {
     @Input() color: "light" | "accent" = "light";
     @Input() icon: string | null = null;
     @Input() label: string | null = null;
+    @Input() circle = false;
 }
