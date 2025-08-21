@@ -20,7 +20,7 @@ import { FormatNumberPipe } from "@/app/shared/pipes/format-number.pipe";
 import { SettingsService } from "@/app/shared/services/api/settings.service";
 import { UserService } from "@/app/shared/services/api/user.service";
 import { DialogService } from "@/app/shared/services/core/dialog.service";
-import { TopicQRCodePopupData } from "../../helpers/interfaces/topic-qrcode-popup-data.interface";
+import { TopicQRCodePopupData } from "../../interfaces/topic-qrcode-popup-data.interface";
 import { InfiniteLoaderService } from "../../services/infinite-loader.service";
 import { TopicQrcodePopupComponent } from "../../ui/topic-qrcode-popup/topic-qrcode-popup.component";
 import { UserAvatarComponent } from "../../ui/user-avatar/user-avatar.component";

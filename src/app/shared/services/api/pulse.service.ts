@@ -6,7 +6,7 @@ import { API_URL } from "../../tokens/tokens";
 import { IValidateTopicTitleResponse } from "../../interfaces/validate-topic-title.response";
 import { ICategory } from "../../interfaces/category.interface";
 import { PendingTopicsService } from "../topic/pending-topics.service";
-import { IH3Pulses } from "@/app/features/landing/helpers/interfaces/h3-pulses.interface";
+import { IH3Pulses } from "@/app/features/landing/interfaces/h3-pulses.interface";
 import { IH3Votes } from "@/app/shared/interfaces/map/h3-votes.interface";
 import { IGetLeaderboardTopicsRequest } from "../../interfaces/topic/get-leaderboard-topics-request.interface";
 import { IGetLeaderboardTopicsResponse } from "../../interfaces/topic/get-leaderboard-topics-response.interface";

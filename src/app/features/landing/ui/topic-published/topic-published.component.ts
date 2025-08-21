@@ -12,7 +12,7 @@ import { CommonModule } from "@angular/common";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
 import { delay, map, Observable, take } from "rxjs";
-import { TopicQRCodePopupData } from "../../helpers/interfaces/topic-qrcode-popup-data.interface";
+import { TopicQRCodePopupData } from "../../interfaces/topic-qrcode-popup-data.interface";
 import { TopicQrcodePopupComponent } from "../topic-qrcode-popup/topic-qrcode-popup.component";
 
 @Component({

@@ -7,7 +7,7 @@ import { MAPBOX_STYLE } from "../../tokens/tokens";
 import { AppConstants } from "../../constants";
 import { MapMarkersLayerComponent } from "./map-markers-layer/map-markers-layer.component";
 import { IMapMarker } from "../../interfaces/map/map-marker.interface";
-import { IMapClickEvent } from "@/app/features/landing/helpers/interfaces/map-click-event.interface";
+import { IMapClickEvent } from "@/app/features/landing/interfaces/map-click-event.interface";
 import { MapWeightsLayerComponent } from "./map-weights-layer/map-weights-layer.component";
 import { environment } from "@/environments/environment";
 

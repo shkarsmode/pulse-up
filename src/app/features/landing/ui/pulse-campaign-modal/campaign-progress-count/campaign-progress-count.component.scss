@@ -1,0 +1,15 @@
+.campaign-progress-count {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 8px;
+    font-size: 14px;
+
+    span:last-child {
+        color: #8386a5;
+    }
+}
+.campaign-progress-count__text--center {
+    width: 100%;
+    text-align: center;
+}

@@ -13,7 +13,7 @@
         font-size: 14px;
         font-weight: 700;
         line-height: 20px;
-        color: #1e1e1e !important;
+        color: var(--black-color);
         margin-bottom: 8px;
 
         text-align: center;
@@ -22,6 +22,9 @@
             width: 14px;
             height: 14px;
         }
+    }
+    &-title--disabled {
+        color: var(--dark-grey-color);
     }
 
     .modal__progress-bar {
@@ -56,18 +59,6 @@
 
         .modal__goal-max {
             color: #9ca3af;
-        }
-    }
-
-    .modal__progress-count {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        margin-top: 8px;
-        font-size: 14px;
-
-        span:last-child {
-            color: #8386A5;
         }
     }
 

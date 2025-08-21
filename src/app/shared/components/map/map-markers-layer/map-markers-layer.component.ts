@@ -25,7 +25,7 @@ import { MediaUtilsService } from "@/app/features/landing/services/media-utils.s
 import { MapMarkersService } from "@/app/shared/services/map/map-marker.service";
 import { NgxMapboxGLModule } from "ngx-mapbox-gl";
 import { MapMarkerComponent } from "../map-marker/map-marker.component";
-import { IH3Pulses } from "@/app/features/landing/helpers/interfaces/h3-pulses.interface";
+import { IH3Pulses } from "@/app/features/landing/interfaces/h3-pulses.interface";
 import { ICategory } from "@/app/shared/interfaces/category.interface";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 

@@ -2,7 +2,7 @@ import { Campaign, ITopicStats } from '@/app/shared/interfaces';
 import { ChangeDetectionStrategy, Component, HostListener, inject, Input } from '@angular/core';
 import { PulseCampaignModalComponent } from '../pulse-campaign-modal/pulse-campaign-modal.component';
 import { DialogService } from '@/app/shared/services/core/dialog.service';
-import { getCampaignGoalName } from '../../../helpers/getCampaignGoalName';
+import { getCampaignGoalName } from '../../helpers/getCampaignGoalName';
 
 enum CampaignState {
     NOT_STARTED = "not_started",
@@ -33,7 +33,11 @@ export class PulseCampaignComponent {
             width: '335px',
             data: {
                 campaign: this.campaign,
-                stats: this.stats,
+                stats: this.stats || {
+                    totalUniqueUsers: 0,
+                    lastDayVotes: 0,
+                    totalVotes: 0,
+                },
             },
         });
     }
