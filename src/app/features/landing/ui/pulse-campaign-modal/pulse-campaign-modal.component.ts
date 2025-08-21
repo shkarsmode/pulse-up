@@ -6,6 +6,8 @@ import { PopupLayoutComponent } from "@/app/shared/components/ui-kit/popup/popup
 import { PopupCloseButtonComponent } from "@/app/shared/components/ui-kit/popup/popup-close-button/popup-close-button.component";
 import { PopupSubtitleComponent } from "@/app/shared/components/ui-kit/popup/popup-subtitle/popup-subtitle.component";
 import { AngularSvgIconModule } from "angular-svg-icon";
+import { CampaignProgressCountComponent } from "./campaign-progress-count/campaign-progress-count.component";
+import { CampaignGoalExtended } from "../../interfaces/campaign-goal-extended.interface";
 
 @Component({
     selector: "app-pulse-campaign-modal",
@@ -19,12 +21,14 @@ import { AngularSvgIconModule } from "angular-svg-icon";
         PopupCloseButtonComponent,
         PopupSubtitleComponent,
         AngularSvgIconModule,
+        CampaignProgressCountComponent,
     ],
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PulseCampaignModalComponent {
     public campaign: Campaign;
-    public stats?: ITopicStats;
+    public goals: CampaignGoalExtended[];
+    public stats: ITopicStats;
 
     public readonly data: { campaign: Campaign; stats: ITopicStats } = inject(MAT_DIALOG_DATA);
     public readonly dialogRef: MatDialogRef<PulseCampaignModalComponent> = inject(MatDialogRef);
@@ -32,6 +36,20 @@ export class PulseCampaignModalComponent {
     constructor() {
         this.campaign = this.data.campaign;
         this.stats = this.data.stats;
+
+        let hasGoalsInProgress = false;
+        this.goals = this.campaign.goals.map((goal, index) => {
+            const isAccomplished = !!this.campaign.accomplishedGoals?.[index] || false;
+            const isInProgress = !isAccomplished && !hasGoalsInProgress;
+            if (isInProgress) {
+                hasGoalsInProgress = true;
+            }
+            return {
+                ...goal,
+                isAccomplished: isAccomplished,
+                isInProgress: isInProgress,
+            };
+        });
     }
 
     public get campaignEnded(): boolean {
@@ -52,13 +70,15 @@ export class PulseCampaignModalComponent {
     }
 
     public getGoalProgress(goalIndex: number): number {
-        if (!this.campaign || !this.campaign.goals.length) {
+        if (!this.goals.length) {
             return 0;
         }
 
-        if(this.isGoalCompleted(goalIndex)) return 100;
+        const goal = this.goals[goalIndex];
 
-        const goal = this.campaign.goals[goalIndex];
+        if (goal.isAccomplished) return 100;
+        if (!goal.isInProgress) return 0;
+        
         const { totalUniqueUsers, lastDayVotes, totalVotes } = this.stats || {};
 
         switch (true) {
@@ -73,36 +93,11 @@ export class PulseCampaignModalComponent {
         }
     }
 
-    public getGoalCurrentValue(goalIndex: number): string | number {
-        const { totalUniqueUsers, lastDayVotes, totalVotes } = this.stats || {};
-        const goal = this.campaign.goals[goalIndex];
-
-        switch (true) {
-            case !!goal?.supporters:
-                return (totalUniqueUsers ?? 0) + " supporters";
-            case !!goal?.dailyVotes:
-                return (lastDayVotes ?? 0) + " daily pulses";
-            case !!goal?.lifetimeVotes:
-                return (totalVotes ?? 0) + " lifetime pulses";
-            default:
-                return 0;
-        }
-    }
-
-    public getGoalTargetValue(goalIndex: number): number {
-        const goal = this.campaign.goals[goalIndex];
-        return goal?.supporters || goal?.dailyVotes || goal?.lifetimeVotes || 0;
-    }
-
     public getGoalColor(goalIndex: number): string {
         const progress = this.getGoalProgress(goalIndex);
         if (progress >= 100) {
             return "#00C105";
         }
         return "#5E00CC";
-    }
-
-    public isGoalCompleted(goalIndex: number): boolean {
-        return !!this.campaign?.accomplishedGoals && !!this.campaign.accomplishedGoals[goalIndex];
     }
 }

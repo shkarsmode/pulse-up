@@ -18,7 +18,7 @@ import { MapPainter } from "@/app/shared/helpers/map-painter";
 import { MapUtils } from "@/app/shared/services/map/map-utils.service";
 import { AppConstants } from "@/app/shared/constants";
 import { PulseService } from "@/app/shared/services/api/pulse.service";
-import { IH3Pulses } from "@/app/features/landing/helpers/interfaces/h3-pulses.interface";
+import { IH3Pulses } from "@/app/features/landing/interfaces/h3-pulses.interface";
 import { ICategory } from "@/app/shared/interfaces/category.interface";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 

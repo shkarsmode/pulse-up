@@ -1,6 +1,6 @@
 import { Component, inject, Input } from "@angular/core";
 import { SvgIconComponent } from "angular-svg-icon";
-import { TopicQRCodePopupData } from "@/app/features/landing/helpers/interfaces/topic-qrcode-popup-data.interface";
+import { TopicQRCodePopupData } from "@/app/features/landing/interfaces/topic-qrcode-popup-data.interface";
 import { TopicQrcodePopupComponent } from "@/app/features/landing/ui/topic-qrcode-popup/topic-qrcode-popup.component";
 import { DialogService } from "@/app/shared/services/core/dialog.service";
 

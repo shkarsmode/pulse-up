@@ -41,7 +41,7 @@ export interface ITopicStats {
     lastDayVotes: number;
 }
 
-interface CampaignGoal {
+export interface CampaignGoal {
     reward: string;
     supporters?: number;
     lifetimeVotes?: number;

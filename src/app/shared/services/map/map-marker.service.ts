@@ -5,7 +5,7 @@ import { IMapMarker, IMapMarkerAnimated } from "@/app/shared/interfaces/map/map-
 import { ITopic } from "@/app/shared/interfaces";
 import { PulseService } from "@/app/shared/services/api/pulse.service";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
-import { IH3Pulses } from "@/app/features/landing/helpers/interfaces/h3-pulses.interface";
+import { IH3Pulses } from "@/app/features/landing/interfaces/h3-pulses.interface";
 import { ICategory } from "../../interfaces/category.interface";
 
 interface TooltipData extends ITopic {

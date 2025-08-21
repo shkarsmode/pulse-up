@@ -1,0 +1,12 @@
+<div
+    class="campaign-progress-count"
+    [class.campaign-progress-count--reached]="goal.isAccomplished">
+    @if (goal.isAccomplished || !goal.isInProgress) {
+        <span class="campaign-progress-count__text--center">{{ goalCurrentValue }}</span>
+    } @else {
+        <span>
+            {{ goalCurrentValue }}
+        </span>
+        <span>{{ goalTargetValue }}</span>
+    }
+</div>

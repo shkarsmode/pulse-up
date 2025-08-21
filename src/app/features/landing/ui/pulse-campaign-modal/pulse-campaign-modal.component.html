@@ -3,19 +3,19 @@
     <app-popup-subtitle>Campaign</app-popup-subtitle>
 
     <div class="modal__inner">
-        @for (goal of campaign.goals; track goal; let i = $index) {
+        @for (goal of goals; track goal; let i = $index) {
             <div
                 class="modal__goal"
                 [class.modal__goal--ended]="campaignEnded">
                 <div
                     class="modal__goal-title"
-                    [style.color]="getGoalColor(i)">
+                    [class.modal__goal-title--disabled]="
+                        !goal.isAccomplished && !goal.isInProgress
+                    ">
                     {{ goal.reward }}
-                    <ng-container *ngIf="isGoalCompleted(i)">
-                        <svg-icon
-                            *ngIf="true"
-                            src="assets/svg/checked-circle-solid.svg" />
-                    </ng-container>
+                    @if (goal.isAccomplished) {
+                        <svg-icon src="assets/svg/checked-circle-solid.svg" />
+                    }
                 </div>
                 <div class="modal__progress-bar">
                     <div
@@ -27,12 +27,9 @@
                         [style.width.%]="getGoalProgress(i)"
                         [style.backgroundColor]="getGoalColor(i)"></div>
                 </div>
-                <div class="modal__progress-count">
-                    <span>
-                        {{ getGoalCurrentValue(i) }}
-                    </span>
-                    <span>{{ getGoalTargetValue(i) }}</span>
-                </div>
+                <app-campaign-progress-count
+                    [goal]="goal"
+                    [topicStats]="stats" />
             </div>
         }
 
