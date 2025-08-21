@@ -6,7 +6,8 @@
         'fab-button--circle': circle
     }"
     matRipple
-    [attr.aria-label]="label">
+    [attr.aria-label]="label"
+    (click)="onClick()">
     @if (icon) {
         <svg-icon
             [src]="icon"

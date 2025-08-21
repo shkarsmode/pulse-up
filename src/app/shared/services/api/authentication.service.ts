@@ -1,5 +1,6 @@
 import { HttpHeaders } from "@angular/common/http";
-import { inject, Inject, Injectable } from "@angular/core";
+import { DestroyRef, inject, Inject, Injectable } from "@angular/core";
+import { Router } from "@angular/router";
 import { FirebaseApp, FirebaseError, initializeApp } from "firebase/app";
 import {
     Auth,
@@ -35,15 +36,21 @@ import { WindowService } from "../core/window.service";
 import { ProfileService } from "../profile/profile.service";
 import { IdentityService } from "./identity.service";
 import { UserService } from "./user.service";
+import { RouterLoadingIndicatorService } from "../../components/router-loading-indicator/router-loading-indicator.service";
+import { AppRoutes } from "../../enums/app-routes.enum";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 
 @Injectable({
     providedIn: "root",
 })
 export class AuthenticationService {
+    private readonly router = inject(Router);
+    private readonly destroyRef = inject(DestroyRef);
     private readonly windowService: WindowService = inject(WindowService);
     private readonly userService: UserService = inject(UserService);
     private readonly profileService: ProfileService = inject(ProfileService);
     private readonly identityService: IdentityService = inject(IdentityService);
+    private readonly routerLoadingIndicatorService = inject(RouterLoadingIndicatorService);
 
     private anonymousUser$: BehaviorSubject<string | null>;
     private userToken$: BehaviorSubject<string | null>;
@@ -117,7 +124,7 @@ export class AuthenticationService {
                     ),
                 }),
             ),
-            switchMap(() => this.logout()),
+            switchMap(() => this.signOutFromFirebase()),
             switchMap(() => this.prepareRecaptcha()),
             switchMap(() => this.sendVerificationCode(phoneNumber)),
             tap(() => this.isSigninInProgress$.next(false)),
@@ -364,7 +371,7 @@ export class AuthenticationService {
         );
     };
 
-    public logout = () => {
+    public signOutFromFirebase = () => {
         return from(signOut(this.firebaseAuth)).pipe(
             tap(() => {
                 LocalStorageService.remove(LOCAL_STORAGE_KEYS.userToken);
@@ -376,9 +383,28 @@ export class AuthenticationService {
                 LocalStorageService.remove(LOCAL_STORAGE_KEYS.isAnonymous);
             }),
             catchError((error: unknown) => {
-                throw new AuthenticationError((error as Error).message, AuthenticationErrorCode.UNKNOWN_ERROR);
+                throw new AuthenticationError(
+                    (error as Error).message,
+                    AuthenticationErrorCode.UNKNOWN_ERROR,
+                );
             }),
         );
+    };
+
+    public logout = () => {
+        this.routerLoadingIndicatorService.setLoading(true);
+        this.signOutFromFirebase()
+            .pipe(
+                switchMap(() => this.loginAsAnonymousThroughTheFirebase()),
+                tap(() => {
+                    this.router.navigateByUrl("/" + AppRoutes.Landing.HOME, {
+                        replaceUrl: true,
+                    });
+                    this.routerLoadingIndicatorService.setLoading(false);
+                }),
+                takeUntilDestroyed(this.destroyRef),
+            )
+            .subscribe();
     };
 
     public updateToken = (): Observable<string> => {

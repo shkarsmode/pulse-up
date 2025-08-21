@@ -9,7 +9,7 @@ import { AuthenticationService } from "../../services/api/authentication.service
 export class SignInPageGuard implements CanActivate {
     private readonly authenticationService = inject(AuthenticationService);
     canActivate(): Observable<boolean> {
-        return this.authenticationService.logout().pipe(
+        return this.authenticationService.signOutFromFirebase().pipe(
             catchError(() => {
                 return of(false);
             }),
