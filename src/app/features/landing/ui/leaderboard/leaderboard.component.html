@@ -14,7 +14,6 @@
     (timeframe$ | async)! !== "last24Hours"
 ) {
     <app-leaderboard-hint
-        *ngIf="(timeframe$ | async) !== 'last24Hours' as timeframe"
         [selectedDate]="date$ | async"
         [selectedTimeframe]="(hintTimeframe$ | async)!"
         [timeframeStatus]="(timeframeStatus$ | async)!"

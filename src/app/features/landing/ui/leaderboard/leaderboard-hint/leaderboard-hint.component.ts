@@ -42,15 +42,17 @@ export class LeaderboardHintComponent implements OnInit {
     private dialogService = inject(DialogService);
     private leaderboardService = inject(LeaderboardService);
 
+    private tickCount = 0;
+
     public isVisible = signal(false);
     public remainingTime = signal(0);
-    public elapsedTimePercentage = 0;
+    public elapsedTimePercentage = signal(0);
     public labels: Record<LeaderboardTimeframe, string> = {
         Day: "today",
         Week: "this week",
         Month: "this month",
     };
-    
+
     public ngOnInit() {
         this.leaderboardService.topics$
             .pipe(
@@ -93,8 +95,8 @@ export class LeaderboardHintComponent implements OnInit {
 
     private updateElapsedTimePercentage() {
         if (this.timeframeStatus === "Active" && this.selectedDate) {
-            this.elapsedTimePercentage = Math.ceil(
-                getElapsedTimePercentage(this.selectedDate, this.selectedTimeframe),
+            this.elapsedTimePercentage.set(
+                Math.ceil(getElapsedTimePercentage(this.selectedDate, this.selectedTimeframe)),
             );
         }
     }
@@ -110,6 +112,11 @@ export class LeaderboardHintComponent implements OnInit {
                         return;
                     }
                     this.remainingTime.set(time);
+                    
+                    this.tickCount++;
+                    if (this.tickCount % 60 === 0) {
+                        this.updateElapsedTimePercentage();
+                    }
                 }),
                 takeUntilDestroyed(this.destroyRef),
             )
