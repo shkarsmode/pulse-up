@@ -1,8 +1,20 @@
-<ng-container *ngIf="(topics$ | async)?.length">
-    <h2>What’s Trending Right Now?</h2>
+<h2>What’s Trending Right Now?</h2>
 
-    <div class="pulses">
-        @for (topicData of topics$ | async; track topicData.topic.id; let i = $index) {
+<div class="pulses">
+    @if (isLoading()) {
+        <app-skeleton
+            height="210px"
+            class="pulses__skeleton-item"></app-skeleton>
+        <app-skeleton
+            height="210px"
+            class="pulses__skeleton-item"></app-skeleton>
+        <app-skeleton
+            height="210px"
+            class="pulses__skeleton-item"></app-skeleton>
+    } @else if (isError()) {
+        <div></div>
+    } @else {
+        @for (topicData of topics(); track topicData.topic.id; let i = $index) {
             <app-small-pulse class="pulses__item">
                 <app-small-pulse-header>
                     <app-small-pulse-icon
@@ -27,16 +39,16 @@
                 }}</app-small-pulse-subtitle>
             </app-small-pulse>
         }
-    </div>
+    }
+</div>
 
-    <div class="pulses__button">
-        <app-secondary-button
-            [routerLink]="'/' + AppRoutes.Landing.LEADERBOARD"
-            routerLinkActive="active"
-            [fullWidth]="true"
-            size="large"
-            [color]="buttonColor">
-            See more
-        </app-secondary-button>
-    </div>
-</ng-container>
+<div class="pulses__button">
+    <app-secondary-button
+        [routerLink]="'/' + AppRoutes.Landing.LEADERBOARD"
+        routerLinkActive="active"
+        [fullWidth]="true"
+        size="large"
+        [color]="buttonColor">
+        See more
+    </app-secondary-button>
+</div>
