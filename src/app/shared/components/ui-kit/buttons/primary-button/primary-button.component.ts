@@ -24,6 +24,7 @@ export class PrimaryButtonComponent {
     @Input() public contrast = false;
     @Input() public size: "small" | "medium" | "large" = "medium";
     @Input() public loading = false;
+    @Input() public circle = false;
 
     @Output() public handleClick: EventEmitter<MouseEvent> = new EventEmitter<MouseEvent>();
 
@@ -37,6 +38,7 @@ export class PrimaryButtonComponent {
             'primary-button--full-width': this.fullWidth,
             'primary-button--contrast': this.contrast,
             'primary-button--disabled': this.disabled,
+            'primary-button--circle': this.circle,
         };
     }
 

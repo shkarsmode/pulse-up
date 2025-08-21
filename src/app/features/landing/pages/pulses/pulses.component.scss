@@ -11,12 +11,54 @@
     flex-direction: column;
     row-gap: 16px;
 }
+.pulses__title-wrap {
+    display: flex;
+    align-items: center;
+    column-gap: 16px;
+}
 .pulses__title {
     @include title-32px;
+    flex: 1;
 }
+
+.pulses__add-topic-button {
+    flex-shrink: 0;
+}
+.add-topic-button {
+    width: 160px;
+    @include media-md {
+        width: auto;
+    }
+}
+.add-topic-button--desktop {
+    @include media-md {
+        display: none;
+    }
+}
+.add-topic-button--mobile {
+    display: none;
+    @include media-md {
+        display: block;
+    }
+}
+.add-topic-button__icon {
+    width: 24px;
+    height: 24px;
+    color: var(--white-color);
+
+    svg {
+        width: 100%;
+        height: 100%;
+
+        path {
+            fill: currentColor;
+        }
+    }
+}
+
 .pulses__search-wrap {
     display: flex;
-    column-gap: 16px;
+    column-gap: 12px;
 }
 .pulses__search {
     flex-grow: 1;

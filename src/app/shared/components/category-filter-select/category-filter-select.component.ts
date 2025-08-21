@@ -13,7 +13,7 @@ import { PulseService } from "../../services/api/pulse.service";
 @Component({
     selector: "app-category-filter-select",
     standalone: true,
-    imports: [CommonModule, NgxMatSelectSearchModule, ReactiveFormsModule, MatFormField, MatOption],
+    imports: [CommonModule, NgxMatSelectSearchModule, ReactiveFormsModule, MatFormField, MatOption, MatSelect],
     templateUrl: "./category-filter-select.component.html",
     styleUrl: "./category-filter-select.component.scss",
 })

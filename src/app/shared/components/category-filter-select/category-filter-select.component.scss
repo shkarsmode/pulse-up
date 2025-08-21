@@ -4,11 +4,11 @@
     }
     &::ng-deep {
         --mdc-outlined-text-field-container-shape: 30px;
-        --mdc-outlined-text-field-focus-outline-color: var(--accent-color);
-        --mdc-outlined-text-field-hover-outline-color: var(--accent-color);
+        --mdc-outlined-text-field-focus-outline-color: var(--dark-grey-color);
+        --mdc-outlined-text-field-hover-outline-color: var(--dark-grey-color);
         --mat-select-panel-background-color: var(--white-color);
-        --mat-select-enabled-arrow-color: var(--accent-color);
-        --mat-select-focused-arrow-color: var(--accent-color);
+        --mat-select-enabled-arrow-color: var(--dark-grey-color);
+        --mat-select-focused-arrow-color: var(--dark-grey-color);
 
         .mdc-text-field--outlined:not(.mdc-text-field--disabled) .mat-mdc-notch-piece {
             border-color: var(--light-grey-color);
@@ -19,6 +19,7 @@
         }
         .mat-mdc-form-field-infix {
             min-height: unset;
+            width: 100%;
         }
         .mdc-text-field--outlined .mat-mdc-form-field-infix {
             padding-top: 12px;
@@ -34,6 +35,9 @@
         }
         .mat-select-search-clear {
             display: none;
+        }
+        .mat-mdc-select-trigger {
+            column-gap: 16px;
         }
     }
 }

@@ -1,6 +1,7 @@
 import { Component, inject } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { RouterModule } from "@angular/router";
+import { AngularSvgIconModule } from "angular-svg-icon";
 import { combineLatest, distinctUntilChanged, map } from "rxjs";
 import { InfiniteScrollDirective } from "ngx-infinite-scroll";
 import { ITopic } from "@/app/shared/interfaces";
@@ -16,6 +17,8 @@ import { CategoryFilterSelectionComponent } from "@/app/shared/components/catego
 import { CategoryFilterService } from "@/app/shared/components/category-filter-menu/category-filter.service";
 import { PulsesPaginationService } from "../../services/pulses-pagination.service";
 import { TopicsEmptyListComponent } from "../../ui/topics-empty-list/topics-empty-list.component";
+import { PrimaryButtonComponent } from "@/app/shared/components/ui-kit/buttons/primary-button/primary-button.component";
+import { AppRoutes } from "@/app/shared/enums/app-routes.enum";
 
 @Component({
     selector: "app-pulses",
@@ -33,6 +36,8 @@ import { TopicsEmptyListComponent } from "../../ui/topics-empty-list/topics-empt
         CategoryFilterMenuComponent,
         CategoryFilterSelectionComponent,
         TopicsEmptyListComponent,
+        PrimaryButtonComponent,
+        AngularSvgIconModule,
     ],
     providers: [InfiniteLoaderService, PulsesPaginationService],
 })
@@ -52,6 +57,7 @@ export class PulsesComponent {
         distinctUntilChanged(),
     );
     public searchText = "";
+    public suggestTopicRoute = "/" + AppRoutes.User.Topic.SUGGEST;
 
     public get selectedCategory(): ICategory | null {
         return this.categoryFilterService.activeCategory === "all"
