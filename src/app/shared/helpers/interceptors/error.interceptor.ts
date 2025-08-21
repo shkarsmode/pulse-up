@@ -1,10 +1,8 @@
 import { HttpEvent, HttpHandlerFn, HttpInterceptorFn, HttpRequest } from "@angular/common/http";
 import { inject } from "@angular/core";
-import { Router } from "@angular/router";
 import { BehaviorSubject, Observable, throwError } from "rxjs";
 import { catchError, filter, switchMap, take } from "rxjs/operators";
 import { AuthenticationService } from "../../services/api/authentication.service";
-import { AppRoutes } from "../../enums/app-routes.enum";
 
 export const errorInterceptor: HttpInterceptorFn = (req, next) => {
     // Skip error interceptor for identity requests
@@ -12,7 +10,6 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
         return next(req);
     }
     
-    const router = inject(Router);
     const authenticationService = inject(AuthenticationService);
 
     const refreshTokenSubject = new BehaviorSubject<string | null>(null);
@@ -40,7 +37,7 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
                 catchError((err: unknown) => {
                     isRefreshing = false;
                     console.log("log out, reason: ", err);
-                    router.navigateByUrl(AppRoutes.Auth.SIGN_IN);
+                    authenticationService.logout();
                     return throwError(() => err);
                 }),
             );

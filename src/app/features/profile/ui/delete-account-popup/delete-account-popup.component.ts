@@ -79,7 +79,7 @@ export class DeleteAccountPopupComponent {
                         );
                     }
                 }),
-                switchMap(() => this.authenticationService.logout()),
+                switchMap(() => this.authenticationService.signOutFromFirebase()),
                 catchError(() => {
                     return throwError(
                         () =>
