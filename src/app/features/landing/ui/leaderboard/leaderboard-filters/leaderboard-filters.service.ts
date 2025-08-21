@@ -74,4 +74,10 @@ export class LeaderboardFiltersService {
         this.leaderboardService.setTimeframe(timeframe);
         this.leaderboardService.applyFilters();
     }
+
+    public resetFilters() {
+        this.leaderboardService.setDate(new Date());
+        this.leaderboardService.setTimeframe("last24Hours");
+        this.leaderboardService.applyFilters();
+    }
 }

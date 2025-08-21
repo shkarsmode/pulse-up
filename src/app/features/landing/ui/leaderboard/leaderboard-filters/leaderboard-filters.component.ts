@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, inject, OnInit } from "@angular/core";
+import { ChangeDetectionStrategy, Component, DestroyRef, inject, OnInit, OnDestroy } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { FormControl } from "@angular/forms";
 import { AngularSvgIconModule } from "angular-svg-icon";
@@ -17,7 +17,7 @@ import { LeaderboardDatepickerComponent } from "../leaderboard-datepicker/leader
     styleUrl: "./leaderboard-filters.component.scss",
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class LeaderboardFiltersComponent implements OnInit {
+export class LeaderboardFiltersComponent implements OnInit, OnDestroy {
     private destroyRef = inject(DestroyRef);
     private leaderboardFiltersService = inject(LeaderboardFiltersService);
 
@@ -47,6 +47,10 @@ export class LeaderboardFiltersComponent implements OnInit {
                 takeUntilDestroyed(this.destroyRef),
             )
             .subscribe();
+    }
+
+    public ngOnDestroy() {
+        this.leaderboardFiltersService.resetFilters();
     }
 
     public onDateChange(date: Date | null) {
