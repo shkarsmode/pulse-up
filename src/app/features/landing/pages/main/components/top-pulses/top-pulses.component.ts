@@ -14,8 +14,9 @@ import {
     SmallPulseSubtitleComponent,
     SmallPulseTitleComponent,
 } from "@/app/shared/components/pulses/small-pulse";
-import { TopTopicsService } from "@/app/shared/services/topic/topTopics.service";
+import { TopPulsesService } from "@/app/features/landing/pages/main/components/top-pulses/top-pulses.service";
 import { FormatNumberPipe } from "@/app/shared/pipes/format-number.pipe";
+import { SkeletonComponent } from "@/app/shared/components/ui-kit/skeleton/skeleton.component";
 
 @Component({
     selector: "app-top-pulses",
@@ -35,12 +36,15 @@ import { FormatNumberPipe } from "@/app/shared/pipes/format-number.pipe";
         SmallPulseTitleComponent,
         SmallPulseSubtitleComponent,
         FormatNumberPipe,
+        SkeletonComponent,
     ],
 })
 export class TopPulsesComponent {
-    private topTopicsService = inject(TopTopicsService);
+    private topPulsesService = inject(TopPulsesService);
 
-    public topics$ = this.topTopicsService.topics$;
+    public topics = this.topPulsesService.topics;
+    public isLoading = this.topPulsesService.isLoading;
+    public isError = this.topPulsesService.isError;
     public AppRoutes = AppRoutes;
     public buttonColor = Colors.BLACK;
 }

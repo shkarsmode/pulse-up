@@ -1,0 +1,26 @@
+:host {
+    display: block;
+    width: 100%;
+}
+
+.skel {
+    width: 100%;
+    background: linear-gradient(
+        90deg,
+        rgba(0, 0, 0, 0.06) 0%,
+        rgba(0, 0, 0, 0.08) 20%,
+        rgba(0, 0, 0, 0.06) 40%
+    );
+    background-size: 200% 100%;
+    animation: shimmer 1.2s linear infinite;
+    overflow: hidden;
+}
+
+@keyframes shimmer {
+    0% {
+        background-position: 200% 0;
+    }
+    100% {
+        background-position: -200% 0;
+    }
+}
