@@ -2,7 +2,26 @@
     <div class="pulses">
         <main class="pulses__main">
             <div class="pulses__header">
-                <h1 class="pulses__title">Support what matters today</h1>
+                <div class="pulses__title-wrap">
+                    <h1 class="pulses__title">Support What Matters</h1>
+                    <app-primary-button
+                        class="pulses__add-topic-button add-topic-button add-topic-button--desktop"
+                        size="large"
+                        [fullWidth]="true"
+                        [routerLink]="suggestTopicRoute">
+                        Start a Topic
+                    </app-primary-button>
+                    <app-primary-button
+                        class="pulses__add-topic-button add-topic-button add-topic-button--mobile"
+                        size="large"
+                        [circle]="true"
+                        [routerLink]="suggestTopicRoute">
+                        <svg-icon
+                            src="assets/svg/plus.svg"
+                            class="add-topic-button__icon"></svg-icon>
+                        <span class="visualy-hidden">Start a Topic</span>
+                    </app-primary-button>
+                </div>
                 <div class="pulses__search-wrap">
                     <app-input-search
                         class="pulses__search"
