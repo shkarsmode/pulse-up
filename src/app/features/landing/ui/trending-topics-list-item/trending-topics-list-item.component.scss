@@ -81,8 +81,25 @@
 
 .card-footer-campaign {
     @include mixins.link-14px;
-    padding: 8px 16px;
-    text-align: center;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    column-gap: 8px;
+    padding: 8px 40px;
     border-radius: 10px;
     background-color: #F6F085;
+}
+.card-footer-campaign__icon {
+    width: 24px;
+    height: 24px;
+
+    svg {
+        width: 100%;
+        height: 100%;
+
+        path {
+            stroke: currentColor;
+        }
+    }
 }

@@ -1,4 +1,4 @@
-import { Component, inject, Input } from "@angular/core";
+import { Component, inject, Input, OnInit } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { AngularSvgIconModule } from "angular-svg-icon";
 import { MatButtonModule } from "@angular/material/button";
@@ -43,7 +43,7 @@ import { WaveAnimationDirective } from "@/app/shared/directives/wave-animation/w
     templateUrl: "./trending-topics-list-item.component.html",
     styleUrl: "./trending-topics-list-item.component.scss",
 })
-export class TrendingTopicsListItemComponent {
+export class TrendingTopicsListItemComponent implements OnInit {
     private readonly settingsService = inject(SettingsService);
 
     @Input({ required: true }) data: ITopic;
@@ -55,4 +55,9 @@ export class TrendingTopicsListItemComponent {
     public isVoteActive$ = this.settingsService.settings$.pipe(
         map(settings => !!this.vote && VoteUtils.isActiveVote(this.vote, settings.minVoteInterval))
     );
+    public isCampaignAttached: boolean;
+
+    public ngOnInit() {
+        this.isCampaignAttached = !!this.data.campaign;
+    }
 }
