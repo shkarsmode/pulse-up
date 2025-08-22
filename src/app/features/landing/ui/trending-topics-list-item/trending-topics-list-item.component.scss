@@ -88,7 +88,8 @@
     column-gap: 8px;
     padding: 8px 40px;
     border-radius: 10px;
-    background-color: #F6F085;
+    color: var(--dark-grey-color);
+    background-color: rgba(#f6f085, 0.34);
 }
 .card-footer-campaign__icon {
     width: 24px;

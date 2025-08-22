@@ -19,12 +19,14 @@ import { CopyTopicButtonComponent } from "../copy-topic-button/copy-topic-button
 import { IVote } from "@/app/shared/interfaces/vote.interface";
 import { VoteUtils } from "@/app/shared/helpers/vote-utils";
 import { WaveAnimationDirective } from "@/app/shared/directives/wave-animation/wave-animation.directive";
+import { RouterLink, RouterModule } from "@angular/router";
 
 @Component({
     selector: "app-trending-topics-list-item",
     standalone: true,
     imports: [
         CommonModule,
+        RouterModule,
         LargePulseComponent,
         LargePulseIconComponent,
         FormatNumberPipe,
@@ -39,6 +41,7 @@ import { WaveAnimationDirective } from "@/app/shared/directives/wave-animation/w
         QrcodeButtonComponent,
         CopyTopicButtonComponent,
         WaveAnimationDirective,
+        RouterLink,
     ],
     templateUrl: "./trending-topics-list-item.component.html",
     styleUrl: "./trending-topics-list-item.component.scss",
@@ -50,10 +53,13 @@ export class TrendingTopicsListItemComponent implements OnInit {
     @Input() vote?: IVote | null = null;
 
     public topicUrl$ = this.settingsService.settings$.pipe(
-        map(settings => `${settings.shareTopicBaseUrl}${this.data.shareKey}`)
+        map((settings) => `${settings.shareTopicBaseUrl}${this.data.shareKey}`),
     );
     public isVoteActive$ = this.settingsService.settings$.pipe(
-        map(settings => !!this.vote && VoteUtils.isActiveVote(this.vote, settings.minVoteInterval))
+        map(
+            (settings) =>
+                !!this.vote && VoteUtils.isActiveVote(this.vote, settings.minVoteInterval),
+        ),
     );
     public isCampaignAttached: boolean;
 
