@@ -1,6 +1,6 @@
 <div class="user-votes">
     <p
-        *ngIf="!(hasVotes$ | async)"
+        *ngIf="(hasVotes$ | async) === false"
         class="user-votes__empty">
         Your pulses will appear here
     </p>

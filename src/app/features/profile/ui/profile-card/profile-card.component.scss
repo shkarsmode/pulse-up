@@ -91,10 +91,21 @@
     min-width: 130px;
 }
 
-.signout-profile-button {
+.more-profile-button {
     position: absolute;
     top: 0;
     right: 0;
+    &::ng-deep {
+        button {
+            padding: 12px;
+        }
+        svg {
+            transform: rotate(90deg);
+            path {
+                fill: currentColor;
+            }
+        }
+    }
 }
 
 .profile-button--more {

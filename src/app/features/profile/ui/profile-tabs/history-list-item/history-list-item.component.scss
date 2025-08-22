@@ -1,3 +1,20 @@
+@use "../../../../../../styles/mixins" as *;
+
+.history-list-item {
+    padding-right: 4px;
+
+    &::ng-deep {
+        .card-heading {
+            @include media-sm {
+                column-gap: 8px;
+            }
+            @include media-xs {
+                column-gap: 4px;
+            }
+        }
+    }
+}
+
 .card-heading-meta {
     display: flex;
     flex-direction: column;

@@ -1,3 +1,5 @@
+@use "../../../../../../styles/mixins" as *;
+
 .icon {
     position: relative;
     width: var(--size);
@@ -12,6 +14,10 @@
     justify-content: center;
     align-items: center;
 
+    @include media-xs {
+        padding: 6px;
+    }
+
     &.icon--lg {
         --size: 140px;
         @media screen and (max-width: 650px) {
@@ -20,6 +26,10 @@
     }
     &.icon--md {
         --size: 80px;
+
+        @include media-xs {
+            --size: 70px;
+        }
     }
 
     img {
@@ -27,5 +37,9 @@
         max-height: 100%;
         object-fit: cover;
         border-radius: 8px;
+
+        @include media-xs {
+            border-radius: 6px;
+        }
     }
 }

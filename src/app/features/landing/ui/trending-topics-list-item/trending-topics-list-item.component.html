@@ -57,7 +57,7 @@
                 [topicUrl]="topicUrl" />
         </div>
         @if (isCampaignAttached) {
-            <div class="card-footer__campaign">
+            <div class="card-footer__campaign" routerLink="/topic/{{ data.id }}">
                 <div class="card-footer-campaign">
                     <svg-icon
                         src="assets/svg/goal.svg"

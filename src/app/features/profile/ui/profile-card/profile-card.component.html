@@ -18,10 +18,10 @@
     </div>
     <app-fab-button
         [circle]="true"
-        class="signout-profile-button"
-        icon="assets/svg/signout.svg"
-        label="Sign Out"
-        (handleClick)="logout()">
+        class="more-profile-button"
+        icon="assets/svg/more-dots.svg"
+        label="More options"
+        [matMenuTriggerFor]="menu">
     </app-fab-button>
 </div>
 
@@ -45,18 +45,24 @@
             <span>Share</span>
         </app-fab-button>
     </app-menu>
-    <app-fab-button
+    <!-- <app-fab-button
         class="profile-button profile-button--more"
         icon="assets/svg/more-dots.svg"
         label="More options"
         [matMenuTriggerFor]="menu">
-    </app-fab-button>
+    </app-fab-button> -->
 </div>
 
 <mat-menu
     #menu="matMenu"
     class="floating-menu">
     <ng-template matMenuContent>
+        <button
+            mat-menu-item
+            (click)="logout()">
+            <svg-icon src="assets/svg/signout.svg" />
+            <span>Sign Out</span>
+        </button>
         <button
             mat-menu-item
             [routerLink]="deleteAccountRoute">
