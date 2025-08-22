@@ -2,7 +2,7 @@ import { Component, inject } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { RouterModule } from "@angular/router";
 import { AngularSvgIconModule } from "angular-svg-icon";
-import { combineLatest, distinctUntilChanged, map } from "rxjs";
+import { combineLatest, distinctUntilChanged, map, shareReplay } from "rxjs";
 import { InfiniteScrollDirective } from "ngx-infinite-scroll";
 import { ITopic } from "@/app/shared/interfaces";
 import { InputSearchComponent } from "../../ui/input-search/input-search.component";
@@ -49,7 +49,9 @@ export class PulsesComponent {
     public pulses: ITopic[] = [];
     public searchInFocus = false;
     public votes$ = this.votesService.votesByTopicId$;
-    public topics$ = this.pulsesPaginationService.topics$;
+    public topics$ = this.pulsesPaginationService.topics$.pipe(
+        shareReplay({ bufferSize: 1, refCount: true })
+    );
     public isInitialLoading$ = this.pulsesPaginationService.initialLoading$;
     public isLoadingMore$ = this.pulsesPaginationService.paginationLoading$;
     public isEmpty$ = combineLatest([this.isInitialLoading$, this.topics$]).pipe(
