@@ -83,6 +83,7 @@ export class VotesService {
     }
 
     private clearVotes(): void {
+        this.initialized = false;
         this.votesSubject.next([]);
     }
 }
