@@ -1,3 +1,5 @@
+@use "../../../../../../styles/mixins" as *;
+
 .votes {
     margin-top: 20px;
     margin-bottom: 40px;
@@ -16,6 +18,10 @@
     flex-direction: column;
     row-gap: 16px;
     padding: 20px;
+
+    @include media-xs {
+        padding: 20px 16px;
+    }
 }
 
 .user-votes__loading {
