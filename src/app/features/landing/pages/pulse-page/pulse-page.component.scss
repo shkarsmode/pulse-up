@@ -9,6 +9,7 @@
 }
 
 .pulse__info-description-text::ng-deep a {
+    text-decoration: underline;
     &:hover {
         opacity: 0.7;
     }

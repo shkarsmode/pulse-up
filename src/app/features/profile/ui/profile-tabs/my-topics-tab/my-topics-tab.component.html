@@ -1,5 +1,5 @@
 <div class="topics">
-    <ng-container *ngIf="!(hasTopics$ | async)">
+    <ng-container *ngIf="(hasTopics$ | async) === false">
         <div class="topics__empty">
             <p>Spark a movement — create your first topic today!</p>
             <app-link-button
