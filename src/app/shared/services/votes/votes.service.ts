@@ -24,10 +24,12 @@ export class VotesService {
     private readonly voteService = inject(VoteService);
     private readonly authenticationService = inject(AuthenticationService);
 
-    private readonly votesSubject = new BehaviorSubject<IVote[]>([]);
-    public readonly votes$: Observable<IVote[]> = this.votesSubject.asObservable();
+    private initialized = false;
+    private readonly votesSubject = new BehaviorSubject<IVote[] | null>(null);
+    public readonly votes$: Observable<IVote[] | null> = this.votesSubject.asObservable();
     public readonly votesByTopicId$ = this.votes$.pipe(
         map((votes) => {
+            if (!votes) return null;
             const map = new Map<number, IVote>();
             votes.forEach((vote) => {
                 if (!map.has(vote.topicId)) {
@@ -37,8 +39,6 @@ export class VotesService {
             return map;
         }),
     );
-
-    private initialized = false;
 
     constructor() {
         this.authenticationService.userToken
@@ -78,12 +78,12 @@ export class VotesService {
     }
 
     public addVote(vote: IVote): void {
-        const currentVotes = this.votesSubject.getValue();
+        const currentVotes = this.votesSubject.getValue() || [];
         this.votesSubject.next([vote, ...currentVotes]);
     }
 
     private clearVotes(): void {
         this.initialized = false;
-        this.votesSubject.next([]);
+        this.votesSubject.next(null);
     }
 }

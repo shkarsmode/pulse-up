@@ -1,8 +1,8 @@
-import { Component, inject, Input, DestroyRef, Output, EventEmitter, OnInit } from "@angular/core";
+import { Component, inject, DestroyRef, Output, EventEmitter, OnInit } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { SvgIconComponent } from "angular-svg-icon";
 import { VotingService } from "@/app/shared/services/core/voting.service";
-import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
+import { takeUntilDestroyed, toObservable } from "@angular/core/rxjs-interop";
 import {
     BehaviorSubject,
     combineLatest,
@@ -23,6 +23,7 @@ import { AuthenticationService } from "@/app/shared/services/api/authentication.
 import { VotingError, VotingErrorCode } from "@/app/shared/helpers/errors/voting-error";
 import { isErrorWithMessage } from "@/app/shared/helpers/errors/is-error-with-message";
 import { WaveAnimationDirective } from "@/app/shared/directives/wave-animation/wave-animation.directive";
+import { PulsePageService } from "../../services/pulse-page.service";
 
 function delayBetween<T>(delayMs: number, first = false) {
     let past = Date.now();
@@ -57,16 +58,19 @@ export class VoteButtonComponent implements OnInit {
     private votingService = inject(VotingService);
     private notificationService = inject(NotificationService);
     private authService = inject(AuthenticationService);
+    private pulsePageService = inject(PulsePageService);
 
-    @Input() topicId: number | null = null;
-    @Input() vote: IVote | null = null;
-    @Input() isActiveVote: boolean | null = null;
-    @Input() lastVoteInfo = "";
     @Output() voteExpired = new EventEmitter<void>();
     @Output() voted = new EventEmitter<IVote>();
     @Output() pulse = new EventEmitter<{ justSignedIn?: boolean }>();
 
     private isAnimating = new BehaviorSubject(false);
+    private topic = this.pulsePageService.topic;
+    private isUpdated$ = toObservable(this.pulsePageService.isUpdatedAfterUserSignIn);
+
+    public vote = this.pulsePageService.vote;
+    public isActiveVote = this.pulsePageService.isActiveVote;
+    public lastVoteInfo = this.pulsePageService.lastVoteInfo;
 
     isAnimating$ = this.isAnimating.asObservable();
     isAnonymousUser = this.authService.anonymousUserValue;
@@ -86,7 +90,7 @@ export class VoteButtonComponent implements OnInit {
     }
 
     voteAfterSignIn() {
-        if (this.isSignedInUserVoted) return;
+        if (this.isSignedInUserVoted || this.isActiveVote()) return;
         this.isSignedInUserVoted = true;
         this.sendVote({
             onSuccess: () => {
@@ -108,14 +112,15 @@ export class VoteButtonComponent implements OnInit {
         onSuccess,
         onError,
     }: { onSuccess?: () => void; onError?: (error: unknown) => void } = {}) {
-        if (this.isAnimating.value || this.isActiveVote || !this.topicId || this.isInProgress)
+        const topic = this.topic();
+        if (this.isAnimating.value || this.isActiveVote() || !topic?.id || this.isInProgress)
             return;
 
         this.isInProgress = true;
 
         this.votingService
             .vote({
-                topicId: this.topicId,
+                topicId: topic.id,
             })
             .pipe(
                 switchMap((vote) => this.waitForEndOfAnimation(vote)),
@@ -136,11 +141,12 @@ export class VoteButtonComponent implements OnInit {
 
     private listenToUserSignedIn() {
         return combineLatest([
-            this.authService.firebaseUser$,
+            this.authService.userToken,
             this.votingService.isAnonymousUserSignedIn$,
+            this.isUpdated$,
         ])
             .pipe(
-                filter(([user, signedIn]) => !!user && !user.isAnonymous && signedIn === true),
+                filter(([token, anonymousUserSignedIn, pageUpdated]) => !!token && anonymousUserSignedIn && pageUpdated),
                 tap(() => {
                     this.votingService.setIsAnonymousUserSignedIn(false);
 

@@ -45,7 +45,7 @@ export class LeaderboardListItemComponent implements OnInit {
     public ngOnInit() {
         this.isActiveVote$ = combineLatest([
             this.votesService.votesByTopicId$.pipe(
-                map((votes) => votes.get(this.topic.id)),
+                map((votes) => votes && votes.get(this.topic.id)),
                 filter((vote) => !!vote),
             ),
             this.settingsService.settings$,
