@@ -7,49 +7,53 @@
                 explore and support what matters.
             </p>
             <div class="hero__actions">
-                <app-primary-button
-                    [fullWidth]="true"
-                    [contrast]="true"
-                    size="large"
-                    [routerLink]="'/' + AppRoutes.Landing.TOPICS"
-                    class="hero__button">
-                    Browse topics
-                </app-primary-button>
-                <app-secondary-button
-                    [routerLink]="'/' + AppRoutes.User.Topic.SUGGEST"
-                    routerLinkActive="active"
-                    [fullWidth]="true"
-                    [fullHeight]="true"
-                    [contrast]="true"
-                    size="large"
-                    class="hero__button">
-                    Start a topic
-                </app-secondary-button>
+                @defer {
+                    <app-primary-button
+                        [fullWidth]="true"
+                        [contrast]="true"
+                        size="large"
+                        [routerLink]="'/' + AppRoutes.Landing.TOPICS"
+                        class="hero__button">
+                        Browse topics
+                    </app-primary-button>
+                    <app-secondary-button
+                        [routerLink]="'/' + AppRoutes.User.Topic.SUGGEST"
+                        routerLinkActive="active"
+                        [fullWidth]="true"
+                        [fullHeight]="true"
+                        [contrast]="true"
+                        size="large"
+                        class="hero__button">
+                        Start a topic
+                    </app-secondary-button>
+                }
             </div>
         </div>
         <div
             class="hero__map"
             #mapWrapper>
-            <app-map
-                projection="globe"
-                [markers]="{
-                    enabled: true,
-                    showTooltip: true,
-                    isAnimated: true,
-                }"
-                [zoom]="[zoom]"
-                [minZoom]="0.45"
-                [maxBounds]="undefined"
-                [isScrollZoomEnabled]="false"
-                [isDoubleClickZoomEnabled]="false"
-                (mapLoaded)="onMapLoaded($event)"
-                (mapStyleData)="onStyleData($event)"
-                (mapClick)="onMapClick()">
-                <ng-container *ngIf="map">
-                    <app-map-hexagons-layer [map]="map" />
-                    <app-map-heatmap-layer [map]="map" />
-                </ng-container>
-            </app-map>
+            @defer {
+                <app-map
+                    projection="globe"
+                    [markers]="{
+                        enabled: true,
+                        showTooltip: true,
+                        isAnimated: true,
+                    }"
+                    [zoom]="[zoom]"
+                    [minZoom]="0.45"
+                    [maxBounds]="undefined"
+                    [isScrollZoomEnabled]="false"
+                    [isDoubleClickZoomEnabled]="false"
+                    (mapLoaded)="onMapLoaded($event)"
+                    (mapStyleData)="onStyleData($event)"
+                    (mapClick)="onMapClick()">
+                    <ng-container *ngIf="map">
+                        <app-map-hexagons-layer [map]="map" />
+                        <app-map-heatmap-layer [map]="map" />
+                    </ng-container>
+                </app-map>
+            }
         </div>
     </div>
 </section>

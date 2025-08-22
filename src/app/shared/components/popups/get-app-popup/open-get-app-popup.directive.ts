@@ -1,21 +1,20 @@
-import { Directive, HostListener } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
-import { GetAppPopupComponent } from './get-app-popup.component';
+import { Directive, HostListener } from "@angular/core";
+import { MatDialog } from "@angular/material/dialog";
 
 @Directive({
-    selector: '[openGetAppPopup]',
+    selector: "[openGetAppPopup]",
     standalone: true,
 })
 export class OpenGetAppPopupDirective {
+    constructor(private dialog: MatDialog) {}
 
-    constructor( private dialog: MatDialog) {}
-
-    @HostListener('click') 
+    @HostListener("click")
     openPopup(): void {
-        this.dialog.open(GetAppPopupComponent, {
-            width: "630px",
-            panelClass: "custom-dialog-container",
-            backdropClass: "custom-dialog-backdrop",
-        })
-    }   
+        import("./get-app-popup.component").then(({ GetAppPopupComponent }) => {
+            this.dialog.open(GetAppPopupComponent, {
+                width: "630px",
+                panelClass: "custom-dialog-container",
+            });
+        });
+    }
 }

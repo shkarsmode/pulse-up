@@ -1,7 +1,11 @@
-<app-header />
+@defer {
+    <app-header />
+}
 
 <div class="page">
     <router-outlet></router-outlet>
 </div>
 
-<app-footer />
+@defer {
+    <app-footer />
+}
