@@ -13,6 +13,7 @@ import { SettingsService } from "@/app/shared/services/api/settings.service";
 import { toObservable, toSignal } from "@angular/core/rxjs-interop";
 import { MetadataService } from "@/app/shared/services/core/metadata.service";
 import { VoteUtils } from "@/app/shared/helpers/vote-utils";
+import { SuggestedTopicsService } from "@/app/shared/services/topic/suggested-topics.service";
 
 @Injectable({
     providedIn: "root",
@@ -25,6 +26,7 @@ export class PulsePageService {
     private readonly settingsService = inject(SettingsService);
     private readonly notificationService = inject(NotificationService);
     private readonly metadataService = inject(MetadataService);
+    private readonly suggestedTopicsService = inject(SuggestedTopicsService);
 
     private settings = toSignal(this.settingsService.settings$);
 
@@ -57,10 +59,9 @@ export class PulsePageService {
                 if (!topic?.category) {
                     return of([]);
                 }
-                return this.pulseService.get({
-                    category: topic.category,
-                    take: 3,
-                });
+                this.suggestedTopicsService.topicId = topic.id;
+                this.suggestedTopicsService.category = topic.category;
+                return this.suggestedTopicsService.suggestedTopics$;
             }),
         ),
         { initialValue: [] as ITopic[] },
@@ -194,7 +195,9 @@ export class PulsePageService {
 
         if (!link || !this.topic) return;
 
-        const description = topic.description.replace(link, "") + `<a href="${link}" rel="nofollow" target="_blank">${link}</a>`;
+        const description =
+            topic.description.replace(link, "") +
+            `<a href="${link}" rel="nofollow" target="_blank">${link}</a>`;
         this._topic.set({ ...topic, description });
     }
 
