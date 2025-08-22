@@ -26,6 +26,7 @@ import {
     AfterViewInit,
     OnDestroy,
     ChangeDetectionStrategy,
+    effect,
 } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { ActivatedRoute, ParamMap, RouterModule } from "@angular/router";
@@ -85,14 +86,22 @@ export class PulsePageComponent implements OnInit, AfterViewInit, OnDestroy {
 
     public isReadMore = false;
     public map: mapboxgl.Map | null = null;
+    public isLoading = true;
     public topic = this.pulsePageService.topic;
     public vote = this.pulsePageService.vote;
-    public isLoading = this.pulsePageService.isLoading;
     public topicUrl = this.pulsePageService.topicUrl;
     public isActiveVote = this.pulsePageService.isActiveVote;
     public lastVoteInfo = this.pulsePageService.lastVoteInfo;
     public shortPulseDescription = this.pulsePageService.shortPulseDescription;
     public suggestions = this.pulsePageService.suggestions;
+
+    constructor() {
+        effect(() => {
+            if (this.isLoading && !this.pulsePageService.isLoading()) {
+                this.isLoading = false;
+            }
+        });
+    }
 
     ngOnInit(): void {
         this.updatePageData();
@@ -181,7 +190,7 @@ export class PulsePageComponent implements OnInit, AfterViewInit, OnDestroy {
                     return this.pulsePageService.updatePageData({ topicId: this.topic()?.id });
                 }),
                 tap(() => {
-                    this.pulsePageService.setAsUpdatedAfterUserSignIn()
+                    this.pulsePageService.setAsUpdatedAfterUserSignIn();
                 }),
                 takeUntilDestroyed(this.destroyRef),
             )

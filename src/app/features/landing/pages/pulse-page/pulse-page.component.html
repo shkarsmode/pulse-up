@@ -1,5 +1,5 @@
 @let topicData = topic();
-@if (isLoading() || !topicData) {
+@if (isLoading || !topicData) {
     <app-spinner />
 } @else {
     <div
@@ -17,7 +17,7 @@
             <div class="pulse__header-title">
                 <h2>{{ topicData.title }}</h2>
                 <a
-                    [routerLink]="['/user', topicData.author.username ]"
+                    [routerLink]="['/user', topicData.author.username]"
                     [state]="{ pulseId: topicData.id }">
                     {{ topicData.author.name }}
                 </a>
@@ -111,7 +111,9 @@
                     class="pulse__info-description-text"
                     [class.pulse__info-description-text--read-more]="isReadMore"
                     #description
-                    [innerHTML]="isReadMore ? topicData.description : shortPulseDescription()"></div>
+                    [innerHTML]="
+                        isReadMore ? topicData.description : shortPulseDescription()
+                    "></div>
                 @if (!isReadMore) {
                     <button
                         class="pulse__info-description-read-more"

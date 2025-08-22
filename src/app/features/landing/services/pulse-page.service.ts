@@ -93,7 +93,6 @@ export class PulsePageService {
         if (!topicId && !shareKey) return EMPTY;
         
         this._isLoading.set(true);
-        this.clearPageData();
 
         if (topicId) {
             return forkJoin({
