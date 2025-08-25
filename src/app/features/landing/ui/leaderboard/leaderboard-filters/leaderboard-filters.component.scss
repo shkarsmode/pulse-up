@@ -3,22 +3,42 @@
 :host {
     --button-width: 220px;
     display: flex;
-    flex-wrap: wrap;
     align-items: center;
-    column-gap: 16px;
+    column-gap: 8px;
     row-gap: 16px;
 
     @include mixins.media-sm {
-        flex-direction: column;
         align-items: flex-start;
+    }
+
+    @include mixins.media-xs {
+        --button-width: 144px;
     }
 }
 
 .leaderboard-filters__select,
 .leaderboard-header__datepicker {
     min-width: var(--button-width);
+}
 
+.leaderboard-filters__select {
     @include mixins.media-xs {
-        min-width: 100%;
+        &::ng-deep {
+            .mat-mdc-select-trigger {
+                font-size: 14px;
+            }
+        }
+    }
+}
+
+.leaderboard-header__datepicker {
+    @include mixins.media-xs {
+        flex-grow: 1;
+
+        &::ng-deep {
+            button {
+                font-size: 14px;
+            }
+        }
     }
 }
