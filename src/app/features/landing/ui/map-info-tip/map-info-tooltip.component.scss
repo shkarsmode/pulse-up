@@ -1,3 +1,5 @@
+@use "../../../../../styles/mixins" as *;
+
 :host {
     opacity: 0;
     transform: translateY(-10px);
@@ -22,6 +24,10 @@
     border-radius: 10px;
     background-color: var(--white-color);
     box-shadow: 0px 3px 10px 0px #0000002e;
+
+    @include media-xs {
+        max-width: unset;
+    }
 }
 
 .map-info-tooltip__close {
