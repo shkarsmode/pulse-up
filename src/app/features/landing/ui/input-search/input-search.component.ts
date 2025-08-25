@@ -1,11 +1,10 @@
-import { Component, EventEmitter, Input, Output } from "@angular/core";
+import { Component, DestroyRef, EventEmitter, inject, Input, Output, OnInit } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
-import { asyncScheduler, debounceTime, distinctUntilChanged, Subject, ThrottleConfig } from "rxjs";
 import { InputComponent } from "@/app/shared/components/ui-kit/input/input.component";
 import { CommonModule } from "@angular/common";
 import { AngularSvgIconModule } from "angular-svg-icon";
 import { MatButtonModule } from "@angular/material/button";
-import { StringUtils } from "@/app/shared/helpers/string-utils";
+import { InputSearchService } from "./input-search.service";
 
 @Component({
     selector: "app-input-search",
@@ -14,7 +13,7 @@ import { StringUtils } from "@/app/shared/helpers/string-utils";
     standalone: true,
     imports: [CommonModule, MatButtonModule, InputComponent, AngularSvgIconModule],
 })
-export class InputSearchComponent {
+export class InputSearchComponent implements OnInit {
     @Input()
     public isLoading = false;
 
@@ -27,18 +26,17 @@ export class InputSearchComponent {
     @Output()
     public handleBlur: EventEmitter<void> = new EventEmitter<void>();
 
-    private readonly inputValueChanged$ = new Subject<string>();
-    private readonly throttleConfig: ThrottleConfig = {
-        leading: true,
-        trailing: true,
-    };
+    private readonly destroyRef = inject(DestroyRef);
+    private inputSearchService = inject(InputSearchService);
 
-    constructor() {
-        this.initThrottleInputValueChange();
-    }
+    public inputValue = this.inputSearchService.inputValue;
 
-    public handleInputChange(event: InputEvent): void {
-        this.inputValueChanged$.next((event.target as HTMLInputElement).value);
+    ngOnInit() {
+        this.inputSearchService.inputValueChanged$
+            .pipe(takeUntilDestroyed(this.destroyRef))
+            .subscribe((value) => {
+                this.handleValueChange.emit(value);
+            });
     }
 
     public onFocus(): void {
@@ -50,23 +48,11 @@ export class InputSearchComponent {
     }
 
     public clearInput(): void {
-        this.inputValueChanged$.next("");
+        this.inputSearchService.setValue("");
     }
 
-    private initThrottleInputValueChange(): void {
-        if (this.inputValueChanged$.observers.length === 0)
-            this.inputValueChanged$
-                .pipe(
-                    debounceTime(400, asyncScheduler),
-                    distinctUntilChanged((prev, curr) => {
-                        return StringUtils.normalizeWhitespace(prev) === StringUtils.normalizeWhitespace(curr);
-                    }),
-                    takeUntilDestroyed(),
-                )
-                .subscribe(this.handleInputValue.bind(this));
-    }
-
-    private handleInputValue(value: string): void {
-        this.handleValueChange.emit(StringUtils.normalizeWhitespace(value));
+    public handleInputChange(event: InputEvent): void {
+        const value = (event.target as HTMLInputElement).value;
+        this.inputSearchService.setValue(value);
     }
 }

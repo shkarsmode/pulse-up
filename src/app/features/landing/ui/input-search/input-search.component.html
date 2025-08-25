@@ -2,6 +2,7 @@
     placeholder="Search topics"
     iconStart="search"
     [isLoading]="isLoading"
+    [value]="inputValue()"
     (onInput)="handleInputChange($event)"
     (emitFocus)="onFocus()"
     (emitBlur)="onBlur()">

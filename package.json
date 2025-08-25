@@ -29,6 +29,7 @@
     "@ngx-popovers/core": "^18.2.0",
     "@ngx-popovers/tooltip": "^18.2.0",
     "@splidejs/splide": "^4.1.4",
+    "@tanstack/angular-query-experimental": "^5.85.5",
     "@types/intl-tel-input": "^18.1.4",
     "angular-svg-icon": "^18.0.2",
     "angularx-qrcode": "^18.0.2",
