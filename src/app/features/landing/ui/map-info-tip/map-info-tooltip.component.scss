@@ -1,0 +1,31 @@
+:host {
+    opacity: 0;
+    transform: translateY(-10px);
+    transition:
+        opacity 0.2s ease,
+        transform 0.2s ease;
+}
+
+:host(.visible) {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.map-info-tooltip {
+    position: relative;
+    width: 100%;
+    max-width: 350px;
+    display: flex;
+    align-items: flex-start;
+    column-gap: 12px;
+    padding: 16px 40px 16px 16px;
+    border-radius: 10px;
+    background-color: var(--white-color);
+    box-shadow: 0px 3px 10px 0px #0000002e;
+}
+
+.map-info-tooltip__close {
+    position: absolute;
+    top: 12px;
+    right: 8px;
+}

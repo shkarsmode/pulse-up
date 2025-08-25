@@ -1,22 +1,17 @@
-import { Component, effect, EventEmitter, inject, OnDestroy, Output } from "@angular/core";
+import { Component, effect, EventEmitter, inject, Output } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { toSignal } from "@angular/core/rxjs-interop";
-import { BehaviorSubject } from "rxjs";
 import mapboxgl from "mapbox-gl";
 import { IMapMarker } from "@/app/shared/interfaces/map/map-marker.interface";
 import { MediaQueryService } from "@/app/shared/services/core/media-query.service";
 import { MapEventListenerService } from "@/app/features/landing/services/map-event-listener.service";
-import { MapMarkersService } from "@/app/shared/services/map/map-marker.service";
 import { MapComponent } from "@/app/shared/components/map/map.component";
 import { MapHexagonsLayerComponent } from "@/app/shared/components/map/map-hexagons-layer/map-hexagons-layer.component";
 import { MapHeatmapLayerComponent } from "@/app/shared/components/map/map-heatmap-layer/map-heatmap-layer.component";
 import { MapZoomControlsComponent } from "@/app/shared/components/map/map-zoom-controls/map-zoom-controls.component";
 import { MapControlsComponent } from "@/app/shared/components/map/map-controls/map-controls.component";
 import { MapSpinControlComponent } from "@/app/shared/components/map/map-spin-control/map-spin-control.component";
-import { ICategory } from "@/app/shared/interfaces/category.interface";
-import { CategoryFilterMenuComponent } from "@/app/shared/components/category-filter-menu/category-filter-menu.component";
-import { CategoryFilterService } from "@/app/shared/components/category-filter-menu/category-filter.service";
-import { CategoryFilterSelectionComponent } from "@/app/shared/components/category-filter-menu/category-filter-selection/category-filter-selection.component";
+import { MapPageService } from "../../map-page.service";
 
 @Component({
     selector: "app-globe-map",
@@ -24,22 +19,19 @@ import { CategoryFilterSelectionComponent } from "@/app/shared/components/catego
     styleUrl: "./globe-map.component.scss",
     standalone: true,
     imports: [
-    CommonModule,
-    MapComponent,
-    MapHexagonsLayerComponent,
-    MapHeatmapLayerComponent,
-    MapZoomControlsComponent,
-    MapControlsComponent,
-    MapSpinControlComponent,
-    CategoryFilterMenuComponent,
-    CategoryFilterSelectionComponent
-],
+        CommonModule,
+        MapComponent,
+        MapHexagonsLayerComponent,
+        MapHeatmapLayerComponent,
+        MapZoomControlsComponent,
+        MapControlsComponent,
+        MapSpinControlComponent,
+    ],
 })
-export class GlobeMapComponent implements OnDestroy {
+export class GlobeMapComponent {
     private readonly mediaService = inject(MediaQueryService);
     private readonly mapEventListenerService = inject(MapEventListenerService);
-    private readonly mapMarkersService = inject(MapMarkersService);
-    private categoryFilterService = inject(CategoryFilterService);
+    private mapPageService = inject(MapPageService);
 
     private isMobile = toSignal(this.mediaService.mediaQuery("max", "SM"));
     private isMobileLandscape = toSignal(
@@ -97,10 +89,9 @@ export class GlobeMapComponent implements OnDestroy {
     private is1400Desctop = toSignal(this.mediaService.mediaQuery("max", "XXL"));
     private is1600Desctop = toSignal(this.mediaService.mediaQuery("max", "XXXL"));
     private is1920Desctop = toSignal(this.mediaService.mediaQuery("max", "XXXXL"));
-    private selectedCategorySubject = new BehaviorSubject<ICategory | null>(null);
 
     public map: mapboxgl.Map | null = null;
-    public selectedCategory$ = this.selectedCategorySubject.asObservable();
+    public selectedCategory$ = this.mapPageService.selectedCategory$;
 
     @Output() zoomEnd: EventEmitter<number> = new EventEmitter<number>();
     @Output() markerClick: EventEmitter<IMapMarker> = new EventEmitter<IMapMarker>();
@@ -148,11 +139,6 @@ export class GlobeMapComponent implements OnDestroy {
         });
     }
 
-    ngOnDestroy(): void {
-        this.mapMarkersService.category = null;
-        this.mapMarkersService.clearMarkers();
-    }
-
     public onMapLoaded(map: mapboxgl.Map): void {
         this.map = map;
         this.map.setFog(this.fog);
@@ -165,12 +151,6 @@ export class GlobeMapComponent implements OnDestroy {
 
     public onZoomEnd(zoom: number): void {
         this.zoomEnd.emit(zoom);
-    }
-
-    public onSelectedCategory(category: ICategory | null): void {
-        this.selectedCategorySubject.next(category);
-        this.mapMarkersService.category = category;
-        this.categoryFilterService.activeCategory = category || "all";
     }
 
     private flyToCoordinates() {
