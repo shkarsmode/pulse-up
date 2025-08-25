@@ -37,13 +37,13 @@ export class LeaderboardFiltersService {
                 case "last24Hours":
                     return "";
                 case "Day":
-                    return date ? DateUtils.format(date, "MM/DD") : "";
+                    return date ? DateUtils.format(date, "MMM DD") : "";
                 case "Week":
                     return date
-                        ? `${DateUtils.format(DateUtils.getStartOfWeek(date), "MM/DD")} - ${DateUtils.format(DateUtils.getEndOfWeek(date), "MM/DD")}`
+                        ? `${DateUtils.format(DateUtils.getStartOfWeek(date), "MMM DD")} - ${DateUtils.format(DateUtils.getEndOfWeek(date), "MMM DD")}`
                         : "";
                 case "Month":
-                    return date ? DateUtils.format(date, "MM/YYYY") : "";
+                    return date ? DateUtils.format(date, "MMM YYYY") : "";
                 default:
                     return "";
             }

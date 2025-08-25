@@ -42,7 +42,7 @@
     &.select-field--with-icon {
         &::ng-deep {
             .mdc-text-field {
-                padding-left: 48px;
+                padding-left: 40px;
             }
         }
     }
@@ -100,7 +100,7 @@
 .select-field__icon {
     position: absolute;
     top: 50%;
-    left: 16px;
+    left: 12px;
     transform: translateY(-50%);
     width: 22px;
     height: 22px;
