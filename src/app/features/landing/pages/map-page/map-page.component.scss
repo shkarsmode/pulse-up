@@ -72,6 +72,7 @@ app-map::ng-deep .map-container {
     position: absolute;
     top: 0;
     left: 0;
+    width: 100%;
     display: flex;
     flex-direction: column-reverse;
     row-gap: 12px;
