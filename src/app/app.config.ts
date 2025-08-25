@@ -13,6 +13,10 @@ import {
     popperVariation,
 } from "@ngneat/helipopper/config";
 import {
+  provideTanStackQuery,
+  QueryClient,
+} from '@tanstack/angular-query-experimental'
+import {
     API_URL,
     FIREBASE_CONFIG,
     GEOCODE_API_URL,
@@ -30,6 +34,7 @@ export const appConfig: ApplicationConfig = {
         provideZoneChangeDetection({ eventCoalescing: true }),
         provideRouter(APP_ROUTES),
         provideHttpClient(withInterceptors([jwtInterceptor, errorInterceptor])),
+        provideTanStackQuery(new QueryClient()),
         provideAngularSvgIcon(),
         provideAnimationsAsync(),
         provideTippyLoader(() => import("tippy.js")),

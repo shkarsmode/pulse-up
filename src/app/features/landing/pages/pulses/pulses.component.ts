@@ -1,10 +1,9 @@
-import { Component, inject } from "@angular/core";
+import { ChangeDetectionStrategy, Component, inject } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { RouterModule } from "@angular/router";
 import { AngularSvgIconModule } from "angular-svg-icon";
-import { combineLatest, distinctUntilChanged, map, shareReplay } from "rxjs";
+import { toSignal } from "@angular/core/rxjs-interop";
 import { InfiniteScrollDirective } from "ngx-infinite-scroll";
-import { ITopic } from "@/app/shared/interfaces";
 import { InputSearchComponent } from "../../ui/input-search/input-search.component";
 import { InfiniteLoaderService } from "../../services/infinite-loader.service";
 import { LoadingIndicatorComponent } from "@/app/shared/components/loading-indicator/loading-indicator.component";
@@ -14,11 +13,11 @@ import { VotesService } from "@/app/shared/services/votes/votes.service";
 import { ContainerComponent } from "@/app/shared/components/ui-kit/container/container.component";
 import { CategoryFilterMenuComponent } from "@/app/shared/components/category-filter-menu/category-filter-menu.component";
 import { CategoryFilterSelectionComponent } from "@/app/shared/components/category-filter-menu/category-filter-selection/category-filter-selection.component";
-import { CategoryFilterService } from "@/app/shared/components/category-filter-menu/category-filter.service";
 import { PulsesPaginationService } from "../../services/pulses-pagination.service";
 import { TopicsEmptyListComponent } from "../../ui/topics-empty-list/topics-empty-list.component";
 import { PrimaryButtonComponent } from "@/app/shared/components/ui-kit/buttons/primary-button/primary-button.component";
 import { AppRoutes } from "@/app/shared/enums/app-routes.enum";
+import { TopicsService } from "../../services/topics.service";
 
 @Component({
     selector: "app-pulses",
@@ -40,52 +39,41 @@ import { AppRoutes } from "@/app/shared/enums/app-routes.enum";
         AngularSvgIconModule,
     ],
     providers: [InfiniteLoaderService, PulsesPaginationService],
+    changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PulsesComponent {
     private readonly votesService = inject(VotesService);
-    private readonly categoryFilterService = inject(CategoryFilterService);
-    private readonly pulsesPaginationService = inject(PulsesPaginationService);
+    private readonly topicsService = inject(TopicsService);
 
-    public pulses: ITopic[] = [];
-    public searchInFocus = false;
-    public votes$ = this.votesService.votesByTopicId$;
-    public topics$ = this.pulsesPaginationService.topics$.pipe(
-        shareReplay({ bufferSize: 1, refCount: true })
-    );
-    public isInitialLoading$ = this.pulsesPaginationService.initialLoading$;
-    public isLoadingMore$ = this.pulsesPaginationService.paginationLoading$;
-    public isEmpty$ = combineLatest([this.isInitialLoading$, this.topics$]).pipe(
-        map(([isLoading, topics]) => !isLoading && topics.length === 0),
-        distinctUntilChanged(),
-    );
-    public searchText = "";
+    public userVotesMap = toSignal(this.votesService.votesByTopicId$);
     public suggestTopicRoute = "/" + AppRoutes.User.Topic.SUGGEST;
-
-    public get selectedCategory(): ICategory | null {
-        return this.categoryFilterService.activeCategory === "all"
-            ? null
-            : this.categoryFilterService.activeCategory;
+    public topicsQuery = this.topicsService.topics;
+    public get searchText() {
+        return this.topicsService.searchText();
+    }
+    public get selectedCategory() {
+        return this.topicsService.category();
+    }
+    public get isInitialLoading() {
+        return this.topicsQuery.isLoading();
+    }
+    public get isLoadingMore() {
+        return this.topicsQuery.isFetchingNextPage();
+    }
+    public get isEmpty() {
+        return !this.isInitialLoading && this.topicsQuery.data()?.pages.flat().length === 0;
     }
 
     public loadMore() {
-        this.pulsesPaginationService.loadMore();
+        if (this.topicsQuery.isFetchingNextPage()) return;
+        this.topicsQuery.fetchNextPage();
     }
 
     public onSearchValueChange(searchValue: string): void {
-        this.pulsesPaginationService.setSearchText(searchValue);
-        this.searchText = searchValue;
+        this.topicsService.setSearchText(searchValue);
     }
 
     public onCategorySelected(category: ICategory | null): void {
-        this.categoryFilterService.activeCategory = category || "all";
-        this.pulsesPaginationService.setCategoryFilter(category);
-    }
-
-    public onSearchFocus(): void {
-        this.searchInFocus = true;
-    }
-
-    public onSearchBlur(): void {
-        this.searchInFocus = false;
+        this.topicsService.setCategory(category);
     }
 }
