@@ -26,6 +26,12 @@
         @include text-14px;
     }
 }
+.leaderboard-hint__time {
+    display: inline-block;
+}
+.leaderboard-hint__time--day {
+    min-width: 87px;
+}
 
 .leaderboard-hint__progress {
     width: 100%;

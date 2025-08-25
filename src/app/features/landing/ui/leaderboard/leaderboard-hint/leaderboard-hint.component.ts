@@ -53,6 +53,10 @@ export class LeaderboardHintComponent implements OnInit {
         Month: "this month",
     };
 
+    public get isDayFormat() {
+        return this.selectedTimeframe !== "Month";
+    }
+
     public ngOnInit() {
         this.leaderboardService.topics$
             .pipe(

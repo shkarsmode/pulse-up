@@ -10,7 +10,12 @@
         }
         @if (timeframeStatus === "Active") {
             <div class="leaderboard-hint__text">
-                {{ formatTime(remainingTime()) }} remaining to pulse {{ labels[selectedTimeframe] }}.
+                <span
+                    class="leaderboard-hint__time"
+                    [class.leaderboard-hint__time--day]="isDayFormat">
+                    {{ formatTime(remainingTime()) }}
+                </span>
+                remaining to pulse {{ labels[selectedTimeframe] }}.
             </div>
         }
         @if (timeframeStatus === "Active") {
