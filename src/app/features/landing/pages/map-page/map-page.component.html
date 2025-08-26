@@ -19,16 +19,6 @@
             (markerClick)="onMarkerClick($event)"
             (zoomEnd)="onZoomEnd($event)" />
     }
-    @if (isMobile()) {
-        <div class="map-page__top-container--mobile">
-            <ng-container *ngTemplateOutlet="topContainer"></ng-container>
-        </div>
-    } @else {
-        <ng-container *ngTemplateOutlet="topContainer"></ng-container>
-    }
-</div>
-
-<ng-template #topContainer>
     <div class="map-page__filter">
         <app-category-filter-menu
             class="category-filter-menu"
@@ -39,9 +29,5 @@
                 (cancelSelection)="onSelectedCategory(null)" />
         </ng-container>
     </div>
-    @if (infoTooltipVisible()) {
-        <div class="map-page__info">
-            <app-map-info-tooltip (closed)="hideInfoTooltip()" />
-        </div>
-    }
-</ng-template>
+    <app-map-info-button class="map-page__info" />
+</div>

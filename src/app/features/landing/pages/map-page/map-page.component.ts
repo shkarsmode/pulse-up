@@ -6,7 +6,6 @@ import { IMapMarker } from "@/app/shared/interfaces/map/map-marker.interface";
 import { SwitchComponent } from "@/app/shared/components/ui-kit/switch/switch/switch.component";
 import { MercatorMapComponent } from "./components/mercator-map/mercator-map.component";
 import { GlobeMapComponent } from "./components/globe-map/globe-map.component";
-import { MapInfoTipComponent } from "../../ui/map-info-tip/map-info-tooltip.component";
 import { CategoryFilterMenuComponent } from "@/app/shared/components/category-filter-menu/category-filter-menu.component";
 import { ICategory } from "@/app/shared/interfaces/category.interface";
 import { MapMarkersService } from "@/app/shared/services/map/map-marker.service";
@@ -19,6 +18,7 @@ import {
 } from "@/app/shared/services/core/local-storage.service";
 import { toSignal } from "@angular/core/rxjs-interop";
 import { MediaQueryService } from "@/app/shared/services/core/media-query.service";
+import { MapInfoButtonComponent } from "../../ui/map-info-button/map-info-button.component";
 
 @Component({
     selector: "app-map-page",
@@ -30,9 +30,9 @@ import { MediaQueryService } from "@/app/shared/services/core/media-query.servic
         SwitchComponent,
         MercatorMapComponent,
         GlobeMapComponent,
-        MapInfoTipComponent,
         CategoryFilterMenuComponent,
         CategoryFilterSelectionComponent,
+        MapInfoButtonComponent,
     ],
 })
 export class MapPageComponent implements OnInit, OnDestroy {

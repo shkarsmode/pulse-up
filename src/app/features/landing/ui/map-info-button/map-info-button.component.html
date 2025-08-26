@@ -1,0 +1,18 @@
+<app-popover
+    trigger="manual"
+    [placement]="isMobile() ? 'bottom-start' : 'right-start'"
+    [tpIsVisible]="tooltipVisible">
+    <button
+        host
+        flatButton
+        class="map-info-button"
+        (click)="openPopover()">
+        <span class="visualy-hidden">Show more information</span>
+        <svg-icon
+            src="assets/svg/info.svg"
+            class="map-info-button__icon" />
+    </button>
+    <app-map-info-tooltip
+        content
+        (closed)="closePopover()" />
+</app-popover>

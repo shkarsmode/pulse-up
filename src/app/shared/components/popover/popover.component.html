@@ -1,0 +1,15 @@
+<div
+    [tp]="tpl"
+    [tpVariation]="variation"
+    [tpTrigger]="trigger"
+    [tpPlacement]="placement"
+    [tpStaticWidthHost]="true"
+    [tpHideOnClick]="true"
+    [tpDelay]="delay"
+    [tpIsVisible]="tpIsVisible">
+    <ng-content select="[host]"></ng-content>
+</div>
+
+<ng-template #tpl>
+    <ng-content select="[content]"></ng-content>
+</ng-template>
