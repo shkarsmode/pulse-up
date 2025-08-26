@@ -4,10 +4,12 @@ import { lastValueFrom, shareReplay } from "rxjs";
 import { QUERY_KEYS } from "@/app/shared/constants";
 import { ICategory } from "@/app/shared/interfaces/category.interface";
 import { PulseService } from "@/app/shared/services/api/pulse.service";
+import { PendingTopicsService } from "@/app/shared/services/topic/pending-topics.service";
 
 @Injectable({ providedIn: "root" })
 export class TopicsService {
     private pulseService = inject(PulseService);
+    private pendingTopicsService = inject(PendingTopicsService);
 
     private searchTextSignal = signal("");
     private categorySignal = signal<ICategory | null>(null);
@@ -16,18 +18,23 @@ export class TopicsService {
     public category = this.categorySignal.asReadonly();
 
     public topics = injectInfiniteQuery(() => ({
-        queryKey: [QUERY_KEYS.topics, this.searchText(), this.category()?.name],
+        queryKey: [
+            QUERY_KEYS.topics,
+            this.searchText(),
+            this.category()?.name,
+            this.pendingTopicsService.pendingTopicsIds(),
+        ],
         queryFn: async ({ pageParam }) => {
             const category = this.category();
             return lastValueFrom(
-                this.pulseService.get({
-                    keyword: this.searchText(),
-                    category: category ? category.name : undefined,
-                    take: 10,
-                    skip: pageParam * 10,
-                }).pipe(
-                    shareReplay({ bufferSize: 1, refCount: true }),
-                ),
+                this.pulseService
+                    .get({
+                        keyword: this.searchText(),
+                        category: category ? category.name : undefined,
+                        take: 10,
+                        skip: pageParam * 10,
+                    })
+                    .pipe(shareReplay({ bufferSize: 1, refCount: true })),
             );
         },
         initialPageParam: 0,
@@ -41,7 +48,7 @@ export class TopicsService {
 
     public setSearchText(text: string) {
         this.searchTextSignal.set(text);
-    }   
+    }
 
     public setCategory(category: ICategory | null) {
         this.categorySignal.set(category);
