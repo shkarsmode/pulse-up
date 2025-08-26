@@ -1,7 +1,4 @@
-import {
-    ApplicationConfig,
-    provideZoneChangeDetection,
-} from "@angular/core";
+import { ApplicationConfig, provideZoneChangeDetection } from "@angular/core";
 import { provideRouter } from "@angular/router";
 import { provideHttpClient, withInterceptors } from "@angular/common/http";
 import { provideAnimationsAsync } from "@angular/platform-browser/animations/async";
@@ -12,10 +9,7 @@ import {
     tooltipVariation,
     popperVariation,
 } from "@ngneat/helipopper/config";
-import {
-  provideTanStackQuery,
-  QueryClient,
-} from '@tanstack/angular-query-experimental'
+import { provideTanStackQuery, QueryClient } from "@tanstack/angular-query-experimental";
 import {
     API_URL,
     FIREBASE_CONFIG,
@@ -29,12 +23,27 @@ import { errorInterceptor } from "./shared/helpers/interceptors/error.intercepto
 import { APP_ROUTES } from "./app.routes";
 import { WindowService } from "./shared/services/core/window.service";
 
+const queryClient = new QueryClient({
+    defaultOptions: {
+        queries: {
+            retry: (failureCount, error) => {
+                console.log({ failureCount, error });
+
+                if (error instanceof Object && "status" in error && error.status === 404) {
+                    return false;
+                }
+                return failureCount < 3;
+            },
+        },
+    },
+});
+
 export const appConfig: ApplicationConfig = {
     providers: [
         provideZoneChangeDetection({ eventCoalescing: true }),
         provideRouter(APP_ROUTES),
         provideHttpClient(withInterceptors([jwtInterceptor, errorInterceptor])),
-        provideTanStackQuery(new QueryClient()),
+        provideTanStackQuery(queryClient),
         provideAngularSvgIcon(),
         provideAnimationsAsync(),
         provideTippyLoader(() => import("tippy.js")),
