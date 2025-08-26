@@ -23,6 +23,10 @@
 .category-filter-button__icon {
     position: relative;
     top: 2px;
+
+    svg path {
+        fill: var(--dark-grey-color);
+    }
 }
 .category-filter-button__icon--active {
     svg path {
