@@ -1,8 +1,7 @@
-import { computed, inject, Injectable, signal } from "@angular/core";
+import { computed, effect, inject, Injectable, signal } from "@angular/core";
 import { Router } from "@angular/router";
-import { catchError, EMPTY, forkJoin, map, Observable, of, switchMap, tap } from "rxjs";
+import { catchError, EMPTY, lastValueFrom, of, switchMap } from "rxjs";
 import { ITopic, TopicState } from "@/app/shared/interfaces";
-import { IVote } from "@/app/shared/interfaces/vote.interface";
 import { PulseService } from "@/app/shared/services/api/pulse.service";
 import { isHttpErrorResponse } from "@/app/shared/helpers/errors/isHttpErrorResponse";
 import { AppRoutes } from "@/app/shared/enums/app-routes.enum";
@@ -14,6 +13,9 @@ import { toObservable, toSignal } from "@angular/core/rxjs-interop";
 import { MetadataService } from "@/app/shared/services/core/metadata.service";
 import { VoteUtils } from "@/app/shared/helpers/vote-utils";
 import { SuggestedTopicsService } from "@/app/shared/services/topic/suggested-topics.service";
+import { QueryService } from "@/app/shared/services/core/query.service";
+import { QUERY_KEYS } from "@/app/shared/constants";
+import { injectQuery } from "@tanstack/angular-query-experimental";
 
 @Injectable({
     providedIn: "root",
@@ -27,34 +29,84 @@ export class PulsePageService {
     private readonly notificationService = inject(NotificationService);
     private readonly metadataService = inject(MetadataService);
     private readonly suggestedTopicsService = inject(SuggestedTopicsService);
+    private readonly queryService = inject(QueryService);
+
+    constructor() {
+        effect(() => {
+            const topic = this.topicQuery.data();
+            if (topic) {
+                this.updateMetadata(topic);
+            }
+        });
+    }
 
     private settings = toSignal(this.settingsService.settings$);
 
-    private _topic = signal<ITopic | null>(null);
-    private _vote = signal<IVote | null>(null);
-    private _isLoading = signal(true);
+    private topicId = signal<number | null>(null);
+    private topicShareKey = signal<string | null>(null);
     private _isUpdatedAfterUserSignIn = signal(false);
+    private topicQuery = injectQuery(() => ({
+        queryFn: () => {
+            const topicId = this.topicId();
+            const topicShareKey = this.topicShareKey();
+            const topicIdOrShareKey = topicId || topicShareKey;
+            if (topicIdOrShareKey) {
+                
+                return this.getTopic(topicIdOrShareKey);
+            }
+            return null;
+        },
+        queryKey: [QUERY_KEYS.topic, this.topicId(), this.topicShareKey()],
+        options: {
+            refetchOnWindowFocus: false,
+        },
+    }));
+    private votesQuery = injectQuery(() => ({
+        queryFn: async () => {
+            const topicId = this.topicQuery.data()?.id;
+            if (!topicId) return null;
+            const votes = await this.getVotes(topicId);
+            return votes;
+        },
+        queryKey: [QUERY_KEYS.votes, this.topicQuery.data()?.id],
+        options: {
+            refetchOnWindowFocus: false,
+        },
+    }));
 
-    public topic = this._topic.asReadonly();
-    public vote = this._vote.asReadonly();
-    public isLoading = this._isLoading.asReadonly();
+    public isLoading = computed(() => {
+        return this.topicQuery.isLoading();
+    });
     public isUpdatedAfterUserSignIn = this._isUpdatedAfterUserSignIn.asReadonly();
 
+    public topic = computed(() => {
+        const topic = this.topicQuery.data();
+        if (!topic) return null;
+        const r = this.replaceDescriptionLink(topic);
+        return r;
+    });
+
+    public vote = computed(() => {
+        const votes = this.votesQuery.data();
+        const lastVote = votes && votes.length > 0 ? votes[0] : null;
+        return lastVote;
+    });
+
     public isActiveVote = computed(() => {
-        const vote = this._vote();
+        const vote = this.vote();
         const settings = this.settings();
         if (!vote || !settings) return false;
         return VoteUtils.isActiveVote(vote, settings.minVoteInterval);
     });
 
     public lastVoteInfo = computed(() => {
-        const vote = this._vote();
+        const vote = this.vote();
         if (!vote) return "";
         return VoteUtils.parseVoteInfo(vote);
     });
 
     public suggestions = toSignal(
-        toObservable(this._topic).pipe(
+        toObservable(this.topicQuery.data).pipe(
             switchMap((topic) => {
                 if (!topic?.category) {
                     return of([]);
@@ -68,7 +120,7 @@ export class PulsePageService {
     );
 
     public topicUrl = computed(() => {
-        const topic = this._topic();
+        const topic = this.topicQuery.data();
         const settings = this.settings();
         if (topic && settings) {
             return settings.shareTopicBaseUrl + topic.shareKey;
@@ -77,7 +129,7 @@ export class PulsePageService {
     });
 
     public shortPulseDescription = computed(() => {
-        const topic = this._topic();
+        const topic = this.topicQuery.data();
         if (topic) {
             return topic.description.replace(/\n/g, " ");
         }
@@ -85,63 +137,25 @@ export class PulsePageService {
     });
 
     public isArchived = computed(() => {
-        const topic = this._topic();
+        const topic = this.topicQuery.data();
         return topic?.state === TopicState.Archived;
     });
 
-    public updatePageData({ topicId, shareKey = "" }: { topicId?: number; shareKey?: string }) {
-        if (!topicId && !shareKey) return EMPTY;
-        
-        this._isLoading.set(true);
+    public setTopicId(id: number) {
+        this.topicId.set(id);
+    }
 
-        if (topicId) {
-            return forkJoin({
-                topic: this.getTopic(topicId),
-                votes: this.getVotes(topicId),
-            }).pipe(
-                tap(({ topic, votes }) => {
-                    const lastVote = votes && votes.length > 0 ? votes[0] : null;
-                    this._topic.set(topic);
-                    this._vote.set(lastVote);
-                    this.updateMetadata(topic);
-                    this._isLoading.set(false);
-                    this.createLink(topic);
-                }),
-                catchError(() => {
-                    this._isLoading.set(false);
-                    return EMPTY;
-                }),
-            );
-        } else {
-            return this.getTopic(shareKey).pipe(
-                tap((topic) => {
-                    this._topic.set(topic);
-                    this.updateMetadata(topic);
-                    this.createLink(topic);
-                }),
-                switchMap((topic) => {
-                    return this.getVotes(topic.id).pipe(
-                        tap((votes) => {
-                            const lastVote = votes && votes.length > 0 ? votes[0] : null;
-                            this._vote.set(lastVote);
-                            this._isLoading.set(false);
-                        }),
-                        map((votes) => ({
-                            topic,
-                            votes,
-                        })),
-                        catchError(() => {
-                            this._isLoading.set(false);
-                            return EMPTY;
-                        }),
-                    );
-                }),
-            );
-        }
+    public setTopicShareKey(shareKey: string) {
+        this.topicShareKey.set(shareKey);
+    }
+
+    public refreshData() {
+        this.topicQuery.refetch();
+        this.votesQuery.refetch();
     }
 
     public setVoteAsExpired() {
-        this._vote.set(null);
+        this.votesQuery.refetch();
     }
 
     public setAsUpdatedAfterUserSignIn() {
@@ -149,13 +163,20 @@ export class PulsePageService {
     }
 
     public clearPageData() {
-        this._topic.set(null);
-        this._vote.set(null);
-        this._isLoading.set(true);
+        this.topicId.set(null);
+        this.topicShareKey.set(null);
     }
 
-    private getTopic(id: string | number): Observable<ITopic> {
-        return this.pulseService.getById(id).pipe(
+    public updateMetadata(topic: ITopic): void {
+        this.metadataService.setTitle(`${topic.title} | Support What Matters – Pulse Up`);
+        this.metadataService.setMetaTag(
+            "description",
+            `Support '${topic.title}' anonymously and see how it’s trending in real time across the map. Track public sentiment and join the pulse.`,
+        );
+    }
+
+    private async getTopic(id: string | number) {
+        const topic$ = this.pulseService.getById(id).pipe(
             catchError((error: unknown) => {
                 if (isHttpErrorResponse(error) && error.status === 404) {
                     this.router.navigateByUrl("/" + AppRoutes.Community.INVALID_LINK);
@@ -163,14 +184,15 @@ export class PulsePageService {
                 return EMPTY;
             }),
         );
+        return lastValueFrom(topic$);
     }
 
-    private getVotes(topicId: number): Observable<IVote[] | null> {
+    private async getVotes(topicId: number) {
         if (!this.authService.userTokenValue) {
             console.log("Anonymous user, skipping vote fetch");
-            return of(null);
+            return null;
         }
-        return this.voteService.getMyVotes({ topicId }).pipe(
+        const votes$ = this.voteService.getMyVotes({ topicId }).pipe(
             catchError((error: unknown) => {
                 console.error("Failed to fetch votes:", error);
                 this.notificationService.error(
@@ -179,25 +201,18 @@ export class PulsePageService {
                 return of(null);
             }),
         );
+        return lastValueFrom(votes$);
     }
 
-    private updateMetadata(topic: ITopic): void {
-        this.metadataService.setTitle(`${topic.title} | Support What Matters – Pulse Up`);
-        this.metadataService.setMetaTag(
-            "description",
-            `Support '${topic.title}' anonymously and see how it’s trending in real time across the map. Track public sentiment and join the pulse.`,
-        );
-    }
-
-    private createLink(topic: ITopic): void {
+    private replaceDescriptionLink(topic: ITopic): ITopic {
         const link = this.extractUrl(topic.description);
 
-        if (!link || !this.topic) return;
+        if (!link || !this.topic) return topic;
 
         const description =
             topic.description.replace(link, "") +
             `<a href="${link}" rel="nofollow" target="_blank">${link}</a>`;
-        this._topic.set({ ...topic, description });
+        return { ...topic, description };
     }
 
     private extractUrl(value: string): string | null {

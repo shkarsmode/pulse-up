@@ -1,7 +1,6 @@
-@let topicData = topic();
-@if (isLoading || !topicData) {
+@if (isLoading()) {
     <app-spinner />
-} @else {
+} @else if (topic) {
     <div
         class="pulse"
         fadeIn
@@ -9,17 +8,16 @@
         <div class="pulse__header">
             <img
                 class="pulse__header-logo"
-                [src]="topicData.icon"
+                [src]="topicIcon$ | async"
                 width="160"
                 height="160"
-                alt="pulse icon"
-                appLoadImgPath />
+                alt="pulse icon" />
             <div class="pulse__header-title">
-                <h2>{{ topicData.title }}</h2>
+                <h2>{{ topic.title }}</h2>
                 <a
-                    [routerLink]="['/user', topicData.author.username]"
-                    [state]="{ pulseId: topicData.id }">
-                    {{ topicData.author.name }}
+                    [routerLink]="['/user', topic.author.username]"
+                    [state]="{ pulseId: topic.id }">
+                    {{ topic.author.name }}
                 </a>
             </div>
         </div>
@@ -32,7 +30,7 @@
                         <svg-icon src="assets/svg/fans.svg" />
                     </div>
                     <span class="pulse__stats-count">
-                        {{ topicData.stats?.totalUniqueUsers || 0 | formatNumber }}
+                        {{ topic.stats?.totalUniqueUsers || 0 | formatNumber }}
                     </span>
                 </div>
                 <div>
@@ -41,7 +39,7 @@
                         <svg-icon src="assets/svg/chart-simple.svg" />
                     </div>
                     <span class="pulse__stats-count">
-                        {{ topicData.stats?.totalVotes || 0 | formatNumber }}
+                        {{ topic.stats?.totalVotes || 0 | formatNumber }}
                     </span>
                 </div>
                 <div>
@@ -58,7 +56,7 @@
                         <svg-icon src="assets/svg/pulse.svg" />
                     }
                     <span class="pulse__stats-count">
-                        {{ topicData.stats?.lastDayVotes || 0 | formatNumber }}
+                        {{ topic.stats?.lastDayVotes || 0 | formatNumber }}
                     </span>
                 </div>
             </div>
@@ -83,10 +81,10 @@
                         </button>
                     </app-menu>
                 </div>
-                @if (topicData.campaign) {
+                @if (topic.campaign) {
                     <app-pulse-campaign
-                        [campaign]="topicData.campaign"
-                        [stats]="topicData.stats" />
+                        [campaign]="topic.campaign"
+                        [stats]="topic.stats" />
                     <!-- <button
                         style="
                             background-color: #007bff;
@@ -111,9 +109,7 @@
                     class="pulse__info-description-text"
                     [class.pulse__info-description-text--read-more]="isReadMore"
                     #description
-                    [innerHTML]="
-                        isReadMore ? topicData.description : shortPulseDescription()
-                    "></div>
+                    [innerHTML]="isReadMore ? topic.description : shortPulseDescription()"></div>
                 @if (!isReadMore) {
                     <button
                         class="pulse__info-description-read-more"
@@ -123,27 +119,27 @@
                 }
             </div>
             <div class="pulse__info-keywords">
-                @for (keyword of topicData.keywords; track keyword) {
+                @for (keyword of topic.keywords; track keyword) {
                     <div>{{ keyword }}</div>
                 }
             </div>
             <div class="pulse__info-activity">
-                Active from {{ topicData.startsAt | date: "MMM d, y" }}, to
-                {{ topicData.endsAt | date: "MMM d, y" }}
+                Active from {{ topic.startsAt | date: "MMM d, y" }}, to
+                {{ topic.endsAt | date: "MMM d, y" }}
             </div>
 
             <div class="pulse__info-media">
                 <img
-                    *ngIf="topicData.picture"
-                    [src]="topicData.picture"
+                    *ngIf="topic.picture"
+                    [src]="topic.picture"
                     width="275"
                     height="180"
-                    [alt]="topicData.title"
+                    [alt]="topic.title"
                     appLoadImgPath />
 
                 <div
                     class="pulse__info-media__map"
-                    [routerLink]="'/topic/' + topicData.id + '/heatmap'">
+                    [routerLink]="'/topic/' + topic.id + '/heatmap'">
                     <div class="pulse__info-media__map-clickbait">
                         <svg-icon src="assets/svg/time-icon-large.svg" />
                         <h3>View Heatmap</h3>
@@ -157,7 +153,7 @@
                         <ng-container *ngIf="map">
                             <app-map-heatmap-layer
                                 [map]="map"
-                                [topicId]="topicData.id" />
+                                [topicId]="topic.id" />
                         </ng-container>
                     </app-map>
                 </div>

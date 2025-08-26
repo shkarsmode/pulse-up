@@ -26,12 +26,11 @@ import {
     AfterViewInit,
     OnDestroy,
     ChangeDetectionStrategy,
-    effect,
 } from "@angular/core";
-import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
+import { takeUntilDestroyed, toObservable } from "@angular/core/rxjs-interop";
 import { ActivatedRoute, ParamMap, RouterModule } from "@angular/router";
 import { SvgIconComponent } from "angular-svg-icon";
-import { distinctUntilChanged, filter, map, switchMap, tap } from "rxjs";
+import { combineLatest, distinctUntilChanged, filter, map, tap } from "rxjs";
 import { TopicQRCodePopupData } from "../../interfaces/topic-qrcode-popup-data.interface";
 import { MapComponent } from "@/app/shared/components/map/map.component";
 import { TopicQrcodePopupComponent } from "../../ui/topic-qrcode-popup/topic-qrcode-popup.component";
@@ -41,6 +40,7 @@ import { VotesService } from "@/app/shared/services/votes/votes.service";
 import { MapHeatmapLayerComponent } from "@/app/shared/components/map/map-heatmap-layer/map-heatmap-layer.component";
 import { WaveAnimationDirective } from "@/app/shared/directives/wave-animation/wave-animation.directive";
 import { PulsePageService } from "../../services/pulse-page.service";
+import { SettingsService } from "@/app/shared/services/api/settings.service";
 
 @Component({
     selector: "app-pulse-page",
@@ -78,7 +78,8 @@ export class PulsePageComponent implements OnInit, AfterViewInit, OnDestroy {
     private readonly dialogService = inject(DialogService);
     private readonly pendingTopicsService = inject(PendingTopicsService);
     private readonly votesService = inject(VotesService);
-    private pulsePageService = inject(PulsePageService);
+    private readonly pulsePageService = inject(PulsePageService);
+    private readonly settingsService = inject(SettingsService);
 
     @ViewChild("description", { static: false }) description!: ElementRef<HTMLDivElement>;
 
@@ -86,24 +87,35 @@ export class PulsePageComponent implements OnInit, AfterViewInit, OnDestroy {
 
     public isReadMore = false;
     public map: mapboxgl.Map | null = null;
-    public isLoading = true;
-    public topic = this.pulsePageService.topic;
+    public get topic() {
+        return this.pulsePageService.topic();
+    }
     public vote = this.pulsePageService.vote;
     public topicUrl = this.pulsePageService.topicUrl;
     public isActiveVote = this.pulsePageService.isActiveVote;
     public lastVoteInfo = this.pulsePageService.lastVoteInfo;
     public shortPulseDescription = this.pulsePageService.shortPulseDescription;
     public suggestions = this.pulsePageService.suggestions;
+    public isLoading = this.pulsePageService.isLoading;
+    public topicIcon$ = combineLatest([
+        toObservable(this.pulsePageService.topic),
+        this.settingsService.settings$,
+    ]).pipe(
+        map(([topic, settings]) => {
+            if (topic?.icon) {
+                return `${settings.blobUrlPrefix}${topic.icon}`;
+            }
+            return "";
+        }),
+    );
 
     constructor() {
-        effect(() => {
-            if (this.isLoading && !this.pulsePageService.isLoading()) {
-                this.isLoading = false;
-            }
-        });
+        window.scrollTo(0, 0);
     }
 
     ngOnInit(): void {
+        console.log("PulsePageComponent ngOnInit");
+        
         this.updatePageData();
         this.openJustCreatedTopicPopup();
     }
@@ -147,7 +159,8 @@ export class PulsePageComponent implements OnInit, AfterViewInit, OnDestroy {
     };
 
     public onVoted(vote: IVote): void {
-        const topic = this.topic();
+        const topic = this.topic;
+        // const topic = this.topic();
         if (!topic) return;
         this.pendingTopicsService.add({
             ...topic,
@@ -158,10 +171,7 @@ export class PulsePageComponent implements OnInit, AfterViewInit, OnDestroy {
             },
         });
         this.votesService.addVote(vote);
-        this.pulsePageService
-            .updatePageData({ topicId: topic.id })
-            .pipe(takeUntilDestroyed(this.destroyRef))
-            .subscribe();
+        this.pulsePageService.refreshData();
     }
 
     private updatePageData(): void {
@@ -175,8 +185,12 @@ export class PulsePageComponent implements OnInit, AfterViewInit, OnDestroy {
                         shareKey: Number.isNaN(topicId) ? idParam : undefined,
                     };
                 }),
-                switchMap(({ topicId, shareKey }) => {
-                    return this.pulsePageService.updatePageData({ topicId, shareKey });
+                tap(({ topicId, shareKey }) => {
+                    if (topicId) {
+                        this.pulsePageService.setTopicId(topicId);
+                    } else if (shareKey) {
+                        this.pulsePageService.setTopicShareKey(shareKey);
+                    }
                 }),
                 takeUntilDestroyed(this.destroyRef),
             )
@@ -186,10 +200,8 @@ export class PulsePageComponent implements OnInit, AfterViewInit, OnDestroy {
             .pipe(
                 distinctUntilChanged(),
                 filter((token) => !!token),
-                switchMap(() => {
-                    return this.pulsePageService.updatePageData({ topicId: this.topic()?.id });
-                }),
                 tap(() => {
+                    this.pulsePageService.refreshData();
                     this.pulsePageService.setAsUpdatedAfterUserSignIn();
                 }),
                 takeUntilDestroyed(this.destroyRef),
@@ -202,7 +214,8 @@ export class PulsePageComponent implements OnInit, AfterViewInit, OnDestroy {
             setTimeout(() => {
                 this.dialogService.open(TopicPublishedComponent, {
                     data: {
-                        shareKey: this.topic()?.shareKey,
+                        shareKey: this.topic?.shareKey,
+                        // shareKey: this.topic()?.shareKey,
                     },
                 });
             }, 1000);
