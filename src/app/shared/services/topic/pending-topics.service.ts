@@ -1,4 +1,4 @@
-import { Injectable } from "@angular/core";
+import { computed, Injectable, signal } from "@angular/core";
 import { ITopic, ITopicStats } from "../../interfaces";
 import { LocalStorageService, LOCAL_STORAGE_KEYS } from "../core/local-storage.service";
 
@@ -11,15 +11,17 @@ interface IPendingTopic {
     providedIn: "root",
 })
 export class PendingTopicsService {
-    private pendingTopics: IPendingTopic[] = [];
     private readonly STORAGE_KEY = LOCAL_STORAGE_KEYS.pendingTopics;
+    private pendingTopics = signal<IPendingTopic[]>([]);
+
+    public pendingTopicsIds = computed(() => this.pendingTopics().map(topic => topic.id));
 
     constructor() {
         this.loadFromStorage();
     }
 
     get(id: number): IPendingTopic | null {
-        const topic = this.pendingTopics.find(topic => topic.id === id);
+        const topic = this.pendingTopics().find(topic => topic.id === id);
         if (!topic) return null;
         return topic;
     }
@@ -34,30 +36,31 @@ export class PendingTopicsService {
                 lastDayVotes: 0,
             },
         };
-        
-        this.pendingTopics = this.pendingTopics.filter((pendingTopic) => {
-            return pendingTopic.id !== topic.id
-        });
-        this.pendingTopics.push(newPendingTopic);
+        const topics = this.pendingTopics();
+
+        this.pendingTopics.set([
+            ...topics.filter((pendingTopic) => pendingTopic.id !== topic.id), 
+            newPendingTopic
+        ]);
         this.saveToStorage();
     }
 
     remove(topicId: number): void {
-        this.pendingTopics = this.pendingTopics.filter(topic => topic.id !== topicId);
+        this.pendingTopics.set(this.pendingTopics().filter(topic => topic.id !== topicId));
         this.saveToStorage();
     }
 
     clear(): void {
-        this.pendingTopics = [];
+        this.pendingTopics.set([]);
         LocalStorageService.remove(this.STORAGE_KEY);
     }
 
     private saveToStorage(): void {
-        LocalStorageService.set<IPendingTopic[]>(this.STORAGE_KEY, this.pendingTopics);
+        LocalStorageService.set<IPendingTopic[]>(this.STORAGE_KEY, this.pendingTopics());
     }
 
     private loadFromStorage(): void {
         const stored = LocalStorageService.get<IPendingTopic[]>(this.STORAGE_KEY);
-        this.pendingTopics = stored ?? [];
+        this.pendingTopics.set(stored || []);
     }
 }
