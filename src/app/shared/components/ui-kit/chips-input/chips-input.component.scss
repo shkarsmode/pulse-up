@@ -74,6 +74,15 @@
 
 .chips-add {
     color: var(--accent-color);
+
+    svg {
+        width: 16px;
+        height: 16px;
+        
+        path {
+            fill: currentColor;
+        }
+    }
 }
 
 .chip {
