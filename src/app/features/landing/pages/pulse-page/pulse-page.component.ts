@@ -109,15 +109,14 @@ export class PulsePageComponent implements OnInit, AfterViewInit, OnDestroy {
         }),
     );
 
-    constructor() {
-        window.scrollTo(0, 0);
-    }
-
     ngOnInit(): void {
-        console.log("PulsePageComponent ngOnInit");
-        
         this.updatePageData();
         this.openJustCreatedTopicPopup();
+        window.scrollTo({
+            top: 0,
+            left: 0,
+            behavior: "instant",
+        });
     }
 
     ngAfterViewInit(): void {
@@ -160,7 +159,6 @@ export class PulsePageComponent implements OnInit, AfterViewInit, OnDestroy {
 
     public onVoted(vote: IVote): void {
         const topic = this.topic;
-        // const topic = this.topic();
         if (!topic) return;
         this.pendingTopicsService.add({
             ...topic,
