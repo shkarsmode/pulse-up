@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, OnDestroy, signal } from "@angular/core";
+import { Component, inject, OnInit, OnDestroy } from "@angular/core";
 import { Router } from "@angular/router";
 import { CommonModule } from "@angular/common";
 import { Projection } from "mapbox-gl";
@@ -12,11 +12,6 @@ import { MapMarkersService } from "@/app/shared/services/map/map-marker.service"
 import { CategoryFilterService } from "@/app/shared/components/category-filter-menu/category-filter.service";
 import { CategoryFilterSelectionComponent } from "@/app/shared/components/category-filter-menu/category-filter-selection/category-filter-selection.component";
 import { MapPageService } from "./map-page.service";
-import {
-    LOCAL_STORAGE_KEYS,
-    LocalStorageService,
-} from "@/app/shared/services/core/local-storage.service";
-import { toSignal } from "@angular/core/rxjs-interop";
 import { MediaQueryService } from "@/app/shared/services/core/media-query.service";
 import { MapInfoButtonComponent } from "../../ui/map-info-button/map-info-button.component";
 
@@ -46,8 +41,6 @@ export class MapPageComponent implements OnInit, OnDestroy {
     public switchClasses = {};
     public isProjectionToogleVisible = true;
     public selectedCategory$ = this.mapPageService.selectedCategory$;
-    public infoTooltipVisible = signal(false);
-    public isMobile = toSignal(this.mediaService.mediaQuery("max", "XS"));
 
     get isGlobe() {
         return this.projection === "globe";
@@ -62,9 +55,6 @@ export class MapPageComponent implements OnInit, OnDestroy {
             "map-page__switch": true,
             "map-page__switch--contrast": this.projection === "globe",
         };
-        const mapInfoTooltipShown =
-            LocalStorageService.get<boolean>(LOCAL_STORAGE_KEYS.mapInfoTooltipShown) || false;
-        this.infoTooltipVisible.set(!mapInfoTooltipShown);
     }
 
     ngOnDestroy(): void {
@@ -88,9 +78,5 @@ export class MapPageComponent implements OnInit, OnDestroy {
         this.mapPageService.setSelectedCategory(category);
         this.mapMarkersService.category = category;
         this.categoryFilterService.activeCategory = category || "all";
-    }
-
-    public hideInfoTooltip() {
-        this.infoTooltipVisible.set(false);
     }
 }

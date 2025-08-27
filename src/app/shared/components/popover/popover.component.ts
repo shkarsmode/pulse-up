@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, Input } from "@angular/core";
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from "@angular/core";
 import { TippyDirective } from "@ngneat/helipopper";
 import { TippyProps } from "@ngneat/helipopper/config";
 
@@ -15,5 +15,12 @@ export class PopoverComponent {
     @Input() trigger: "mouseenter" | "click" | "manual" = "mouseenter";
     @Input() placement: TippyProps["placement"] = "bottom";
     @Input() delay: number;
-    @Input() tpIsVisible: boolean;
+    @Input() isVisible: boolean;
+    @Input() hideOnClickOutside = true;
+
+    @Output() isVisibleChange = new EventEmitter<boolean>();
+
+    public onIsVisibleChange(visible: boolean) {
+        this.isVisibleChange.emit(visible);
+    }
 }

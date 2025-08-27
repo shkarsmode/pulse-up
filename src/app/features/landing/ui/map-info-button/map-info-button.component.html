@@ -1,7 +1,9 @@
 <app-popover
     trigger="manual"
     [placement]="isMobile() ? 'bottom-start' : 'right-start'"
-    [tpIsVisible]="tooltipVisible">
+    [isVisible]="tooltipVisible"
+    [hideOnClickOutside]="false"
+    (isVisibleChange)="onTooltipVisibilityChange($event)">
     <button
         host
         flatButton
