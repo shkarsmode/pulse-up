@@ -1,8 +1,15 @@
+@use "../../../../../styles/mixins" as *;
+
 :host {
     position: absolute;
-    right: 30px;
-    bottom: 30px;
+    right: 20px;
+    bottom: 20px;
     display: flex;
     flex-direction: column;
     gap: 20px;
+
+    @include media-xs {
+        right: 16px;
+        bottom: 16px;
+    }
 }

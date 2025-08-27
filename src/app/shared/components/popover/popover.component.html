@@ -4,9 +4,10 @@
     [tpTrigger]="trigger"
     [tpPlacement]="placement"
     [tpStaticWidthHost]="true"
-    [tpHideOnClick]="true"
+    [tpHideOnClick]="hideOnClickOutside"
     [tpDelay]="delay"
-    [tpIsVisible]="tpIsVisible">
+    [tpIsVisible]="isVisible"
+    (tpIsVisibleChange)="onIsVisibleChange($event)">
     <ng-content select="[host]"></ng-content>
 </div>
 
