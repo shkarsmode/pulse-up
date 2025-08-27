@@ -23,7 +23,6 @@ import {
     inject,
     OnInit,
     ViewChild,
-    AfterViewInit,
     OnDestroy,
     ChangeDetectionStrategy,
 } from "@angular/core";
@@ -70,7 +69,7 @@ import { SettingsService } from "@/app/shared/services/api/settings.service";
     ],
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class PulsePageComponent implements OnInit, AfterViewInit, OnDestroy {
+export class PulsePageComponent implements OnInit, OnDestroy {
     private readonly destroyRef = inject(DestroyRef);
     private readonly route = inject(ActivatedRoute);
     private readonly pulseService = inject(PulseService);
@@ -81,8 +80,14 @@ export class PulsePageComponent implements OnInit, AfterViewInit, OnDestroy {
     private readonly pulsePageService = inject(PulsePageService);
     private readonly settingsService = inject(SettingsService);
 
-    @ViewChild("description", { static: false }) description!: ElementRef<HTMLDivElement>;
-
+    @ViewChild("description", { static: false })
+    set descriptionElement(el: ElementRef<HTMLDivElement> | undefined) {
+        if (el) {
+            this.description = el;
+            this.checkIfDescriptionTruncated();
+        }
+    }
+    private description?: ElementRef<HTMLDivElement>;
     private mutationObserver: MutationObserver | null = null;
 
     public isReadMore = false;
@@ -117,10 +122,6 @@ export class PulsePageComponent implements OnInit, AfterViewInit, OnDestroy {
             left: 0,
             behavior: "instant",
         });
-    }
-
-    ngAfterViewInit(): void {
-        this.observeDescriptionMutations();
     }
 
     ngOnDestroy(): void {
@@ -213,28 +214,13 @@ export class PulsePageComponent implements OnInit, AfterViewInit, OnDestroy {
                 this.dialogService.open(TopicPublishedComponent, {
                     data: {
                         shareKey: this.topic?.shareKey,
-                        // shareKey: this.topic()?.shareKey,
                     },
                 });
             }, 1000);
         }
     }
 
-    private observeDescriptionMutations(): void {
-        if (!this.description?.nativeElement) return;
-
-        this.mutationObserver = new MutationObserver(() => {
-            this.checkIfTruncated();
-        });
-
-        this.mutationObserver.observe(this.description.nativeElement, {
-            childList: true,
-            subtree: true,
-            characterData: true,
-        });
-    }
-
-    private checkIfTruncated(): void {
+    private checkIfDescriptionTruncated(): void {
         const textElement = this.description?.nativeElement;
         if (!textElement) return;
 
