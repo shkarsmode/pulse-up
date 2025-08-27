@@ -38,7 +38,9 @@
                 label="number of supporters" />
             @if (lastPulse) {
                 <app-large-pulse-meta
-                    [text]="'Last pulse: ' + (lastPulse | date: 'MM/dd hh:mm a')" />
+                    [text]="lastPulse | timeFromNow"
+                    icon="assets/svg/clock.svg"
+                    label="last pulse time" />
             }
         </div>
     </div>

@@ -12,6 +12,7 @@ import { VoteUtils } from "@/app/shared/helpers/vote-utils";
 import { SettingsService } from "@/app/shared/services/api/settings.service";
 import { AngularSvgIconModule } from "angular-svg-icon";
 import { WaveAnimationDirective } from "@/app/shared/directives/wave-animation/wave-animation.directive";
+import { TimeFromNowPipe } from "@/app/shared/pipes/time-from-now.pipe";
 
 @Component({
     selector: "app-leaderboard-list-item",
@@ -25,6 +26,7 @@ import { WaveAnimationDirective } from "@/app/shared/directives/wave-animation/w
         FormatNumberPipe,
         AngularSvgIconModule,
         WaveAnimationDirective,
+        TimeFromNowPipe,
     ],
     templateUrl: "./leaderboard-list-item.component.html",
     styleUrl: "./leaderboard-list-item.component.scss",
