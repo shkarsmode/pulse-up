@@ -6,7 +6,7 @@
     display: block;
     padding: 0;
     height: calc(100%);
-    
+
     @include media-xs {
         --offset-width: 16px;
     }
@@ -18,7 +18,6 @@
     margin: 0 auto;
     background-color: #020b1b;
 }
-
 
 app-map {
     height: 100%;
@@ -60,6 +59,9 @@ app-map::ng-deep .map-container {
     position: absolute;
     top: var(--offset-width);
     left: var(--offset-width);
+    display: flex;
+    align-items: center;
+    column-gap: 8px;
 }
 
 .map-page__info {
