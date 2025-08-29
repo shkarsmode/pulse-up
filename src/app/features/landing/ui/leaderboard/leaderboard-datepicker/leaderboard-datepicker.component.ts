@@ -173,7 +173,7 @@ export class LeaderboardDatepickerComponent {
         const startOfWeek = DateUtils.getStartOfWeek(date); // Sunday-based week
         const endOfWeek = DateUtils.getEndOfWeek(date);
         this.selectedDateRange = new DateRange(startOfWeek, endOfWeek);
-        this.dateChange.emit(endOfWeek);
+        this.dateChange.emit(startOfWeek);
         this.closeCalendar();
     }
 
@@ -183,7 +183,7 @@ export class LeaderboardDatepickerComponent {
     }
 
     public onMonthSelected(date: Date) {
-        this.dateChange.emit(DateUtils.getEndOfMonth(date));
+        this.dateChange.emit(DateUtils.getStartOfMonth(date));
         this.closeCalendar();
     }
 
