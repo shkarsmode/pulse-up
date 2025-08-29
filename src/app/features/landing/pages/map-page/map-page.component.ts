@@ -9,7 +9,6 @@ import { GlobeMapComponent } from "./components/globe-map/globe-map.component";
 import { CategoryFilterMenuComponent } from "@/app/shared/components/category-filter-menu/category-filter-menu.component";
 import { ICategory } from "@/app/shared/interfaces/category.interface";
 import { MapMarkersService } from "@/app/shared/services/map/map-marker.service";
-import { CategoryFilterService } from "@/app/shared/components/category-filter-menu/category-filter.service";
 import { CategoryFilterSelectionComponent } from "@/app/shared/components/category-filter-menu/category-filter-selection/category-filter-selection.component";
 import { MapPageService } from "./map-page.service";
 import { MediaQueryService } from "@/app/shared/services/core/media-query.service";
@@ -33,7 +32,6 @@ import { MapInfoButtonComponent } from "../../ui/map-info-button/map-info-button
 export class MapPageComponent implements OnInit, OnDestroy {
     private router: Router = inject(Router);
     private mapMarkersService = inject(MapMarkersService);
-    private categoryFilterService = inject(CategoryFilterService);
     private mapPageService = inject(MapPageService);
     private mediaService = inject(MediaQueryService);
 
@@ -77,6 +75,6 @@ export class MapPageComponent implements OnInit, OnDestroy {
     public onSelectedCategory(category: ICategory | null): void {
         this.mapPageService.setSelectedCategory(category);
         this.mapMarkersService.category = category;
-        this.categoryFilterService.activeCategory = category || "all";
+        // this.categoryFilterService.activeCategory = category || "all";
     }
 }

@@ -8,6 +8,8 @@ import {
     OnInit,
     DestroyRef,
     OnDestroy,
+    Input,
+    ChangeDetectionStrategy, OnChanges,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { FormControl, ReactiveFormsModule } from "@angular/forms";
@@ -16,11 +18,11 @@ import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { map } from "rxjs/operators";
 import { MatButtonModule } from "@angular/material/button";
 import { MatIconModule } from "@angular/material/icon";
-import { ICategory } from "../../interfaces/category.interface";
 import { FlatButtonDirective } from "../ui-kit/buttons/flat-button/flat-button.directive";
 import { AngularSvgIconModule } from "angular-svg-icon";
 import { CategoryFilterMenuItemComponent } from "./category-filter-menu-item/category-filter-menu-item.component";
-import { CategoryFilterService } from "./category-filter.service";
+
+const DEFAULT_CATEGORY = "trending";
 
 @Component({
     selector: "app-category-filter-menu",
@@ -37,24 +39,20 @@ import { CategoryFilterService } from "./category-filter.service";
     ],
     templateUrl: "./category-filter-menu.component.html",
     styleUrl: "./category-filter-menu.component.scss",
+    changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class CategoryFilterMenuComponent implements OnInit, OnDestroy {
+export class CategoryFilterMenuComponent implements OnInit, OnDestroy, OnChanges {
     private destroyRef = inject(DestroyRef);
-    private categoryFilterService = inject(CategoryFilterService);
 
-    @Output() selectedCategory = new EventEmitter<ICategory | null>();
+    @Input() options: string[] = [];
+    @Output() selectedCategory = new EventEmitter<string>();
     @ViewChild(MatMenuTrigger) menuTrigger: MatMenuTrigger;
     @ViewChild("searchInput") searchInput: ElementRef<HTMLInputElement>;
 
+    public activeCategory = DEFAULT_CATEGORY;
+    public filteredCategories: string[] = this.options;
     public filterControl = new FormControl<string>("");
     public clearButtonVisible$ = this.filterControl.valueChanges.pipe(map((value) => !!value));
-
-    public get activeCategory(): ICategory | "all" {
-        return this.categoryFilterService.activeCategory;
-    }
-    public get filteredCategories(): ICategory[] {
-        return this.categoryFilterService.filteredCategories;
-    }
 
     public ngOnInit(): void {
         this.filterControl.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
@@ -62,14 +60,21 @@ export class CategoryFilterMenuComponent implements OnInit, OnDestroy {
         });
     }
 
+    public ngOnChanges(): void {
+        if (this.options.length && !this.filteredCategories.length) {
+            this.filteredCategories = [...this.options];
+        }
+    }
+
     public ngOnDestroy(): void {
-        this.categoryFilterService.reset();
+        this.activeCategory = DEFAULT_CATEGORY;
+        this.filteredCategories = [...this.options];
     }
 
     public clearSearch(event: MouseEvent): void {
         event.stopPropagation();
         this.filterControl.setValue("");
-        this.categoryFilterService.filteredCategories = [...this.categoryFilterService.categories];
+        this.filteredCategories = [...this.options];
         this.searchInput?.nativeElement.focus();
     }
 
@@ -81,35 +86,26 @@ export class CategoryFilterMenuComponent implements OnInit, OnDestroy {
         const timeout = setTimeout(() => {
             if (this.filterControl.value) {
                 this.filterControl.setValue("");
-                this.categoryFilterService.filteredCategories = [
-                    ...this.categoryFilterService.categories,
-                ];
+                this.filteredCategories = [...this.options];
                 clearTimeout(timeout);
             }
         }, 100);
     }
 
-    public onCategorySelect(category: ICategory | "all"): void {
-        if (category === "all") {
-            this.selectedCategory.emit(null);
-        } else {
-            this.selectedCategory.emit(category);
-        }
-        this.categoryFilterService.activeCategory = category;
+    public onCategorySelect(category: string): void {
+        this.selectedCategory.emit(category);
+        this.activeCategory = category;
         this.menuTrigger.closeMenu();
     }
 
     private filterCategories(): void {
         const search = (this.filterControl.value || "").toLowerCase();
         if (!search) {
-            this.categoryFilterService.filteredCategories = [
-                ...this.categoryFilterService.categories,
-            ];
+            this.filteredCategories = [...this.options];
         } else {
-            this.categoryFilterService.filteredCategories =
-                this.categoryFilterService.categories.filter((cat) =>
-                    cat.name.toLowerCase().includes(search),
-                );
+            this.filteredCategories = this.options.filter((option) =>
+                option.toLowerCase().includes(search),
+            );
         }
     }
 }

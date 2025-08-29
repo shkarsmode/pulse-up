@@ -15,5 +15,6 @@ export const environment = {
         storageBucket: 'pulseapp-d9cea.appspot.com',
         messagingSenderId: '301057533103',
         appId: '1:301057533103:web:388935743e165e31bf205a',
-    }
+    },
+    ipInfoApiToken: "7781b0329f5236",
 };

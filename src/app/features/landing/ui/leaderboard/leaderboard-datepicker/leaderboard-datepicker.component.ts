@@ -172,12 +172,15 @@ export class LeaderboardDatepickerComponent {
         if (!date) return;
         const startOfWeek = DateUtils.getStartOfWeek(date); // Sunday-based week
         const endOfWeek = DateUtils.getEndOfWeek(date);
+        console.log({startOfWeek, endOfWeek});
+        
         this.selectedDateRange = new DateRange(startOfWeek, endOfWeek);
         this.dateChange.emit(endOfWeek);
         this.closeCalendar();
     }
 
     public onDaySelected(date: Date) {
+        console.log({date});
         this.dateChange.emit(date);
         this.closeCalendar();
     }

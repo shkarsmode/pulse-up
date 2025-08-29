@@ -7,7 +7,6 @@ import { InfiniteScrollDirective } from "ngx-infinite-scroll";
 import { InputSearchComponent } from "../../ui/input-search/input-search.component";
 import { InfiniteLoaderService } from "../../services/infinite-loader.service";
 import { LoadingIndicatorComponent } from "@/app/shared/components/loading-indicator/loading-indicator.component";
-import { ICategory } from "@/app/shared/interfaces/category.interface";
 import { TrendingTopicsListItemComponent } from "../../ui/trending-topics-list-item/trending-topics-list-item.component";
 import { VotesService } from "@/app/shared/services/votes/votes.service";
 import { ContainerComponent } from "@/app/shared/components/ui-kit/container/container.component";
@@ -18,6 +17,8 @@ import { TopicsEmptyListComponent } from "../../ui/topics-empty-list/topics-empt
 import { PrimaryButtonComponent } from "@/app/shared/components/ui-kit/buttons/primary-button/primary-button.component";
 import { AppRoutes } from "@/app/shared/enums/app-routes.enum";
 import { TopicsService } from "../../services/topics.service";
+import { PulseService } from "@/app/shared/services/api/pulse.service";
+import { map } from "rxjs";
 
 @Component({
     selector: "app-pulses",
@@ -44,15 +45,23 @@ import { TopicsService } from "../../services/topics.service";
 export class PulsesComponent {
     private readonly votesService = inject(VotesService);
     private readonly topicsService = inject(TopicsService);
+    private readonly pulseService = inject(PulseService);
 
     public userVotesMap = toSignal(this.votesService.votesByTopicId$);
     public suggestTopicRoute = "/" + AppRoutes.User.Topic.SUGGEST;
     public topicsQuery = this.topicsService.topics;
+    public localTopicsQuery = this.topicsService.localTopics;
+    public categories$ = this.pulseService.categories$.pipe(
+        map((categories) => ["Trending", "Newest", ...categories.map((category) => category.name)]),
+    );
     public get searchText() {
         return this.topicsService.searchText();
     }
     public get selectedCategory() {
         return this.topicsService.category();
+    }
+    public get isSelectedCategoryVisible() {
+        return this.selectedCategory !== "trending";
     }
     public get isInitialLoading() {
         return this.topicsQuery.isLoading();
@@ -73,7 +82,7 @@ export class PulsesComponent {
         this.topicsService.setSearchText(searchValue);
     }
 
-    public onCategorySelected(category: ICategory | null): void {
+    public onCategorySelected(category: string): void {
         this.topicsService.setCategory(category);
     }
 }

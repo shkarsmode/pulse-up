@@ -14,6 +14,7 @@ import {
     API_URL,
     FIREBASE_CONFIG,
     GEOCODE_API_URL,
+    IP_INFO_API_TOKEN,
     MAPBOX_ACCESS_TOKEN,
     MAPBOX_STYLE,
 } from "./shared/tokens/tokens";
@@ -78,6 +79,10 @@ export const appConfig: ApplicationConfig = {
         {
             provide: FIREBASE_CONFIG,
             useValue: environment.firebaseConfig,
+        },
+        {
+            provide: IP_INFO_API_TOKEN,
+            useValue: environment.ipInfoApiToken,
         },
         WindowService,
     ],

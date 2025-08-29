@@ -1,7 +1,7 @@
-import { ICategory } from "@/app/shared/interfaces/category.interface";
 import { Component, EventEmitter, Input, Output } from "@angular/core";
 import { MatMenuModule } from "@angular/material/menu";
 import { AngularSvgIconModule } from "angular-svg-icon";
+
 
 @Component({
     selector: "app-category-filter-menu-item",
@@ -11,12 +11,12 @@ import { AngularSvgIconModule } from "angular-svg-icon";
     styleUrl: "./category-filter-menu-item.component.scss",
 })
 export class CategoryFilterMenuItemComponent {
-  @Input() category: ICategory | "all";
-  @Input() isSelected = false;
+    @Input() category: string;
+    @Input() isSelected = false;
 
-  @Output() selectCategory = new EventEmitter<ICategory | "all">();
+    @Output() selectCategory = new EventEmitter<string>();
 
-  public onSelect(): void {
-      this.selectCategory.emit(this.category);
-  }
+    public onSelect(): void {
+        this.selectCategory.emit(this.category);
+    }
 }

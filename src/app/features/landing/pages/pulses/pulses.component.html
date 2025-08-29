@@ -27,14 +27,15 @@
                         class="pulses__search"
                         (handleValueChange)="onSearchValueChange($event)" />
                     <app-category-filter-menu
+                        [options]="(categories$ | async) || []"
                         class="pulses__filter"
                         (selectedCategory)="onCategorySelected($event)" />
                 </div>
-                @if (selectedCategory) {
+                @if (selectedCategory !== "trending") {
                     <div class="pulses__selection">
                         <app-category-filter-selection
                             [category]="selectedCategory"
-                            (cancelSelection)="onCategorySelected(null)" />
+                            (cancelSelection)="onCategorySelected('trending')" />
                     </div>
                 }
             </div>
