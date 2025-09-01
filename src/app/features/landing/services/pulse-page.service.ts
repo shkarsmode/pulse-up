@@ -13,7 +13,6 @@ import { toObservable, toSignal } from "@angular/core/rxjs-interop";
 import { MetadataService } from "@/app/shared/services/core/metadata.service";
 import { VoteUtils } from "@/app/shared/helpers/vote-utils";
 import { SuggestedTopicsService } from "@/app/shared/services/topic/suggested-topics.service";
-import { QueryService } from "@/app/shared/services/core/query.service";
 import { QUERY_KEYS } from "@/app/shared/constants";
 import { injectQuery } from "@tanstack/angular-query-experimental";
 
@@ -29,7 +28,6 @@ export class PulsePageService {
     private readonly notificationService = inject(NotificationService);
     private readonly metadataService = inject(MetadataService);
     private readonly suggestedTopicsService = inject(SuggestedTopicsService);
-    private readonly queryService = inject(QueryService);
 
     constructor() {
         effect(() => {

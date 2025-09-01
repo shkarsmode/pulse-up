@@ -17,4 +17,5 @@ export const environment = {
         appId: "1:301057533103:web:388935743e165e31bf205a",
         measurementId: "G-W6FV6E25JL"
     },
+    ipInfoApiToken: "7781b0329f5236",
 };

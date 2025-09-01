@@ -65,9 +65,9 @@ export class TopicFormComponent implements OnInit {
     public tooltipText = tooltipText;
 
     public ngOnInit(): void {
-        this.categoriesForForm = this.pulseService
-            .getCategories()
-            .pipe(map((categories) => categories.map((category) => category.name)));
+        this.categoriesForForm = this.pulseService.categories$.pipe(
+            map((categories) => categories.map((category) => category.name)),
+        );
     }
 
     public control(name: string) {
@@ -106,7 +106,10 @@ export class TopicFormComponent implements OnInit {
                     },
                 },
             );
-            dialogRef.afterClosed().pipe(take(1)).subscribe((result) => this.onCroppedImage(result));
+            dialogRef
+                .afterClosed()
+                .pipe(take(1))
+                .subscribe((result) => this.onCroppedImage(result));
         }
     }
 

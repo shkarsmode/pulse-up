@@ -3,3 +3,5 @@ export interface ICategory {
     topics: number;
     votes: number;
 }
+
+export type IFilterCategory = string | "newest" | "trending";

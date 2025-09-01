@@ -19,7 +19,7 @@
             (markerClick)="onMarkerClick($event)"
             (zoomEnd)="onZoomEnd($event)" />
     }
-    <div class="map-page__filter">
+    <!-- <div class="map-page__filter">
         <app-category-filter-menu
             class="category-filter-menu"
             (selectedCategory)="onSelectedCategory($event)" />
@@ -28,6 +28,6 @@
                 [category]="selectedCategory"
                 (cancelSelection)="onSelectedCategory(null)" />
         </ng-container>
-    </div>
+    </div> -->
     <app-map-info-button class="map-page__info" />
 </div>

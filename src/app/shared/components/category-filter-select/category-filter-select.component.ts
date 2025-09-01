@@ -31,7 +31,7 @@ export class CategoryFilterSelectComponent implements OnInit {
 
     ngOnInit() {
         this.pulseService
-            .getCategories()
+            .categories$
             .pipe(
                 take(1),
                 tap((categories) => {

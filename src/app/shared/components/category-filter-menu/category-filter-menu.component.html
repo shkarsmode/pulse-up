@@ -38,10 +38,6 @@
     </div>
 
     <div class="menu-scroll">
-        <app-category-filter-menu-item
-            category="all"
-            [isSelected]="activeCategory === 'all'"
-            (selectCategory)="onCategorySelect($event)" />
         <ng-container *ngFor="let category of filteredCategories">
             <app-category-filter-menu-item
                 [category]="category"

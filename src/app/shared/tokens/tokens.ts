@@ -19,3 +19,7 @@ export const GEOCODE_API_URL = new InjectionToken<string>(
 export const FIREBASE_CONFIG = new InjectionToken<IFirebaseConfig>(
     'fireBaseConfig'
 );
+
+export const IP_INFO_API_TOKEN = new InjectionToken<string>(
+    'ipInfoApiToken'
+);

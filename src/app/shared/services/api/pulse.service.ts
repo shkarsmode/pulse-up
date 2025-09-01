@@ -27,7 +27,6 @@ export class PulseService {
 
     private readonly apiUrl: string = inject(API_URL);
     private readonly http: HttpClient = inject(HttpClient);
-    private categories$?: Observable<ICategory[]>;
     private readonly pendingTopicsService = inject(PendingTopicsService);
 
     public get(
@@ -254,6 +253,14 @@ export class PulseService {
         );
     }
 
+    public getTopicsByCellIndex(cellIndex: string): Observable<ITopic[]> {
+        return this.http.get<ITopic[]>(`${this.apiUrl}/map/cell`, {
+            params: {
+                cellIndex
+            }
+        });
+    }
+
     public validateTitle(value: string) {
         return this.http
             .post<IValidateTopicTitleResponse>(`${this.apiUrl}/topics/validate`, { title: value })
@@ -265,14 +272,9 @@ export class PulseService {
             );
     }
 
-    public getCategories(): Observable<ICategory[]> {
-        if (!this.categories$) {
-            this.categories$ = this.http
-                .get<ICategory[]>(`${this.apiUrl}/topics/categories`)
-                .pipe(shareReplay({ bufferSize: 1, refCount: true }));
-        }
-        return this.categories$;
-    }
+    public categories$ = this.http
+            .get<ICategory[]>(`${this.apiUrl}/topics/categories`)
+            .pipe(shareReplay({ bufferSize: 1, refCount: true }));
 
     public getShareKeyFromTitle(title: string): Observable<string> {
         return this.http
