@@ -2,7 +2,6 @@
 
 :host {
     display: block;
-    padding: 20px;
     width: 100%;
     border-radius: 10px;
     box-shadow: 0px 3px 20px 0px #0000001f;
@@ -14,12 +13,22 @@
         box-shadow: 0px 3px 20px 0px #00000036;
     }
 
+    &:not(:has(.card-top-badge)) {
+        padding-top: 20px;
+    }
+
     @include media-xs {
         padding: 12px;
     }
 }
 
+.card-top-badge {
+    padding-bottom: 12px;
+    cursor: pointer;
+}
+
 .card-wrap {
+    padding: 0 20px;
     cursor: pointer;
 }
 
@@ -57,6 +66,10 @@
 
 .card-body:not(:empty) {
     margin-top: 10px;
+}
+
+.card-footer {
+    padding: 0 20px 20px;
 }
 
 .card-footer:not(:empty) {
