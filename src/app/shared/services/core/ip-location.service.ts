@@ -15,8 +15,8 @@ export class IpLocationService {
     private ipInfoApiToken = inject(IP_INFO_API_TOKEN);
     private mapboxToken = inject(MAPBOX_ACCESS_TOKEN);
 
-    private readonly jsonipUrl = "http://jsonip.com/";
-    private readonly ipInfoUrl = "http://api.ipinfo.io/lite/";
+    private readonly jsonipUrl = "https://jsonip.com/";
+    private readonly ipInfoUrl = "https://api.ipinfo.io/lite/";
 
     public coordinates$ = new Observable<ICoordinates>((observer) => {
         this.getCoordinatesFromIp()
