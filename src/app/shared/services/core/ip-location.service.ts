@@ -15,7 +15,6 @@ export class IpLocationService {
     private ipInfoApiToken = inject(IP_INFO_API_TOKEN);
     private mapboxToken = inject(MAPBOX_ACCESS_TOKEN);
 
-    private readonly jsonipUrl = "https://jsonip.com/";
     private readonly ipInfoUrl = "https://api.ipinfo.io/lite/";
 
     public coordinates$ = new Observable<ICoordinates>((observer) => {
@@ -31,12 +30,7 @@ export class IpLocationService {
 
     private getCoordinatesFromIp(): Promise<ICoordinates> {
         return new Promise((resolve, reject) => {
-            fetch(this.jsonipUrl, { mode: "cors" })
-                .then((response) => response.json())
-                .then(({ ip }) => {
-                    console.log("ip", ip);
-                    return fetch(`${this.ipInfoUrl}/${ip}?token=${this.ipInfoApiToken}`);
-                })
+            fetch(`${this.ipInfoUrl}/me?token=${this.ipInfoApiToken}`)
                 .then((response) => response.json())
                 .then(({ country }: IIpInfo) => country)
                 .then((country) => {
@@ -57,16 +51,4 @@ export class IpLocationService {
                 .catch((error) => reject(error));
         });
     }
-
-    // public location$ = this.httpClient.get<{ ip: string }>(this.jsonipUrl).pipe(
-    //     switchMap(({ ip }) => {
-    //         console.log("ip", ip);
-
-    //         return this.httpClient.get<IIpInfo>(`${this.ipInfoUrl}/${ip}`, {
-    //             params: { token: this.ipInfoApiToken },
-    //         });
-    //     }),
-    //     map((response) => response.country),
-    //     shareReplay({ bufferSize: 1, refCount: true }),
-    // );
 }

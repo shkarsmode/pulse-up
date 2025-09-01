@@ -256,7 +256,7 @@ export class PulseService {
     public getTopicsByCellIndex(cellIndex: string): Observable<ITopic[]> {
         return this.http.get<ITopic[]>(`${this.apiUrl}/map/cell`, {
             params: {
-                cellIndex
+                id: cellIndex
             }
         });
     }

@@ -42,25 +42,30 @@ import { TopicsService } from "../../services/topics.service";
 })
 export class PulsesComponent {
     private readonly votesService = inject(VotesService);
-    private readonly topicsService = inject(TopicsService);
+    public readonly topicsService = inject(TopicsService);
 
     public userVotesMap = toSignal(this.votesService.votesByTopicId$);
     public suggestTopicRoute = "/" + AppRoutes.User.Topic.SUGGEST;
-    public globalTopicsQuery = this.topicsService.globalTopics;
+    public globalTopicsQuery = this.topicsService.globalTopicsQuery;
+    public localTopicsQuery = this.topicsService.localTopicsQuery;
+
     public get searchText() {
         return this.topicsService.searchText();
     }
     public get selectedCategory() {
         return this.topicsService.category();
     }
-    public get isInitialLoading() {
-        return this.globalTopicsQuery.isLoading();
+    public get isTrendingCategorySelected() {
+        return this.selectedCategory === "trending";
     }
     public get isLoadingMore() {
         return this.globalTopicsQuery.isFetchingNextPage();
     }
-    public get isEmpty() {
-        return !this.isInitialLoading && this.globalTopicsQuery.data()?.pages.flat().length === 0;
+    public get isEmptyGlobalTopics() {
+        return !this.globalTopicsQuery.isLoading() && this.globalTopicsQuery.data()?.pages.flat().length === 0;
+    }
+    public get isEmptyLocalTopics() {
+        return !this.localTopicsQuery.isLoading() && this.localTopicsQuery.data()?.length === 0;
     }
     public categories = this.topicsService.categories;
 
