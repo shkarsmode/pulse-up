@@ -68,7 +68,7 @@ export class MercatorMapComponent {
     public minZoom: number = this.configMap.default.minZoom;
     public maxBounds: mapboxgl.LngLatBoundsLike = this.configMap.default.maxBounds;
     public center: [number, number] = [-100.661, 37.7749];
-    public selectedCategory$ = this.mapPageService.selectedCategory$;
+    public selectedCategory$ = this.mapPageService.selectedTopicCategory$;
 
     constructor() {
         effect(() => {

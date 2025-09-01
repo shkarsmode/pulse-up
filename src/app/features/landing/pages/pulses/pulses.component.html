@@ -29,6 +29,7 @@
                     <app-category-filter-menu
                         class="pulses__filter"
                         [options]="categories()"
+                        [activeCategory]="selectedCategory"
                         (selectedCategory)="onCategorySelected($event)" />
                 </div>
                 @if (!isTrendingCategorySelected) {
