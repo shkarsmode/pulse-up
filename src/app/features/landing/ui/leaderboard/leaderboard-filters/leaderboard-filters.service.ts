@@ -65,10 +65,10 @@ export class LeaderboardFiltersService {
                 this.leaderboardService.setDate(today);
                 break;
             case "Week":
-                this.leaderboardService.setDate(DateUtils.getEndOfWeek(new Date()));
+                this.leaderboardService.setDate(DateUtils.getStartOfWeek(new Date()));
                 break;
             case "Month":
-                this.leaderboardService.setDate(DateUtils.getEndOfMonth(new Date()));
+                this.leaderboardService.setDate(DateUtils.getStartOfMonth(new Date()));
                 break;
         }
         this.leaderboardService.setTimeframe(timeframe);

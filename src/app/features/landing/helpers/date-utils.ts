@@ -13,6 +13,10 @@ export class DateUtils {
         return dayjs(date).endOf("month").toDate();
     }
 
+    public static getStartOfMonth(date: Date): Date {
+        return dayjs(date).startOf("month").toDate();
+    }
+
     public static format(date: Date, format: string): string {
         return dayjs(date).format(format);
     }
