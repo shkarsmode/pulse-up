@@ -25,6 +25,11 @@ export type ILeaderboardTopic = Pick<
     "id" | "icon" | "title" | "shareKey" | "authorId" | "author" | "startsAt" | "endsAt"
 >;
 
+export type ICellTopic = Pick<
+    ITopic,
+    "id" | "icon" | "title" | "shareKey" | "authorId" | "stats" | "campaign" | "startsAt" | "endsAt"
+>;
+
 export enum TopicState {
     Active = "Active",
     Archived = "Archived",

@@ -1,6 +1,6 @@
 import { inject, Injectable, signal } from "@angular/core";
 import { injectInfiniteQuery, injectQuery } from "@tanstack/angular-query-experimental";
-import { concat, first, lastValueFrom, map, shareReplay, switchMap } from "rxjs";
+import { concat, first, forkJoin, lastValueFrom, map, of, shareReplay, switchMap } from "rxjs";
 import { toSignal } from "@angular/core/rxjs-interop";
 import { geoToH3 } from "h3-js";
 import { QUERY_KEYS } from "@/app/shared/constants";
@@ -8,7 +8,7 @@ import { PulseService } from "@/app/shared/services/api/pulse.service";
 import { PendingTopicsService } from "@/app/shared/services/topic/pending-topics.service";
 import { IpLocationService } from "@/app/shared/services/core/ip-location.service";
 
-@Injectable({ providedIn: "root" })
+@Injectable()
 export class TopicsService {
     private pulseService = inject(PulseService);
     private pendingTopicsService = inject(PendingTopicsService);
@@ -66,8 +66,8 @@ export class TopicsService {
             this.category(),
             this.pendingTopicsService.pendingTopicsIds(),
         ],
-        queryFn: () => this.getLocalTopics(),
-        enabled: this.category() === "trending"
+        queryFn: () => lastValueFrom(this.getLocalTopics()),
+        enabled: this.category() === "trending",
     }));
 
     public setSearchText(text: string) {
@@ -79,15 +79,18 @@ export class TopicsService {
     }
 
     private getLocalTopics() {
-        const topics$ = this.ipLocationService.coordinates$.pipe(
+        return this.ipLocationService.coordinates$.pipe(
             map(({ latitude, longitude }) => geoToH3(latitude, longitude, 1)),
             switchMap((h3Index) => {
-                return concat(
-                    this.pulseService.getTopicsByCellIndex(h3Index),
-                ).pipe(first((topics) => topics.length > 0, []));
+                return concat(this.pulseService.getTopicsByCellIndex(h3Index)).pipe(
+                    first((topics) => topics.length > 0, []),
+                );
+            }),
+            switchMap((topics) => {
+                if (topics.length === 0) return of([]);
+                return forkJoin(topics.map(({ id }) => this.pulseService.getById(id)));
             }),
             shareReplay({ bufferSize: 1, refCount: true }),
         );
-        return lastValueFrom(topics$);
     }
 }

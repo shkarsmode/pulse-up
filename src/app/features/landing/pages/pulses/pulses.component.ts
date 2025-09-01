@@ -37,7 +37,7 @@ import { TopicsService } from "../../services/topics.service";
         PrimaryButtonComponent,
         AngularSvgIconModule,
     ],
-    providers: [InfiniteLoaderService, PulsesPaginationService],
+    providers: [InfiniteLoaderService, PulsesPaginationService, TopicsService],
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PulsesComponent {

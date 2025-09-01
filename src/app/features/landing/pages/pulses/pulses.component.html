@@ -81,10 +81,9 @@
                     }
                     <div class="pulses__list">
                         @for (topic of localTopicsQuery.data(); track topic.id) {
-                            <div>{{ topic.title }}</div>
-                            <!-- <app-trending-topics-list-item
+                            <app-trending-topics-list-item
                                 [data]="topic"
-                                [vote]="userVotesMap()?.get(topic.id)" /> -->
+                                [vote]="userVotesMap()?.get(topic.id)" />
                         }
                     </div>
                     @if (isEmptyLocalTopics) {
