@@ -1,4 +1,14 @@
-<app-large-pulse [pulse]="data">
+<app-large-pulse
+    [pulse]="data"
+    [showTopBadge]="isCampaignBadgeVisible">
+    <div
+        card-top-badge
+        class="card-top-badge">
+        <svg-icon
+            src="assets/svg/goal.svg"
+            class="card-top-badge__icon" />
+        Campaign attached
+    </div>
     <app-large-pulse-icon
         [src]="data.icon"
         size="md"
@@ -56,7 +66,7 @@
                 *ngIf="topicUrl$ | async as topicUrl"
                 [topicUrl]="topicUrl" />
         </div>
-        @if (isCampaignAttached) {
+        <!-- @if (isCampaignAttached) {
             <div class="card-footer__campaign">
                 <div class="card-footer-campaign">
                     <svg-icon
@@ -65,7 +75,7 @@
                     Campaign attached
                 </div>
             </div>
-        }
+        } -->
     </div>
 </app-large-pulse>
 

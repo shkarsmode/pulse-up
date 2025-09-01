@@ -1,3 +1,10 @@
+@if (showTopBadge) {
+    <div
+        class="card-top-badge"
+        routerLink="/topic/{{ pulse.id }}">
+        <ng-content select="[card-top-badge]"></ng-content>
+    </div>
+}
 <div
     class="card-wrap"
     routerLink="/topic/{{ pulse.id }}">
@@ -21,7 +28,6 @@
     </div>
 </div>
 
-<div
-    class="card-footer">
+<div class="card-footer">
     <ng-content select="card-footer"></ng-content>
 </div>

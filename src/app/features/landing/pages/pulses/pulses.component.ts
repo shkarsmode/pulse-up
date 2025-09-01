@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject } from "@angular/core";
+import { ChangeDetectionStrategy, Component, computed, inject } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { RouterModule } from "@angular/router";
 import { AngularSvgIconModule } from "angular-svg-icon";
@@ -17,6 +17,7 @@ import { TopicsEmptyListComponent } from "../../ui/topics-empty-list/topics-empt
 import { PrimaryButtonComponent } from "@/app/shared/components/ui-kit/buttons/primary-button/primary-button.component";
 import { AppRoutes } from "@/app/shared/enums/app-routes.enum";
 import { TopicsService } from "../../services/topics.service";
+import { StringUtils } from "@/app/shared/helpers/string-utils";
 
 @Component({
     selector: "app-pulses",
@@ -49,6 +50,7 @@ export class PulsesComponent {
     public globalTopicsQuery = this.topicsService.globalTopicsQuery;
     public localTopicsQuery = this.topicsService.localTopicsQuery;
 
+    public categories = this.topicsService.categories;
     public get searchText() {
         return this.topicsService.searchText();
     }
@@ -62,12 +64,26 @@ export class PulsesComponent {
         return this.globalTopicsQuery.isFetchingNextPage();
     }
     public get isEmptyGlobalTopics() {
-        return !this.globalTopicsQuery.isLoading() && this.globalTopicsQuery.data()?.pages.flat().length === 0;
+        return (
+            !this.globalTopicsQuery.isLoading() &&
+            this.globalTopicsQuery.data()?.pages.flat().length === 0
+        );
     }
     public get isEmptyLocalTopics() {
         return !this.localTopicsQuery.isLoading() && this.localTopicsQuery.data()?.length === 0;
     }
-    public categories = this.topicsService.categories;
+    public localTopics = computed(() => {
+        const localTopics = this.localTopicsQuery.data() || [];
+        const searchText = StringUtils.normalizeWhitespace(this.searchText.toLowerCase());
+        if (searchText) {
+            return localTopics.filter(
+                (topic) =>
+                    topic.title.toLowerCase().includes(searchText) ||
+                    topic.keywords.some((keyword) => keyword.toLowerCase().includes(searchText)),
+            );
+        }
+        return localTopics;
+    });
 
     public loadMore() {
         if (this.globalTopicsQuery.isFetchingNextPage()) return;
