@@ -2,15 +2,7 @@ import { inject } from "@angular/core";
 import { HttpHeaders, HttpInterceptorFn } from "@angular/common/http";
 import { AuthenticationService } from "../../services/api/authentication.service";
 
-const whiteListedDomains = ["http://jsonip.com/", "http://api.ipinfo.io/lite/"];
-
 export const jwtInterceptor: HttpInterceptorFn = (req, next) => {
-    if (whiteListedDomains.some((domain) => req.url.includes(domain))) {
-        
-        return next(req);
-    }
-    console.log(req.url);
-
     const authenticationService = inject(AuthenticationService);
 
     const userToken = authenticationService.userTokenValue;

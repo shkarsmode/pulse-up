@@ -4,4 +4,4 @@ export interface ICategory {
     votes: number;
 }
 
-export type IFilterCategory = ICategory | "all" | "trending";
+export type IFilterCategory = string | "newest" | "trending";

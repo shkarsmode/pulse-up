@@ -21,6 +21,7 @@ import { MatIconModule } from "@angular/material/icon";
 import { FlatButtonDirective } from "../ui-kit/buttons/flat-button/flat-button.directive";
 import { AngularSvgIconModule } from "angular-svg-icon";
 import { CategoryFilterMenuItemComponent } from "./category-filter-menu-item/category-filter-menu-item.component";
+import { IFilterCategory } from "../../interfaces/category.interface";
 
 const DEFAULT_CATEGORY = "trending";
 
@@ -92,7 +93,7 @@ export class CategoryFilterMenuComponent implements OnInit, OnDestroy, OnChanges
         }, 100);
     }
 
-    public onCategorySelect(category: string): void {
+    public onCategorySelect(category: IFilterCategory): void {
         this.selectedCategory.emit(category);
         this.activeCategory = category;
         this.menuTrigger.closeMenu();

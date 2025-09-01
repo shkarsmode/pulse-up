@@ -253,6 +253,14 @@ export class PulseService {
         );
     }
 
+    public getTopicsByCellIndex(cellIndex: string): Observable<ITopic[]> {
+        return this.http.get<ITopic[]>(`${this.apiUrl}/map/cell`, {
+            params: {
+                cellIndex
+            }
+        });
+    }
+
     public validateTitle(value: string) {
         return this.http
             .post<IValidateTopicTitleResponse>(`${this.apiUrl}/topics/validate`, { title: value })

@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject } from "@angular/core";
+import { ChangeDetectionStrategy, Component, computed, inject } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { RouterModule } from "@angular/router";
 import { AngularSvgIconModule } from "angular-svg-icon";
@@ -19,6 +19,7 @@ import { AppRoutes } from "@/app/shared/enums/app-routes.enum";
 import { TopicsService } from "../../services/topics.service";
 import { PulseService } from "@/app/shared/services/api/pulse.service";
 import { map } from "rxjs";
+import { IFilterCategory } from "@/app/shared/interfaces/category.interface";
 
 @Component({
     selector: "app-pulses",
@@ -49,10 +50,13 @@ export class PulsesComponent {
 
     public userVotesMap = toSignal(this.votesService.votesByTopicId$);
     public suggestTopicRoute = "/" + AppRoutes.User.Topic.SUGGEST;
-    public topicsQuery = this.topicsService.topics;
+    public category = this.topicsService.category;
+    public globalTopicsQuery = this.topicsService.globalTopics;
     public localTopicsQuery = this.topicsService.localTopics;
+    public globalTopics = computed(() => this.globalTopicsQuery.data()?.pages.flat() ?? []);
+    public localTopics = computed(() => this.localTopicsQuery.data() ?? []);
     public categories$ = this.pulseService.categories$.pipe(
-        map((categories) => ["Trending", "Newest", ...categories.map((category) => category.name)]),
+        map((categories) => ["trending", "newest", ...categories.map((category) => category.name)]),
     );
     public get searchText() {
         return this.topicsService.searchText();
@@ -63,26 +67,30 @@ export class PulsesComponent {
     public get isSelectedCategoryVisible() {
         return this.selectedCategory !== "trending";
     }
-    public get isInitialLoading() {
-        return this.topicsQuery.isLoading();
+    public get isLoading() {
+        return this.localTopicsQuery.isLoading() || this.globalTopicsQuery.isLoading();
     }
     public get isLoadingMore() {
-        return this.topicsQuery.isFetchingNextPage();
+        return this.globalTopicsQuery.isFetchingNextPage();
     }
     public get isEmpty() {
-        return !this.isInitialLoading && this.topicsQuery.data()?.pages.flat().length === 0;
+        return (!this.localTopicsQuery.isLoading() && this.localTopicsQuery.data()?.length === 0) 
+        || (!this.globalTopicsQuery.isLoading() && this.globalTopicsQuery.data()?.pages.flat().length === 0);
+    }
+    public get isError() {
+        return this.localTopicsQuery.isError() || this.globalTopicsQuery.isError();
     }
 
     public loadMore() {
-        if (this.topicsQuery.isFetchingNextPage()) return;
-        this.topicsQuery.fetchNextPage();
+        if (this.globalTopicsQuery.isFetchingNextPage()) return;
+        this.globalTopicsQuery.fetchNextPage();
     }
 
     public onSearchValueChange(searchValue: string): void {
         this.topicsService.setSearchText(searchValue);
     }
 
-    public onCategorySelected(category: string): void {
+    public onCategorySelected(category: IFilterCategory): void {
         this.topicsService.setCategory(category);
     }
 }

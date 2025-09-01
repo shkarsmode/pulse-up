@@ -31,7 +31,7 @@ export class IpLocationService {
 
     private getCoordinatesFromIp(): Promise<ICoordinates> {
         return new Promise((resolve, reject) => {
-            fetch(this.jsonipUrl)
+            fetch(this.jsonipUrl, { mode: "cors" })
                 .then((response) => response.json())
                 .then(({ ip }) => {
                     console.log("ip", ip);
