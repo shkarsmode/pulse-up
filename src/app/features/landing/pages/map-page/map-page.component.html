@@ -19,15 +19,18 @@
             (markerClick)="onMarkerClick($event)"
             (zoomEnd)="onZoomEnd($event)" />
     }
-    <!-- <div class="map-page__filter">
+    <div class="map-page__filter">
         <app-category-filter-menu
             class="category-filter-menu"
+            [activeCategory]="(selectedCategory$ | async) || 'newest'"
+            [options]="(filterOptions$ | async) || []"
             (selectedCategory)="onSelectedCategory($event)" />
-        <ng-container *ngIf="selectedCategory$ | async as selectedCategory">
+        @if ((isNewestCategorySelected$ | async) === false) {
             <app-category-filter-selection
+                *ngIf="selectedCategory$ | async as selectedCategory"
                 [category]="selectedCategory"
-                (cancelSelection)="onSelectedCategory(null)" />
-        </ng-container>
-    </div> -->
+                (cancelSelection)="onSelectedCategory('newest')" />
+        }
+    </div>
     <app-map-info-button class="map-page__info" />
 </div>

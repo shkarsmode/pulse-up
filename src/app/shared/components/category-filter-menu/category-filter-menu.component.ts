@@ -46,11 +46,11 @@ export class CategoryFilterMenuComponent implements OnInit, OnDestroy, OnChanges
     private destroyRef = inject(DestroyRef);
 
     @Input() options: string[] = [];
+    @Input() activeCategory: string;
     @Output() selectedCategory = new EventEmitter<string>();
     @ViewChild(MatMenuTrigger) menuTrigger: MatMenuTrigger;
     @ViewChild("searchInput") searchInput: ElementRef<HTMLInputElement>;
 
-    public activeCategory = DEFAULT_CATEGORY;
     public filteredCategories: string[] = this.options;
     public filterControl = new FormControl<string>("");
     public clearButtonVisible$ = this.filterControl.valueChanges.pipe(map((value) => !!value));

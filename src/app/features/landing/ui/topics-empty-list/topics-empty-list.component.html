@@ -5,8 +5,14 @@
 
 <h2>No topics found</h2>
 <div>
-    <p>"{{ searchText }}" did not match any topics.</p>
-    <p>Would you like to create a new topic?</p>
+    @if (message.length) {
+        @for (text of message; track $index) {
+            <p>{{ text }}</p>
+        }
+    } @else {
+        <p>"{{ searchString }}" did not match any topics.</p>
+        <p>Would you like to create a new topic?</p>
+    }
 </div>
 <div class="empty-actions">
     <app-primary-button

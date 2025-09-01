@@ -1,7 +1,7 @@
 import { HttpClient } from "@angular/common/http";
 import { inject, Injectable } from "@angular/core";
 import { catchError, map, Observable, of, shareReplay, tap } from "rxjs";
-import { ITopic, TopicState } from "../../interfaces";
+import { ICellTopic, ITopic, TopicState } from "../../interfaces";
 import { API_URL } from "../../tokens/tokens";
 import { IValidateTopicTitleResponse } from "../../interfaces/validate-topic-title.response";
 import { ICategory } from "../../interfaces/category.interface";
@@ -253,10 +253,10 @@ export class PulseService {
         );
     }
 
-    public getTopicsByCellIndex(cellIndex: string): Observable<ITopic[]> {
-        return this.http.get<ITopic[]>(`${this.apiUrl}/map/cell`, {
+    public getTopicsByCellIndex(cellIndex: string): Observable<ICellTopic[]> {
+        return this.http.get<ICellTopic[]>(`${this.apiUrl}/map/cell`, {
             params: {
-                cellIndex
+                id: cellIndex
             }
         });
     }

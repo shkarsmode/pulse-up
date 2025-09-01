@@ -13,7 +13,8 @@ import { AppRoutes } from '@/app/shared/enums/app-routes.enum';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class TopicsEmptyListComponent {
-  @Input() searchText = '';
+  @Input() searchString = '';
+  @Input() message: string[] = [];
 
   public suggestTopicsLink = "/" + AppRoutes.User.Topic.SUGGEST;
 }
