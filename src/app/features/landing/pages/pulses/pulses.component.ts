@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, inject } from "@angular/core";
+import { ChangeDetectionStrategy, Component, inject } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { RouterModule } from "@angular/router";
 import { AngularSvgIconModule } from "angular-svg-icon";
@@ -17,9 +17,6 @@ import { TopicsEmptyListComponent } from "../../ui/topics-empty-list/topics-empt
 import { PrimaryButtonComponent } from "@/app/shared/components/ui-kit/buttons/primary-button/primary-button.component";
 import { AppRoutes } from "@/app/shared/enums/app-routes.enum";
 import { TopicsService } from "../../services/topics.service";
-import { PulseService } from "@/app/shared/services/api/pulse.service";
-import { map } from "rxjs";
-import { IFilterCategory } from "@/app/shared/interfaces/category.interface";
 
 @Component({
     selector: "app-pulses",
@@ -46,40 +43,26 @@ import { IFilterCategory } from "@/app/shared/interfaces/category.interface";
 export class PulsesComponent {
     private readonly votesService = inject(VotesService);
     private readonly topicsService = inject(TopicsService);
-    private readonly pulseService = inject(PulseService);
 
     public userVotesMap = toSignal(this.votesService.votesByTopicId$);
     public suggestTopicRoute = "/" + AppRoutes.User.Topic.SUGGEST;
-    public category = this.topicsService.category;
     public globalTopicsQuery = this.topicsService.globalTopics;
-    public localTopicsQuery = this.topicsService.localTopics;
-    public globalTopics = computed(() => this.globalTopicsQuery.data()?.pages.flat() ?? []);
-    public localTopics = computed(() => this.localTopicsQuery.data() ?? []);
-    public categories$ = this.pulseService.categories$.pipe(
-        map((categories) => ["trending", "newest", ...categories.map((category) => category.name)]),
-    );
     public get searchText() {
         return this.topicsService.searchText();
     }
     public get selectedCategory() {
         return this.topicsService.category();
     }
-    public get isSelectedCategoryVisible() {
-        return this.selectedCategory !== "trending";
-    }
-    public get isLoading() {
-        return this.localTopicsQuery.isLoading() || this.globalTopicsQuery.isLoading();
+    public get isInitialLoading() {
+        return this.globalTopicsQuery.isLoading();
     }
     public get isLoadingMore() {
         return this.globalTopicsQuery.isFetchingNextPage();
     }
     public get isEmpty() {
-        return (!this.localTopicsQuery.isLoading() && this.localTopicsQuery.data()?.length === 0) 
-        || (!this.globalTopicsQuery.isLoading() && this.globalTopicsQuery.data()?.pages.flat().length === 0);
+        return !this.isInitialLoading && this.globalTopicsQuery.data()?.pages.flat().length === 0;
     }
-    public get isError() {
-        return this.localTopicsQuery.isError() || this.globalTopicsQuery.isError();
-    }
+    public categories = this.topicsService.categories;
 
     public loadMore() {
         if (this.globalTopicsQuery.isFetchingNextPage()) return;
@@ -90,7 +73,7 @@ export class PulsesComponent {
         this.topicsService.setSearchText(searchValue);
     }
 
-    public onCategorySelected(category: IFilterCategory): void {
+    public onCategorySelected(category: string): void {
         this.topicsService.setCategory(category);
     }
 }
