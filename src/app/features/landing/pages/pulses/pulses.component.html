@@ -81,7 +81,7 @@
                         </p>
                     }
                     <div class="pulses__list">
-                        @for (topic of localTopicsQuery.data(); track topic.id) {
+                        @for (topic of localTopics(); track topic.id) {
                             <app-trending-topics-list-item
                                 [data]="topic"
                                 [vote]="userVotesMap()?.get(topic.id)" />
