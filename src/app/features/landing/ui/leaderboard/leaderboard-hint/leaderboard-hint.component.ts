@@ -13,7 +13,7 @@ import {
 import { AngularSvgIconModule } from "angular-svg-icon";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { interval, tap } from "rxjs";
-import { LeaderboardService } from "../../../services/leaderboard.service";
+import { LeaderboardService } from "../leaderboard.service";
 import { LeaderboardTimeframe, LeaderboardTimeframeStatus } from "@/app/shared/interfaces";
 import { getRemainingTimeToEnd } from "../../../helpers/getRemainingTimeToEnd";
 import { getElapsedTimePercentage } from "../../../helpers/getElapsedTimePercentage";

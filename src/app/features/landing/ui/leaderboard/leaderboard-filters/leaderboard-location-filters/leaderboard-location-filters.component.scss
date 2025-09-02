@@ -1,0 +1,20 @@
+@use "../../../../../../../styles/mixins" as mixins;
+
+.location-filter-button {
+    @include mixins.title-32px;
+    display: flex;
+    align-items: center;
+    column-gap: 16px;
+}
+
+.location-filter-button__icon {
+    transform: rotate(-90deg);
+}
+
+.location-filter-option__active {
+    background-color: var(--light-grey-color);
+
+    &:hover {
+        background-color: var(--light-grey-color);
+    }
+}

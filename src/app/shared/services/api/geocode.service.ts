@@ -2,7 +2,7 @@ import { inject, Injectable } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
 import { from, Observable } from "rxjs";
 import { TopicLocation } from "@/app/features/user/interfaces/topic-location.interface";
-import { GEOCODE_API_URL, MAPBOX_ACCESS_TOKEN } from "../../tokens/tokens";
+import { GEOCODING_API_URL, MAPBOX_ACCESS_TOKEN } from "../../tokens/tokens";
 import { MapboxFeature, MapboxFeatureCollection } from "../../interfaces";
 import { GeolocationUtils } from "../../helpers/geolocation-utils";
 
@@ -10,7 +10,7 @@ import { GeolocationUtils } from "../../helpers/geolocation-utils";
     providedIn: "root",
 })
 export class GeocodeService {
-    private readonly apiUrl: string = inject(GEOCODE_API_URL);
+    private readonly apiUrl: string = inject(GEOCODING_API_URL);
     private readonly accessToken: string = inject(MAPBOX_ACCESS_TOKEN);
     private readonly http: HttpClient = inject(HttpClient);
 

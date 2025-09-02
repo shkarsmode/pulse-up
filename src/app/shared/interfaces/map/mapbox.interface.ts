@@ -9,6 +9,9 @@ export interface MapboxFeature {
     id: string;
     geometry: Geometry;
     properties: FeatureProperties;
+    place_type?: string[];
+    place_name?: string;
+    text?: string;
 }
 
 export interface Geometry {

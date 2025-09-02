@@ -13,7 +13,7 @@ import { provideTanStackQuery, QueryClient } from "@tanstack/angular-query-exper
 import {
     API_URL,
     FIREBASE_CONFIG,
-    GEOCODE_API_URL,
+    GEOCODING_API_URL,
     IP_INFO_API_TOKEN,
     MAPBOX_ACCESS_TOKEN,
     MAPBOX_STYLE,
@@ -65,8 +65,8 @@ export const appConfig: ApplicationConfig = {
             useValue: environment.apiUrl,
         },
         {
-            provide: GEOCODE_API_URL,
-            useValue: environment.geocodeApiUrl,
+            provide: GEOCODING_API_URL,
+            useValue: environment.geocodingApiUrl,
         },
         {
             provide: MAPBOX_ACCESS_TOKEN,

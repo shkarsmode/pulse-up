@@ -1,6 +1,12 @@
 @use "../../../../../../styles/mixins" as mixins;
 
 :host {
+    display: flex;
+    flex-direction: column;
+    row-gap: 16px;
+}
+
+.date-filters {
     --button-width: 220px;
     display: flex;
     align-items: center;
@@ -16,12 +22,12 @@
     }
 }
 
-.leaderboard-filters__select,
-.leaderboard-header__datepicker {
+.date-filters__select,
+.date-filters__datepicker {
     min-width: var(--button-width);
 }
 
-.leaderboard-filters__select {
+.date-filters__select {
     @include mixins.media-xs {
         &::ng-deep {
             .mat-mdc-select-trigger {
@@ -31,7 +37,7 @@
     }
 }
 
-.leaderboard-header__datepicker {
+.date-filters__datepicker {
     @include mixins.media-xs {
         flex-grow: 1;
 

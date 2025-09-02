@@ -91,7 +91,7 @@ export class GlobeMapComponent {
     private is1920Desctop = toSignal(this.mediaService.mediaQuery("max", "XXXXL"));
 
     public map: mapboxgl.Map | null = null;
-    public selectedCategory$ = this.mapPageService.selectedCategory$;
+    public selectedCategory$ = this.mapPageService.selectedTopicCategory$;
 
     @Output() zoomEnd: EventEmitter<number> = new EventEmitter<number>();
     @Output() markerClick: EventEmitter<IMapMarker> = new EventEmitter<IMapMarker>();
