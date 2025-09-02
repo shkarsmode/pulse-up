@@ -2,14 +2,15 @@ import { CommonModule } from "@angular/common";
 import { ChangeDetectionStrategy, Component, inject, ViewChild } from "@angular/core";
 import { MatMenuModule, MatMenuTrigger } from "@angular/material/menu";
 import { AngularSvgIconModule } from "angular-svg-icon";
+import { map } from "rxjs";
 import { LeaderboardFiltersService } from "../leaderboard-filters.service";
 import { ILeaderboardLocationOption } from "@/app/features/landing/interfaces/leaderboard-filter.interface";
-import { map } from "rxjs";
+import { SpinnerComponent } from "@/app/shared/components/ui-kit/spinner/spinner.component";
 
 @Component({
     selector: "app-leaderboard-location-filters",
     standalone: true,
-    imports: [MatMenuModule, MatMenuTrigger, AngularSvgIconModule, CommonModule],
+    imports: [MatMenuModule, MatMenuTrigger, AngularSvgIconModule, CommonModule, SpinnerComponent],
     templateUrl: "./leaderboard-location-filters.component.html",
     styleUrl: "./leaderboard-location-filters.component.scss",
     changeDetection: ChangeDetectionStrategy.OnPush,
@@ -19,14 +20,19 @@ export class LeaderboardLocationFiltersComponent {
 
     private leaderboardFiltersService = inject(LeaderboardFiltersService);
 
-    public locationOptions = this.leaderboardFiltersService.locationOptions;
+    public locationOptions$ = this.leaderboardFiltersService.locationOptions$;
     public selectedLocation$ = this.leaderboardFiltersService.selectedLocation$;
     public buttonText$ = this.selectedLocation$.pipe(
         map((location) => this.getTileFromLocation(location))
     );
+    public isRequestingGeolocation$ = this.leaderboardFiltersService.isRequestingGeolocation$;
 
     public toggleMenu() {
         this.trigger.openMenu();
+    }
+
+    public getMoreLocationOptions() {
+        this.leaderboardFiltersService.requestMoreLocationOptions();
     }
 
     public onLocationOptionChange(option: ILeaderboardLocationOption) {

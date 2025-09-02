@@ -2,11 +2,8 @@ import { inject, Injectable } from "@angular/core";
 import { Observable, shareReplay } from "rxjs";
 import { IP_INFO_API_TOKEN, MAPBOX_ACCESS_TOKEN } from "../../tokens/tokens";
 import { IIpInfo } from "../../interfaces/ip-info/ip-info.interface";
+import { ILocationCoordinates } from "../../interfaces/location/location-coordinates.interface";
 
-interface ICoordinates {
-    longitude: number;
-    latitude: number;
-}
 
 @Injectable({
     providedIn: "root",
@@ -17,7 +14,7 @@ export class IpLocationService {
 
     private readonly ipInfoUrl = "https://api.ipinfo.io/lite/";
 
-    public coordinates$ = new Observable<ICoordinates>((observer) => {
+    public coordinates$ = new Observable<ILocationCoordinates>((observer) => {
         this.getCoordinatesFromIp()
             .then((coordinates) => {
                 observer.next(coordinates);
@@ -28,7 +25,7 @@ export class IpLocationService {
             });
     }).pipe(shareReplay({ bufferSize: 1, refCount: true }));
 
-    private getCoordinatesFromIp(): Promise<ICoordinates> {
+    private getCoordinatesFromIp(): Promise<ILocationCoordinates> {
         return new Promise((resolve, reject) => {
             fetch(`${this.ipInfoUrl}/me?token=${this.ipInfoApiToken}`)
                 .then((response) => response.json())

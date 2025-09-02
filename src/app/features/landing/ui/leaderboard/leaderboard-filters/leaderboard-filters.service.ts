@@ -1,8 +1,11 @@
-import { DestroyRef, inject, Injectable, signal } from "@angular/core";
+import { DestroyRef, inject, Injectable } from "@angular/core";
 import {
+    BehaviorSubject,
     catchError,
     combineLatest,
     distinctUntilChanged,
+    EMPTY,
+    filter,
     from,
     map,
     Observable,
@@ -17,7 +20,13 @@ import { IpLocationService } from "@/app/shared/services/core/ip-location.servic
 import { MapboxPlacesService } from "@/app/shared/services/api/mapbox-places.service";
 import { GeolocationCacheService } from "@/app/shared/services/core/geolocation-cache.service";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
-import { ILeaderboardFilterLocation, ILeaderboardLocationOption } from "../../../interfaces/leaderboard-filter.interface";
+import {
+    ILeaderboardFilterLocation,
+    ILeaderboardLocationOption,
+} from "../../../interfaces/leaderboard-filter.interface";
+import { GeolocationService } from "@/app/shared/services/core/geolocation.service";
+import { ILocationCoordinates } from "@/app/shared/interfaces/location/location-coordinates.interface";
+import { NotificationService } from "@/app/shared/services/core/notification.service";
 
 interface Option {
     value: LeaderboardTimeframeExtended;
@@ -40,10 +49,15 @@ export class LeaderboardFiltersService {
     private destroyRef = inject(DestroyRef);
     private leaderboardService = inject(LeaderboardService);
     private ipLocationService = inject(IpLocationService);
+    private geolocationService = inject(GeolocationService);
     private mapboxPlacesService = inject(MapboxPlacesService);
     private geolocationCacheService = inject(GeolocationCacheService);
+    private notificationService = inject(NotificationService);
 
-    private _locationOptions = signal<ILeaderboardLocationOption[]>(initialLocationOptions);
+    private locationOptionsSubject = new BehaviorSubject<ILeaderboardLocationOption[]>(
+        initialLocationOptions,
+    );
+    private userLocationCoordinates = new BehaviorSubject<ILocationCoordinates | null>(null);
 
     public timeframeOptions: Option[] = TIMEFRAME_OPTIONS;
     public date$ = this.leaderboardService.tempFilters$.pipe(
@@ -87,9 +101,13 @@ export class LeaderboardFiltersService {
             }
         }),
     );
-    public locationOptions = this._locationOptions.asReadonly();
+    public isRequestingGeolocation$ = this.geolocationService.status$.pipe(
+        map((status) => status === "pending"),
+    );
+    public locationOptions$ = this.locationOptionsSubject.asObservable();
 
     constructor() {
+        this.updateUserCoordinates();
         this.initializeLocationOptions();
     }
 
@@ -129,37 +147,75 @@ export class LeaderboardFiltersService {
         this.leaderboardService.applyFilters();
     }
 
-    private initializeLocationOptions() {
-        const geolocation = this.geolocationCacheService.get();
-
-        const coordinates$ = geolocation
-            ? of({
-                  longitude: geolocation.geolocationPosition.coords.longitude,
-                  latitude: geolocation.geolocationPosition.coords.latitude,
-              })
-            : this.ipLocationService.coordinates$;
-
-        coordinates$
+    public requestMoreLocationOptions() {
+        this.geolocationService
+            .getCurrentGeolocation()
             .pipe(
-                switchMap((coords) => this.getFeaturesFromCoordinates(coords)),
-                tap((features) => {
-                    if (!features) return;
-
-                    const options: ILeaderboardLocationOption[] = [...initialLocationOptions];
-                    const countryName = this.getCountryName(features);
-                    const regionName = this.getRegionName(features);
-
-                    if (countryName) {
-                        options.push({ label: countryName, value: "country" });
-                    }
-                    if (geolocation && regionName) {
-                        options.push({ label: regionName, value: "region" });
-                    }
-                    this._locationOptions.set(options);
+                catchError(() => {
+                    this.notificationService.error("Geolocation not available.");
+                    return EMPTY;
                 }),
                 takeUntilDestroyed(this.destroyRef),
             )
+            .subscribe((geolocation) => {
+                if (geolocation) {
+                    this.userLocationCoordinates.next({
+                        longitude: geolocation.geolocationPosition.coords.longitude,
+                        latitude: geolocation.geolocationPosition.coords.latitude,
+                    });
+                }
+            });
+    }
+
+    private updateUserCoordinates() {
+        const coordinates = this.geolocationCacheService.get();
+        if (coordinates) {
+            this.userLocationCoordinates.next({
+                latitude: coordinates.geolocationPosition.coords.latitude,
+                longitude: coordinates.geolocationPosition.coords.longitude,
+            });
+            return;
+        }
+
+        this.ipLocationService.coordinates$
+            .pipe(takeUntilDestroyed(this.destroyRef))
+            .subscribe((coords) => {
+                if (coords) {
+                    this.userLocationCoordinates.next({
+                        latitude: coords.latitude,
+                        longitude: coords.longitude,
+                    });
+                }
+            });
+    }
+
+    private initializeLocationOptions() {
+        this.userLocationCoordinates
+            .pipe(
+                filter((coords) => !!coords),
+                switchMap((coords) => this.getFeaturesFromCoordinates(coords)),
+                tap((features) => this.updateLocationOptions(features)),
+                takeUntilDestroyed(this.destroyRef),
+            )
             .subscribe();
+    }
+
+    private updateLocationOptions(features: MapboxFeatureCollection | null) {
+        if (!features) return;
+
+        const options: ILeaderboardLocationOption[] = [...initialLocationOptions];
+        const countryName = this.getCountryName(features);
+        const regionName = this.getRegionName(features);
+
+        if (countryName) {
+            options.push({ label: countryName, value: "country" });
+        }
+
+        if (this.geolocationCacheService.get() && regionName) {
+            options.push({ label: regionName, value: "region" });
+        }
+
+        this.locationOptionsSubject.next(options);
     }
 
     private getFeaturesFromCoordinates(coordinates: {

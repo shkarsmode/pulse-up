@@ -18,3 +18,9 @@
         background-color: var(--light-grey-color);
     }
 }
+
+.location-filter__unlock {
+    @include mixins.text-14px;
+    color: var(--dark-grey-color);
+    padding: 10px;
+}
