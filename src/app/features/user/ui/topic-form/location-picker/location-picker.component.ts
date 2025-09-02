@@ -2,7 +2,7 @@ import { Component, inject, Input } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { ReactiveFormsModule } from '@angular/forms';
 import { AppRoutes } from '@/app/shared/enums/app-routes.enum';
-import { SendTopicService } from '@/app/shared/services/core/send-topic.service';
+import { SendTopicService } from '@/app/shared/services/topic/send-topic.service';
 import { TopicInfoComponent } from "../topic-info/topic-info.component";
 import { tooltipText } from '../../../constants/tooltip-text';
 import { TopicLocation } from '../../../interfaces/topic-location.interface';

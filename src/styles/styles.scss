@@ -318,6 +318,8 @@ html {
 
             container-color: var(--white-color),
 
+            item-hover-state-layer-color: var(--light-grey-color),
+            item-focus-state-layer-color: var(--light-grey-color),
             item-label-text-color: var(--black-color),
             item-label-text-size: 16px,
 
@@ -326,13 +328,13 @@ html {
         )
     );
     &.mat-mdc-menu-panel {
-        min-width: 200px;
+        min-width: 220px;
         border-radius: 10px;
         box-shadow: 0px 3px 10px 0px #0000002E;
         margin-top: 8px;
     }
     .mat-mdc-menu-item {
-        min-height: 40px;
+        min-height: 48px;
     }
     .mat-mdc-menu-item-text {
         display: flex;

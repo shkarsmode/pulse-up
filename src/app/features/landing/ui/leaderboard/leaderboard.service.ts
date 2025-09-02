@@ -11,21 +11,21 @@ import {
 } from "rxjs";
 import { PulseService } from "@/app/shared/services/api/pulse.service";
 import { LeaderboardTimeframeExtended, LeaderboardTimeframeStatus } from "@/app/shared/interfaces";
-import { getTimeframeStatus } from "../helpers/getTimeframeStatus";
-
-interface ILeaderboardTempFilter {
-    date: Date | null;
-    timeframe: LeaderboardTimeframeExtended;
-}
-
-interface ILeaderboardFilter {
-    date: Date;
-    timeframe: LeaderboardTimeframeExtended;
-}
+import { getTimeframeStatus } from "../../helpers/getTimeframeStatus";
+import {
+    ILeaderboardFilter,
+    ILeaderboardFilterLocation,
+    ILeaderboardTempFilter,
+} from "../../interfaces/leaderboard-filter.interface";
 
 const initialTempFilter: ILeaderboardTempFilter = {
     date: null,
     timeframe: "last24Hours",
+    location: {
+        country: null,
+        region: null,
+        city: null,
+    },
 };
 
 const initialFilter: ILeaderboardFilter = {
@@ -53,7 +53,13 @@ export class LeaderboardService {
     public timeframeStatus$ = this.timeframeStatus.asObservable();
     public topics$ = this.filters.pipe(
         distinctUntilChanged((prev, curr) => {
-            return prev.date.getTime() === curr.date.getTime() && prev.timeframe === curr.timeframe;
+            return (
+                prev.date.getTime() === curr.date.getTime() &&
+                prev.timeframe === curr.timeframe &&
+                (prev.location?.country === curr.location?.country ||
+                    prev.location?.region === curr.location?.region ||
+                    prev.location?.city === curr.location?.city)
+            );
         }),
         tap(() => {
             this.isLoadingSubject.next(true);
@@ -65,6 +71,9 @@ export class LeaderboardService {
                 date: filter.date.toDateString(),
                 timeframe: filter.timeframe,
                 includeTopicDetails: true,
+                ...(filter.location?.country && { "Location.Country": filter.location.country }),
+                ...(filter.location?.region && { "Location.Region": filter.location.region }),
+                ...(filter.location?.city && { "Location.City": filter.location.city }),
             });
         }),
         catchError(() => {
@@ -94,10 +103,20 @@ export class LeaderboardService {
         });
     }
 
+    public setLocation(location: Partial<ILeaderboardFilterLocation> | null) {
+        const currentFilters = this.tempFilters.getValue();
+        this.tempFilters.next({
+            ...currentFilters,
+            location: {
+                ...currentFilters.location,
+                ...location,
+            },
+        });
+    }
+
     public applyFilters() {
-        const { date, timeframe } = this.tempFilters.getValue();
-        if (!date) return;
-        this.filters.next({ date, timeframe });
+        const { date, timeframe, location } = this.tempFilters.getValue();
+        this.filters.next({ date: date || new Date(), timeframe, location });
     }
 
     public updateTimeframeStatus() {

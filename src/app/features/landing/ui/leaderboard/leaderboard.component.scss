@@ -7,10 +7,6 @@
     margin-bottom: 16px;
 }
 
-.leaderboard__title {
-    @include title-32px;
-}
-
 .leaderboard-header__action--search {
     display: block;
     transform: scaleX(-1);

@@ -2,17 +2,17 @@ import { Component, ElementRef, inject, ViewChild, OnInit, DestroyRef } from "@a
 import { CommonModule, Location } from "@angular/common";
 import { Router } from "@angular/router";
 import { filter, map } from "rxjs";
-import { SendTopicService } from "@/app/shared/services/core/send-topic.service";
+import { SendTopicService } from "@/app/shared/services/topic/send-topic.service";
 import { ProfileService } from "@/app/shared/services/profile/profile.service";
 import { NotificationService } from "@/app/shared/services/core/notification.service";
 import { isErrorWithMessage } from "@/app/shared/helpers/errors/is-error-with-message";
-import { VotingService } from "@/app/shared/services/core/voting.service";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { FadeInDirective } from "@/app/shared/animations/fade-in.directive";
 import { AngularSvgIconModule } from "angular-svg-icon";
 import { MapComponent } from "@/app/shared/components/map/map.component";
 import { SecondaryButtonComponent } from "@/app/shared/components/ui-kit/buttons/secondary-button/secondary-button.component";
 import { PrimaryButtonComponent } from "@/app/shared/components/ui-kit/buttons/primary-button/primary-button.component";
+import { VotingService } from "@/app/shared/services/votes/voting.service";
 
 @Component({
     selector: "app-topic-preview",

@@ -7,7 +7,7 @@ import {
     RouterStateSnapshot,
 } from "@angular/router";
 import { inject, Injectable } from "@angular/core";
-import { SendTopicService } from "@/app/shared/services/core/send-topic.service";
+import { SendTopicService } from "@/app/shared/services/topic/send-topic.service";
 import { AppRoutes } from "@/app/shared/enums/app-routes.enum";
 
 @Injectable({

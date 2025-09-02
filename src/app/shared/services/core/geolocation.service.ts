@@ -1,9 +1,10 @@
 import { inject, Injectable } from "@angular/core";
-import { BehaviorSubject, catchError, map, Observable, switchMap, throwError } from "rxjs";
+import { BehaviorSubject, catchError, map, Observable, switchMap, tap, throwError } from "rxjs";
 import { GeocodeService } from "../api/geocode.service";
 import { IGeolocation, IGeolocationPosition } from "../../interfaces";
 import { DevSettingsService } from "./dev-settings.service";
 import { environment } from "@/environments/environment";
+import { GeolocationCacheService } from "./geolocation-cache.service";
 
 type GeolocationStatus = "initial" | "pending" | "success" | "error";
 
@@ -17,6 +18,7 @@ interface GetCurrentGeolocationOptions {
 export class GeolocationService {
     private geocodeService = inject(GeocodeService);
     private devSettingsService = inject(DevSettingsService);
+    private geolocationCacheService = inject(GeolocationCacheService);
     private statusSubject = new BehaviorSubject<GeolocationStatus>("initial");
     public status$ = this.statusSubject.asObservable();
 
@@ -122,6 +124,9 @@ export class GeolocationService {
                         return throwError(() => new Error("Failed to retrieve location details."));
                     }),
                 );
+            }),
+            tap((geolocation) => {
+                this.geolocationCacheService.save(geolocation);
             }),
         );
     }

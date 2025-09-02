@@ -1,7 +1,6 @@
 import { Component, inject, DestroyRef, Output, EventEmitter, OnInit } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { SvgIconComponent } from "angular-svg-icon";
-import { VotingService } from "@/app/shared/services/core/voting.service";
 import { takeUntilDestroyed, toObservable } from "@angular/core/rxjs-interop";
 import {
     BehaviorSubject,
@@ -24,6 +23,7 @@ import { VotingError, VotingErrorCode } from "@/app/shared/helpers/errors/voting
 import { isErrorWithMessage } from "@/app/shared/helpers/errors/is-error-with-message";
 import { WaveAnimationDirective } from "@/app/shared/directives/wave-animation/wave-animation.directive";
 import { PulsePageService } from "../../services/pulse-page.service";
+import { VotingService } from "@/app/shared/services/votes/voting.service";
 
 function delayBetween<T>(delayMs: number, first = false) {
     let past = Date.now();

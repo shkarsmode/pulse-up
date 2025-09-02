@@ -1,18 +1,30 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, inject, OnInit, OnDestroy } from "@angular/core";
+import {
+    ChangeDetectionStrategy,
+    Component,
+    DestroyRef,
+    inject,
+    OnInit,
+    OnDestroy,
+} from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { FormControl } from "@angular/forms";
-import { AngularSvgIconModule } from "angular-svg-icon";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { distinctUntilChanged, filter, map, tap } from "rxjs";
 import { SelectComponent } from "@/app/shared/components/material/select/select.component";
 import { LeaderboardTimeframeExtended } from "@/app/shared/interfaces";
 import { LeaderboardFiltersService } from "./leaderboard-filters.service";
 import { LeaderboardDatepickerComponent } from "../leaderboard-datepicker/leaderboard-datepicker.component";
+import { LeaderboardLocationFiltersComponent } from "./leaderboard-location-filters/leaderboard-location-filters.component";
 
 @Component({
     selector: "app-leaderboard-filters",
     standalone: true,
-    imports: [CommonModule, SelectComponent, AngularSvgIconModule, LeaderboardDatepickerComponent],
+    imports: [
+        CommonModule,
+        SelectComponent,
+        LeaderboardDatepickerComponent,
+        LeaderboardLocationFiltersComponent,
+    ],
     templateUrl: "./leaderboard-filters.component.html",
     styleUrl: "./leaderboard-filters.component.scss",
     changeDetection: ChangeDetectionStrategy.OnPush,

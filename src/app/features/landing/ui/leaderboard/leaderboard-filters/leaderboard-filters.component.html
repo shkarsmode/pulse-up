@@ -1,15 +1,21 @@
-<app-select
-    [control]="timeframeControl"
-    [options]="timeframeOptions"
-    leftIconUrl="assets/svg/clock-arrow-back.svg"
-    class="leaderboard-filters__select">
-</app-select>
+<app-leaderboard-location-filters/>
 
-@if (datepickerButtonVisible$ | async) {
-    <app-leaderboard-datepicker
-        class="leaderboard-header__datepicker"
-        [buttonText]="(buttonText$ | async)!"
-        [date]="date$ | async"
-        [timeframe]="(timeframe$ | async)!"
-        (dateChange)="onDateChange($event)" />
-}
+<div class="date-filters">
+    <app-select
+        [control]="timeframeControl"
+        [options]="timeframeOptions"
+        leftIconUrl="assets/svg/clock-arrow-back.svg"
+        class="date-filters__select">
+    </app-select>
+
+    @if (datepickerButtonVisible$ | async) {
+        <app-leaderboard-datepicker
+            class="date-filters__datepicker"
+            [buttonText]="(buttonText$ | async)!"
+            [date]="date$ | async"
+            [timeframe]="(timeframe$ | async)!"
+            (dateChange)="onDateChange($event)" />
+    }
+</div>
+
+

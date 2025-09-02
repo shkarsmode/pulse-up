@@ -1,6 +1,6 @@
 import { inject, Injectable } from "@angular/core";
 import { BehaviorSubject, catchError, switchMap, take, tap, throwError } from "rxjs";
-import { GeolocationService } from "./geolocation.service";
+import { GeolocationService } from "../core/geolocation.service";
 import { AuthenticationService } from "../api/authentication.service";
 import { VotingError, VotingErrorCode } from "../../helpers/errors/voting-error";
 import { VoteService } from "../api/vote.service";
@@ -10,7 +10,7 @@ import { SuccessfulVotePopupComponent } from "@/app/features/landing/ui/successf
 import { AcceptRulesPopupComponent } from "@/app/features/landing/ui/accept-rules-popup/accept-rules-popup.component";
 import { ConfirmPhoneNumberPopupComponent } from "@/app/features/landing/ui/confirm-phone-number-popup/confirm-phone-number-popup.component";
 import { SigninRequiredPopupComponent } from "../../components/popups/signin-required-popup/signin-required-popup.component";
-import { DialogService } from "./dialog.service";
+import { DialogService } from "../core/dialog.service";
 import { GetLocationPopupComponent } from "@/app/features/landing/ui/get-location-popup/get-location-popup.component";
 
 @Injectable({

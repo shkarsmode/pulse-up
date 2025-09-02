@@ -4,7 +4,7 @@ import { CommonModule } from "@angular/common";
 import { MatDialog } from "@angular/material/dialog";
 import { map, Observable, take } from "rxjs";
 import { AppRoutes } from "@/app/shared/enums/app-routes.enum";
-import { SendTopicService } from "@/app/shared/services/core/send-topic.service";
+import { SendTopicService } from "@/app/shared/services/topic/send-topic.service";
 import { PulseService } from "@/app/shared/services/api/pulse.service";
 import { ErrorMessageBuilder } from "../../helpers/error-message-builder";
 import { tooltipText } from "../../constants/tooltip-text";

@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, inject } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { AngularSvgIconModule } from "angular-svg-icon";
 import { combineLatest, filter, map } from "rxjs";
-import { LeaderboardService } from "../../services/leaderboard.service";
+import { LeaderboardService } from "./leaderboard.service";
 import { SpinnerComponent } from "@/app/shared/components/ui-kit/spinner/spinner.component";
 import { LeaderboardListItemComponent } from "./leaderboard-list-item/leaderboard-list-item.component";
 import { LeaderboardHintComponent } from "./leaderboard-hint/leaderboard-hint.component";
