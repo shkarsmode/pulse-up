@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, inject } from "@angular/core";
+import { ChangeDetectionStrategy, Component, computed, inject, OnInit } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { RouterModule } from "@angular/router";
 import { AngularSvgIconModule } from "angular-svg-icon";
@@ -38,10 +38,10 @@ import { StringUtils } from "@/app/shared/helpers/string-utils";
         PrimaryButtonComponent,
         AngularSvgIconModule,
     ],
-    providers: [InfiniteLoaderService, PulsesPaginationService, TopicsService],
+    providers: [InfiniteLoaderService, PulsesPaginationService],
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class PulsesComponent {
+export class PulsesComponent implements OnInit {
     private readonly votesService = inject(VotesService);
     public readonly topicsService = inject(TopicsService);
 
@@ -85,6 +85,10 @@ export class PulsesComponent {
         return localTopics;
     });
 
+    public ngOnInit() {
+        this.refetchQueries();
+    }
+
     public loadMore() {
         if (this.globalTopicsQuery.isFetchingNextPage()) return;
         this.globalTopicsQuery.fetchNextPage();
@@ -96,5 +100,17 @@ export class PulsesComponent {
 
     public onCategorySelected(category: string): void {
         this.topicsService.setCategory(category);
+    }
+
+    private refetchQueries() {
+        const localTopics = this.localTopicsQuery.data();
+        const globalTopics = this.globalTopicsQuery.data()?.pages.flat();
+
+        if (localTopics) {
+            this.localTopicsQuery.refetch();
+        }
+        if (globalTopics) {
+            this.globalTopicsQuery.refetch();
+        }
     }
 }

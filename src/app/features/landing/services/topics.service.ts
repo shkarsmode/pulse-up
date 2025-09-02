@@ -8,7 +8,7 @@ import { PulseService } from "@/app/shared/services/api/pulse.service";
 import { PendingTopicsService } from "@/app/shared/services/topic/pending-topics.service";
 import { IpLocationService } from "@/app/shared/services/core/ip-location.service";
 
-@Injectable()
+@Injectable({ providedIn: "root" })
 export class TopicsService {
     private pulseService = inject(PulseService);
     private pendingTopicsService = inject(PendingTopicsService);
