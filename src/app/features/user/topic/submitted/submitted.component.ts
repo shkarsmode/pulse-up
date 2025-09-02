@@ -1,7 +1,7 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { AppRoutes } from '../../../../shared/enums/app-routes.enum';
-import { SendTopicService } from '../../../../shared/services/core/send-topic.service';
+import { SendTopicService } from '../../../../shared/services/topic/send-topic.service';
 import { AngularSvgIconModule } from "angular-svg-icon";
 import { PrimaryButtonComponent } from "@/app/shared/components/ui-kit/buttons/primary-button/primary-button.component";
 import { SecondaryButtonComponent } from "@/app/shared/components/ui-kit/buttons/secondary-button/secondary-button.component";

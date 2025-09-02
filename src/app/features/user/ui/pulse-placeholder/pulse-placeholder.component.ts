@@ -1,6 +1,6 @@
 import { Component, inject, Input, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { SendTopicService } from '../../../../shared/services/core/send-topic.service';
+import { SendTopicService } from '../../../../shared/services/topic/send-topic.service';
 
 @Component({
     selector: 'app-pulse-placeholder',

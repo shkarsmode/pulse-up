@@ -7,8 +7,8 @@ import { PopupSubtitleComponent } from "@/app/shared/components/ui-kit/popup/pop
 import { PopupTextComponent } from "@/app/shared/components/ui-kit/popup/popup-text/popup-text.component";
 import { PopupLayoutComponent } from "@/app/shared/components/ui-kit/popup/popup.component";
 import { SignInFormService } from "@/app/shared/services/core/sign-in-form.service";
-import { VotingService } from "@/app/shared/services/core/voting.service";
 import { AuthDisclaimerComponent } from "@/app/shared/components/auth-disclaimer/auth-disclaimer.component";
+import { VotingService } from "@/app/shared/services/votes/voting.service";
 
 @Component({
     selector: "app-welcome-popup",

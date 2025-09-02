@@ -5,7 +5,7 @@ import { BehaviorSubject, catchError, map, Subject, take, takeUntil, tap, throwE
 import mapboxgl from "mapbox-gl";
 import * as h3 from "h3-js";
 import { MatDialog } from "@angular/material/dialog";
-import { SendTopicService } from "@/app/shared/services/core/send-topic.service";
+import { SendTopicService } from "@/app/shared/services/topic/send-topic.service";
 import { AppRoutes } from "@/app/shared/enums/app-routes.enum";
 import { MapUtils } from "@/app/shared/services/map/map-utils.service";
 import { GeolocationService } from "@/app/shared/services/core/geolocation.service";

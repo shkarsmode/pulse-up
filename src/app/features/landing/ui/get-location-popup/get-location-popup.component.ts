@@ -7,7 +7,7 @@ import { PopupTitleComponent } from "@/app/shared/components/ui-kit/popup/popup-
 import { PopupCloseButtonComponent } from "@/app/shared/components/ui-kit/popup/popup-close-button/popup-close-button.component";
 import { PrimaryButtonComponent } from "@/app/shared/components/ui-kit/buttons/primary-button/primary-button.component";
 import { GeolocationService } from "@/app/shared/services/core/geolocation.service";
-import { VotingService } from "@/app/shared/services/core/voting.service";
+import { VotingService } from "@/app/shared/services/votes/voting.service";
 import { CommonModule } from "@angular/common";
 import { Component, DestroyRef, inject, OnInit } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";

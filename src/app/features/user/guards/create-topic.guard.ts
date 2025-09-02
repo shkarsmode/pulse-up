@@ -1,6 +1,6 @@
 import { ActivatedRouteSnapshot, CanActivate, GuardResult, MaybeAsync, RouterStateSnapshot } from "@angular/router";
 import { inject, Injectable } from "@angular/core";
-import { SendTopicService } from "@/app/shared/services/core/send-topic.service";
+import { SendTopicService } from "@/app/shared/services/topic/send-topic.service";
 
 @Injectable({
     providedIn: "root",

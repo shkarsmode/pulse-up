@@ -10,8 +10,8 @@ import {
 } from "@/app/shared/helpers/errors/authentication-error";
 import { NotificationService } from "@/app/shared/services/core/notification.service";
 import { isErrorWithMessage } from "@/app/shared/helpers/errors/is-error-with-message";
-import { VotingService } from "@/app/shared/services/core/voting.service";
 import { PopupBackButtonComponent } from "@/app/shared/components/ui-kit/popup/popup-back-button/popup-back-button.component";
+import { VotingService } from "@/app/shared/services/votes/voting.service";
 
 @Component({
     selector: "app-confirm-phone-number-popup",
