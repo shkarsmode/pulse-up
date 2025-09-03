@@ -11,6 +11,7 @@ export interface MapboxFeature {
     properties: FeatureProperties;
     place_type?: string[];
     place_name?: string;
+    name?: string;
     text?: string;
 }
 
@@ -21,7 +22,7 @@ export interface Geometry {
 
 export interface FeatureProperties {
     mapbox_id: string;
-    feature_type: string;
+    feature_type: "place" | "district" | "region" | "country";
     full_address: string;
     name: string;
     name_preferred: string;

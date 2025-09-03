@@ -1,0 +1,31 @@
+@let options = options$ | async;
+
+<div class="location-filter">
+    <button
+        class="location-filter-button"
+        [matMenuTriggerFor]="locationMenu"
+        #locationMenuTrigger="matMenuTrigger">
+        <span>{{ buttonText$ | async }}</span>
+        <svg-icon
+            src="assets/svg/arrow-left.svg"
+            class="location-filter-button__icon" />
+    </button>
+</div>
+
+<mat-menu
+    #locationMenu="matMenu"
+    class="floating-menu floating-menu--visible">
+    <ng-template matMenuContent>
+        <app-location-search class="location-search" />
+        @for (option of options; track $index) {
+            <button
+                mat-menu-item
+                class="location-filter-option"
+                [class.location-filter-option--selected]="option.selected"
+                (click)="onSelect(option)">
+                <span>{{ option.label }}</span>
+                <span class="location-filter-option__checkbox"></span>
+            </button>
+        }
+    </ng-template>
+</mat-menu>

@@ -1,0 +1,24 @@
+<div class="location-search">
+    <div class="location-search-input">
+        <input
+            type="text"
+            [formControl]="searchControl"
+            placeholder="Search (USA, Brazil, Miami...)"
+            (focus)="onFocus()"
+            (click)="$event.stopPropagation()" />
+    </div>
+
+    @if (suggestionsVisible()) {
+        <ul class="suggestions">
+            @for (option of options(); track $index) {
+                <li>
+                    <button
+                        class="suggestion-item"
+                        (click)="selectSuggestion($event, $index)">
+                        {{ option }}
+                    </button>
+                </li>
+            }
+        </ul>
+    }
+</div>

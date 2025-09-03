@@ -14,7 +14,7 @@ import { LeaderboardTimeframeExtended, LeaderboardTimeframeStatus } from "@/app/
 import { getTimeframeStatus } from "../../helpers/getTimeframeStatus";
 import {
     ILeaderboardFilter,
-    ILeaderboardFilterLocation,
+    ILeaderboardLocationOption,
     ILeaderboardTempFilter,
 } from "../../interfaces/leaderboard-filter.interface";
 
@@ -22,9 +22,14 @@ const initialTempFilter: ILeaderboardTempFilter = {
     date: null,
     timeframe: "last24Hours",
     location: {
-        country: null,
-        region: null,
-        city: null,
+        id: "global",
+        label: "Global",
+        type: "quickPick",
+        data: {
+            country: null,
+            region: null,
+            city: null,
+        },
     },
 };
 
@@ -103,20 +108,25 @@ export class LeaderboardService {
         });
     }
 
-    public setLocation(location: Partial<ILeaderboardFilterLocation> | null) {
+    public setLocation(location: ILeaderboardLocationOption) {
         const currentFilters = this.tempFilters.getValue();
         this.tempFilters.next({
             ...currentFilters,
-            location: {
-                ...currentFilters.location,
-                ...location,
-            },
+            location,
         });
     }
 
     public applyFilters() {
         const { date, timeframe, location } = this.tempFilters.getValue();
-        this.filters.next({ date: date || new Date(), timeframe, location });
+        this.filters.next({
+            date: date || new Date(),
+            timeframe,
+            location: {
+                country: location.data.country,
+                region: location.data.region,
+                city: location.data.city,
+            },
+        });
     }
 
     public updateTimeframeStatus() {
