@@ -1,5 +1,5 @@
 import { DestroyRef, inject, Injectable } from "@angular/core";
-import { BehaviorSubject, combineLatest, filter, map, tap } from "rxjs";
+import { BehaviorSubject, combineLatest, filter, map, take, tap } from "rxjs";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { ILeaderboardLocationOption } from "@/app/features/landing/interfaces/leaderboard-filter.interface";
 import { LeaderboardFiltersService } from "../leaderboard-filters.service";
@@ -36,6 +36,7 @@ export class LeaderboardLocationFilterService {
                 filter(
                     (locations) => locations.length > 0 && this.optionsSubject.value.length === 1,
                 ),
+                take(1),
                 map((locations) => locations.slice(0, 3)),
                 map((locations) =>
                     locations.map(
