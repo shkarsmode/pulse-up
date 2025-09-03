@@ -104,9 +104,9 @@ export class LeaderboardFiltersService {
     public isRequestingGeolocation$ = this.geolocationService.status$.pipe(
         map((status) => status === "pending"),
     );
-    public isGeolocationAccessGranted$ = this.geolocationService.status$.pipe(
-        map((status) => status === "success"),
-    );
+    public get isGeolocationAccessGranted() {
+        return !!this.geolocationCacheService.get();
+    }
     public locationOptions$ = this.locationOptionsSubject.asObservable();
 
     constructor() {
