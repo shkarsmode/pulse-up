@@ -1,7 +1,9 @@
-import { inject, Injectable } from "@angular/core";
-import { BehaviorSubject, combineLatest, map } from "rxjs";
+import { DestroyRef, inject, Injectable } from "@angular/core";
+import { BehaviorSubject, combineLatest, filter, map, tap } from "rxjs";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { ILeaderboardLocationOption } from "@/app/features/landing/interfaces/leaderboard-filter.interface";
 import { LeaderboardFiltersService } from "../leaderboard-filters.service";
+import { LeaderboardService } from "../../leaderboard.service";
 
 interface ILeaderboardLocationOptionWithSelected extends ILeaderboardLocationOption {
     selected: boolean;
@@ -11,6 +13,8 @@ interface ILeaderboardLocationOptionWithSelected extends ILeaderboardLocationOpt
     providedIn: "root",
 })
 export class LeaderboardLocationFilterService {
+    private destroyRef = inject(DestroyRef);
+    private leaderboardService = inject(LeaderboardService);
     private leaderboardFiltersService = inject(LeaderboardFiltersService);
 
     private optionsSubject = new BehaviorSubject<ILeaderboardLocationOption[]>([
@@ -25,7 +29,37 @@ export class LeaderboardLocationFilterService {
             },
         },
     ]);
-    
+
+    constructor() {
+        this.leaderboardService.availableLocations$
+            .pipe(
+                filter(
+                    (locations) => locations.length > 0 && this.optionsSubject.value.length === 1,
+                ),
+                map((locations) => locations.slice(0, 3)),
+                map((locations) =>
+                    locations.map(
+                        ({ country, state }) =>
+                            ({
+                                id: `${country}-${state}`,
+                                label: `${state}, ${country}`,
+                                type: "quickPick",
+                                data: {
+                                    country,
+                                    region: state,
+                                    city: null,
+                                },
+                            }) as ILeaderboardLocationOption,
+                    ),
+                ),
+                tap((locations) => {
+                    this.optionsSubject.next([this.optionsSubject.value[0], ...locations]);
+                }),
+                takeUntilDestroyed(this.destroyRef),
+            )
+            .subscribe();
+    }
+
     public selectedOption$ = this.leaderboardFiltersService.location$;
     public options$ = combineLatest([this.optionsSubject, this.selectedOption$]).pipe(
         map(([options, selectedOption]) =>

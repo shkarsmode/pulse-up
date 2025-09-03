@@ -10,6 +10,8 @@ import { IH3Pulses } from "@/app/features/landing/interfaces/h3-pulses.interface
 import { IH3Votes } from "@/app/shared/interfaces/map/h3-votes.interface";
 import { IGetLeaderboardTopicsRequest } from "../../interfaces/topic/get-leaderboard-topics-request.interface";
 import { IGetLeaderboardTopicsResponse } from "../../interfaces/topic/get-leaderboard-topics-response.interface";
+import { IGetLeaderboardLocationsRequest } from "../../interfaces/topic/get-leaderboard-locations-request.interface";
+import { IGetLeaderboardLocationsResponse } from "../../interfaces/topic/get-leaderboard-locations-response.interface";
 
 type RequestParams = Record<
     string,
@@ -293,6 +295,16 @@ export class PulseService {
         params: IGetLeaderboardTopicsRequest,
     ): Observable<IGetLeaderboardTopicsResponse> {
         return this.http.get<IGetLeaderboardTopicsResponse>(`${this.apiUrl}/topics/leaderboard`, {
+            params: {
+                ...params,
+            },
+        });
+    }
+
+    public getLeaderboardLocations(
+        params: IGetLeaderboardLocationsRequest,
+    ): Observable<IGetLeaderboardLocationsResponse> {
+        return this.http.get<IGetLeaderboardLocationsResponse>(`${this.apiUrl}/topics/leaderboard/locations`, {
             params: {
                 ...params,
             },
