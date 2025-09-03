@@ -14,17 +14,17 @@ import { SelectComponent } from "@/app/shared/components/material/select/select.
 import { LeaderboardTimeframeExtended } from "@/app/shared/interfaces";
 import { LeaderboardFiltersService } from "./leaderboard-filters.service";
 import { LeaderboardDatepickerComponent } from "../leaderboard-datepicker/leaderboard-datepicker.component";
-import { LeaderboardLocationFiltersComponent } from "./leaderboard-location-filters/leaderboard-location-filters.component";
+import { LeaderboardLocationFilterComponent } from "./leaderboard-location-filter/leaderboard-location-filter.component";
 
 @Component({
     selector: "app-leaderboard-filters",
     standalone: true,
     imports: [
-        CommonModule,
-        SelectComponent,
-        LeaderboardDatepickerComponent,
-        LeaderboardLocationFiltersComponent,
-    ],
+    CommonModule,
+    SelectComponent,
+    LeaderboardDatepickerComponent,
+    LeaderboardLocationFilterComponent
+],
     templateUrl: "./leaderboard-filters.component.html",
     styleUrl: "./leaderboard-filters.component.scss",
     changeDetection: ChangeDetectionStrategy.OnPush,

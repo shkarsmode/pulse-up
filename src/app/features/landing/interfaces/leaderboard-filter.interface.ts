@@ -1,6 +1,6 @@
 import { LeaderboardTimeframeExtended } from "@/app/shared/interfaces";
 
-export interface ILeaderboardFilterLocation {
+export interface ILeaderboardLocation {
     country: string | null;
     region: string | null;
     city: string | null;
@@ -9,18 +9,20 @@ export interface ILeaderboardFilterLocation {
 export interface ILeaderboardTempFilter {
     date: Date | null;
     timeframe: LeaderboardTimeframeExtended;
-    location: ILeaderboardFilterLocation;
+    location: ILeaderboardLocationOption;
 }
 
 export interface ILeaderboardFilter {
     date: Date;
     timeframe: LeaderboardTimeframeExtended;
-    location?: Partial<ILeaderboardFilterLocation>;
+    location?: Partial<ILeaderboardLocation>;
 }
 
-type ILeaderboardLocationType = "global" | "country" | "region" | "city";
+type ILeaderboardLocationType = "quickPick" | "search";
 
 export interface ILeaderboardLocationOption {
+    id: string;
     label: string;
-    value: ILeaderboardLocationType;
+    type: ILeaderboardLocationType;
+    data: ILeaderboardLocation;
 }

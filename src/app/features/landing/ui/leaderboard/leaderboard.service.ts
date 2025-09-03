@@ -14,17 +14,23 @@ import { LeaderboardTimeframeExtended, LeaderboardTimeframeStatus } from "@/app/
 import { getTimeframeStatus } from "../../helpers/getTimeframeStatus";
 import {
     ILeaderboardFilter,
-    ILeaderboardFilterLocation,
+    ILeaderboardLocationOption,
     ILeaderboardTempFilter,
 } from "../../interfaces/leaderboard-filter.interface";
+import { IGetLeaderboardLocationsResponse } from "@/app/shared/interfaces/topic/get-leaderboard-locations-response.interface";
 
 const initialTempFilter: ILeaderboardTempFilter = {
     date: null,
     timeframe: "last24Hours",
     location: {
-        country: null,
-        region: null,
-        city: null,
+        id: "global",
+        label: "Global",
+        type: "quickPick",
+        data: {
+            country: null,
+            region: null,
+            city: null,
+        },
     },
 };
 
@@ -88,6 +94,33 @@ export class LeaderboardService {
         map((data) => data?.results || null),
         shareReplay({ bufferSize: 1, refCount: true }),
     );
+    public availableLocations$ = this.filters.pipe(
+        distinctUntilChanged((prev, curr) => {
+            return (
+                prev.date.getTime() === curr.date.getTime() &&
+                prev.timeframe === curr.timeframe &&
+                (prev.location?.country === curr.location?.country ||
+                    prev.location?.region === curr.location?.region ||
+                    prev.location?.city === curr.location?.city)
+            );
+        }),
+        switchMap((filter) => {
+            return this.pulseService.getLeaderboardLocations({
+                date: filter.date.toDateString(),
+                timeframe: filter.timeframe,
+                ...(filter.location?.country && { "Location.Country": filter.location.country }),
+                ...(filter.location?.region && { "Location.Region": filter.location.region }),
+                ...(filter.location?.city && { "Location.City": filter.location.city }),
+            });
+        }),
+        tap(() => {
+            console.log("Available locations updated");
+        }),
+        catchError(() => {
+            return of([] as IGetLeaderboardLocationsResponse);
+        }),
+        shareReplay({ bufferSize: 1, refCount: true }),
+    );
 
     public setDate(date: Date | null) {
         this.tempFilters.next({
@@ -103,20 +136,25 @@ export class LeaderboardService {
         });
     }
 
-    public setLocation(location: Partial<ILeaderboardFilterLocation> | null) {
+    public setLocation(location: ILeaderboardLocationOption) {
         const currentFilters = this.tempFilters.getValue();
         this.tempFilters.next({
             ...currentFilters,
-            location: {
-                ...currentFilters.location,
-                ...location,
-            },
+            location,
         });
     }
 
     public applyFilters() {
         const { date, timeframe, location } = this.tempFilters.getValue();
-        this.filters.next({ date: date || new Date(), timeframe, location });
+        this.filters.next({
+            date: date || new Date(),
+            timeframe,
+            location: {
+                country: location.data.country,
+                region: location.data.region,
+                city: location.data.city,
+            },
+        });
     }
 
     public updateTimeframeStatus() {

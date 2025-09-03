@@ -1,0 +1,60 @@
+@use "../../../../../../../styles/mixins" as mixins;
+
+.location-filter-button {
+    @include mixins.title-24px;
+    display: flex;
+    align-items: center;
+    column-gap: 16px;
+    text-align: left;
+}
+
+.location-filter-button__icon {
+    transform: rotate(-90deg);
+}
+
+.location-filter-option {
+    &::ng-deep .mat-mdc-menu-item-text {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        column-gap: 8px;
+    }
+}
+.location-filter-option--selected {
+    background-color: var(--light-grey-color);
+
+    .location-filter-option__checkbox {
+        opacity: 1;
+    }
+}
+
+.location-filter-option__checkbox {
+    position: relative;
+    width: 14px;
+    height: 14px;
+    opacity: 0;
+
+    &::after {
+        position: absolute;
+        content: "";
+        border-bottom: 2px solid currentColor;
+        transition: opacity 90ms cubic-bezier(0, 0, 0.2, 0.1);
+        border-left: 2px solid currentColor;
+        transform: rotate(-45deg);
+        opacity: 1;
+        box-sizing: content-box;
+        width: 14px;
+        height: 6px;
+        transform-origin: center;
+        top: -4.2426406871px;
+        left: 0;
+        bottom: 0;
+        right: 0;
+        margin: auto;
+    }
+}
+
+.location-search {
+    display: block;
+    padding: 0 8px 8px 8px;
+}

@@ -328,10 +328,14 @@ html {
         )
     );
     &.mat-mdc-menu-panel {
-        min-width: 220px;
+        min-width: 260px;
         border-radius: 10px;
         box-shadow: 0px 3px 10px 0px #0000002E;
         margin-top: 8px;
+
+        &.floating-menu--visible {
+            overflow: visible;
+        }
     }
     .mat-mdc-menu-item {
         min-height: 48px;
