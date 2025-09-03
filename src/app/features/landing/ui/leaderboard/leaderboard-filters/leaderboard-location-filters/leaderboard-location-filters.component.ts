@@ -26,12 +26,14 @@ export class LeaderboardLocationFiltersComponent {
         map((location) => this.getTileFromLocation(location))
     );
     public isRequestingGeolocation$ = this.leaderboardFiltersService.isRequestingGeolocation$;
+    public isGeolocationAccessGranted$ = this.leaderboardFiltersService.isGeolocationAccessGranted$;
 
     public toggleMenu() {
         this.trigger.openMenu();
     }
 
-    public getMoreLocationOptions() {
+    public getMoreLocationOptions(event: MouseEvent) {
+        event.stopPropagation();
         this.leaderboardFiltersService.requestMoreLocationOptions();
     }
 

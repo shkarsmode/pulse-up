@@ -104,6 +104,9 @@ export class LeaderboardFiltersService {
     public isRequestingGeolocation$ = this.geolocationService.status$.pipe(
         map((status) => status === "pending"),
     );
+    public isGeolocationAccessGranted$ = this.geolocationService.status$.pipe(
+        map((status) => status === "success"),
+    );
     public locationOptions$ = this.locationOptionsSubject.asObservable();
 
     constructor() {
@@ -151,8 +154,8 @@ export class LeaderboardFiltersService {
         this.geolocationService
             .getCurrentGeolocation()
             .pipe(
-                catchError(() => {
-                    this.notificationService.error("Geolocation not available.");
+                catchError((error: unknown) => {
+                    this.notificationService.error((error as Error).message);
                     return EMPTY;
                 }),
                 takeUntilDestroyed(this.destroyRef),
