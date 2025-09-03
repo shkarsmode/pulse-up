@@ -1,6 +1,14 @@
 import { computed, DestroyRef, inject, Injectable, signal } from "@angular/core";
 import { FormControl } from "@angular/forms";
-import { debounceTime, distinctUntilChanged, filter, map, switchMap, tap } from "rxjs";
+import {
+    combineLatest,
+    debounceTime,
+    distinctUntilChanged,
+    filter,
+    map,
+    switchMap,
+    tap,
+} from "rxjs";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { GeocodeService } from "@/app/shared/services/api/geocode.service";
 import { StringUtils } from "@/app/shared/helpers/string-utils";
@@ -22,6 +30,28 @@ export class LeaderboardLocationSearchService {
         return suggestions.map(({ properties }) => properties.full_address);
     });
     public suggestions = this._suggestions.asReadonly();
+    // public clearButtonVisible$ = this.leaderboardFiltersService.location$.pipe(
+    //     map((location) => {
+    //         const value = this.searchControl.value;
+    //         console.log({ location: location.label, value });
+    //         return value && value === location.label;
+    //     }),
+    // );
+    public clearButtonVisible$ = combineLatest([
+        this.searchControl.valueChanges,
+        this.leaderboardFiltersService.location$,
+    ]).pipe(
+        map(([, location]) => {
+            const value = this.searchControl.value;
+            // console.log({
+            //     searchValue,
+            //     location: location.label,
+            //     value,
+            //     visible: value === location.label,
+            // });
+            return value === location.label;
+        }),
+    );
 
     constructor() {
         const validFeatureTypes = ["country", "region", "place"];

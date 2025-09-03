@@ -6,6 +6,17 @@
             placeholder="Search (USA, Brazil, Miami...)"
             (focus)="onFocus()"
             (click)="$event.stopPropagation()" />
+        <!-- @if (clearButtonVisible$ | async) {
+            <button
+                mat-icon-button
+                aria-label="Clear search"
+                class="clear-button"
+                (click)="clearSearch($event)">
+                <svg-icon
+                    src="assets/svg/close.svg"
+                    aria-hidden="true" />
+            </button>
+        } -->
     </div>
 
     @if (suggestionsVisible()) {
