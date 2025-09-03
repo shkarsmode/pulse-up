@@ -14,7 +14,6 @@ import { MatIconModule } from "@angular/material/icon";
 import { MatButtonModule } from "@angular/material/button";
 import { MapboxFeature } from "@/app/shared/interfaces";
 import { LeaderboardLocationSearchService } from "./leaderboard-location-search.service";
-import { tap } from "rxjs";
 
 @Component({
     selector: "app-location-search",
@@ -40,11 +39,7 @@ export class LocationSearchComponent {
     public searchControl = this.leaderboardLocationSearchService.searchControl;
     public suggestions = this.leaderboardLocationSearchService.suggestions;
     public options = this.leaderboardLocationSearchService.options;
-    public clearButtonVisible$ = this.leaderboardLocationSearchService.clearButtonVisible$.pipe(
-        tap((visible) => {
-            console.log({ visible });
-        }),
-    );
+    public clearButtonVisible$ = this.leaderboardLocationSearchService.clearButtonVisible$;
     public suggestionsVisible = computed(() => {
         const isTypeMode = this.isTypeMode();
         const hasSuggestions = this.suggestions().length > 0;
