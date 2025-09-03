@@ -12,6 +12,7 @@ export const LOCAL_STORAGE_KEYS = {
     howItWorksPageVisited: "how_it_works_page_visited",
     pendingTopics: "pending_topics",
     mapInfoTooltipClosed: "map_info_tooltip_closed",
+    geolocationCache: "geolocation_cache",
 } as const;
 
 type LocalStorageKey = typeof LOCAL_STORAGE_KEYS[keyof typeof LOCAL_STORAGE_KEYS];

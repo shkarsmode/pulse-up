@@ -30,14 +30,16 @@
                 <span>{{ option.label }}</span>
             </button>
         }
-        <button
-            class="location-filter__unlock"
-            (click)="getMoreLocationOptions()">
-            @if (isRequestingGeolocation) {
-                <app-spinner />
-            } @else {
-                <span>Allow location to see more options</span>
-            }
-        </button>
+        @if (!isGeolocationAccessGranted) {
+            <button
+                class="location-filter__unlock"
+                (click)="getMoreLocationOptions($event)">
+                @if (isRequestingGeolocation) {
+                    <app-spinner />
+                } @else {
+                    <span>Allow location to see more options</span>
+                }
+            </button>
+        }
     </ng-template>
 </mat-menu>
