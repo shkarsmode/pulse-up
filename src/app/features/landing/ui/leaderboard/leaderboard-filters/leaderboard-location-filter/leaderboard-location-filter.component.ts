@@ -4,52 +4,54 @@ import {
     Component,
     DestroyRef,
     inject,
-    ViewChild,
     OnInit,
+    signal,
 } from "@angular/core";
-import { MatMenuModule, MatMenuTrigger } from "@angular/material/menu";
 import { AngularSvgIconModule } from "angular-svg-icon";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
+import { distinctUntilChanged, map, tap } from "rxjs";
 import { LeaderboardLocationFilterService } from "./leaderboard-location-filter.service";
 import { ILeaderboardLocationOption } from "@/app/features/landing/interfaces/leaderboard-filter.interface";
 import { LocationSearchComponent } from "../../leaderboard-location-search/leaderboard-location-search.component";
-import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
-import { distinctUntilChanged, map, tap } from "rxjs";
+import { PopoverComponent } from "@/app/shared/components/popover/popover.component";
+import { MatButtonModule } from "@angular/material/button";
 
 @Component({
     selector: "app-leaderboard-location-filter",
     standalone: true,
     imports: [
-        MatMenuModule,
-        MatMenuTrigger,
         AngularSvgIconModule,
         CommonModule,
+        MatButtonModule,
         LocationSearchComponent,
+        PopoverComponent,
     ],
     templateUrl: "./leaderboard-location-filter.component.html",
     styleUrl: "./leaderboard-location-filter.component.scss",
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class LeaderboardLocationFilterComponent implements OnInit {
-    @ViewChild("locationMenuTrigger") locationMenuTrigger: MatMenuTrigger;
-
     private destroyRef = inject(DestroyRef);
     private leaderboardLocationFilterService = inject(LeaderboardLocationFilterService);
     private selectedOption$ = this.leaderboardLocationFilterService.selectedOption$;
 
+    public menuVisible = signal(false);
     public options$ = this.leaderboardLocationFilterService.options$;
-    public buttonText$ = this.selectedOption$.pipe(map((option) => {
-        if (option.id === "global") {
-            return "Global Top 10";
-        } else {
-            return `Top 10 in ${option.label}`;
-        }
-    }));
+    public buttonText$ = this.selectedOption$.pipe(
+        map((option) => {
+            if (option.id === "global") {
+                return "Global Top 10";
+            } else {
+                return `Top 10 in ${option.label}`;
+            }
+        }),
+    );
 
     ngOnInit() {
         this.selectedOption$
             .pipe(
                 distinctUntilChanged((prev, curr) => prev.id === curr.id),
-                tap(() => this.onToggleMenu()),
+                tap(() => this.closeMenu()),
                 takeUntilDestroyed(this.destroyRef),
             )
             .subscribe();
@@ -59,10 +61,15 @@ export class LeaderboardLocationFilterComponent implements OnInit {
         this.leaderboardLocationFilterService.changeLocation(option);
     }
 
-    public onToggleMenu() {
-        console.log("Toggling location filter menu");
-        if (this.locationMenuTrigger) {
-            this.locationMenuTrigger.toggleMenu();
-        }
+    public openMenu() {
+        this.menuVisible.set(true);
+    }
+
+    public closeMenu() {
+        this.menuVisible.set(false);
+    }
+
+    public onMenuVisibilityChange(visible: boolean) {
+        this.menuVisible.set(visible);
     }
 }

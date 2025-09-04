@@ -4,8 +4,7 @@
             type="text"
             [formControl]="searchControl"
             placeholder="Search (USA, Brazil, Miami...)"
-            (focus)="onFocus()"
-            (click)="$event.stopPropagation()" />
+            (focus)="onFocus()"/>
         <!-- @if (clearButtonVisible$ | async) {
             <button
                 mat-icon-button

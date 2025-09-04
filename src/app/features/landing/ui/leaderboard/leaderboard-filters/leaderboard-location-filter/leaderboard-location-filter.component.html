@@ -1,31 +1,38 @@
 @let options = options$ | async;
 
 <div class="location-filter">
-    <button
-        class="location-filter-button"
-        [matMenuTriggerFor]="locationMenu"
-        #locationMenuTrigger="matMenuTrigger">
-        <span>{{ buttonText$ | async }}</span>
-        <svg-icon
-            src="assets/svg/arrow-left.svg"
-            class="location-filter-button__icon" />
-    </button>
-</div>
+    <h1 class="location-filter-title">{{ buttonText$ | async }}</h1>
 
-<mat-menu
-    #locationMenu="matMenu"
-    class="floating-menu floating-menu--visible">
-    <ng-template matMenuContent>
-        <app-location-search class="location-search" />
-        @for (option of options; track $index) {
-            <button
-                mat-menu-item
-                class="floating-menu__item floating-menu__item--small location-filter-option"
-                [class.location-filter-option--selected]="option.selected"
-                (click)="onSelect(option)">
-                <span>{{ option.label }}</span>
-                <span class="location-filter-option__checkbox"></span>
-            </button>
-        }
-    </ng-template>
-</mat-menu>
+    <app-popover
+        trigger="manual"
+        placement="bottom-start"
+        variation="popper"
+        [isVisible]="menuVisible()"
+        (isVisibleChange)="onMenuVisibilityChange($event)">
+        <button
+            host
+            mat-icon-button
+            class="location-filter-button"
+            (click)="openMenu()">
+            <span class="visualy-hidden">Open menu</span>
+            <svg-icon
+                src="assets/svg/search.svg"
+                class="location-filter-button__icon" />
+        </button>
+        <div
+            content
+            role="menu"
+            class="location-filter-menu">
+            <app-location-search class="location-search" />
+            @for (option of options; track $index) {
+                <button
+                    class="location-filter-option"
+                    [class.location-filter-option--selected]="option.selected"
+                    (click)="onSelect(option)">
+                    <span>{{ option.label }}</span>
+                    <span class="location-filter-option__checkbox"></span>
+                </button>
+            }
+        </div>
+    </app-popover>
+</div>
