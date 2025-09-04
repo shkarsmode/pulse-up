@@ -1,7 +1,21 @@
 @let options = options$ | async;
+@let title = title$ | async;
+@let subtitle = subtitle$ | async;
 
 <div class="location-filter">
-    <h1 class="location-filter-title">{{ buttonText$ | async }}</h1>
+    <h1 class="location-filter-header">
+        <svg-icon
+            src="assets/svg/trophy.svg"
+            class="location-filter-header__icon" />
+        <span class="location-filter-header__title">
+            {{ title }}
+        </span>
+        @if (subtitle) {
+            <span class="location-filter-header__subtitle">
+                {{ subtitle }}
+            </span>
+        }
+    </h1>
 
     <app-popover
         trigger="manual"

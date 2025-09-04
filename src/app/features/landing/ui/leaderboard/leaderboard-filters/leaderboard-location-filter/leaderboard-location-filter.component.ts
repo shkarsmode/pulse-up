@@ -38,13 +38,22 @@ export class LeaderboardLocationFilterComponent implements OnInit {
 
     public menuVisible = signal(false);
     public options$ = this.leaderboardLocationFilterService.options$;
-    public buttonText$ = this.selectedOption$.pipe(
+    public title$ = this.selectedOption$.pipe(
         map((option) => {
             if (option.id === "global") {
-                return "Global Top 10";
-            } else {
-                return `Top 10 in ${option.label}`;
+                return "Global";
             }
+            const {country, region, city} = option.data;
+            return city || region || country;
+        }),
+    );
+    public subtitle$ = this.selectedOption$.pipe(
+        map((option) => {
+            if (option.id === "global") {
+                return "";
+            };
+            const {country, region, city} = option.data;
+            return city ? `${region}, ${country}` : region ? `${country}` : "";
         }),
     );
 
