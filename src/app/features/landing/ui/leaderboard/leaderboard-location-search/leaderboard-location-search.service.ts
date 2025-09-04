@@ -14,7 +14,6 @@ import { GeocodeService } from "@/app/shared/services/api/geocode.service";
 import { StringUtils } from "@/app/shared/helpers/string-utils";
 import { MapboxFeature } from "@/app/shared/interfaces";
 import { LeaderboardFiltersService } from "../leaderboard-filters/leaderboard-filters.service";
-import { ILeaderboardLocationOption } from "../../../interfaces/leaderboard-filter.interface";
 
 @Injectable({ providedIn: "root" })
 export class LeaderboardLocationSearchService {
@@ -44,13 +43,15 @@ export class LeaderboardLocationSearchService {
         const validFeatureTypes = ["country", "region", "place"];
         this.searchControl.valueChanges
             .pipe(
+                tap((query) => {
+                    if (!query) {
+                        this._suggestions.set([]);
+                    }
+                }),
                 debounceTime(400),
                 distinctUntilChanged(),
                 filter((query) => {
-                    if (!query) {
-                        this._suggestions.set([]);
-                        return false;
-                    };
+                    if (!query) return false;
                     const searchString = StringUtils.normalizeWhitespace(query);
                     return searchString.length > 1;
                 }),
@@ -81,42 +82,7 @@ export class LeaderboardLocationSearchService {
             .subscribe();
     }
 
-    public setSuggestion(suggestion: MapboxFeature) {
+    public clearSuggestions() {
         this._suggestions.set([]);
-        this.leaderboardFiltersService.changeLocation({
-            id: suggestion.id,
-            label: suggestion.properties.full_address,
-            type: "search",
-            data: this.mapFeatureToLocationData(suggestion),
-        });
-    }
-
-    private mapFeatureToLocationData(feature: MapboxFeature): ILeaderboardLocationOption["data"] {
-        switch (feature.properties.feature_type) {
-            case "country":
-                return {
-                    country: feature.properties.context.country?.name || null,
-                    region: null,
-                    city: null,
-                };
-            case "region":
-                return {
-                    country: feature.properties.context.country?.name || null,
-                    region: feature.properties.context.region?.name || null,
-                    city: null,
-                };
-            case "place":
-                return {
-                    country: feature.properties.context.country?.name || null,
-                    region: feature.properties.context.region?.name || null,
-                    city: feature.properties.context.place?.name || null,
-                };
-            default:
-                return {
-                    country: null,
-                    region: null,
-                    city: null,
-                };
-        }
     }
 }

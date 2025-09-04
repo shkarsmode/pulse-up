@@ -15,6 +15,7 @@ import { IpLocationService } from "@/app/shared/services/core/ip-location.servic
 import { PulseService } from "@/app/shared/services/api/pulse.service";
 import { LeaderboardService } from "../../leaderboard.service";
 import { DateUtils } from "@/app/features/landing/helpers/date-utils";
+import { MapboxFeature } from "@/app/shared/interfaces";
 
 const initGlobalOption: ILeaderboardLocationOption = {
     id: "global",
@@ -174,5 +175,34 @@ export class LeaderboardLocationFilterService {
 
     public changeLocation(option: ILeaderboardLocationOption) {
         this.leaderboardFiltersService.changeLocation(option);
+    }
+
+    public mapFeatureToLocationData(feature: MapboxFeature): ILeaderboardLocationOption["data"] {
+        switch (feature.properties.feature_type) {
+            case "country":
+                return {
+                    country: feature.properties.context.country?.name || null,
+                    region: null,
+                    city: null,
+                };
+            case "region":
+                return {
+                    country: feature.properties.context.country?.name || null,
+                    region: feature.properties.context.region?.name || null,
+                    city: null,
+                };
+            case "place":
+                return {
+                    country: feature.properties.context.country?.name || null,
+                    region: feature.properties.context.region?.name || null,
+                    city: feature.properties.context.place?.name || null,
+                };
+            default:
+                return {
+                    country: null,
+                    region: null,
+                    city: null,
+                };
+        }
     }
 }

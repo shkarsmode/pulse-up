@@ -15,6 +15,7 @@ import { ILeaderboardLocationOption } from "@/app/features/landing/interfaces/le
 import { LocationSearchComponent } from "../../leaderboard-location-search/leaderboard-location-search.component";
 import { PopoverComponent } from "@/app/shared/components/popover/popover.component";
 import { MatButtonModule } from "@angular/material/button";
+import { MapboxFeature } from "@/app/shared/interfaces";
 
 @Component({
     selector: "app-leaderboard-location-filter",
@@ -57,8 +58,17 @@ export class LeaderboardLocationFilterComponent implements OnInit {
             .subscribe();
     }
 
-    public onSelect(option: ILeaderboardLocationOption) {
+    public onSelectOption(option: ILeaderboardLocationOption) {;
         this.leaderboardLocationFilterService.changeLocation(option);
+        this.closeMenu();
+    }
+    public onSelectSuggestion(suggestion: MapboxFeature) {
+        this.leaderboardLocationFilterService.changeLocation({
+            id: suggestion.id,
+            label: suggestion.properties.full_address,
+            type: "search",
+            data: this.leaderboardLocationFilterService.mapFeatureToLocationData(suggestion),
+        });
     }
 
     public openMenu() {

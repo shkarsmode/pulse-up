@@ -8,7 +8,9 @@
             [formControl]="searchControl"
             placeholder="Search (USA, Brazil, Miami...)"
             class="location-search-input"
-            [class.location-search-input--filled]="clearButtonVisible" />
+            [class.location-search-input--filled]="clearButtonVisible"
+            (focus)="onFocus()"
+            (blur)="onBlur()" />
         @if (clearButtonVisible) {
             <button
                 mat-icon-button
@@ -28,7 +30,7 @@
                 <li>
                     <button
                         class="suggestion-item"
-                        (click)="selectSuggestion($event, $index)">
+                        (mousedown)="onSuggestionsMouseDown($index)">
                         {{ option }}
                     </button>
                 </li>

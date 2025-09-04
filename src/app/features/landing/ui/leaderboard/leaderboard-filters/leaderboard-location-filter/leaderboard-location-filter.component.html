@@ -23,12 +23,14 @@
             content
             role="menu"
             class="location-filter-menu">
-            <app-location-search class="location-search" />
+            <app-location-search
+                class="location-search"
+                (locationSelected)="onSelectSuggestion($event)" />
             @for (option of options; track $index) {
                 <button
                     class="location-filter-option"
                     [class.location-filter-option--selected]="option.selected"
-                    (click)="onSelect(option)">
+                    (click)="onSelectOption(option)">
                     <span>{{ option.label }}</span>
                     <span class="location-filter-option__checkbox"></span>
                 </button>
