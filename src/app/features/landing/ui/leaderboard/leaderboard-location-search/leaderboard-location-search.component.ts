@@ -4,8 +4,10 @@ import {
     EventEmitter,
     Output,
     inject,
-    signal,
     computed,
+    ElementRef,
+    ViewChild,
+    signal,
 } from "@angular/core";
 import { ReactiveFormsModule } from "@angular/forms";
 import { CommonModule } from "@angular/common";
@@ -32,34 +34,41 @@ import { LeaderboardLocationSearchService } from "./leaderboard-location-search.
 export class LocationSearchComponent {
     @Output() locationSelected = new EventEmitter<MapboxFeature>();
 
+    @ViewChild("searchInput") searchInput!: ElementRef<HTMLInputElement>;
+
     private leaderboardLocationSearchService = inject(LeaderboardLocationSearchService);
 
-    private isTypeMode = signal(false);
+    private isTyping = signal(false);
 
     public searchControl = this.leaderboardLocationSearchService.searchControl;
     public suggestions = this.leaderboardLocationSearchService.suggestions;
     public options = this.leaderboardLocationSearchService.options;
     public clearButtonVisible$ = this.leaderboardLocationSearchService.clearButtonVisible$;
     public suggestionsVisible = computed(() => {
-        const isTypeMode = this.isTypeMode();
-        const hasSuggestions = this.suggestions().length > 0;
-        return isTypeMode && hasSuggestions;
+        const suggestions = this.suggestions();
+        const isTyping = this.isTyping();
+        const hasSuggestions = suggestions.length > 0;
+        return hasSuggestions && (isTyping);
     });
 
     public onFocus() {
-        this.isTypeMode.set(true);
+        this.isTyping.set(true);
+    }
+
+    public onBlur() {
+        this.isTyping.set(false);
+    }
+
+    public onSuggestionsMouseDown(index: number) {
+        const suggestion = this.suggestions()[index];
+        this.locationSelected.emit(suggestion);
+        this.leaderboardLocationSearchService.clearSuggestions();
     }
 
     public clearSearch(event: MouseEvent) {
         event.stopPropagation();
+        this.isTyping.set(true);
         this.searchControl.setValue("");
-    }
-
-    public selectSuggestion(event: MouseEvent, index: number) {
-        event.stopPropagation();
-        const suggestion = this.suggestions()[index];
-        this.locationSelected.emit(suggestion);
-        this.leaderboardLocationSearchService.setSuggestion(suggestion);
-        this.isTypeMode.set(false);
+        this.searchInput.nativeElement.focus();
     }
 }

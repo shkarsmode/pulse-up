@@ -22,7 +22,7 @@
     }
 }
 
-.card-top-badge {
+.card-top-badge:not(:empty) {
     padding-bottom: 12px;
     cursor: pointer;
 }
@@ -68,7 +68,7 @@
     margin-top: 10px;
 }
 
-.card-footer {
+.card-footer:not(:empty) {
     padding: 0 20px 20px;
 }
 

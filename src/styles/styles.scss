@@ -317,7 +317,6 @@ html {
             item-with-icon-leading-spacing: 16px,
 
             container-color: var(--white-color),
-
             item-hover-state-layer-color: var(--light-grey-color),
             item-focus-state-layer-color: var(--light-grey-color),
             item-label-text-color: var(--black-color),
@@ -330,15 +329,12 @@ html {
     &.mat-mdc-menu-panel {
         min-width: 260px;
         border-radius: 10px;
-        box-shadow: 0px 3px 10px 0px #0000002E;
+        box-shadow: 0px 3px 10px 0px #0000002e;
         margin-top: 8px;
 
         &.floating-menu--visible {
             overflow: visible;
         }
-    }
-    .mat-mdc-menu-item {
-        min-height: 48px;
     }
     .mat-mdc-menu-item-text {
         display: flex;
@@ -347,7 +343,15 @@ html {
     }
 }
 
-// select 
+.floating-menu__item {
+    &.floating-menu__item--small {
+        &.mat-mdc-menu-item {
+            min-height: 40px;
+        }
+    }
+}
+
+// select
 div.mat-mdc-select-panel {
     background-color: var(--white-color);
 }

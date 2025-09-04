@@ -17,7 +17,7 @@ import {
     ILeaderboardLocationOption,
     ILeaderboardTempFilter,
 } from "../../interfaces/leaderboard-filter.interface";
-import { IGetLeaderboardLocationsResponse } from "@/app/shared/interfaces/topic/get-leaderboard-locations-response.interface";
+import { DateUtils } from "../../helpers/date-utils";
 
 const initialTempFilter: ILeaderboardTempFilter = {
     date: null,
@@ -62,8 +62,8 @@ export class LeaderboardService {
             return (
                 prev.date.getTime() === curr.date.getTime() &&
                 prev.timeframe === curr.timeframe &&
-                (prev.location?.country === curr.location?.country ||
-                    prev.location?.region === curr.location?.region ||
+                (prev.location?.country === curr.location?.country &&
+                    prev.location?.region === curr.location?.region &&
                     prev.location?.city === curr.location?.city)
             );
         }),
@@ -74,11 +74,11 @@ export class LeaderboardService {
         switchMap((filter) => {
             return this.pulseService.getLeaderboardTopics({
                 count: this.count,
-                date: filter.date.toDateString(),
+                date: DateUtils.toISOString(DateUtils.getStatrtOfDay(filter.date)),
                 timeframe: filter.timeframe,
                 includeTopicDetails: true,
                 ...(filter.location?.country && { "Location.Country": filter.location.country }),
-                ...(filter.location?.region && { "Location.Region": filter.location.region }),
+                ...(filter.location?.region && { "Location.State": filter.location.region }),
                 ...(filter.location?.city && { "Location.City": filter.location.city }),
             });
         }),
@@ -92,33 +92,6 @@ export class LeaderboardService {
             this.updateTimeframeStatus();
         }),
         map((data) => data?.results || null),
-        shareReplay({ bufferSize: 1, refCount: true }),
-    );
-    public availableLocations$ = this.filters.pipe(
-        distinctUntilChanged((prev, curr) => {
-            return (
-                prev.date.getTime() === curr.date.getTime() &&
-                prev.timeframe === curr.timeframe &&
-                (prev.location?.country === curr.location?.country ||
-                    prev.location?.region === curr.location?.region ||
-                    prev.location?.city === curr.location?.city)
-            );
-        }),
-        switchMap((filter) => {
-            return this.pulseService.getLeaderboardLocations({
-                date: filter.date.toDateString(),
-                timeframe: filter.timeframe,
-                ...(filter.location?.country && { "Location.Country": filter.location.country }),
-                ...(filter.location?.region && { "Location.Region": filter.location.region }),
-                ...(filter.location?.city && { "Location.City": filter.location.city }),
-            });
-        }),
-        tap(() => {
-            console.log("Available locations updated");
-        }),
-        catchError(() => {
-            return of([] as IGetLeaderboardLocationsResponse);
-        }),
         shareReplay({ bufferSize: 1, refCount: true }),
     );
 

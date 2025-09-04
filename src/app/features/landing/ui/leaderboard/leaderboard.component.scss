@@ -45,7 +45,7 @@
     li {
         display: flex;
         align-items: center;
-        column-gap: 12px;
+        column-gap: 8px;
         counter-increment: rate-counter;
         &::before {
             content: counter(rate-counter);
@@ -84,6 +84,14 @@
 .leaderboard__spinner {
     height: auto;
     padding-top: 16px;
+}
+
+.leaderboard__no-results {
+    padding-top: 48px;
+
+    @include media-sm {
+        padding-top: 28px;
+    }
 }
 
 .info-message {

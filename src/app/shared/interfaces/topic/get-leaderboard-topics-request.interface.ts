@@ -6,7 +6,7 @@ export interface IGetLeaderboardTopicsRequest {
     timeframe?: LeaderboardTimeframe | "last24Hours";
     includeTopicDetails?: boolean;
     "Location.Country"?: string;
-    "Location.Region"?: string;
+    "Location.State"?: string;
     "Location.City"?: string;
 }
     

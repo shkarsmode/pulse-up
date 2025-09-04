@@ -1,11 +1,4 @@
-import {
-    ChangeDetectionStrategy,
-    Component,
-    DestroyRef,
-    inject,
-    OnInit,
-    OnDestroy,
-} from "@angular/core";
+import { ChangeDetectionStrategy, Component, DestroyRef, inject, OnInit } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { FormControl } from "@angular/forms";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
@@ -20,16 +13,16 @@ import { LeaderboardLocationFilterComponent } from "./leaderboard-location-filte
     selector: "app-leaderboard-filters",
     standalone: true,
     imports: [
-    CommonModule,
-    SelectComponent,
-    LeaderboardDatepickerComponent,
-    LeaderboardLocationFilterComponent
-],
+        CommonModule,
+        SelectComponent,
+        LeaderboardDatepickerComponent,
+        LeaderboardLocationFilterComponent,
+    ],
     templateUrl: "./leaderboard-filters.component.html",
     styleUrl: "./leaderboard-filters.component.scss",
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class LeaderboardFiltersComponent implements OnInit, OnDestroy {
+export class LeaderboardFiltersComponent implements OnInit {
     private destroyRef = inject(DestroyRef);
     private leaderboardFiltersService = inject(LeaderboardFiltersService);
 
@@ -59,10 +52,6 @@ export class LeaderboardFiltersComponent implements OnInit, OnDestroy {
                 takeUntilDestroyed(this.destroyRef),
             )
             .subscribe();
-    }
-
-    public ngOnDestroy() {
-        this.leaderboardFiltersService.resetFilters();
     }
 
     public onDateChange(date: Date | null) {

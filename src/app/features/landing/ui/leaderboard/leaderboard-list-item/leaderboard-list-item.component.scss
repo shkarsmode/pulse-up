@@ -6,10 +6,10 @@
 }
 
 .leaderboard-item {
-    padding: 6px;
+    padding: 16px 0;
     &::ng-deep {
-        .card-top {
-            grid-column-gap: 8px;
+        .card-wrap {
+            padding: 0 16px;
         }
     }
 }

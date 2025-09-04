@@ -1,27 +1,69 @@
 @use "../../../../../../../styles/mixins" as mixins;
 
-.location-filter-button {
-    @include mixins.title-24px;
+.location-filter {
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     column-gap: 16px;
-    text-align: left;
 }
 
-.location-filter-button__icon {
-    transform: rotate(-90deg);
+.location-filter-header {
+    flex-grow: 1;
+    display: grid;
+    grid-template-columns: auto 1fr;
+    column-gap: 12px;
+    row-gap: 4px;
+}
+.location-filter-header__title {
+    @include mixins.title-32px;
+}
+.location-filter-header__subtitle {
+    @include mixins.link-16px;
+    color: var(--dark-grey-color);
+}
+.location-filter-header__icon {
+    grid-row: 1 / 3;
+
+    svg {
+        width: 40px;
+        height: 40px;
+    }
+}
+
+.location-filter-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    svg-icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        svg {
+            width: 20px;
+            height: 20px;
+        }
+    }
 }
 
 .location-filter-option {
-    &::ng-deep .mat-mdc-menu-item-text {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        column-gap: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    column-gap: 8px;
+    min-height: 40px;
+    padding: 4px 12px;
+    @include mixins.text-16px;
+
+    &:hover {
+        background-color: #f3f3f3;
     }
 }
 .location-filter-option--selected {
     background-color: var(--light-grey-color);
+
+    &:hover {
+        background-color: var(--light-grey-color);
+    }
 
     .location-filter-option__checkbox {
         opacity: 1;
@@ -56,5 +98,15 @@
 
 .location-search {
     display: block;
-    padding: 0 8px 8px 8px;
+    padding: 4px 12px 12px;
+}
+
+.location-filter-menu {
+    min-width: 268px;
+    display: flex;
+    flex-direction: column;
+    padding: 8px 0;
+    border-radius: 10px;
+    background-color: var(--white-color);
+    box-shadow: 0px 3px 10px 0px #0000002e;
 }
