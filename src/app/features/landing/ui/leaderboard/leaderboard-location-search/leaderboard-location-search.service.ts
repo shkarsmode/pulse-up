@@ -40,7 +40,7 @@ export class LeaderboardLocationSearchService {
     );
 
     constructor() {
-        const validFeatureTypes = ["country", "region", "place"];
+        const validFeatureTypes = ["country", "region"];
         this.searchControl.valueChanges
             .pipe(
                 tap((query) => {
