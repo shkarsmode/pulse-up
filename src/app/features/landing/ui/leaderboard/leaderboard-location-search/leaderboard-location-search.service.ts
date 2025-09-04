@@ -47,7 +47,10 @@ export class LeaderboardLocationSearchService {
                 debounceTime(400),
                 distinctUntilChanged(),
                 filter((query) => {
-                    if (!query) return false;
+                    if (!query) {
+                        this._suggestions.set([]);
+                        return false;
+                    };
                     const searchString = StringUtils.normalizeWhitespace(query);
                     return searchString.length > 1;
                 }),
@@ -68,9 +71,9 @@ export class LeaderboardLocationSearchService {
             .pipe(
                 tap((location) => {
                     if (location.type === "search") {
-                        this.searchControl.setValue(location.label, { emitEvent: false });
+                        this.searchControl.setValue(location.label, { emitEvent: true });
                     } else {
-                        this.searchControl.setValue("", { emitEvent: false });
+                        this.searchControl.setValue("", { emitEvent: true });
                     }
                 }),
                 takeUntilDestroyed(this.destroyRef),

@@ -1,10 +1,15 @@
+@let clearButtonVisible = clearButtonVisible$ | async;
+
 <div class="location-search">
-    <div class="location-search-input">
+    <div class="location-search-input-wrap">
         <input
+            #searchInput
             type="text"
             [formControl]="searchControl"
-            placeholder="Search (USA, Brazil, Miami...)"/>
-        <!-- @if (clearButtonVisible$ | async) {
+            placeholder="Search (USA, Brazil, Miami...)"
+            class="location-search-input"
+            [class.location-search-input--filled]="clearButtonVisible" />
+        @if (clearButtonVisible) {
             <button
                 mat-icon-button
                 aria-label="Clear search"
@@ -14,7 +19,7 @@
                     src="assets/svg/close.svg"
                     aria-hidden="true" />
             </button>
-        } -->
+        }
     </div>
 
     @if (suggestionsVisible()) {

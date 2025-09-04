@@ -5,6 +5,8 @@ import {
     Output,
     inject,
     computed,
+    ElementRef,
+    ViewChild,
 } from "@angular/core";
 import { ReactiveFormsModule } from "@angular/forms";
 import { CommonModule } from "@angular/common";
@@ -31,6 +33,8 @@ import { LeaderboardLocationSearchService } from "./leaderboard-location-search.
 export class LocationSearchComponent {
     @Output() locationSelected = new EventEmitter<MapboxFeature>();
 
+    @ViewChild("searchInput") searchInput!: ElementRef<HTMLInputElement>;
+
     private leaderboardLocationSearchService = inject(LeaderboardLocationSearchService);
 
     public searchControl = this.leaderboardLocationSearchService.searchControl;
@@ -45,6 +49,7 @@ export class LocationSearchComponent {
     public clearSearch(event: MouseEvent) {
         event.stopPropagation();
         this.searchControl.setValue("");
+        this.searchInput.nativeElement.focus();
     }
 
     public selectSuggestion(event: MouseEvent, index: number) {
