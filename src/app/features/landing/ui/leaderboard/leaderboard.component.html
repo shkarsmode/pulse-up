@@ -35,7 +35,10 @@
 }
 
 @if (isEmpty$ | async) {
-    <div class="info-message">No topics found for the selected time range.</div>
+    <app-no-results
+        class="leaderboard__no-results"
+        heading="No Results Found"
+        [text]="['Change your filters to see more results.']" />
 }
 
 @if (isErrorVisible$ | async) {

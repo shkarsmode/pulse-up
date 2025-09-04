@@ -1,4 +1,11 @@
-import { ChangeDetectionStrategy, Component, computed, inject, OnInit } from "@angular/core";
+import {
+    ChangeDetectionStrategy,
+    Component,
+    computed,
+    effect,
+    inject,
+    OnInit,
+} from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { RouterModule } from "@angular/router";
 import { AngularSvgIconModule } from "angular-svg-icon";
@@ -84,6 +91,16 @@ export class PulsesComponent implements OnInit {
         }
         return localTopics;
     });
+
+    constructor() {
+        effect(() => {
+            console.log({
+                isEmptyLocalTopics: this.isEmptyLocalTopics,
+                isLoading: this.localTopicsQuery.isLoading(),
+                data: this.localTopicsQuery.data(),
+            });
+        });
+    }
 
     public ngOnInit() {
         this.refetchQueries();

@@ -7,19 +7,21 @@ import { SpinnerComponent } from "@/app/shared/components/ui-kit/spinner/spinner
 import { LeaderboardListItemComponent } from "./leaderboard-list-item/leaderboard-list-item.component";
 import { LeaderboardHintComponent } from "./leaderboard-hint/leaderboard-hint.component";
 import { LeaderboardFiltersComponent } from "./leaderboard-filters/leaderboard-filters.component";
+import { NoResultsComponent } from "@/app/shared/components/no-results/no-results.component";
 
 
 @Component({
     selector: "app-leaderboard",
     standalone: true,
     imports: [
-        CommonModule,
-        SpinnerComponent,
-        AngularSvgIconModule,
-        LeaderboardListItemComponent,
-        LeaderboardHintComponent,
-        LeaderboardFiltersComponent,
-    ],
+    CommonModule,
+    SpinnerComponent,
+    AngularSvgIconModule,
+    LeaderboardListItemComponent,
+    LeaderboardHintComponent,
+    LeaderboardFiltersComponent,
+    NoResultsComponent
+],
     templateUrl: "./leaderboard.component.html",
     styleUrl: "./leaderboard.component.scss",
     changeDetection: ChangeDetectionStrategy.OnPush,
