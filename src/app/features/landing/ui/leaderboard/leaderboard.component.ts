@@ -9,19 +9,18 @@ import { LeaderboardHintComponent } from "./leaderboard-hint/leaderboard-hint.co
 import { LeaderboardFiltersComponent } from "./leaderboard-filters/leaderboard-filters.component";
 import { NoResultsComponent } from "@/app/shared/components/no-results/no-results.component";
 
-
 @Component({
     selector: "app-leaderboard",
     standalone: true,
     imports: [
-    CommonModule,
-    SpinnerComponent,
-    AngularSvgIconModule,
-    LeaderboardListItemComponent,
-    LeaderboardHintComponent,
-    LeaderboardFiltersComponent,
-    NoResultsComponent
-],
+        CommonModule,
+        SpinnerComponent,
+        AngularSvgIconModule,
+        LeaderboardListItemComponent,
+        LeaderboardHintComponent,
+        LeaderboardFiltersComponent,
+        NoResultsComponent,
+    ],
     templateUrl: "./leaderboard.component.html",
     styleUrl: "./leaderboard.component.scss",
     changeDetection: ChangeDetectionStrategy.OnPush,
@@ -58,9 +57,30 @@ export class LeaderboardComponent {
     public isEmpty$ = combineLatest([this.topics$, this.isLoading$]).pipe(
         map(([topics, isLoading]) => !isLoading && topics && topics.length === 0),
     );
-    
+
     public isActiveTimeframe$ = this.leaderboardService.timeframeStatus$.pipe(
         map((status) => status === "Active"),
+    );
+
+    public noResultsText$ = this.filter$.pipe(
+        map((filter) => {
+            const baseText = "No pulse in this time period.";
+            const location = filter.location;
+
+            if (!location) {
+                return baseText;
+            }
+
+            const { city, region, country } = location;
+            const isGlobal = !city && !region && !country;
+
+            if (isGlobal) {
+                return baseText;
+            }
+
+            const place = city || region || country;
+            return `No pulse in ${place} in this time period.`;
+        }),
     );
 
     public updateTimeframeStatus() {

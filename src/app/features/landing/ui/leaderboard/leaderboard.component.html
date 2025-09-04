@@ -38,7 +38,7 @@
     <app-no-results
         class="leaderboard__no-results"
         heading="No Results Found"
-        [text]="['Change your filters to see more results.']" />
+        [text]="[(noResultsText$ | async) || '']" />
 }
 
 @if (isErrorVisible$ | async) {

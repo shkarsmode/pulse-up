@@ -20,6 +20,7 @@
 
 h2 {
     @include title-24px;
+    text-align: center;
 }
 p {
     @include text-16px;

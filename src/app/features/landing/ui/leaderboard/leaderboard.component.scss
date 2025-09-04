@@ -87,7 +87,11 @@
 }
 
 .leaderboard__no-results {
-    padding-top: 32px;
+    padding-top: 48px;
+
+    @include media-sm {
+        padding-top: 28px;
+    }
 }
 
 .info-message {
