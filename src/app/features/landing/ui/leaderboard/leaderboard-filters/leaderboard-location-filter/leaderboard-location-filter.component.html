@@ -20,7 +20,7 @@
         @for (option of options; track $index) {
             <button
                 mat-menu-item
-                class="location-filter-option"
+                class="floating-menu__item floating-menu__item--small location-filter-option"
                 [class.location-filter-option--selected]="option.selected"
                 (click)="onSelect(option)">
                 <span>{{ option.label }}</span>
