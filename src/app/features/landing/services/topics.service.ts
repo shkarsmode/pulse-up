@@ -79,7 +79,7 @@ export class TopicsService {
     }
 
     private getLocalTopics() {
-        return this.ipLocationService.coordinates$.pipe(
+        return this.ipLocationService.countryCoodinates$.pipe(
             map(({ latitude, longitude }) => geoToH3(latitude, longitude, 1)),
             switchMap((h3Index) => {
                 return concat(this.pulseService.getTopicsByCellIndex(h3Index)).pipe(
