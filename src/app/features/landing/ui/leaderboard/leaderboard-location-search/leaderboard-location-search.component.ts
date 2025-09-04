@@ -4,7 +4,6 @@ import {
     EventEmitter,
     Output,
     inject,
-    signal,
     computed,
 } from "@angular/core";
 import { ReactiveFormsModule } from "@angular/forms";
@@ -34,21 +33,14 @@ export class LocationSearchComponent {
 
     private leaderboardLocationSearchService = inject(LeaderboardLocationSearchService);
 
-    private isTypeMode = signal(false);
-
     public searchControl = this.leaderboardLocationSearchService.searchControl;
     public suggestions = this.leaderboardLocationSearchService.suggestions;
     public options = this.leaderboardLocationSearchService.options;
     public clearButtonVisible$ = this.leaderboardLocationSearchService.clearButtonVisible$;
     public suggestionsVisible = computed(() => {
-        const isTypeMode = this.isTypeMode();
         const hasSuggestions = this.suggestions().length > 0;
-        return isTypeMode && hasSuggestions;
+        return hasSuggestions;
     });
-
-    public onFocus() {
-        this.isTypeMode.set(true);
-    }
 
     public clearSearch(event: MouseEvent) {
         event.stopPropagation();
@@ -60,6 +52,5 @@ export class LocationSearchComponent {
         const suggestion = this.suggestions()[index];
         this.locationSelected.emit(suggestion);
         this.leaderboardLocationSearchService.setSuggestion(suggestion);
-        this.isTypeMode.set(false);
     }
 }
