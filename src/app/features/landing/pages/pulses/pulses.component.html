@@ -66,7 +66,7 @@
                             </p>
                         }
                     </div>
-                    @if (isEmptyGlobalTopics) {
+                    @if (isEmptyGlobalTopics()) {
                         <app-topics-empty-list
                             [searchString]="searchText"
                             class="pulses__empty-list" />

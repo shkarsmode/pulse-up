@@ -1,10 +1,4 @@
-import {
-    ChangeDetectionStrategy,
-    Component,
-    computed,
-    inject,
-    OnInit,
-} from "@angular/core";
+import { ChangeDetectionStrategy, Component, inject, OnInit } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { RouterModule } from "@angular/router";
 import { AngularSvgIconModule } from "angular-svg-icon";
@@ -22,8 +16,7 @@ import { PulsesPaginationService } from "../../services/pulses-pagination.servic
 import { TopicsEmptyListComponent } from "../../ui/topics-empty-list/topics-empty-list.component";
 import { PrimaryButtonComponent } from "@/app/shared/components/ui-kit/buttons/primary-button/primary-button.component";
 import { AppRoutes } from "@/app/shared/enums/app-routes.enum";
-import { TopicsService } from "../../services/topics.service";
-import { StringUtils } from "@/app/shared/helpers/string-utils";
+import { TopicsService } from "./topics.service";
 
 @Component({
     selector: "app-pulses",
@@ -57,6 +50,10 @@ export class PulsesComponent implements OnInit {
     public localTopicsQuery = this.topicsService.localTopicsQuery;
 
     public categories = this.topicsService.categories;
+    public localTopics = this.topicsService.localTopics;
+    public isEmptyGlobalTopics = this.topicsService.isEmptyGlobalTopics;
+    public isEmptyLocalTopics = this.topicsService.isEmptyLocalTopics;
+
     public get searchText() {
         return this.topicsService.searchText();
     }
@@ -69,30 +66,6 @@ export class PulsesComponent implements OnInit {
     public get isLoadingMore() {
         return this.globalTopicsQuery.isFetchingNextPage();
     }
-    public get isEmptyGlobalTopics() {
-        return (
-            !this.globalTopicsQuery.isLoading() &&
-            this.globalTopicsQuery.data()?.pages.flat().length === 0
-        );
-    }
-    public isEmptyLocalTopics = computed(() => {
-        const isLoading = this.localTopicsQuery.isLoading();
-        const hasLocalTopics = !!this.localTopics().length;
-        return !isLoading && !hasLocalTopics;
-    })
-
-    public localTopics = computed(() => {
-        const localTopics = this.localTopicsQuery.data() || [];
-        const searchText = StringUtils.normalizeWhitespace(this.searchText.toLowerCase());
-        if (searchText) {
-            return localTopics.filter(
-                (topic) =>
-                    topic.title.toLowerCase().includes(searchText) ||
-                    topic.keywords.some((keyword) => keyword.toLowerCase().includes(searchText)),
-            );
-        }
-        return localTopics;
-    });
 
     public ngOnInit() {
         this.refetchQueries();
