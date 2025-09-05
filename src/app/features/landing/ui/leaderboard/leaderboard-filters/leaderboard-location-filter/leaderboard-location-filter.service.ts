@@ -52,10 +52,8 @@ export class LeaderboardLocationFilterService {
         this.localCountryOptions,
         this.localStatesOptions,
     ]);
-    private activeFilters$ = combineLatest([
-        this.leaderboardService.filters$.pipe(map((filter) => filter.date)),
-        this.leaderboardService.filters$.pipe(map((filter) => filter.timeframe)),
-    ]).pipe(
+    private activeFilters$ = this.leaderboardService.filters$.pipe(
+        map(({ date, timeframe }) => [date, timeframe] as const),
         distinctUntilChanged((prev, curr) => {
             return prev[0] === curr[0] && prev[1] === curr[1];
         }),
@@ -85,18 +83,11 @@ export class LeaderboardLocationFilterService {
                         this.globalCountriesOptions.next([initGlobalOption]);
                         return;
                     }
-                    const options = countries.map(
-                        (country) =>
-                            ({
-                                id: `${country}`,
-                                label: `${country}`,
-                                type: "quickPick",
-                                data: {
-                                    country,
-                                    region: null,
-                                    city: null,
-                                },
-                            }) as ILeaderboardLocationOption,
+                    const options = countries.map((country) =>
+                        this.createOption({
+                            location: { country, region: null, city: null },
+                            type: "global",
+                        }),
                     );
                     this.globalCountriesOptions.next([initGlobalOption, ...options]);
                 }),
@@ -121,18 +112,11 @@ export class LeaderboardLocationFilterService {
                                     this.localStatesOptions.next([]);
                                     return;
                                 }
-                                const stateOptions = locations.map(
-                                    ({ country, state }) =>
-                                        ({
-                                            id: `user-state-${state}`,
-                                            label: `${state}`,
-                                            type: "quickPick",
-                                            data: {
-                                                country,
-                                                region: state,
-                                                city: null,
-                                            },
-                                        }) as ILeaderboardLocationOption,
+                                const stateOptions = locations.map(({ country, state }) =>
+                                    this.createOption({
+                                        location: { country, region: state, city: null },
+                                        type: "local",
+                                    }),
                                 );
                                 this.localStatesOptions.next(stateOptions);
                             }),
@@ -143,16 +127,10 @@ export class LeaderboardLocationFilterService {
                     const isCountryAdded = !!this.localCountryOptions.getValue().length;
                     if (isCountryAdded) return;
                     this.localCountryOptions.next([
-                        {
-                            id: `user-country-${country}`,
-                            label: `${country}`,
-                            type: "quickPick",
-                            data: {
-                                country,
-                                region: null,
-                                city: null,
-                            },
-                        },
+                        this.createOption({
+                            location: { country, region: null, city: null },
+                            type: "local",
+                        }),
                     ]);
                 }),
                 takeUntilDestroyed(this.destroyRef),
@@ -204,5 +182,31 @@ export class LeaderboardLocationFilterService {
                     city: null,
                 };
         }
+    }
+
+    private createOption({
+        location,
+        type,
+    }: {
+        location: {
+            country: string;
+            region?: string | null;
+            city?: string | null;
+        };
+        type: "global" | "local";
+    }): ILeaderboardLocationOption {
+        const { country, region, city } = location;
+        const locationsType = `${type}-${region ? "state" : "country"}`;
+        const label = region ? region : country;
+        return {
+            id: `${locationsType}-${location.country}`,
+            label,
+            type: "quickPick",
+            data: {
+                country: country,
+                region: region || null,
+                city: city || null,
+            },
+        };
     }
 }

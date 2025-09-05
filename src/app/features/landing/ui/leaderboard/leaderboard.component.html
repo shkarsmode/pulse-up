@@ -35,10 +35,7 @@
 }
 
 @if (isEmpty$ | async) {
-    <app-no-results
-        class="leaderboard__no-results"
-        heading="No Results Found"
-        [text]="[(noResultsText$ | async) || '']" />
+    <app-leaderboard-no-results />
 }
 
 @if (isErrorVisible$ | async) {

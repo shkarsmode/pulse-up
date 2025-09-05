@@ -1,0 +1,19 @@
+@let text = (text$ | async) || "";
+@let suggestions = (suggestions$ | async) || [];
+
+<app-no-results
+    class="leaderboard-no-results"
+    heading="No Results Found"
+    [text]="[text]" />
+
+@if (suggestions.length) {
+    <div class="leaderboard-no-results__suggestions">
+        @for (suggestion of suggestions; track $index) {
+            <app-link-button
+                class="leaderboard-no-results__suggestion"
+                (handleClick)="onSuggestionClick(suggestion)">
+                {{ suggestion.region }}
+            </app-link-button>
+        }
+    </div>
+}

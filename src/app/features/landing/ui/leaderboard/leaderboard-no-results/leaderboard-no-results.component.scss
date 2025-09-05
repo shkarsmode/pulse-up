@@ -1,0 +1,17 @@
+@use "../../../../../../styles/mixins" as *;
+
+.leaderboard-no-results {
+    padding-top: 36px;
+
+    @include media-sm {
+        padding-top: 28px;
+    }
+}
+
+.leaderboard-no-results__suggestions {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 4px;
+}
+
