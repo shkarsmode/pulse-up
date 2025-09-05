@@ -75,9 +75,12 @@ export class PulsesComponent implements OnInit {
             this.globalTopicsQuery.data()?.pages.flat().length === 0
         );
     }
-    public get isEmptyLocalTopics() {
-        return !this.localTopicsQuery.isLoading() && this.localTopicsQuery.data()?.length === 0;
-    }
+    public isEmptyLocalTopics = computed(() => {
+        const isLoading = this.localTopicsQuery.isLoading();
+        const hasLocalTopics = !!this.localTopics().length;
+        return !isLoading && !hasLocalTopics;
+    })
+
     public localTopics = computed(() => {
         const localTopics = this.localTopicsQuery.data() || [];
         const searchText = StringUtils.normalizeWhitespace(this.searchText.toLowerCase());
