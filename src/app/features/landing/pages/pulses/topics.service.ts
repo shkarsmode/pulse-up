@@ -1,4 +1,4 @@
-import { inject, Injectable, signal } from "@angular/core";
+import { computed, effect, inject, Injectable, signal } from "@angular/core";
 import { injectInfiniteQuery, injectQuery } from "@tanstack/angular-query-experimental";
 import { concat, first, lastValueFrom, map, of, shareReplay, switchMap } from "rxjs";
 import { toSignal } from "@angular/core/rxjs-interop";
@@ -7,6 +7,7 @@ import { QUERY_KEYS } from "@/app/shared/constants";
 import { PulseService } from "@/app/shared/services/api/pulse.service";
 import { PendingTopicsService } from "@/app/shared/services/topic/pending-topics.service";
 import { IpLocationService } from "@/app/shared/services/core/ip-location.service";
+import { StringUtils } from "@/app/shared/helpers/string-utils";
 
 @Injectable({ providedIn: "root" })
 export class TopicsService {
@@ -69,6 +70,47 @@ export class TopicsService {
         queryFn: () => lastValueFrom(this.getLocalTopics()),
         enabled: this.category() === "trending",
     }));
+
+    public localTopics = computed(() => {
+        const localTopics = this.localTopicsQuery.data() || [];
+        const searchText = this.searchText();
+        const searchTextNormalized = StringUtils.normalizeWhitespace(searchText.toLowerCase());
+        if (searchText) {
+            return localTopics.filter(
+                (topic) =>
+                    topic.title.toLowerCase().includes(searchTextNormalized) ||
+                    topic.keywords.some((keyword) =>
+                        keyword.toLowerCase().includes(searchTextNormalized),
+                    ),
+            );
+        }
+        return localTopics;
+    });
+
+    public isEmptyGlobalTopics = computed(() => {
+        const isLoading = this.globalTopicsQuery.isLoading();
+        const hasTopics = this.globalTopicsQuery.data()?.pages.flat().length !== 0;
+        return !isLoading && !hasTopics;
+    });
+
+    public isEmptyLocalTopics = computed(() => {
+        const isLoading = this.localTopicsQuery.isLoading();
+        const hasLocalTopics = !!this.localTopics().length;
+        return !isLoading && !hasLocalTopics;
+    });
+
+    constructor() {
+        effect(
+            () => {
+                if (this.isEmptyLocalTopics()) {
+                    this.categorySignal.set("newest");
+                }
+            },
+            {
+                allowSignalWrites: true,
+            },
+        );
+    }
 
     public setSearchText(text: string) {
         this.searchTextSignal.set(text);
