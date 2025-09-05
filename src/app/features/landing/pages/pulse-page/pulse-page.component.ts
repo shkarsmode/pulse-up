@@ -38,8 +38,9 @@ import { PulseCampaignComponent } from "../../ui/pulse-campaign/pulse-campaign.c
 import { VotesService } from "@/app/shared/services/votes/votes.service";
 import { MapHeatmapLayerComponent } from "@/app/shared/components/map/map-heatmap-layer/map-heatmap-layer.component";
 import { WaveAnimationDirective } from "@/app/shared/directives/wave-animation/wave-animation.directive";
-import { PulsePageService } from "../../services/pulse-page.service";
+import { PulsePageService } from "./pulse-page.service";
 import { SettingsService } from "@/app/shared/services/api/settings.service";
+import { TimeFromNowPipe } from "@/app/shared/pipes/time-from-now.pipe";
 
 @Component({
     selector: "app-pulse-page",
@@ -66,6 +67,7 @@ import { SettingsService } from "@/app/shared/services/api/settings.service";
         PulseCampaignComponent,
         MapHeatmapLayerComponent,
         WaveAnimationDirective,
+        TimeFromNowPipe,
     ],
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -113,6 +115,9 @@ export class PulsePageComponent implements OnInit, OnDestroy {
             return "";
         }),
     );
+    public get lastPulseTime() {
+        return this.pulsePageService.lastPulseTime();
+    }
 
     ngOnInit(): void {
         this.updatePageData();

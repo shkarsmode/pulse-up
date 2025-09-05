@@ -6,7 +6,7 @@ import { toObservable } from "@angular/core/rxjs-interop";
 import { AngularSvgIconModule } from "angular-svg-icon";
 import { FadeInDirective } from "@/app/shared/animations/fade-in.directive";
 import { SettingsService } from "@/app/shared/services/api/settings.service";
-import { PulsePageService } from "../../services/pulse-page.service";
+import { PulsePageService } from "../../pages/pulse-page/pulse-page.service";
 import { ITopic } from "@/app/shared/interfaces";
 import { FormatNumberPipe } from "@/app/shared/pipes/format-number.pipe";
 import { VoteButtonComponent } from "../vote-button/vote-button.component";

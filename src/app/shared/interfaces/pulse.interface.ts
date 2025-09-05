@@ -44,6 +44,7 @@ export interface ITopicStats {
     totalVotes: number;
     totalUniqueUsers: number;
     lastDayVotes: number;
+    timestamp?: string;
 }
 
 export interface CampaignGoal {
