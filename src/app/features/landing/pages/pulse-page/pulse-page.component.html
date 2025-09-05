@@ -62,12 +62,22 @@
             </div>
 
             <div class="pulse__vote">
-                @if (vote() && !isActiveVote()) {
-                    <div class="pulse__last-vote">
-                        <svg-icon src="assets/svg/pin.svg"></svg-icon>
-                        {{ lastVoteInfo() }}
-                    </div>
-                }
+                <div
+                    class="pulse__vote-info"
+                    [class.pulse__vote-info--active]="isActiveVote()">
+                    @if (lastPulseTime) {
+                        <div class="pulse__last-vote pulse__last-vote--time">
+                            <svg-icon src="assets/svg/clock.svg"></svg-icon>
+                            Last pulse: {{ lastPulseTime | timeFromNow }}
+                        </div>
+                    }
+                    @if (vote() && !isActiveVote()) {
+                        <div class="pulse__last-vote">
+                            <svg-icon src="assets/svg/pin.svg"></svg-icon>
+                            {{ lastVoteInfo() }}
+                        </div>
+                    }
+                </div>
                 <div class="pulse__buttons">
                     <app-vote-button
                         (voted)="onVoted($event)"

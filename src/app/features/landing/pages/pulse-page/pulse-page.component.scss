@@ -115,13 +115,29 @@
         margin: 0 auto;
     }
 
+    &__vote-info {
+        margin-bottom: 16px;
+    }
+
+    &__vote-info--active {
+        margin-bottom: 8px;
+    }
+
     &__last-vote {
         @include text-14px;
         display: flex;
         align-items: center;
         column-gap: 8px;
-        margin-bottom: 16px;
         color: var(--dark-grey-color);
+    }
+
+    &__last-vote--time {
+        margin-bottom: 8px;
+
+        svg {
+            width: 16px;
+            height: 16px;
+        }
     }
 
     &__buttons {

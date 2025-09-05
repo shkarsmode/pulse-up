@@ -27,7 +27,6 @@
                     [topic]="topicData.topic"
                     [votes]="topicData.votes"
                     [users]="topicData.uniqueUsers"
-                    [lastPulse]="(isActiveTimeframe$ | async) ? topicData.lastVoteTime : undefined"
                     [isActiveTimeframe]="(isActiveTimeframe$ | async) || false" />
             </li>
         }

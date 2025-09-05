@@ -22,7 +22,7 @@ import { AuthenticationService } from "@/app/shared/services/api/authentication.
 import { VotingError, VotingErrorCode } from "@/app/shared/helpers/errors/voting-error";
 import { isErrorWithMessage } from "@/app/shared/helpers/errors/is-error-with-message";
 import { WaveAnimationDirective } from "@/app/shared/directives/wave-animation/wave-animation.directive";
-import { PulsePageService } from "../../services/pulse-page.service";
+import { PulsePageService } from "../../pages/pulse-page/pulse-page.service";
 import { VotingService } from "@/app/shared/services/votes/voting.service";
 
 function delayBetween<T>(delayMs: number, first = false) {

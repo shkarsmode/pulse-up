@@ -139,6 +139,10 @@ export class PulsePageService {
         return topic?.state === TopicState.Archived;
     });
 
+    public lastPulseTime = computed(() => {
+        return this.topicQuery.data()?.stats?.timestamp
+    });
+
     public setTopicId(id: number) {
         this.topicId.set(id);
     }
