@@ -87,7 +87,7 @@
                                 [vote]="userVotesMap()?.get(topic.id)" />
                         }
                     </div>
-                    @if (isEmptyLocalTopics) {
+                    @if (isEmptyLocalTopics()) {
                         <app-topics-empty-list
                             [message]="[
                                 'There are no topics nearby.',
