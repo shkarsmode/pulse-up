@@ -33,22 +33,30 @@
                 src="assets/svg/search.svg"
                 class="location-filter-button__icon" />
         </button>
-        <div
+        <ul
             content
             role="menu"
+            tabindex="-1"
+            aria-label="locations filters"
             class="location-filter-menu">
-            <app-location-search
-                class="location-search"
-                (locationSelected)="onSelectSuggestion($event)" />
+            <li role="presentation">
+                <app-location-search
+                    class="location-search"
+                    (locationSelected)="onSelectSuggestion($event)"
+                    role="presentation" />
+            </li>
             @for (option of options; track $index) {
-                <button
-                    class="location-filter-option"
-                    [class.location-filter-option--selected]="option.selected"
-                    (click)="onSelectOption(option)">
-                    <span>{{ option.label }}</span>
-                    <span class="location-filter-option__checkbox"></span>
-                </button>
+                <li role="presentation">
+                    <button
+                        role="menuitem"
+                        class="location-filter-option"
+                        [class.location-filter-option--selected]="option.selected"
+                        (click)="onSelectOption(option)">
+                        <span>{{ option.label }}</span>
+                        <span class="location-filter-option__checkbox"></span>
+                    </button>
+                </li>
             }
-        </div>
+        </ul>
     </app-popover>
 </div>
