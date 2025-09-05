@@ -32,13 +32,12 @@
                         [activeCategory]="selectedCategory"
                         (selectedCategory)="onCategorySelected($event)" />
                 </div>
-                @if (!isTrendingCategorySelected) {
-                    <div class="pulses__selection">
-                        <app-category-filter-selection
-                            [category]="selectedCategory"
-                            (cancelSelection)="onCategorySelected('trending')" />
-                    </div>
-                }
+                <div class="pulses__selection">
+                    <app-category-filter-selection
+                        [category]="selectedCategory"
+                        [cancelable]="!isTrendingCategorySelected"
+                        (cancelSelection)="onCategorySelected('trending')" />
+                </div>
             </div>
             @if (!isTrendingCategorySelected) {
                 <div class="pulses__list-wrap">

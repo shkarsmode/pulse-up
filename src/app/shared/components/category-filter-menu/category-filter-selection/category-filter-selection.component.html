@@ -1,11 +1,15 @@
 @if (category) {
-    <div class="categories-selection">
+    <div
+        class="categories-selection"
+        [class.categories-selection--cancelable]="cancelable">
         {{ label }}
-        <button
-            class="categories-selection__cancel"
-            (click)="onCancel()">
-            <svg-icon src="assets/svg/close.svg" />
-            <span class="visualy-hidden">Cancel selection</span>
-        </button>
+        @if (cancelable) {
+            <button
+                class="categories-selection__cancel"
+                (click)="onCancel()">
+                <svg-icon src="assets/svg/close.svg" />
+                <span class="visualy-hidden">Cancel selection</span>
+            </button>
+        }
     </div>
 }
