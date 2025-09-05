@@ -2,7 +2,6 @@ import {
     ChangeDetectionStrategy,
     Component,
     computed,
-    effect,
     inject,
     OnInit,
 } from "@angular/core";
@@ -91,16 +90,6 @@ export class PulsesComponent implements OnInit {
         }
         return localTopics;
     });
-
-    constructor() {
-        effect(() => {
-            console.log({
-                isEmptyLocalTopics: this.isEmptyLocalTopics,
-                isLoading: this.localTopicsQuery.isLoading(),
-                data: this.localTopicsQuery.data(),
-            });
-        });
-    }
 
     public ngOnInit() {
         this.refetchQueries();
