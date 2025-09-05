@@ -13,6 +13,7 @@ import { IFilterCategory } from "@/app/shared/interfaces/category.interface";
 })
 export class CategoryFilterSelectionComponent {
     @Input() category: IFilterCategory;
+    @Input() cancelable = true;
     @Output() cancelSelection = new EventEmitter<void>();
 
     public get label() {
