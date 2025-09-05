@@ -196,10 +196,10 @@ export class LeaderboardLocationFilterService {
         type: "global" | "local";
     }): ILeaderboardLocationOption {
         const { country, region, city } = location;
-        const locationsType = `${type}-${region ? "state" : "country"}`;
+        const optionId = `${type}-${region ? "state" : "country"}-${region || country}`;
         const label = region ? region : country;
         return {
-            id: `${locationsType}-${location.country}`,
+            id: optionId,
             label,
             type: "quickPick",
             data: {
