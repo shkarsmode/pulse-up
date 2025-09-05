@@ -1,6 +1,6 @@
 import { inject, Injectable, signal } from "@angular/core";
 import { injectInfiniteQuery, injectQuery } from "@tanstack/angular-query-experimental";
-import { concat, first, forkJoin, lastValueFrom, map, of, shareReplay, switchMap } from "rxjs";
+import { concat, first, lastValueFrom, map, of, shareReplay, switchMap } from "rxjs";
 import { toSignal } from "@angular/core/rxjs-interop";
 import { geoToH3 } from "h3-js";
 import { QUERY_KEYS } from "@/app/shared/constants";
@@ -80,7 +80,7 @@ export class TopicsService {
 
     private getLocalTopics() {
         return this.ipLocationService.countryCoodinates$.pipe(
-            map(({ latitude, longitude }) => geoToH3(latitude, longitude, 1)),
+            map(({ latitude, longitude }) => geoToH3(latitude, longitude, 0)),
             switchMap((h3Index) => {
                 return concat(this.pulseService.getTopicsByCellIndex(h3Index)).pipe(
                     first((topics) => topics.length > 0, []),
@@ -88,7 +88,10 @@ export class TopicsService {
             }),
             switchMap((topics) => {
                 if (topics.length === 0) return of([]);
-                return forkJoin(topics.map(({ id }) => this.pulseService.getById(id)));
+                const topicsIds = topics.map(({ id }) => id);
+                return this.pulseService.get({
+                    id: topicsIds,
+                });
             }),
             shareReplay({ bufferSize: 1, refCount: true }),
         );
