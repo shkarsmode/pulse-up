@@ -1,4 +1,4 @@
-import { computed, inject, Injectable, signal } from "@angular/core";
+import { computed, effect, inject, Injectable, signal } from "@angular/core";
 import { injectInfiniteQuery, injectQuery } from "@tanstack/angular-query-experimental";
 import { concat, first, lastValueFrom, map, of, shareReplay, switchMap } from "rxjs";
 import { toSignal } from "@angular/core/rxjs-interop";
@@ -8,7 +8,6 @@ import { PulseService } from "@/app/shared/services/api/pulse.service";
 import { PendingTopicsService } from "@/app/shared/services/topic/pending-topics.service";
 import { IpLocationService } from "@/app/shared/services/core/ip-location.service";
 import { StringUtils } from "@/app/shared/helpers/string-utils";
-import { ITopic } from "@/app/shared/interfaces";
 
 @Injectable({ providedIn: "root" })
 export class TopicsService {
@@ -97,10 +96,21 @@ export class TopicsService {
     public isEmptyLocalTopics = computed(() => {
         const isLoading = this.localTopicsQuery.isLoading();
         const hasLocalTopics = !!this.localTopics().length;
-        console.log({ isLoading, hasLocalTopics });
-        
         return !isLoading && !hasLocalTopics;
     });
+
+    constructor() {
+        effect(
+            () => {
+                if (this.isEmptyLocalTopics()) {
+                    this.categorySignal.set("newest");
+                }
+            },
+            {
+                allowSignalWrites: true,
+            },
+        );
+    }
 
     public setSearchText(text: string) {
         this.searchTextSignal.set(text);
@@ -125,7 +135,6 @@ export class TopicsService {
                     id: topicsIds,
                 });
             }),
-            map(() => [] as  ITopic[]),
             shareReplay({ bufferSize: 1, refCount: true }),
         );
     }
