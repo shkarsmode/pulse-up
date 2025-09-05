@@ -8,6 +8,9 @@ import {
     ElementRef,
     ViewChild,
     signal,
+    Input,
+    OnChanges,
+    SimpleChanges,
 } from "@angular/core";
 import { ReactiveFormsModule } from "@angular/forms";
 import { CommonModule } from "@angular/common";
@@ -31,7 +34,8 @@ import { LeaderboardLocationSearchService } from "./leaderboard-location-search.
     styleUrls: ["./leaderboard-location-search.component.scss"],
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class LocationSearchComponent {
+export class LocationSearchComponent implements OnChanges {
+    @Input() shouldFocus: boolean;
     @Output() locationSelected = new EventEmitter<MapboxFeature>();
 
     @ViewChild("searchInput") searchInput!: ElementRef<HTMLInputElement>;
@@ -48,8 +52,16 @@ export class LocationSearchComponent {
         const suggestions = this.suggestions();
         const isTyping = this.isTyping();
         const hasSuggestions = suggestions.length > 0;
-        return hasSuggestions && (isTyping);
+        return hasSuggestions && isTyping;
     });
+
+    ngOnChanges(changes: SimpleChanges) {
+        if (changes["shouldFocus"] && !changes["shouldFocus"].isFirstChange()) {
+            setTimeout(() => {
+                this.searchInput?.nativeElement.focus();
+            });
+        }
+    }
 
     public onFocus() {
         this.isTyping.set(true);

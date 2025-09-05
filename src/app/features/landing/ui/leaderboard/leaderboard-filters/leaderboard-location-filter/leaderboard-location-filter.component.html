@@ -42,6 +42,7 @@
             <li role="presentation">
                 <app-location-search
                     class="location-search"
+                    [shouldFocus]="menuVisible()"
                     (locationSelected)="onSelectSuggestion($event)"
                     role="presentation" />
             </li>

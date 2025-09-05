@@ -4,13 +4,14 @@
     <div class="location-search-input-wrap">
         <input
             #searchInput
+            name="search"
             type="text"
             [formControl]="searchControl"
             placeholder="Search (USA, Brazil, Miami...)"
             class="location-search-input"
             [class.location-search-input--filled]="clearButtonVisible"
             (focus)="onFocus()"
-            (blur)="onBlur()" />
+            (blur)="onBlur()"/>
         @if (clearButtonVisible) {
             <button
                 mat-icon-button
