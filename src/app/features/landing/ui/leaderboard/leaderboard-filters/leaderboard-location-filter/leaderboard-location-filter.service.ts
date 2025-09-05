@@ -52,10 +52,8 @@ export class LeaderboardLocationFilterService {
         this.localCountryOptions,
         this.localStatesOptions,
     ]);
-    private activeFilters$ = combineLatest([
-        this.leaderboardService.filters$.pipe(map((filter) => filter.date)),
-        this.leaderboardService.filters$.pipe(map((filter) => filter.timeframe)),
-    ]).pipe(
+    private activeFilters$ = this.leaderboardService.filters$.pipe(
+        map(({ date, timeframe }) => [date, timeframe] as const),
         distinctUntilChanged((prev, curr) => {
             return prev[0] === curr[0] && prev[1] === curr[1];
         }),

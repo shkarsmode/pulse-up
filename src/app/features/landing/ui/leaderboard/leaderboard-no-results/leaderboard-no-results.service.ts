@@ -1,5 +1,5 @@
 import { inject, Injectable } from "@angular/core";
-import { combineLatest, map, switchMap } from "rxjs";
+import { combineLatest, distinctUntilChanged, map, shareReplay, switchMap } from "rxjs";
 import { PulseService } from "@/app/shared/services/api/pulse.service";
 import { LeaderboardService } from "../leaderboard.service";
 import { DateUtils } from "../../../helpers/date-utils";
@@ -14,7 +14,9 @@ export class LeaderboardNoResultsService {
     private leaderboardService = inject(LeaderboardService);
     private leaderboardFiltersService = inject(LeaderboardFiltersService);
 
-    private filter$ = this.leaderboardService.filters$;
+    private filter$ = this.leaderboardService.filters$.pipe(
+        shareReplay({ bufferSize: 1, refCount: true }),
+    );
 
     private noResultsText$ = this.filter$.pipe(
         map((filter) => {
@@ -38,9 +40,14 @@ export class LeaderboardNoResultsService {
     );
 
     public suggestions$ = this.filter$.pipe(
+        distinctUntilChanged((prev, curr) => {
+            return (
+                prev.date === curr.date &&
+                prev.timeframe === curr.timeframe &&
+                JSON.stringify(prev.location) === JSON.stringify(curr.location)
+            );
+        }),
         switchMap(({ date, timeframe, location }) => {
-            console.log({ location, timeframe });
-
             return this.pulseService.getLeaderboardLocations({
                 date: DateUtils.toISOString(DateUtils.getStatrtOfDay(date)),
                 timeframe,
@@ -54,6 +61,7 @@ export class LeaderboardNoResultsService {
             region: location.state,
             city: location.city,
         } as ILeaderboardLocation))),
+        shareReplay({ bufferSize: 1, refCount: true }),
     );
 
     public text$ = combineLatest([this.noResultsText$, this.suggestions$]).pipe(
