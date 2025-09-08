@@ -1,5 +1,5 @@
 import { inject, Injectable } from "@angular/core";
-import { combineLatest, distinctUntilChanged, map, shareReplay, switchMap } from "rxjs";
+import { distinctUntilChanged, map, of, shareReplay, switchMap } from "rxjs";
 import { PulseService } from "@/app/shared/services/api/pulse.service";
 import { LeaderboardService } from "../leaderboard.service";
 import { DateUtils } from "../../../helpers/date-utils";
@@ -18,7 +18,7 @@ export class LeaderboardNoResultsService {
         shareReplay({ bufferSize: 1, refCount: true }),
     );
 
-    private noResultsText$ = this.filter$.pipe(
+    public noResultsText$ = this.filter$.pipe(
         map((filter) => {
             const baseText = "No pulse in this time period.";
             const location = filter.location;
@@ -48,32 +48,57 @@ export class LeaderboardNoResultsService {
             );
         }),
         switchMap(({ date, timeframe, location }) => {
-            return this.pulseService.getLeaderboardLocations({
-                date: DateUtils.toISOString(DateUtils.getStatrtOfDay(date)),
-                timeframe,
-                "Location.Country": location?.country || undefined,
-            });
+            return this.pulseService
+                .getLeaderboardLocations({
+                    date: DateUtils.toISOString(DateUtils.getStatrtOfDay(date)),
+                    timeframe,
+                    "Location.Country": location?.country || undefined,
+                })
+                .pipe(
+                    switchMap((locations) => {
+                        if (locations.length) {
+                            return of(locations);
+                        } else {
+                            return this.pulseService.getLeaderboardLocations({
+                                date: DateUtils.toISOString(DateUtils.getStatrtOfDay(date)),
+                                timeframe,
+                            });
+                        }
+                    }),
+                    map((locations) => locations.filter((location) => !!location.state)),
+                    map((locations) => locations.filter((item) => {
+                        if (location?.region) {
+                            return item.state !== location.region;
+                        } else {
+                            return item.country !== location?.country;
+                        }
+                    })),
+                    map((locations) => locations.slice(0, 3)),
+                    map((locations) =>
+                        locations.map(
+                            (location) =>
+                                ({
+                                    country: location.country,
+                                    region: location.state,
+                                    city: location.city,
+                                }) as ILeaderboardLocation,
+                        ),
+                    ),
+                    shareReplay({ bufferSize: 1, refCount: true }),
+                );
         }),
-        map((locations) => locations.filter((location) => !!location.state)),
-        map((locations) => locations.slice(0, 3)),
-        map((locations) => locations.map((location) => ({
-            country: location.country,
-            region: location.state,
-            city: location.city,
-        } as ILeaderboardLocation))),
-        shareReplay({ bufferSize: 1, refCount: true }),
     );
 
-    public text$ = combineLatest([this.noResultsText$, this.suggestions$]).pipe(
-        map(([noResultsText, suggestions]) => {
-            const hasSuggestions = suggestions && suggestions.length > 0;
-            return `${noResultsText} ${hasSuggestions ? " See results for:" : ""}`;
-        }),
-    );
+    // public text$ = combineLatest([this.noResultsText$, this.suggestions$]).pipe(
+    //     map(([noResultsText, suggestions]) => {
+    //         const hasSuggestions = suggestions && suggestions.length > 0;
+    //         return `${noResultsText} ${hasSuggestions ? " See results for:" : ""}`;
+    //     }),
+    // );
 
     public setSuggestedLocation(location: ILeaderboardLocation) {
-      const {country, region} = location;
-      if (!country || !region) return;
+        const { country, region } = location;
+        if (!country || !region) return;
         this.leaderboardFiltersService.changeLocation({
             id: `${country}-${region}`,
             label: region,

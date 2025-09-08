@@ -33,7 +33,7 @@
     </ul>
 }
 
-@if (isEmpty$ | async) {
+@if ((isEmpty$ | async) && (isErrorVisible$ | async) === false) {
     <app-leaderboard-no-results />
 }
 

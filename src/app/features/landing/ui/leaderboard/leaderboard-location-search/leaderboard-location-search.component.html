@@ -10,6 +10,7 @@
             placeholder="Search (USA, Brazil, Miami...)"
             class="location-search-input"
             [class.location-search-input--filled]="clearButtonVisible"
+            autocomplete="off"
             (focus)="onFocus()"
             (blur)="onBlur()"/>
         @if (clearButtonVisible) {

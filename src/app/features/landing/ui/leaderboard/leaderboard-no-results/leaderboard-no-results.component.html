@@ -3,8 +3,8 @@
 
 <app-no-results
     class="leaderboard-no-results"
-    heading="No Results Found"
-    [text]="[text]" />
+    [heading]="text"
+    [text]="suggestions.length ? ['See results for:'] : []" />
 
 @if (suggestions.length) {
     <div class="leaderboard-no-results__suggestions">
@@ -12,7 +12,7 @@
             <app-link-button
                 class="leaderboard-no-results__suggestion"
                 (handleClick)="onSuggestionClick(suggestion)">
-                {{ suggestion.region }}
+                {{ suggestion.region || suggestion.country }}
             </app-link-button>
         }
     </div>
