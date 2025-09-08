@@ -24,7 +24,7 @@ import { errorInterceptor } from "./shared/helpers/interceptors/error.intercepto
 import { APP_ROUTES } from "./app.routes";
 import { WindowService } from "./shared/services/core/window.service";
 
-const queryClient = new QueryClient({
+export const queryClient = new QueryClient({
     defaultOptions: {
         queries: {
             retry: (failureCount, error) => {

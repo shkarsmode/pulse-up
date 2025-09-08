@@ -8,6 +8,7 @@ import {
     delay,
     filter,
     first,
+    map,
     mergeMap,
     Observable,
     of,
@@ -17,12 +18,12 @@ import {
 import { IVote } from "@/app/shared/interfaces/vote.interface";
 import { PrimaryButtonComponent } from "@/app/shared/components/ui-kit/buttons/primary-button/primary-button.component";
 import { NotificationService } from "@/app/shared/services/core/notification.service";
-import { VoteTimeLeftComponent } from "../vote-time-left/vote-time-left.component";
+import { VoteTimeLeftComponent } from "../../vote-time-left/vote-time-left.component";
 import { AuthenticationService } from "@/app/shared/services/api/authentication.service";
 import { VotingError, VotingErrorCode } from "@/app/shared/helpers/errors/voting-error";
 import { isErrorWithMessage } from "@/app/shared/helpers/errors/is-error-with-message";
 import { WaveAnimationDirective } from "@/app/shared/directives/wave-animation/wave-animation.directive";
-import { PulsePageService } from "../../pages/pulse-page/pulse-page.service";
+import { PulsePageService } from "../../../pages/pulse-page/pulse-page.service";
 import { VotingService } from "@/app/shared/services/votes/voting.service";
 
 function delayBetween<T>(delayMs: number, first = false) {
@@ -41,7 +42,7 @@ function delayBetween<T>(delayMs: number, first = false) {
 }
 
 @Component({
-    selector: "app-vote-button",
+    selector: "app-user-vote-button",
     standalone: true,
     imports: [
         CommonModule,
@@ -50,10 +51,10 @@ function delayBetween<T>(delayMs: number, first = false) {
         VoteTimeLeftComponent,
         WaveAnimationDirective,
     ],
-    templateUrl: "./vote-button.component.html",
-    styleUrl: "./vote-button.component.scss",
+    templateUrl: "./user-vote-button.component.html",
+    styleUrl: "./user-vote-button.component.scss",
 })
-export class VoteButtonComponent implements OnInit {
+export class UserVoteButtonComponent implements OnInit {
     private destroyRef = inject(DestroyRef);
     private votingService = inject(VotingService);
     private notificationService = inject(NotificationService);
@@ -67,19 +68,20 @@ export class VoteButtonComponent implements OnInit {
     private isAnimating = new BehaviorSubject(false);
     private topic = this.pulsePageService.topic;
     private isUpdated$ = toObservable(this.pulsePageService.isUpdatedAfterUserSignIn);
+    private isActiveVote$ = toObservable(this.pulsePageService.isActiveVote);
 
-    public vote = this.pulsePageService.vote;
+    public votes = this.pulsePageService.votes;
+    public isVotesLoading = this.pulsePageService.isVotesLoading;
     public isActiveVote = this.pulsePageService.isActiveVote;
     public lastVoteInfo = this.pulsePageService.lastVoteInfo;
-
-    isAnimating$ = this.isAnimating.asObservable();
-    isAnonymousUser = this.authService.anonymousUserValue;
-    isSignedInUserVoted = false;
-    isInProgress = false;
+    public isAnimating$ = this.isAnimating.asObservable();
+    public votes$ = toObservable(this.pulsePageService.votes);
+    public isSignedInUserVoted = false;
+    public isInProgress = false;
 
     ngOnInit() {
         this.listenToVotingChanges();
-        this.listenToUserSignedIn();
+        this.voteAfterAnonymousUserSignIn();
         this.checkShouldVoteAutomatically();
     }
 
@@ -89,15 +91,29 @@ export class VoteButtonComponent implements OnInit {
         });
     }
 
-    voteAfterSignIn() {
-        if (this.isSignedInUserVoted || this.isActiveVote()) return;
-        this.isSignedInUserVoted = true;
-        this.sendVote({
-            onSuccess: () => {
-                this.votingService.congratulate();
-            },
-            onError: this.handleError,
-        });
+    voteAfterAnonymousUserSignIn() {
+        combineLatest([this.listenToUserSignedIn(), this.votes$, this.isActiveVote$])
+            .pipe(
+                tap(([isUserSignedIn, votes, isActiveVote]) => {
+                    if (
+                        isUserSignedIn &&
+                        votes &&
+                        isActiveVote === false &&
+                        this.votingService.isGeolocationRetrieved &&
+                        !this.isSignedInUserVoted
+                    ) {
+                        this.isSignedInUserVoted = true;
+                        this.sendVote({
+                            onSuccess: () => {
+                                this.votingService.congratulate();
+                            },
+                            onError: this.handleError,
+                        });
+                    }
+                }),
+                takeUntilDestroyed(this.destroyRef),
+            )
+            .subscribe();
     }
 
     voteAfterTopicPublished() {
@@ -113,6 +129,7 @@ export class VoteButtonComponent implements OnInit {
         onError,
     }: { onSuccess?: () => void; onError?: (error: unknown) => void } = {}) {
         const topic = this.topic();
+
         if (this.isAnimating.value || this.isActiveVote() || !topic?.id || this.isInProgress)
             return;
 
@@ -144,19 +161,16 @@ export class VoteButtonComponent implements OnInit {
             this.authService.userToken,
             this.votingService.isAnonymousUserSignedIn$,
             this.isUpdated$,
-        ])
-            .pipe(
-                filter(([token, anonymousUserSignedIn, pageUpdated]) => !!token && anonymousUserSignedIn && pageUpdated),
-                tap(() => {
-                    this.votingService.setIsAnonymousUserSignedIn(false);
-
-                    if (this.votingService.isGeolocationRetrieved) {
-                        this.voteAfterSignIn();
-                    }
-                }),
-                takeUntilDestroyed(this.destroyRef),
-            )
-            .subscribe();
+        ]).pipe(
+            filter(
+                ([token, anonymousUserSignedIn, pageUpdated]) =>
+                    !!token && anonymousUserSignedIn && pageUpdated,
+            ),
+            tap(() => {
+                this.votingService.setIsAnonymousUserSignedIn(false);
+            }),
+            map(() => true),
+        );
     }
 
     private checkShouldVoteAutomatically() {
