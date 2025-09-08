@@ -1,6 +1,6 @@
 import { computed, effect, inject, Injectable, signal } from "@angular/core";
 import { Router } from "@angular/router";
-import { catchError, EMPTY, lastValueFrom, of, switchMap } from "rxjs";
+import { catchError, EMPTY, lastValueFrom, Observable, of, switchMap } from "rxjs";
 import { ITopic, TopicState } from "@/app/shared/interfaces";
 import { PulseService } from "@/app/shared/services/api/pulse.service";
 import { isHttpErrorResponse } from "@/app/shared/helpers/errors/isHttpErrorResponse";
@@ -15,6 +15,7 @@ import { VoteUtils } from "@/app/shared/helpers/vote-utils";
 import { SuggestedTopicsService } from "@/app/shared/services/topic/suggested-topics.service";
 import { QUERY_KEYS } from "@/app/shared/constants";
 import { injectQuery } from "@tanstack/angular-query-experimental";
+import { IVote } from "@/app/shared/interfaces/vote.interface";
 
 @Injectable({
     providedIn: "root",
@@ -50,7 +51,6 @@ export class PulsePageService {
             const topicShareKey = this.topicShareKey();
             const topicIdOrShareKey = topicId || topicShareKey;
             if (topicIdOrShareKey) {
-                
                 return this.getTopic(topicIdOrShareKey);
             }
             return null;
@@ -64,7 +64,7 @@ export class PulsePageService {
         queryFn: async () => {
             const topicId = this.topicQuery.data()?.id;
             if (!topicId) return null;
-            const votes = await this.getVotes(topicId);
+            const votes = await lastValueFrom(this.getVotes(topicId));
             return votes;
         },
         queryKey: [QUERY_KEYS.votes, this.topicQuery.data()?.id, this.anonymousUser()],
@@ -75,6 +75,9 @@ export class PulsePageService {
 
     public isLoading = computed(() => {
         return this.topicQuery.isLoading();
+    });
+    public isVotesLoading = computed(() => {
+        return this.votesQuery.isLoading();
     });
     public isUpdatedAfterUserSignIn = this._isUpdatedAfterUserSignIn.asReadonly();
     public isAnonymousUser = computed(() => {
@@ -91,7 +94,7 @@ export class PulsePageService {
     public votes = computed(() => {
         const votes = this.votesQuery.data();
         if (votes === null) return null;
-        
+
         return votes || [];
     });
 
@@ -152,7 +155,7 @@ export class PulsePageService {
     });
 
     public lastPulseTime = computed(() => {
-        return this.topicQuery.data()?.stats?.timestamp
+        return this.topicQuery.data()?.stats?.timestamp;
     });
 
     public setTopicId(id: number) {
@@ -201,10 +204,10 @@ export class PulsePageService {
         return lastValueFrom(topic$);
     }
 
-    private async getVotes(topicId: number) {
+    public getVotes(topicId: number): Observable<IVote[] | null> {
         if (!this.authService.userTokenValue) {
             console.log("Anonymous user, skipping vote fetch");
-            return null;
+            return of(null);
         }
         const votes$ = this.voteService.getMyVotes({ topicId }).pipe(
             catchError((error: unknown) => {
@@ -215,7 +218,7 @@ export class PulsePageService {
                 return of([]);
             }),
         );
-        return lastValueFrom(votes$);
+        return votes$;
     }
 
     private replaceDescriptionLink(topic: ITopic): ITopic {

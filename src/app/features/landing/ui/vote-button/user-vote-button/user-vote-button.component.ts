@@ -71,6 +71,7 @@ export class UserVoteButtonComponent implements OnInit {
     private isActiveVote$ = toObservable(this.pulsePageService.isActiveVote);
 
     public votes = this.pulsePageService.votes;
+    public isVotesLoading = this.pulsePageService.isVotesLoading;
     public isActiveVote = this.pulsePageService.isActiveVote;
     public lastVoteInfo = this.pulsePageService.lastVoteInfo;
     public isAnimating$ = this.isAnimating.asObservable();
