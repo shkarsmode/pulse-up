@@ -62,9 +62,9 @@ export class LeaderboardService {
             return (
                 prev.date.getTime() === curr.date.getTime() &&
                 prev.timeframe === curr.timeframe &&
-                (prev.location?.country === curr.location?.country &&
-                    prev.location?.region === curr.location?.region &&
-                    prev.location?.city === curr.location?.city)
+                prev.location?.country === curr.location?.country &&
+                prev.location?.region === curr.location?.region &&
+                prev.location?.city === curr.location?.city
             );
         }),
         tap(() => {
@@ -72,15 +72,25 @@ export class LeaderboardService {
             this.isErrorSubject.next(false);
         }),
         switchMap((filter) => {
-            return this.pulseService.getLeaderboardTopics({
-                count: this.count,
-                date: DateUtils.toISOString(DateUtils.getStatrtOfDay(filter.date)),
-                timeframe: filter.timeframe,
-                includeTopicDetails: true,
-                ...(filter.location?.country && { "Location.Country": filter.location.country }),
-                ...(filter.location?.region && { "Location.State": filter.location.region }),
-                ...(filter.location?.city && { "Location.City": filter.location.city }),
-            });
+            return this.pulseService
+                .getLeaderboardTopics({
+                    count: this.count,
+                    date: DateUtils.toISOString(DateUtils.getStatrtOfDay(filter.date)),
+                    timeframe: filter.timeframe,
+                    includeTopicDetails: true,
+                    ...(filter.location?.country && {
+                        "Location.Country": filter.location.country,
+                    }),
+                    ...(filter.location?.region && { "Location.State": filter.location.region }),
+                    ...(filter.location?.city && { "Location.City": filter.location.city }),
+                })
+                .pipe(
+                    catchError(() => {
+                        this.isErrorSubject.next(true);
+                        this.isLoadingSubject.next(false);
+                        return of({ results: [] });
+                    }),
+                );
         }),
         catchError(() => {
             this.isErrorSubject.next(true);
@@ -118,6 +128,7 @@ export class LeaderboardService {
     }
 
     public applyFilters() {
+        this.isErrorSubject.next(false);
         const { date, timeframe, location } = this.tempFilters.getValue();
         this.filters.next({
             date: date || new Date(),
