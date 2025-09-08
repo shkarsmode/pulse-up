@@ -1,4 +1,5 @@
-@let userVote = vote();
+@let userVotes = votes();
+@let userVote = userVotes ? userVotes[0] : null;
 
 <div class="pulse-button-wrap">
     <app-primary-button

@@ -38,6 +38,7 @@ export class PulsePageService {
         });
     }
 
+    private anonymousUser = toSignal(this.authService.anonymousUser, { initialValue: null });
     private settings = toSignal(this.settingsService.settings$);
 
     private topicId = signal<number | null>(null);
@@ -66,7 +67,7 @@ export class PulsePageService {
             const votes = await this.getVotes(topicId);
             return votes;
         },
-        queryKey: [QUERY_KEYS.votes, this.topicQuery.data()?.id],
+        queryKey: [QUERY_KEYS.votes, this.topicQuery.data()?.id, this.anonymousUser()],
         options: {
             refetchOnWindowFocus: false,
         },
@@ -76,6 +77,9 @@ export class PulsePageService {
         return this.topicQuery.isLoading();
     });
     public isUpdatedAfterUserSignIn = this._isUpdatedAfterUserSignIn.asReadonly();
+    public isAnonymousUser = computed(() => {
+        return !!this.anonymousUser();
+    });
 
     public topic = computed(() => {
         const topic = this.topicQuery.data();
@@ -84,23 +88,31 @@ export class PulsePageService {
         return r;
     });
 
-    public vote = computed(() => {
+    public votes = computed(() => {
         const votes = this.votesQuery.data();
-        const lastVote = votes && votes.length > 0 ? votes[0] : null;
-        return lastVote;
+        if (votes === null) return null;
+        
+        return votes || [];
     });
 
     public isActiveVote = computed(() => {
-        const vote = this.vote();
+        const votes = this.votes();
         const settings = this.settings();
-        if (!vote || !settings) return false;
-        return VoteUtils.isActiveVote(vote, settings.minVoteInterval);
+
+        if (!votes || !settings) return null;
+        if (votes.length === 0) return false;
+
+        const lastVote = votes[0];
+        const isActive = VoteUtils.isActiveVote(lastVote, settings.minVoteInterval);
+        return isActive;
     });
 
     public lastVoteInfo = computed(() => {
-        const vote = this.vote();
-        if (!vote) return "";
-        return VoteUtils.parseVoteInfo(vote);
+        const votes = this.votes();
+        if (votes && votes[0]) {
+            return VoteUtils.parseVoteInfo(votes[0]);
+        }
+        return "";
     });
 
     public suggestions = toSignal(
@@ -200,7 +212,7 @@ export class PulsePageService {
                 this.notificationService.error(
                     "Failed to fetch your vote. Please reload the page.",
                 );
-                return of(null);
+                return of([]);
             }),
         );
         return lastValueFrom(votes$);

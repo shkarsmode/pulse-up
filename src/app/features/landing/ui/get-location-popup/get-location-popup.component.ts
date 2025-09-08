@@ -84,7 +84,7 @@ export class GetLocationPopupComponent implements OnInit {
             .pipe(
                 materialize(),
                 take(1),
-                delay(750),
+                delay(600),
                 dematerialize(), // Adding a delay to simulate loading time
                 tap(() => {
                     this.dialogRef.close({

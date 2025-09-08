@@ -1,4 +1,4 @@
-@use "../../../../../styles/mixins" as *;
+@use "../../../../../../styles/mixins" as *;
 
 :host {
     --timing-function: cubic-bezier(0.24, 0.569, 0.087, 0.984);
@@ -86,39 +86,6 @@
 .pulse-button--success {
     opacity: 0;
     transition: opacity var(--duration-short) ease-in-out;
-    // .pulse-button__inner {
-    //     padding: 0;
-    // }
-    // .pulse-button__icon {
-    //     right: 0;
-    // }
-    // .pulse-button__text {
-    //     display: none;
-    // }
-    // &::ng-deep {
-    //     .primary-button {
-    //         position: relative;
-    //         width: 48px;
-    //         padding: 12px 11px;
-    //         background-color: var(--purple-color);
-    //         overflow: visible;
-
-    //         &:after {
-    //             content: "";
-    //             position: absolute;
-    //             top: 50%;
-    //             left: 50%;
-    //             width: 100%;
-    //             height: 100%;
-    //             border-radius: 50%;
-    //             transform: translate(-50%, -50%);
-    //             background-color: var(--purple-color);
-    //             opacity: 1;
-    //             z-index: -1;
-    //             animation: pulsing-ring 1s var(--timing-function) 1s infinite;
-    //         }
-    //     }
-    // }
 }
 
 @keyframes pulsing-ring {

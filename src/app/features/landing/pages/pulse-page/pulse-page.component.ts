@@ -33,7 +33,7 @@ import { combineLatest, distinctUntilChanged, filter, map, tap } from "rxjs";
 import { TopicQRCodePopupData } from "../../interfaces/topic-qrcode-popup-data.interface";
 import { MapComponent } from "@/app/shared/components/map/map.component";
 import { TopicQrcodePopupComponent } from "../../ui/topic-qrcode-popup/topic-qrcode-popup.component";
-import { VoteButtonComponent } from "../../ui/vote-button/vote-button.component";
+import { UserVoteButtonComponent } from "../../ui/vote-button/user-vote-button/user-vote-button.component";
 import { PulseCampaignComponent } from "../../ui/pulse-campaign/pulse-campaign.component";
 import { VotesService } from "@/app/shared/services/votes/votes.service";
 import { MapHeatmapLayerComponent } from "@/app/shared/components/map/map-heatmap-layer/map-heatmap-layer.component";
@@ -41,6 +41,7 @@ import { WaveAnimationDirective } from "@/app/shared/directives/wave-animation/w
 import { PulsePageService } from "./pulse-page.service";
 import { SettingsService } from "@/app/shared/services/api/settings.service";
 import { TimeFromNowPipe } from "@/app/shared/pipes/time-from-now.pipe";
+import { GuestVoteButtonComponent } from "../../ui/vote-button/guest-vote-button/guest-vote-button.component";
 
 @Component({
     selector: "app-pulse-page",
@@ -48,27 +49,28 @@ import { TimeFromNowPipe } from "@/app/shared/pipes/time-from-now.pipe";
     styleUrl: "./pulse-page.component.scss",
     standalone: true,
     imports: [
-        CommonModule,
-        RouterModule,
-        SvgIconComponent,
-        MenuComponent,
-        CopyButtonComponent,
-        SocialsButtonComponent,
-        MapComponent,
-        SliderComponent,
-        TopPulseCardComponent,
-        SpinnerComponent,
-        FadeInDirective,
-        FormatNumberPipe,
-        LoadImgPathDirective,
-        FlatButtonDirective,
-        VoteButtonComponent,
-        QrcodeButtonComponent,
-        PulseCampaignComponent,
-        MapHeatmapLayerComponent,
-        WaveAnimationDirective,
-        TimeFromNowPipe,
-    ],
+    CommonModule,
+    RouterModule,
+    SvgIconComponent,
+    MenuComponent,
+    CopyButtonComponent,
+    SocialsButtonComponent,
+    MapComponent,
+    SliderComponent,
+    TopPulseCardComponent,
+    SpinnerComponent,
+    FadeInDirective,
+    FormatNumberPipe,
+    LoadImgPathDirective,
+    FlatButtonDirective,
+    QrcodeButtonComponent,
+    PulseCampaignComponent,
+    MapHeatmapLayerComponent,
+    WaveAnimationDirective,
+    TimeFromNowPipe,
+    UserVoteButtonComponent,
+    GuestVoteButtonComponent
+],
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PulsePageComponent implements OnInit, OnDestroy {
@@ -97,7 +99,7 @@ export class PulsePageComponent implements OnInit, OnDestroy {
     public get topic() {
         return this.pulsePageService.topic();
     }
-    public vote = this.pulsePageService.vote;
+    public isAnonymousUser = this.pulsePageService.isAnonymousUser;
     public topicUrl = this.pulsePageService.topicUrl;
     public isActiveVote = this.pulsePageService.isActiveVote;
     public lastVoteInfo = this.pulsePageService.lastVoteInfo;
