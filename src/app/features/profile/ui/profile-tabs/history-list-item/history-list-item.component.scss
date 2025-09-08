@@ -1,8 +1,6 @@
 @use "../../../../../../styles/mixins" as *;
 
 .history-list-item {
-    padding-right: 4px;
-
     &::ng-deep {
         .card-heading {
             @include media-sm {
