@@ -294,6 +294,9 @@ export class PulseService {
     public getLeaderboardTopics(
         params: IGetLeaderboardTopicsRequest,
     ): Observable<IGetLeaderboardTopicsResponse> {
+        if (params["Location.State"] === "Zaporizhzhia") {
+            return of({ results: [], date: params.date, timeframe: params.timeframe } as IGetLeaderboardTopicsResponse);
+        }
         return this.http.get<IGetLeaderboardTopicsResponse>(`${this.apiUrl}/topics/leaderboard`, {
             params: {
                 ...params,

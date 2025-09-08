@@ -16,7 +16,7 @@ import { ILeaderboardLocation } from "../../../interfaces/leaderboard-filter.int
 export class LeaderboardNoResultsComponent {
     private leaderboardNoResultsService = inject(LeaderboardNoResultsService);
 
-    public text$ = this.leaderboardNoResultsService.text$;
+    public text$ = this.leaderboardNoResultsService.noResultsText$;
     public suggestions$ = this.leaderboardNoResultsService.suggestions$;
     public onSuggestionClick(location: ILeaderboardLocation) {
         this.leaderboardNoResultsService.setSuggestedLocation(location);
