@@ -20,10 +20,6 @@
     &:has(.card-footer:empty) {
         padding-bottom: 20px;
     }
-
-    @include media-xs {
-        padding: 12px;
-    }
 }
 
 .card-top-badge:not(:empty) {
