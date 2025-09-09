@@ -51,9 +51,15 @@
     </app-popup>
 } @else if (data.status === "Ended") {
     <app-popup>
-        <app-popup-subtitle>Ranking Updates Continue</app-popup-subtitle>
+        <app-popup-subtitle>⏰ UTC day has ended</app-popup-subtitle>
         <app-popup-text textAlign="center">
-            This period is over, but your pulses can still impact the current rankings
+            While it may still be today in your local time zone, the UTC day has ended for our
+            global leaderboard.
+        </app-popup-text>
+        <app-popup-text textAlign="center">
+            <strong>Note:</strong> we use Coordinated Universal Time (UTC) to track dates. This
+            means the time periods here may start or end earlier or later than in your local time
+            zone.
         </app-popup-text>
         <app-popup-footer>
             <app-primary-button
