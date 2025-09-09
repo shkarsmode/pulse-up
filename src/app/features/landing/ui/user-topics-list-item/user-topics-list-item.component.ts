@@ -1,9 +1,11 @@
 import { Component, inject, Input } from "@angular/core";
+import { CommonModule } from "@angular/common";
+import { map } from "rxjs";
 import { LargePulseComponent } from "@/app/shared/components/pulses/large-pulse/large-pulse.component";
 import { LargePulseIconComponent } from "@/app/shared/components/pulses/large-pulse/large-pulse-icon/large-pulse-icon.component";
 import { SettingsService } from "@/app/shared/services/api/settings.service";
 import { IVote } from "@/app/shared/interfaces/vote.interface";
-import { ITopic } from "@/app/shared/interfaces";
+import { ITopic, TopicState } from "@/app/shared/interfaces";
 import { VoteUtils } from "@/app/shared/helpers/vote-utils";
 import { LargePulseTitleComponent } from "@/app/shared/components/pulses/large-pulse/large-pulse-title/large-pulse-title.component";
 import { LargePulseDescriptionComponent } from "@/app/shared/components/pulses/large-pulse/large-pulse-description/large-pulse-description.component";
@@ -15,8 +17,7 @@ import { SocialsButtonComponent } from "@/app/shared/components/ui-kit/buttons/s
 import { QrcodeButtonComponent } from "@/app/shared/components/ui-kit/buttons/qrcode-button/qrcode-button.component";
 import { FormatNumberPipe } from "@/app/shared/pipes/format-number.pipe";
 import { WaveAnimationDirective } from "@/app/shared/directives/wave-animation/wave-animation.directive";
-import { map } from "rxjs";
-import { CommonModule } from "@angular/common";
+import { PulseIconLabelComponent } from "@/app/shared/components/pulses/pulse-icon-label/pulse-icon-label.component";
 
 @Component({
     selector: "app-user-topics-list-item",
@@ -35,6 +36,7 @@ import { CommonModule } from "@angular/common";
         QrcodeButtonComponent,
         FormatNumberPipe,
         WaveAnimationDirective,
+        PulseIconLabelComponent,
     ],
     templateUrl: "./user-topics-list-item.component.html",
     styleUrl: "./user-topics-list-item.component.scss",
@@ -46,9 +48,16 @@ export class UserTopicsListItemComponent {
     @Input() vote?: IVote | null = null;
 
     public topicUrl$ = this.settingsService.settings$.pipe(
-        map((settings) => settings.shareTopicBaseUrl + this.data.shareKey)
-    )
+        map((settings) => settings.shareTopicBaseUrl + this.data.shareKey),
+    );
     public isVoteActive$ = this.settingsService.settings$.pipe(
-        map((settings) => !!this.vote && VoteUtils.isActiveVote(this.vote, settings.minVoteInterval))
-    )
+        map(
+            (settings) =>
+                !!this.vote && VoteUtils.isActiveVote(this.vote, settings.minVoteInterval),
+        ),
+    );
+
+    public get isArchived(): boolean {
+        return this.data.state === TopicState.Archived;
+    }
 }

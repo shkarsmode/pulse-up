@@ -2,7 +2,7 @@ import { Component, inject, Input } from "@angular/core";
 import { CommonModule, DatePipe } from "@angular/common";
 import { map } from "rxjs";
 import { SettingsService } from "@/app/shared/services/api/settings.service";
-import { ITopic } from "@/app/shared/interfaces";
+import { ITopic, TopicState } from "@/app/shared/interfaces";
 import { IVote } from "@/app/shared/interfaces/vote.interface";
 import { VoteUtils } from "@/app/shared/helpers/vote-utils";
 import { LargePulseComponent } from "@/app/shared/components/pulses/large-pulse/large-pulse.component";
@@ -19,6 +19,7 @@ import { SocialsButtonComponent } from "@/app/shared/components/ui-kit/buttons/s
 import { QrcodeButtonComponent } from "@/app/shared/components/ui-kit/buttons/qrcode-button/qrcode-button.component";
 import { WaveAnimationDirective } from "@/app/shared/directives/wave-animation/wave-animation.directive";
 import { PulseIconComponent } from "../../pulse-icon/pulse-icon.component";
+import { PulseIconLabelComponent } from "@/app/shared/components/pulses/pulse-icon-label/pulse-icon-label.component";
 
 @Component({
     selector: "app-my-topics-list-item",
@@ -40,6 +41,7 @@ import { PulseIconComponent } from "../../pulse-icon/pulse-icon.component";
         QrcodeButtonComponent,
         WaveAnimationDirective,
         PulseIconComponent,
+        PulseIconLabelComponent,
     ],
     templateUrl: "./my-topics-list-item.component.html",
     styleUrl: "./my-topics-list-item.component.scss",
@@ -51,10 +53,17 @@ export class MyTopicsListItemComponent {
     @Input() vote?: IVote | null = null;
 
     public topicUrl$ = this.settingsService.settings$.pipe(
-        map(settings => settings.shareTopicBaseUrl + this.data.shareKey)
-    )
+        map((settings) => settings.shareTopicBaseUrl + this.data.shareKey),
+    );
 
     public isVoteActive$ = this.settingsService.settings$.pipe(
-        map(settings => !!this.vote && VoteUtils.isActiveVote(this.vote, settings.minVoteInterval))
+        map(
+            (settings) =>
+                !!this.vote && VoteUtils.isActiveVote(this.vote, settings.minVoteInterval),
+        ),
     );
+
+    public get isArchived(): boolean {
+        return this.data.state === TopicState.Archived;
+    }
 }
