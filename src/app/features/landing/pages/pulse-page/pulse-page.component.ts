@@ -42,6 +42,7 @@ import { PulsePageService } from "./pulse-page.service";
 import { SettingsService } from "@/app/shared/services/api/settings.service";
 import { TimeFromNowPipe } from "@/app/shared/pipes/time-from-now.pipe";
 import { GuestVoteButtonComponent } from "../../ui/vote-button/guest-vote-button/guest-vote-button.component";
+import { DisbledVoteButtonComponent } from "../../ui/vote-button/disbled-vote-button/disbled-vote-button.component";
 
 @Component({
     selector: "app-pulse-page",
@@ -70,6 +71,7 @@ import { GuestVoteButtonComponent } from "../../ui/vote-button/guest-vote-button
         TimeFromNowPipe,
         UserVoteButtonComponent,
         GuestVoteButtonComponent,
+        DisbledVoteButtonComponent,
     ],
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -106,6 +108,7 @@ export class PulsePageComponent implements OnInit, OnDestroy {
     public shortPulseDescription = this.pulsePageService.shortPulseDescription;
     public suggestions = this.pulsePageService.suggestions;
     public isLoading = this.pulsePageService.isLoading;
+    public isArchived = this.pulsePageService.isArchived;
     public topicIcon$ = combineLatest([
         toObservable(this.pulsePageService.topic),
         this.settingsService.settings$,

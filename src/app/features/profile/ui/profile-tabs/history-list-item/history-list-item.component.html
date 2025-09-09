@@ -6,7 +6,11 @@
         [src]="data.icon"
         size="md"
         [label]="data.title"
-        ngProjectAs="card-icon" />
+        ngProjectAs="card-icon">
+        @if (isArchived) {
+            <app-pulse-icon-label text="Archived" />
+        }
+    </app-large-pulse-icon>
     <div ngProjectAs="card-heading">
         <app-large-pulse-title>
             {{ data.title }}

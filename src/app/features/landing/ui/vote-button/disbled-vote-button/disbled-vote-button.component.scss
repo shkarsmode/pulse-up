@@ -21,6 +21,16 @@
     display: flex;
     justify-content: flex-end;
     z-index: 1;
+
+    &::ng-deep {
+        .primary-button {
+            &:disabled {
+                opacity: 1;
+                cursor: auto;
+                background-color: var(--dark-grey-color);
+            }
+        }
+    }
 }
 
 .pulse-button__inner {
@@ -31,22 +41,4 @@
 
 .pulse-button__text {
     transition: opacity 0.2s ease-in-out;
-}
-
-.pulse-button__icon {
-    position: absolute;
-    top: 50%;
-    right: 0;
-    transform: translateY(-50%);
-
-    svg-icon {
-        display: flex;
-        width: 26px;
-        height: 30px;
-
-        svg {
-            width: 100%;
-            height: 100%;
-        }
-    }
 }

@@ -79,7 +79,9 @@
                     }
                 </div>
                 <div class="pulse__buttons">
-                    @if (isAnonymousUser()) {
+                    @if (isArchived()) {
+                        <app-disbled-vote-button />
+                    } @else if (isAnonymousUser()) {
                         <app-guest-vote-button />
                     } @else {
                         <app-user-vote-button
