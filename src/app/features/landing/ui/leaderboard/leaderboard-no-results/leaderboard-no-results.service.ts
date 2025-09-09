@@ -1,5 +1,5 @@
 import { inject, Injectable } from "@angular/core";
-import { distinctUntilChanged, map, of, shareReplay, switchMap } from "rxjs";
+import { catchError, distinctUntilChanged, map, of, shareReplay, switchMap } from "rxjs";
 import { PulseService } from "@/app/shared/services/api/pulse.service";
 import { LeaderboardService } from "../leaderboard.service";
 import { DateUtils } from "../../../helpers/date-utils";
@@ -55,46 +55,61 @@ export class LeaderboardNoResultsService {
                     "Location.Country": location?.country || undefined,
                 })
                 .pipe(
+                    catchError(() => {
+                        console.log("Error fetching leaderboard locations by state");
+                        return of([]);
+                    }),
                     switchMap((locations) => {
                         if (locations.length) {
-                            return of(locations);
+                            return of(locations).pipe(
+                                map((locations) =>
+                                    locations.filter((location) => !!location.state),
+                                ),
+                                map((locations) => locations.slice(0, 3)),
+                                map((locations) =>
+                                    locations.map(
+                                        (location) =>
+                                            ({
+                                                country: location.country,
+                                                region: location.state,
+                                                city: null,
+                                            }) as ILeaderboardLocation,
+                                    ),
+                                ),
+                            );
                         } else {
-                            return this.pulseService.getLeaderboardLocations({
-                                date: DateUtils.toISOString(DateUtils.getStatrtOfDay(date)),
-                                timeframe,
-                            });
+                            return this.pulseService
+                                .getLeaderboardLocations({
+                                    date: DateUtils.toISOString(DateUtils.getStatrtOfDay(date)),
+                                    timeframe,
+                                })
+
+                                .pipe(
+                                    catchError(() => {
+                                        console.log("Error fetching leaderboard locations by country");
+                                        return of([]);
+                                    }),
+                                    map((locations) =>
+                                        locations.filter((location) => !!location.country),
+                                    ),
+                                    map((locations) => locations.slice(0, 3)),
+                                    map((locations) =>
+                                        locations.map(
+                                            (location) =>
+                                                ({
+                                                    country: location.country,
+                                                    region: null,
+                                                    city: null,
+                                                }) as ILeaderboardLocation,
+                                        ),
+                                    ),
+                                );
                         }
                     }),
-                    map((locations) => locations.filter((location) => !!location.state)),
-                    map((locations) => locations.filter((item) => {
-                        if (location?.region) {
-                            return item.state !== location.region;
-                        } else {
-                            return item.country !== location?.country;
-                        }
-                    })),
-                    map((locations) => locations.slice(0, 3)),
-                    map((locations) =>
-                        locations.map(
-                            (location) =>
-                                ({
-                                    country: location.country,
-                                    region: location.state,
-                                    city: location.city,
-                                }) as ILeaderboardLocation,
-                        ),
-                    ),
                     shareReplay({ bufferSize: 1, refCount: true }),
                 );
         }),
     );
-
-    // public text$ = combineLatest([this.noResultsText$, this.suggestions$]).pipe(
-    //     map(([noResultsText, suggestions]) => {
-    //         const hasSuggestions = suggestions && suggestions.length > 0;
-    //         return `${noResultsText} ${hasSuggestions ? " See results for:" : ""}`;
-    //     }),
-    // );
 
     public setSuggestedLocation(location: ILeaderboardLocation) {
         const { country, region } = location;
