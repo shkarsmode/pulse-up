@@ -6,7 +6,15 @@
         [src]="topic.icon"
         size="md"
         [label]="topic.title"
-        ngProjectAs="card-icon" />
+        ngProjectAs="card-icon">
+        @if (isArchived) {
+            <div
+                class="leaderboard-item__label"
+                text="Archived">
+                Archived
+            </div>
+        }
+    </app-large-pulse-icon>
     <div ngProjectAs="card-heading">
         <app-large-pulse-title class="card-heading-title">
             {{ topic.title }}

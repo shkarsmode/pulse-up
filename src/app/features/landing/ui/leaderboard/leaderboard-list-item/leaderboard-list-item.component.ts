@@ -5,7 +5,7 @@ import { LargePulseComponent } from "@/app/shared/components/pulses/large-pulse/
 import { LargePulseIconComponent } from "@/app/shared/components/pulses/large-pulse/large-pulse-icon/large-pulse-icon.component";
 import { LargePulseTitleComponent } from "@/app/shared/components/pulses/large-pulse/large-pulse-title/large-pulse-title.component";
 import { LargePulseMetaComponent } from "@/app/shared/components/pulses/large-pulse/large-pulse-meta/large-pulse-meta.component";
-import { ITopic } from "@/app/shared/interfaces";
+import { ITopic, TopicState } from "@/app/shared/interfaces";
 import { FormatNumberPipe } from "@/app/shared/pipes/format-number.pipe";
 import { VotesService } from "@/app/shared/services/votes/votes.service";
 import { VoteUtils } from "@/app/shared/helpers/vote-utils";
@@ -56,5 +56,9 @@ export class LeaderboardListItemComponent implements OnInit {
                 return VoteUtils.isActiveVote(vote, settings.minVoteInterval);
             }),
         );
+    }
+
+    public get isArchived(){
+        return this.topic.state === TopicState.Archived;
     }
 }

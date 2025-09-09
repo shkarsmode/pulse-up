@@ -14,6 +14,21 @@
     }
 }
 
+.leaderboard-item__icon {
+    position: relative;
+}
+
+.leaderboard-item__label {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    font-size: 12px;
+    text-align: center;
+    background-color: var(--light-grey-color);
+    padding: 2px;
+}
+
 .card-heading-title {
     &::ng-deep {
         .card-title {
