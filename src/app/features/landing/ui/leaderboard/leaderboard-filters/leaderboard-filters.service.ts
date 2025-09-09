@@ -49,6 +49,7 @@ export class LeaderboardFiltersService {
                     return "";
             }
         }),
+        map((text) => text + " UTC")
     );
     public location$ = this.leaderboardService.tempFilters$.pipe(
         map((filters) => filters.location),

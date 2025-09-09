@@ -3,6 +3,7 @@ import {
     BehaviorSubject,
     catchError,
     distinctUntilChanged,
+    forkJoin,
     map,
     of,
     shareReplay,
@@ -10,7 +11,11 @@ import {
     tap,
 } from "rxjs";
 import { PulseService } from "@/app/shared/services/api/pulse.service";
-import { LeaderboardTimeframeExtended, LeaderboardTimeframeStatus } from "@/app/shared/interfaces";
+import {
+    IGetLeaderboardTopicsResponse,
+    LeaderboardTimeframeExtended,
+    LeaderboardTimeframeStatus,
+} from "@/app/shared/interfaces";
 import { getTimeframeStatus } from "../../helpers/getTimeframeStatus";
 import {
     ILeaderboardFilter,
@@ -88,14 +93,60 @@ export class LeaderboardService {
                     catchError(() => {
                         this.isErrorSubject.next(true);
                         this.isLoadingSubject.next(false);
-                        return of({ results: [] });
+                        return of({
+                            date: filter.date.toISOString(),
+                            timeframe: filter.timeframe,
+                            results: [],
+                        } as IGetLeaderboardTopicsResponse);
                     }),
                 );
         }),
-        catchError(() => {
-            this.isErrorSubject.next(true);
-            this.isLoadingSubject.next(false);
-            return of(null);
+        map((data) => ({
+            ...data,
+            results: data.results.map((item) => {
+                const isArchived = !item.topic.title || !item.topic.icon;
+                return { ...item, topic: { ...item.topic, isArchived } };
+            }),
+        })),
+        switchMap((data) => {
+            const archivedTopicsIds = data.results
+                .filter((item) => {
+                    return item.topic.isArchived;
+                })
+                .map((item) => item.topic.id);
+            if (archivedTopicsIds.length) {
+                return forkJoin(archivedTopicsIds.map((id) => this.pulseService.getById(id)))
+                    .pipe(
+                        map((topics) => {
+                            const archivedTopicsMap = new Map(
+                                topics.map((topic) => [topic.id, topic]),
+                            );
+                            return {
+                                ...data,
+                                results: data.results.map((item) => {
+                                    const archivedTopic = archivedTopicsMap.get(item.topic.id);
+                                    if (item.topic.isArchived && archivedTopic) {
+                                        return { ...item, topic: { ...archivedTopic } };
+                                    }
+                                    return item;
+                                }),
+                            };
+                        }),
+                    )
+                    .pipe(
+                        catchError(() => {
+                            this.isErrorSubject.next(true);
+                            this.isLoadingSubject.next(false);
+                            return of({
+                                date: data.date,
+                                timeframe: data.timeframe,
+                                results: [],
+                            } as IGetLeaderboardTopicsResponse);
+                        }),
+                    );
+            } else {
+                return of(data);
+            }
         }),
         tap(() => {
             this.isLoadingSubject.next(false);

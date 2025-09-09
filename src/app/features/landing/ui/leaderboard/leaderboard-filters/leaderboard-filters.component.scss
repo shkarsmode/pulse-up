@@ -33,6 +33,16 @@
             .mat-mdc-select-trigger {
                 font-size: 14px;
             }
+
+            .select-field.select-field--with-icon .mdc-text-field {
+                padding-left: 30px;
+            }
+
+            .select-field__icon {
+                left: 8px;
+                width: 16px;
+                height: 16px;
+            }
         }
     }
 }
