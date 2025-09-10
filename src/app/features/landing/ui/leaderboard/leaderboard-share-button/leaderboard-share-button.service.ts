@@ -1,8 +1,10 @@
-import { Injectable, signal } from '@angular/core';
+import { Injectable } from '@angular/core';
 
 @Injectable({
   providedIn: 'root'
 })
 export class LeaderboardShareButtonService {
-  public pageUrl = signal(window.location.href).asReadonly();
+  public get shareUrl() {
+    return window.location.href;
+  }
 }

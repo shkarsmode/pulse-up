@@ -13,17 +13,17 @@
 <ng-template #menuContent>
     <div class="social-share-menu">
         <app-copy-button
-            link="{{ pageUrl() }}"
+            link="{{ pageUrl }}"
             (handleClick)="onCopyLink($event)" />
         <app-socials-button
             [variant]="'facebook'"
-            [url]="pageUrl()" />
+            [url]="pageUrl" />
         <app-socials-button
             [variant]="'x'"
-            [url]="pageUrl()" />
+            [url]="pageUrl" />
         <app-socials-button
             [variant]="'email'"
-            [url]="pageUrl()" />
-        <app-qrcode-button [url]="pageUrl()" />
+            [url]="pageUrl" />
+        <app-qrcode-button [url]="pageUrl" />
     </div>
 </ng-template>
