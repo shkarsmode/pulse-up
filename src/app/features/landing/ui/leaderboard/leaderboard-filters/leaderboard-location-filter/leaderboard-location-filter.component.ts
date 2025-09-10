@@ -68,15 +68,16 @@ export class LeaderboardLocationFilterComponent implements OnInit {
     }
 
     public onSelectOption(option: ILeaderboardLocationOption) {;
-        this.leaderboardLocationFilterService.changeLocation(option);
+        this.leaderboardLocationFilterService.changeLocation({
+            location: option.data,
+            label: option.label,
+        });
         this.closeMenu();
     }
     public onSelectSuggestion(suggestion: MapboxFeature) {
         this.leaderboardLocationFilterService.changeLocation({
-            id: suggestion.id,
             label: suggestion.properties.full_address,
-            type: "search",
-            data: this.leaderboardLocationFilterService.mapFeatureToLocationData(suggestion),
+            location: this.leaderboardLocationFilterService.mapFeatureToLocationData(suggestion),
         });
     }
 

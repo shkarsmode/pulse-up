@@ -9,7 +9,7 @@ import {
     tap,
 } from "rxjs";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
-import { ILeaderboardLocationOption } from "@/app/features/landing/interfaces/leaderboard-filter.interface";
+import { ILeaderboardLocation, ILeaderboardLocationOption } from "@/app/features/landing/interfaces/leaderboard-filter.interface";
 import { LeaderboardFiltersService } from "../leaderboard-filters.service";
 import { IpLocationService } from "@/app/shared/services/core/ip-location.service";
 import { PulseService } from "@/app/shared/services/api/pulse.service";
@@ -20,7 +20,6 @@ import { MapboxFeature } from "@/app/shared/interfaces";
 const initGlobalOption: ILeaderboardLocationOption = {
     id: "global",
     label: "Global",
-    type: "quickPick",
     data: {
         country: null,
         region: null,
@@ -85,8 +84,8 @@ export class LeaderboardLocationFilterService {
                     }
                     const options = countries.map((country) =>
                         this.createOption({
-                            location: { country, region: null, city: null },
-                            type: "global",
+                            location: { country },
+                            label: country,
                         }),
                     );
                     this.globalCountriesOptions.next([initGlobalOption, ...options]);
@@ -114,8 +113,8 @@ export class LeaderboardLocationFilterService {
                                 }
                                 const stateOptions = locations.map(({ country, state }) =>
                                     this.createOption({
-                                        location: { country, region: state, city: null },
-                                        type: "local",
+                                        location: { country, region: state },
+                                        label: state,
                                     }),
                                 );
                                 this.localStatesOptions.next(stateOptions);
@@ -128,8 +127,8 @@ export class LeaderboardLocationFilterService {
                     if (isCountryAdded) return;
                     this.localCountryOptions.next([
                         this.createOption({
-                            location: { country, region: null, city: null },
-                            type: "local",
+                            location: { country },
+                            label: country,
                         }),
                     ]);
                 }),
@@ -141,18 +140,27 @@ export class LeaderboardLocationFilterService {
     public selectedOption$ = this.leaderboardFiltersService.location$;
     public options$ = combineLatest([this.allOptions$, this.selectedOption$]).pipe(
         map(([[globalOption, userCountry, userStates], selectedOption]) => {
-            return [...globalOption, ...userCountry, ...userStates].map(
-                (option) =>
-                    ({
-                        ...option,
-                        selected: option.id === selectedOption?.id,
-                    }) as ILeaderboardLocationOptionWithSelected,
-            );
+            return [...globalOption, ...userCountry, ...userStates].map((option) => {
+                return {
+                    ...option,
+                    selected: option.id === selectedOption?.id,
+                } as ILeaderboardLocationOptionWithSelected;
+            });
         }),
     );
 
-    public changeLocation(option: ILeaderboardLocationOption) {
-        this.leaderboardFiltersService.changeLocation(option);
+    public changeLocation({location, label}: {location: ILeaderboardLocation, label: string}) {
+        if (!location.country) return;
+        this.leaderboardFiltersService.changeLocation(
+            this.createOption({
+                location: {
+                    country: location.country,
+                    region: location.region,
+                    city: location.city,
+                },
+                label,
+            })
+        );
     }
 
     public mapFeatureToLocationData(feature: MapboxFeature): ILeaderboardLocationOption["data"] {
@@ -186,22 +194,20 @@ export class LeaderboardLocationFilterService {
 
     private createOption({
         location,
-        type,
+        label,
     }: {
         location: {
             country: string;
             region?: string | null;
             city?: string | null;
         };
-        type: "global" | "local";
+        label: string;
     }): ILeaderboardLocationOption {
         const { country, region, city } = location;
-        const optionId = `${type}-${region ? "state" : "country"}-${region || country}`;
-        const label = region ? region : country;
+        const optionId = Object.values(location).filter(Boolean).join("-");
         return {
             id: optionId,
             label,
-            type: "quickPick",
             data: {
                 country: country,
                 region: region || null,

@@ -30,7 +30,6 @@ const initialTempFilter: ILeaderboardTempFilter = {
     location: {
         id: "global",
         label: "Global",
-        type: "quickPick",
         data: {
             country: null,
             region: null,

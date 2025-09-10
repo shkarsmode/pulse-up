@@ -131,7 +131,6 @@ export class LeaderboardNoResultsService {
         this.leaderboardFiltersService.changeLocation({
             id: `${country}-${region}`,
             label: region,
-            type: "quickPick",
             data: location,
         });
     }

@@ -67,19 +67,6 @@ export class LeaderboardLocationSearchService {
                 takeUntilDestroyed(this.destroyRef),
             )
             .subscribe();
-
-        this.leaderboardFiltersService.location$
-            .pipe(
-                tap((location) => {
-                    if (location.type === "search") {
-                        this.searchControl.setValue(location.label, { emitEvent: true });
-                    } else {
-                        this.searchControl.setValue("", { emitEvent: true });
-                    }
-                }),
-                takeUntilDestroyed(this.destroyRef),
-            )
-            .subscribe();
     }
 
     public clearSuggestions() {
