@@ -1,13 +1,6 @@
 import { DestroyRef, inject, Injectable } from "@angular/core";
 import { FormControl } from "@angular/forms";
-import {
-    debounceTime,
-    distinctUntilChanged,
-    filter,
-    map,
-    switchMap,
-    tap,
-} from "rxjs";
+import { debounceTime, filter, map, switchMap, tap } from "rxjs";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { GeocodeService } from "@/app/shared/services/api/geocode.service";
 import { StringUtils } from "@/app/shared/helpers/string-utils";
@@ -41,12 +34,13 @@ export class LeaderboardLocationSearchService {
                 }),
                 tap(() => this.leaderboardLocationFilterService.setSearching(true)),
                 debounceTime(400),
-                distinctUntilChanged(),
-                switchMap((query) => this.geocodeService.getPlacesByQuery({
-                    query: query || "",
-                    limit: 5,
-                    types: ["country", "region"],
-                })),
+                switchMap((query) =>
+                    this.geocodeService.getPlacesByQuery({
+                        query: query || "",
+                        limit: 5,
+                        types: ["country", "region"],
+                    }),
+                ),
                 tap(({ features }) => {
                     this.leaderboardLocationFilterService.setSearchOptions(features);
                     this.leaderboardLocationFilterService.setSearching(false);

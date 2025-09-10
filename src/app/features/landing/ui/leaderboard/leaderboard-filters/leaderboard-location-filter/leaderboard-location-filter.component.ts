@@ -16,6 +16,7 @@ import { LocationSearchComponent } from "../../leaderboard-location-search/leade
 import { PopoverComponent } from "@/app/shared/components/popover/popover.component";
 import { MatButtonModule } from "@angular/material/button";
 import { LeaderboardLocationOptionSkeletonComponent } from "./leaderboard-location-option-skeleton/leaderboard-location-option-skeleton.component";
+import { LeaderboardLocationFilterEmptyPlaceholderComponent } from "./leaderboard-location-filter-empty-placeholder/leaderboard-location-filter-empty-placeholder.component";
 
 @Component({
     selector: "app-leaderboard-location-filter",
@@ -27,6 +28,7 @@ import { LeaderboardLocationOptionSkeletonComponent } from "./leaderboard-locati
         LocationSearchComponent,
         PopoverComponent,
         LeaderboardLocationOptionSkeletonComponent,
+        LeaderboardLocationFilterEmptyPlaceholderComponent,
     ],
     templateUrl: "./leaderboard-location-filter.component.html",
     styleUrl: "./leaderboard-location-filter.component.scss",

@@ -64,10 +64,8 @@
                     <app-leaderboard-location-option-skeleton width="70%" />
                 </li>
             } @else if (isEmpty) {
-                <li
-                    role="presentation"
-                    class="location-filter-menu__no-results">
-                    No results
+                <li role="presentation">
+                    <app-leaderboard-location-filter-empty-placeholder />
                 </li>
             } @else {
                 @for (option of options; track $index) {
