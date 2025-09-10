@@ -65,6 +65,12 @@ export class LeaderboardNoResultsService {
                                 map((locations) =>
                                     locations.filter((location) => !!location.state),
                                 ),
+                                map((locations) => locations.reduce((acc, curr) => {
+                                    if (!acc.find((loc) => loc.state === curr.state)) {
+                                        acc.push(curr);
+                                    }
+                                    return acc;
+                                }, [] as typeof locations)),
                                 map((locations) => locations.slice(0, 3)),
                                 map((locations) =>
                                     locations.map(
@@ -91,6 +97,14 @@ export class LeaderboardNoResultsService {
                                     }),
                                     map((locations) =>
                                         locations.filter((location) => !!location.country),
+                                    ),
+                                    map((locations) =>
+                                        locations.reduce((acc, curr) => {
+                                            if (!acc.find((loc) => loc.country === curr.country)) {
+                                                acc.push(curr);
+                                            }
+                                            return acc;
+                                        }, [] as typeof locations),
                                     ),
                                     map((locations) => locations.slice(0, 3)),
                                     map((locations) =>
