@@ -1,0 +1,19 @@
+.item {
+    min-height: 40px;
+    display: flex;
+    align-items: center;
+    padding: 4px 12px;
+}
+
+.item__text {
+    height: 16px;
+    border-radius: 4px;
+    background: linear-gradient(-60deg, #ccc 33%, #ddd, #ccc 66%) right/300% 100%;
+    animation: move 1s linear infinite;
+}
+
+@keyframes move {
+    to {
+        background-position: left;
+    }
+}

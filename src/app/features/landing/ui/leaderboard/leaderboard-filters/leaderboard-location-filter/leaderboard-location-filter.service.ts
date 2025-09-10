@@ -42,6 +42,7 @@ export class LeaderboardLocationFilterService {
     private leaderboardFiltersService = inject(LeaderboardFiltersService);
 
     private isSearchMode = new BehaviorSubject<boolean>(false);
+    private isSearching = new BehaviorSubject<boolean>(false);
     private searchOptions = new BehaviorSubject<ILeaderboardLocationOption[]>([]);
     private globalCountriesOptions = new BehaviorSubject<ILeaderboardLocationOption[]>([
         initGlobalOption,
@@ -139,6 +140,7 @@ export class LeaderboardLocationFilterService {
             .subscribe();
     }
 
+    public isSearching$ = this.isSearching.asObservable().pipe(distinctUntilChanged());
     public selectedOption$ = this.leaderboardFiltersService.location$;
     public options$ = combineLatest([
         this.initialOptions$,
@@ -161,6 +163,7 @@ export class LeaderboardLocationFilterService {
             },
         ),
     );
+    public isEmpty$ = this.options$.pipe(map((options) => options.length === 0));
 
     public changeLocation(option: ILeaderboardLocationOption) {
         this.leaderboardFiltersService.changeLocation(option);
@@ -168,6 +171,10 @@ export class LeaderboardLocationFilterService {
 
     public setSearchMode(isSearch: boolean) {
         this.isSearchMode.next(isSearch);
+    }
+
+    public setSearching(isSearching: boolean) {
+        this.isSearching.next(isSearching);
     }
 
     public setSearchOptions(features: MapboxFeature[]) {

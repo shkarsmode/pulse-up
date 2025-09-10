@@ -15,6 +15,7 @@ import { ILeaderboardLocationOption } from "@/app/features/landing/interfaces/le
 import { LocationSearchComponent } from "../../leaderboard-location-search/leaderboard-location-search.component";
 import { PopoverComponent } from "@/app/shared/components/popover/popover.component";
 import { MatButtonModule } from "@angular/material/button";
+import { LeaderboardLocationOptionSkeletonComponent } from "./leaderboard-location-option-skeleton/leaderboard-location-option-skeleton.component";
 
 @Component({
     selector: "app-leaderboard-location-filter",
@@ -25,6 +26,7 @@ import { MatButtonModule } from "@angular/material/button";
         MatButtonModule,
         LocationSearchComponent,
         PopoverComponent,
+        LeaderboardLocationOptionSkeletonComponent,
     ],
     templateUrl: "./leaderboard-location-filter.component.html",
     styleUrl: "./leaderboard-location-filter.component.scss",
@@ -37,12 +39,14 @@ export class LeaderboardLocationFilterComponent implements OnInit {
 
     public menuVisible = signal(false);
     public options$ = this.leaderboardLocationFilterService.options$;
+    public isSearching$ = this.leaderboardLocationFilterService.isSearching$;
+    public isEmpty$ = this.leaderboardLocationFilterService.isEmpty$;
     public title$ = this.selectedOption$.pipe(
         map((option) => {
             if (option.id === "global") {
                 return "Global";
             }
-            const {country, region, city} = option.data;
+            const { country, region, city } = option.data;
             return city || region || country;
         }),
     );
@@ -50,8 +54,8 @@ export class LeaderboardLocationFilterComponent implements OnInit {
         map((option) => {
             if (option.id === "global") {
                 return "";
-            };
-            const {country, region, city} = option.data;
+            }
+            const { country, region, city } = option.data;
             return city ? `${region}, ${country}` : region ? `${country}` : "";
         }),
     );

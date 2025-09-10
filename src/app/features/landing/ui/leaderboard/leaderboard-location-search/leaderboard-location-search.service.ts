@@ -25,7 +25,6 @@ export class LeaderboardLocationSearchService {
     );
 
     constructor() {
-        const validFeatureTypes = ["country", "region"];
         this.searchControl.valueChanges
             .pipe(
                 tap((query) => {
@@ -35,28 +34,23 @@ export class LeaderboardLocationSearchService {
                         this.leaderboardLocationFilterService.setSearchOptions([]);
                     }
                 }),
-                debounceTime(300),
-                distinctUntilChanged(),
                 filter((query) => {
                     if (!query) return false;
                     const searchString = StringUtils.normalizeWhitespace(query);
                     return !!searchString.length;
                 }),
+                tap(() => this.leaderboardLocationFilterService.setSearching(true)),
+                debounceTime(400),
+                distinctUntilChanged(),
                 switchMap((query) => this.geocodeService.getPlacesByQuery({
                     query: query || "",
                     limit: 5,
                     types: ["country", "region"],
                 })),
-                map((response) => {
-                    const collection = response;
-                    collection.features = collection.features.filter((feature) => {
-                        return validFeatureTypes.includes(feature.properties.feature_type);
-                    });
-                    return collection;
+                tap(({ features }) => {
+                    this.leaderboardLocationFilterService.setSearchOptions(features);
+                    this.leaderboardLocationFilterService.setSearching(false);
                 }),
-                tap(({ features }) =>
-                    this.leaderboardLocationFilterService.setSearchOptions(features),
-                ),
                 takeUntilDestroyed(this.destroyRef),
             )
             .subscribe();
