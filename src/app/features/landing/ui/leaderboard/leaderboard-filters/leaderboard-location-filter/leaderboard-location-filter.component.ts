@@ -42,6 +42,7 @@ export class LeaderboardLocationFilterComponent implements OnInit {
     public menuVisible = signal(false);
     public options$ = this.leaderboardLocationFilterService.options$;
     public isSearching$ = this.leaderboardLocationFilterService.isSearching$;
+    public isSearchMode$ = this.leaderboardLocationFilterService.isSearchMode$;
     public isEmpty$ = this.leaderboardLocationFilterService.isEmpty$;
     public title$ = this.selectedOption$.pipe(
         map((option) => {
@@ -60,6 +61,11 @@ export class LeaderboardLocationFilterComponent implements OnInit {
             const { country, region, city } = option.data;
             return city ? `${region}, ${country}` : region ? `${country}` : "";
         }),
+    );
+    public optionIconSrc$ = this.isSearchMode$.pipe(
+        map((isSearchMode) =>
+            isSearchMode ? "assets/svg/pin.svg" : "assets/svg/trophy.svg",
+        ),
     );
 
     ngOnInit() {

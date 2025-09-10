@@ -3,6 +3,7 @@
 @let subtitle = subtitle$ | async;
 @let isSearching = isSearching$ | async;
 @let isEmpty = isEmpty$ | async;
+@let optionIconSrc = (optionIconSrc$ | async) || "";
 
 <div class="location-filter">
     <h1 class="location-filter-header">
@@ -75,8 +76,14 @@
                             class="location-filter-option"
                             [class.location-filter-option--selected]="option.selected"
                             (click)="onSelectOption(option)">
-                            {{ option.label }}
-                            <span class="location-filter-option__checkbox"></span>
+                            <svg-icon
+                                aria-hidden="true"
+                                [src]="optionIconSrc"
+                                class="location-filter-option__icon" />
+                            <span>{{ option.label }}</span>
+                            <span
+                                class="location-filter-option__checkbox"
+                                aria-hidden="true"></span>
                         </button>
                     </li>
                 }

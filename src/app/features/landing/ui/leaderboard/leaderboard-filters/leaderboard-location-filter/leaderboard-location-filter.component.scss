@@ -48,9 +48,9 @@
 
 .location-filter-option {
     width: 100%;
-    display: flex;
+    display: grid;
+    grid-template-columns: auto 1fr auto;
     align-items: center;
-    justify-content: space-between;
     column-gap: 8px;
     min-height: 40px;
     padding: 4px 12px;
@@ -70,6 +70,16 @@
 
     .location-filter-option__checkbox {
         opacity: 1;
+    }
+}
+
+.location-filter-option__icon {
+    width: 16px;
+    height: 16px;
+
+    svg {
+        width: 100%;
+        height: 100%;
     }
 }
 
