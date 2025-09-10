@@ -141,6 +141,7 @@ export class LeaderboardLocationFilterService {
     }
 
     public isSearching$ = this.isSearching.asObservable().pipe(distinctUntilChanged());
+    public isSearchMode$ = this.isSearchMode.asObservable().pipe(distinctUntilChanged());
     public selectedOption$ = this.leaderboardFiltersService.location$;
     public options$ = combineLatest([
         this.initialOptions$,
