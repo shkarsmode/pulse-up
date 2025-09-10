@@ -1,9 +1,10 @@
-import { inject, Injectable } from "@angular/core";
-import { Router, ActivatedRoute } from "@angular/router";
+import { DestroyRef, inject, Injectable } from "@angular/core";
+import { Router, ActivatedRoute, NavigationEnd } from "@angular/router";
 import {
     BehaviorSubject,
     catchError,
     distinctUntilChanged,
+    filter,
     forkJoin,
     map,
     of,
@@ -24,6 +25,7 @@ import {
     ILeaderboardTempFilter,
 } from "../../interfaces/leaderboard-filter.interface";
 import { DateUtils } from "../../helpers/date-utils";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 
 const initialTempFilter: ILeaderboardTempFilter = {
     date: null,
@@ -50,6 +52,7 @@ const initialFilter: ILeaderboardFilter = {
 export class LeaderboardService {
     private router = inject(Router);
     private route = inject(ActivatedRoute);
+    private destroyRef = inject(DestroyRef);
     private pulseService = inject(PulseService);
 
     private readonly count = 10;
@@ -160,6 +163,16 @@ export class LeaderboardService {
 
     constructor() {
         this.syncFiltersWithQueryParams();
+        this.router.events
+            .pipe(
+                filter((event) => event instanceof NavigationEnd),
+                takeUntilDestroyed(this.destroyRef),
+            )
+            .subscribe((event: NavigationEnd) => {
+                if (event.url.includes("leaderboard")) {
+                    this.updateQueryParams();
+                }
+            });
     }
 
     public setDate(date: Date | null) {
@@ -271,6 +284,8 @@ export class LeaderboardService {
                       },
                   }),
         };
+        console.log({ locationName, locationId, country, region, city });
+
         this.tempFilters.next(filters);
         this.applyFilters();
     }
