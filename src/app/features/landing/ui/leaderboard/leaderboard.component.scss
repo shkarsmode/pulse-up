@@ -6,6 +6,18 @@
     row-gap: 16px;
     margin-bottom: 16px;
 }
+.leaderboard-header_top {
+    display: flex;
+    column-gap: 4px;
+}
+
+.leaderboard-header__location-filter {
+    flex: 1;
+}
+
+.leaderboard-header__share-button {
+    flex-shrink: 0;
+}
 
 .leaderboard-header__action--search {
     display: block;

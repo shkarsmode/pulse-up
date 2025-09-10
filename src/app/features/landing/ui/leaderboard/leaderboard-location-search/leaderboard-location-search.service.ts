@@ -1,81 +1,49 @@
-import { computed, DestroyRef, inject, Injectable, signal } from "@angular/core";
+import { DestroyRef, inject, Injectable } from "@angular/core";
 import { FormControl } from "@angular/forms";
-import {
-    combineLatest,
-    debounceTime,
-    distinctUntilChanged,
-    filter,
-    map,
-    switchMap,
-    tap,
-} from "rxjs";
+import { debounceTime, filter, map, switchMap, tap } from "rxjs";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { GeocodeService } from "@/app/shared/services/api/geocode.service";
 import { StringUtils } from "@/app/shared/helpers/string-utils";
-import { MapboxFeature } from "@/app/shared/interfaces";
-import { LeaderboardFiltersService } from "../leaderboard-filters/leaderboard-filters.service";
+import { LeaderboardLocationFilterService } from "../leaderboard-filters/leaderboard-location-filter/leaderboard-location-filter.service";
 
 @Injectable({ providedIn: "root" })
 export class LeaderboardLocationSearchService {
     private destroyRef = inject(DestroyRef);
     private geocodeService = inject(GeocodeService);
-    private leaderboardFiltersService = inject(LeaderboardFiltersService);
-
-    private _suggestions = signal<MapboxFeature[]>([]);
+    private leaderboardLocationFilterService = inject(LeaderboardLocationFilterService);
 
     public searchControl = new FormControl("");
-    public options = computed(() => {
-        const suggestions = this._suggestions();
-        return suggestions.map(({ properties }) => properties.full_address);
-    });
-    public suggestions = this._suggestions.asReadonly();
-    public clearButtonVisible$ = combineLatest([
-        this.searchControl.valueChanges,
-        this.leaderboardFiltersService.location$,
-    ]).pipe(
-        map(([, location]) => {
-            const value = this.searchControl.value;
-            return value === location.label;
-        }),
+    public clearButtonVisible$ = this.searchControl.valueChanges.pipe(
+        map((value) => value && value.length > 0),
     );
 
     constructor() {
-        const validFeatureTypes = ["country", "region"];
         this.searchControl.valueChanges
             .pipe(
                 tap((query) => {
+                    const isSearchMode = !!query?.length && query.length > 0;
+                    this.leaderboardLocationFilterService.setSearchMode(isSearchMode);
                     if (!query) {
-                        this._suggestions.set([]);
+                        this.leaderboardLocationFilterService.setSearchOptions([]);
                     }
                 }),
-                debounceTime(400),
-                distinctUntilChanged(),
                 filter((query) => {
                     if (!query) return false;
                     const searchString = StringUtils.normalizeWhitespace(query);
-                    return searchString.length > 1;
+                    return !!searchString.length;
                 }),
-                switchMap((query) => this.geocodeService.getPlacesByQuery(query || "")),
-                map((response) => {
-                    const collection = response;
-                    collection.features = collection.features.filter((feature) => {
-                        return validFeatureTypes.includes(feature.properties.feature_type);
-                    });
-                    return collection;
-                }),
-                tap((res) => this._suggestions.set(res.features)),
-                takeUntilDestroyed(this.destroyRef),
-            )
-            .subscribe();
-
-        this.leaderboardFiltersService.location$
-            .pipe(
-                tap((location) => {
-                    if (location.type === "search") {
-                        this.searchControl.setValue(location.label, { emitEvent: true });
-                    } else {
-                        this.searchControl.setValue("", { emitEvent: true });
-                    }
+                tap(() => this.leaderboardLocationFilterService.setSearching(true)),
+                debounceTime(400),
+                switchMap((query) =>
+                    this.geocodeService.getPlacesByQuery({
+                        query: query || "",
+                        limit: 5,
+                        types: ["country", "region"],
+                    }),
+                ),
+                tap(({ features }) => {
+                    this.leaderboardLocationFilterService.setSearchOptions(features);
+                    this.leaderboardLocationFilterService.setSearching(false);
                 }),
                 takeUntilDestroyed(this.destroyRef),
             )
@@ -83,6 +51,7 @@ export class LeaderboardLocationSearchService {
     }
 
     public clearSuggestions() {
-        this._suggestions.set([]);
+        this.searchControl.setValue("");
+        this.leaderboardLocationFilterService.setSearchOptions([]);
     }
 }

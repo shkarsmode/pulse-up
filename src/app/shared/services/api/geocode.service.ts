@@ -6,6 +6,8 @@ import { MAPBOX_ACCESS_TOKEN } from "../../tokens/tokens";
 import { MapboxFeature, MapboxFeatureCollection } from "../../interfaces";
 import { GeolocationUtils } from "../../helpers/geolocation-utils";
 
+type PlaceType = "country" | "region" | "district" | "place";
+
 @Injectable({
     providedIn: "root",
 })
@@ -14,12 +16,20 @@ export class GeocodeService {
     private readonly accessToken: string = inject(MAPBOX_ACCESS_TOKEN);
     private readonly http: HttpClient = inject(HttpClient);
 
-    public getPlacesByQuery = (query: string) => {
+    public getPlacesByQuery = ({
+        query,
+        limit = 5,
+        types,
+    }: {
+        query: string;
+        limit?: number;
+        types: PlaceType[];
+    }) => {
         const params = new URLSearchParams({
             q: query,
             access_token: this.accessToken,
-            limit: "5",
-            types: "country,region,district,place",
+            limit: limit.toString(),
+            types: types.join(","),
             language: "en",
             autocomplete: "true",
         }).toString();

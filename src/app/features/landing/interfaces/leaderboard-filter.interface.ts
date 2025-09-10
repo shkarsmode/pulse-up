@@ -18,11 +18,8 @@ export interface ILeaderboardFilter {
     location?: Partial<ILeaderboardLocation>;
 }
 
-type ILeaderboardLocationType = "quickPick" | "search";
-
 export interface ILeaderboardLocationOption {
     id: string;
     label: string;
-    type: ILeaderboardLocationType;
     data: ILeaderboardLocation;
 }

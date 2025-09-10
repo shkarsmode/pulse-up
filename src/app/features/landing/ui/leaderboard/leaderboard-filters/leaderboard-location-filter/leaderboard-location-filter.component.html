@@ -1,6 +1,8 @@
 @let options = options$ | async;
 @let title = title$ | async;
 @let subtitle = subtitle$ | async;
+@let isSearching = isSearching$ | async;
+@let isEmpty = isEmpty$ | async;
 
 <div class="location-filter">
     <h1 class="location-filter-header">
@@ -43,20 +45,41 @@
                 <app-location-search
                     class="location-search"
                     [shouldFocus]="menuVisible()"
-                    (locationSelected)="onSelectSuggestion($event)"
                     role="presentation" />
             </li>
-            @for (option of options; track $index) {
+            @if (isSearching) {
                 <li role="presentation">
-                    <button
-                        role="menuitem"
-                        class="location-filter-option"
-                        [class.location-filter-option--selected]="option.selected"
-                        (click)="onSelectOption(option)">
-                        <span>{{ option.label }}</span>
-                        <span class="location-filter-option__checkbox"></span>
-                    </button>
+                    <app-leaderboard-location-option-skeleton width="60%" />
                 </li>
+                <li role="presentation">
+                    <app-leaderboard-location-option-skeleton width="80%" />
+                </li>
+                <li role="presentation">
+                    <app-leaderboard-location-option-skeleton width="50%" />
+                </li>
+                <li role="presentation">
+                    <app-leaderboard-location-option-skeleton width="90%" />
+                </li>
+                <li role="presentation">
+                    <app-leaderboard-location-option-skeleton width="70%" />
+                </li>
+            } @else if (isEmpty) {
+                <li role="presentation">
+                    <app-leaderboard-location-filter-empty-placeholder />
+                </li>
+            } @else {
+                @for (option of options; track $index) {
+                    <li role="presentation">
+                        <button
+                            role="menuitem"
+                            class="location-filter-option"
+                            [class.location-filter-option--selected]="option.selected"
+                            (click)="onSelectOption(option)">
+                            {{ option.label }}
+                            <span class="location-filter-option__checkbox"></span>
+                        </button>
+                    </li>
+                }
             }
         </ul>
     </app-popover>

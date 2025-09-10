@@ -20,7 +20,6 @@ import { MapboxFeature } from "@/app/shared/interfaces";
 const initGlobalOption: ILeaderboardLocationOption = {
     id: "global",
     label: "Global",
-    type: "quickPick",
     data: {
         country: null,
         region: null,
@@ -42,12 +41,15 @@ export class LeaderboardLocationFilterService {
     private leaderboardService = inject(LeaderboardService);
     private leaderboardFiltersService = inject(LeaderboardFiltersService);
 
+    private isSearchMode = new BehaviorSubject<boolean>(false);
+    private isSearching = new BehaviorSubject<boolean>(false);
+    private searchOptions = new BehaviorSubject<ILeaderboardLocationOption[]>([]);
     private globalCountriesOptions = new BehaviorSubject<ILeaderboardLocationOption[]>([
         initGlobalOption,
     ]);
     private localCountryOptions = new BehaviorSubject<ILeaderboardLocationOption[]>([]);
     private localStatesOptions = new BehaviorSubject<ILeaderboardLocationOption[]>([]);
-    private allOptions$ = combineLatest([
+    private initialOptions$ = combineLatest([
         this.globalCountriesOptions,
         this.localCountryOptions,
         this.localStatesOptions,
@@ -85,8 +87,8 @@ export class LeaderboardLocationFilterService {
                     }
                     const options = countries.map((country) =>
                         this.createOption({
-                            location: { country, region: null, city: null },
-                            type: "global",
+                            location: { country },
+                            label: country,
                         }),
                     );
                     this.globalCountriesOptions.next([initGlobalOption, ...options]);
@@ -114,8 +116,8 @@ export class LeaderboardLocationFilterService {
                                 }
                                 const stateOptions = locations.map(({ country, state }) =>
                                     this.createOption({
-                                        location: { country, region: state, city: null },
-                                        type: "local",
+                                        location: { country, region: state },
+                                        label: state,
                                     }),
                                 );
                                 this.localStatesOptions.next(stateOptions);
@@ -128,8 +130,8 @@ export class LeaderboardLocationFilterService {
                     if (isCountryAdded) return;
                     this.localCountryOptions.next([
                         this.createOption({
-                            location: { country, region: null, city: null },
-                            type: "local",
+                            location: { country },
+                            label: country,
                         }),
                     ]);
                 }),
@@ -138,21 +140,60 @@ export class LeaderboardLocationFilterService {
             .subscribe();
     }
 
+    public isSearching$ = this.isSearching.asObservable().pipe(distinctUntilChanged());
     public selectedOption$ = this.leaderboardFiltersService.location$;
-    public options$ = combineLatest([this.allOptions$, this.selectedOption$]).pipe(
-        map(([[globalOption, userCountry, userStates], selectedOption]) => {
-            return [...globalOption, ...userCountry, ...userStates].map(
-                (option) =>
-                    ({
-                        ...option,
-                        selected: option.id === selectedOption?.id,
-                    }) as ILeaderboardLocationOptionWithSelected,
-            );
-        }),
+    public options$ = combineLatest([
+        this.initialOptions$,
+        this.searchOptions,
+        this.selectedOption$,
+        this.isSearchMode,
+    ]).pipe(
+        map(
+            ([
+                [globalOption, userCountry, userStates],
+                searchOptions,
+                selectedOption,
+                isSearchMode,
+            ]) => {
+                if (isSearchMode) return this.markSelectedOption(searchOptions, selectedOption);
+                return this.markSelectedOption(
+                    [...globalOption, ...userCountry, ...userStates],
+                    selectedOption,
+                );
+            },
+        ),
     );
+    public isEmpty$ = this.options$.pipe(map((options) => options.length === 0));
 
     public changeLocation(option: ILeaderboardLocationOption) {
         this.leaderboardFiltersService.changeLocation(option);
+    }
+
+    public setSearchMode(isSearch: boolean) {
+        this.isSearchMode.next(isSearch);
+    }
+
+    public setSearching(isSearching: boolean) {
+        this.isSearching.next(isSearching);
+    }
+
+    public setSearchOptions(features: MapboxFeature[]) {
+        const options = features.reduce((acc, feature) => {
+            const location = this.mapFeatureToLocationData(feature);
+            if (!location.country) return acc;
+            acc.push(
+                this.createOption({
+                    location: {
+                        country: location.country,
+                        region: location.region,
+                        city: location.city,
+                    },
+                    label: feature.properties.full_address,
+                }),
+            );
+            return acc;
+        }, [] as ILeaderboardLocationOption[]);
+        this.searchOptions.next(options);
     }
 
     public mapFeatureToLocationData(feature: MapboxFeature): ILeaderboardLocationOption["data"] {
@@ -186,27 +227,35 @@ export class LeaderboardLocationFilterService {
 
     private createOption({
         location,
-        type,
+        label,
     }: {
         location: {
             country: string;
             region?: string | null;
             city?: string | null;
         };
-        type: "global" | "local";
+        label: string;
     }): ILeaderboardLocationOption {
         const { country, region, city } = location;
-        const optionId = `${type}-${region ? "state" : "country"}-${region || country}`;
-        const label = region ? region : country;
+        const optionId = Object.values(location).filter(Boolean).join("-");
         return {
             id: optionId,
             label,
-            type: "quickPick",
             data: {
                 country: country,
                 region: region || null,
                 city: city || null,
             },
         };
+    }
+
+    private markSelectedOption(
+        options: ILeaderboardLocationOption[],
+        selectedOption: ILeaderboardLocationOption | null,
+    ): ILeaderboardLocationOptionWithSelected[] {
+        return options.map((option) => ({
+            ...option,
+            selected: option.id === selectedOption?.id,
+        }));
     }
 }

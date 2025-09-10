@@ -5,12 +5,12 @@ import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { distinctUntilChanged, filter, map, tap } from "rxjs";
 import { SelectComponent } from "@/app/shared/components/material/select/select.component";
 import { LeaderboardTimeframeExtended } from "@/app/shared/interfaces";
-import { LeaderboardFiltersService } from "./leaderboard-filters.service";
-import { LeaderboardDatepickerComponent } from "../leaderboard-datepicker/leaderboard-datepicker.component";
-import { LeaderboardLocationFilterComponent } from "./leaderboard-location-filter/leaderboard-location-filter.component";
+import { LeaderboardDatepickerComponent } from "../../leaderboard-datepicker/leaderboard-datepicker.component";
+import { LeaderboardLocationFilterComponent } from "../leaderboard-location-filter/leaderboard-location-filter.component";
+import { LeaderboardFiltersService } from "../leaderboard-filters.service";
 
 @Component({
-    selector: "app-leaderboard-filters",
+    selector: "app-leaderboard-date-filter",
     standalone: true,
     imports: [
         CommonModule,
@@ -18,11 +18,11 @@ import { LeaderboardLocationFilterComponent } from "./leaderboard-location-filte
         LeaderboardDatepickerComponent,
         LeaderboardLocationFilterComponent,
     ],
-    templateUrl: "./leaderboard-filters.component.html",
-    styleUrl: "./leaderboard-filters.component.scss",
+    templateUrl: "./leaderboard-date-filter.component.html",
+    styleUrl: "./leaderboard-date-filter.component.scss",
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class LeaderboardFiltersComponent implements OnInit {
+export class LeaderboardDateFilterComponent implements OnInit {
     private destroyRef = inject(DestroyRef);
     private leaderboardFiltersService = inject(LeaderboardFiltersService);
 
