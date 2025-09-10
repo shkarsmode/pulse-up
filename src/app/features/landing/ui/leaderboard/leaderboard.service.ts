@@ -1,4 +1,5 @@
 import { inject, Injectable } from "@angular/core";
+import { Router, ActivatedRoute } from "@angular/router";
 import {
     BehaviorSubject,
     catchError,
@@ -47,6 +48,8 @@ const initialFilter: ILeaderboardFilter = {
     providedIn: "root",
 })
 export class LeaderboardService {
+    private router = inject(Router);
+    private route = inject(ActivatedRoute);
     private pulseService = inject(PulseService);
 
     private readonly count = 10;
@@ -155,6 +158,10 @@ export class LeaderboardService {
         shareReplay({ bufferSize: 1, refCount: true }),
     );
 
+    constructor() {
+        this.syncFiltersWithQueryParams();
+    }
+
     public setDate(date: Date | null) {
         this.tempFilters.next({
             ...this.tempFilters.getValue(),
@@ -189,11 +196,82 @@ export class LeaderboardService {
                 city: location.data.city,
             },
         });
+        this.updateQueryParams();
     }
 
     public updateTimeframeStatus() {
         const { date, timeframe } = this.filters.getValue();
         const status = getTimeframeStatus(date, timeframe);
         this.timeframeStatus.next(status);
+    }
+
+    private updateQueryParams() {
+        const {
+            date,
+            timeframe,
+            location: {
+                id,
+                label,
+                data: { country, region, city },
+            },
+        } = this.tempFilters.getValue();
+        const queryParams: Record<string, string> = {
+            timeframe,
+            locationId: id,
+            locationName: label,
+        };
+        if (date) {
+            queryParams["date"] = DateUtils.toISOString(DateUtils.getStatrtOfDay(date));
+        }
+        if (country) {
+            queryParams["country"] = country;
+        }
+        if (region) {
+            queryParams["region"] = region;
+        }
+        if (city) {
+            queryParams["city"] = city;
+        }
+        this.router.navigate([], {
+            queryParams,
+            queryParamsHandling: "replace",
+        });
+    }
+
+    private syncFiltersWithQueryParams() {
+        const filtersFromurl = this.route.snapshot.queryParamMap;
+        const date = filtersFromurl.get("date");
+        const timeframe = filtersFromurl.get("timeframe") as LeaderboardTimeframeExtended;
+        const country = filtersFromurl.get("country");
+        const region = filtersFromurl.get("region");
+        const city = filtersFromurl.get("city");
+        const locationId = filtersFromurl.get("locationId")!;
+        const locationName = filtersFromurl.get("locationName")!;
+
+        const filters: ILeaderboardTempFilter = {
+            date: date ? new Date(date) : null,
+            timeframe: timeframe || initialTempFilter.timeframe,
+            ...(locationId && locationName
+                ? {
+                      location: {
+                          id: locationId,
+                          label: locationName,
+                          data: {
+                              country: country || null,
+                              region: region || null,
+                              city: city || null,
+                          },
+                      },
+                  }
+                : {
+                      location: {
+                          id: "global",
+                          label: "Global",
+                          data: { country: null, region: null, city: null },
+                      },
+                  }),
+        };
+        this.tempFilters.next(filters);
+        this.applyFilters();
     }
 }
