@@ -284,8 +284,6 @@ export class LeaderboardService {
                       },
                   }),
         };
-        console.log({ locationName, locationId, country, region, city });
-
         this.tempFilters.next(filters);
         this.applyFilters();
     }
