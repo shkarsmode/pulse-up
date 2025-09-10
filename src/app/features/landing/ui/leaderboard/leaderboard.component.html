@@ -1,5 +1,9 @@
 <div class="leaderboard-header">
-    <app-leaderboard-filters />
+    <div class="leaderboard-header_top">
+        <app-leaderboard-location-filter class="leaderboard-header__location-filter" />
+        <app-leaderboard-share-button class="leaderboard-header__share-button"/>
+    </div>
+    <app-leaderboard-date-filter class="leaderboard-header__date-filter" />
 </div>
 
 @if (isSpinnerVisible$ | async) {

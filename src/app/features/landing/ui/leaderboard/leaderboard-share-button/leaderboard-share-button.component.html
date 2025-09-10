@@ -1,0 +1,29 @@
+<app-menu [content]="menuContent">
+    <button
+        host
+        mat-icon-button
+        class="leaderboard-share-button">
+        <span class="visualy-hidden">Open menu</span>
+        <svg-icon
+            src="assets/svg/icon_share.svg"
+            class="leaderboard-share-button__icon" />
+    </button>
+</app-menu>
+
+<ng-template #menuContent>
+    <div class="social-share-menu">
+        <app-copy-button
+            link="{{ pageUrl() }}"
+            (handleClick)="onCopyLink($event)" />
+        <app-socials-button
+            [variant]="'facebook'"
+            [url]="pageUrl()" />
+        <app-socials-button
+            [variant]="'x'"
+            [url]="pageUrl()" />
+        <app-socials-button
+            [variant]="'email'"
+            [url]="pageUrl()" />
+        <app-qrcode-button [url]="pageUrl()" />
+    </div>
+</ng-template>

@@ -6,8 +6,10 @@ import { LeaderboardService } from "./leaderboard.service";
 import { SpinnerComponent } from "@/app/shared/components/ui-kit/spinner/spinner.component";
 import { LeaderboardListItemComponent } from "./leaderboard-list-item/leaderboard-list-item.component";
 import { LeaderboardHintComponent } from "./leaderboard-hint/leaderboard-hint.component";
-import { LeaderboardFiltersComponent } from "./leaderboard-filters/leaderboard-filters.component";
 import { LeaderboardNoResultsComponent } from "./leaderboard-no-results/leaderboard-no-results.component";
+import { LeaderboardLocationFilterComponent } from "./leaderboard-filters/leaderboard-location-filter/leaderboard-location-filter.component";
+import { LeaderboardDateFilterComponent } from "./leaderboard-filters/leaderboard-date-filter/leaderboard-date-filter.component";
+import { LeaderboardShareButtonComponent } from "./leaderboard-share-button/leaderboard-share-button.component";
 
 @Component({
     selector: "app-leaderboard",
@@ -18,8 +20,10 @@ import { LeaderboardNoResultsComponent } from "./leaderboard-no-results/leaderbo
         AngularSvgIconModule,
         LeaderboardListItemComponent,
         LeaderboardHintComponent,
-        LeaderboardFiltersComponent,
         LeaderboardNoResultsComponent,
+        LeaderboardLocationFilterComponent,
+        LeaderboardDateFilterComponent,
+        LeaderboardShareButtonComponent,
     ],
     templateUrl: "./leaderboard.component.html",
     styleUrl: "./leaderboard.component.scss",
