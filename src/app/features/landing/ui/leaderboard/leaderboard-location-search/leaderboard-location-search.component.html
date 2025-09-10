@@ -11,9 +11,7 @@
             placeholder="Search (USA, Brazil, Miami...)"
             class="location-search-input"
             [class.location-search-input--filled]="clearButtonVisible"
-            autocomplete="off"
-            (focus)="onFocus()"
-            (blur)="onBlur()"/>
+            autocomplete="off"/>
         @if (clearButtonVisible) {
             <button
                 mat-icon-button
@@ -26,18 +24,4 @@
             </button>
         }
     </div>
-
-    @if (suggestionsVisible()) {
-        <ul class="suggestions">
-            @for (option of options(); track $index) {
-                <li>
-                    <button
-                        class="suggestion-item"
-                        (mousedown)="onSuggestionsMouseDown($index)">
-                        {{ option }}
-                    </button>
-                </li>
-            }
-        </ul>
-    }
 </div>

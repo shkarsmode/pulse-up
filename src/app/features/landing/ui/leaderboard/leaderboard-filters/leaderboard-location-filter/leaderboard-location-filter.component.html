@@ -43,7 +43,6 @@
                 <app-location-search
                     class="location-search"
                     [shouldFocus]="menuVisible()"
-                    (locationSelected)="onSelectSuggestion($event)"
                     role="presentation" />
             </li>
             @for (option of options; track $index) {
@@ -53,7 +52,7 @@
                         class="location-filter-option"
                         [class.location-filter-option--selected]="option.selected"
                         (click)="onSelectOption(option)">
-                        <span>{{ option.label }}</span>
+                        {{ option.label }}
                         <span class="location-filter-option__checkbox"></span>
                     </button>
                 </li>

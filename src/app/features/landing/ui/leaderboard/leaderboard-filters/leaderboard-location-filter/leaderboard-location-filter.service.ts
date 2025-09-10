@@ -9,7 +9,7 @@ import {
     tap,
 } from "rxjs";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
-import { ILeaderboardLocation, ILeaderboardLocationOption } from "@/app/features/landing/interfaces/leaderboard-filter.interface";
+import { ILeaderboardLocationOption } from "@/app/features/landing/interfaces/leaderboard-filter.interface";
 import { LeaderboardFiltersService } from "../leaderboard-filters.service";
 import { IpLocationService } from "@/app/shared/services/core/ip-location.service";
 import { PulseService } from "@/app/shared/services/api/pulse.service";
@@ -41,12 +41,14 @@ export class LeaderboardLocationFilterService {
     private leaderboardService = inject(LeaderboardService);
     private leaderboardFiltersService = inject(LeaderboardFiltersService);
 
+    private isSearchMode = new BehaviorSubject<boolean>(false);
+    private searchOptions = new BehaviorSubject<ILeaderboardLocationOption[]>([]);
     private globalCountriesOptions = new BehaviorSubject<ILeaderboardLocationOption[]>([
         initGlobalOption,
     ]);
     private localCountryOptions = new BehaviorSubject<ILeaderboardLocationOption[]>([]);
     private localStatesOptions = new BehaviorSubject<ILeaderboardLocationOption[]>([]);
-    private allOptions$ = combineLatest([
+    private initialOptions$ = combineLatest([
         this.globalCountriesOptions,
         this.localCountryOptions,
         this.localStatesOptions,
@@ -138,29 +140,53 @@ export class LeaderboardLocationFilterService {
     }
 
     public selectedOption$ = this.leaderboardFiltersService.location$;
-    public options$ = combineLatest([this.allOptions$, this.selectedOption$]).pipe(
-        map(([[globalOption, userCountry, userStates], selectedOption]) => {
-            return [...globalOption, ...userCountry, ...userStates].map((option) => {
-                return {
-                    ...option,
-                    selected: option.id === selectedOption?.id,
-                } as ILeaderboardLocationOptionWithSelected;
-            });
-        }),
+    public options$ = combineLatest([
+        this.initialOptions$,
+        this.searchOptions,
+        this.selectedOption$,
+        this.isSearchMode,
+    ]).pipe(
+        map(
+            ([
+                [globalOption, userCountry, userStates],
+                searchOptions,
+                selectedOption,
+                isSearchMode,
+            ]) => {
+                if (isSearchMode) return this.markSelectedOption(searchOptions, selectedOption);
+                return this.markSelectedOption(
+                    [...globalOption, ...userCountry, ...userStates],
+                    selectedOption,
+                );
+            },
+        ),
     );
 
-    public changeLocation({location, label}: {location: ILeaderboardLocation, label: string}) {
-        if (!location.country) return;
-        this.leaderboardFiltersService.changeLocation(
-            this.createOption({
-                location: {
-                    country: location.country,
-                    region: location.region,
-                    city: location.city,
-                },
-                label,
-            })
-        );
+    public changeLocation(option: ILeaderboardLocationOption) {
+        this.leaderboardFiltersService.changeLocation(option);
+    }
+
+    public setSearchMode(isSearch: boolean) {
+        this.isSearchMode.next(isSearch);
+    }
+
+    public setSearchOptions(features: MapboxFeature[]) {
+        const options = features.reduce((acc, feature) => {
+            const location = this.mapFeatureToLocationData(feature);
+            if (!location.country) return acc;
+            acc.push(
+                this.createOption({
+                    location: {
+                        country: location.country,
+                        region: location.region,
+                        city: location.city,
+                    },
+                    label: feature.properties.full_address,
+                }),
+            );
+            return acc;
+        }, [] as ILeaderboardLocationOption[]);
+        this.searchOptions.next(options);
     }
 
     public mapFeatureToLocationData(feature: MapboxFeature): ILeaderboardLocationOption["data"] {
@@ -214,5 +240,15 @@ export class LeaderboardLocationFilterService {
                 city: city || null,
             },
         };
+    }
+
+    private markSelectedOption(
+        options: ILeaderboardLocationOption[],
+        selectedOption: ILeaderboardLocationOption | null,
+    ): ILeaderboardLocationOptionWithSelected[] {
+        return options.map((option) => ({
+            ...option,
+            selected: option.id === selectedOption?.id,
+        }));
     }
 }
