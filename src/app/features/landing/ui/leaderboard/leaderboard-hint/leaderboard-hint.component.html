@@ -23,6 +23,9 @@
                 class="leaderboard-hint__progress"
                 [percentage]="elapsedTimePercentage()" />
         }
+        @if (timeframeStatus !== "Active") {
+            <app-leaderboard-current-utc />
+        }
         <app-link-button
             class="leaderboard-action"
             (handleClick)="openInfoPopup()">
