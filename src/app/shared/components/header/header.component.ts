@@ -1,9 +1,9 @@
 import { CommonModule } from "@angular/common";
-import { Component, DestroyRef, inject, OnInit } from "@angular/core";
+import { Component, inject, OnInit } from "@angular/core";
 import { FormsModule } from "@angular/forms";
-import { NavigationStart, Router, RouterModule } from "@angular/router";
+import { RouterModule } from "@angular/router";
 import { SvgIconComponent } from "angular-svg-icon";
-import { delay, filter, map, tap } from "rxjs";
+import { map } from "rxjs";
 import { AppRoutes } from "../../enums/app-routes.enum";
 import { BurgerButtonComponent } from "../ui-kit/buttons/burger-button/burger-button.component";
 
@@ -16,7 +16,6 @@ import { DownloadAppButtonComponent } from "./download-app-button/download-app-b
 import { SecondaryButtonComponent } from "../ui-kit/buttons/secondary-button/secondary-button.component";
 import { DropdownLinkComponent } from "./dropdown-link/dropdown-link.component";
 import { ProfileButtonComponent } from "./profile-button/profile-button.component";
-import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 
 @Component({
     selector: "app-header",
@@ -37,8 +36,6 @@ import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
     styleUrl: "./header.component.scss",
 })
 export class HeaderComponent implements OnInit {
-    private router = inject(Router);
-    private destroyRef = inject(DestroyRef);
     private platformService = inject(PlatformService);
     private settingsService = inject(SettingsService);
     private authService = inject(AuthenticationService);
@@ -61,15 +58,6 @@ export class HeaderComponent implements OnInit {
         //Called after the constructor, initializing input properties, and the first call to ngOnChanges.
         //Add 'implements OnInit' to the class.
         this.getCurrentVersionOfApplication();
-
-        this.router.events
-            .pipe(
-                filter((event) => event instanceof NavigationStart && this.isMobileDropdown),
-                delay(150),
-                tap(() => this.closeDropdown()),
-                takeUntilDestroyed(this.destroyRef),
-            )
-            .subscribe();
     }
 
     public get isAuthenticated() {
@@ -95,8 +83,10 @@ export class HeaderComponent implements OnInit {
 
     public closeDropdown() {
         if (!this.isMobileDropdown) return;
-        this.isMobileDropdown = false;
-        this.enableDocumentScroll();
+        setTimeout(() => {
+            this.isMobileDropdown = false;
+            this.enableDocumentScroll();
+        }, 150);
     }
 
     // @HostListener('window:scroll', [])
