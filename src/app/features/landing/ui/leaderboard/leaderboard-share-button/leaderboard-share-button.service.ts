@@ -5,8 +5,6 @@ import { Injectable } from '@angular/core';
 })
 export class LeaderboardShareButtonService {
   public getShareUrl() {
-    console.log('Getting share URL:', window.location.href);
-    
     return window.location.href;
   }
 }

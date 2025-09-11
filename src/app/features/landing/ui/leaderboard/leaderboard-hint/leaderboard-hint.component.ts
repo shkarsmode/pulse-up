@@ -23,6 +23,7 @@ import { DialogService } from "@/app/shared/services/core/dialog.service";
 import { LeaderboardInfoPopupComponent } from "../leaderboard-info-popup/leaderboard-info-popup.component";
 import { formatRemainingTime } from "../../../helpers/formatRemainingTime";
 import { LeaderboardCurrentUtcComponent } from "./leaderboard-current-utc/leaderboard-current-utc.component";
+import { isUtcNextDay } from "../../../helpers/isUtcNextDay";
 
 @Component({
     selector: "app-leaderboard-hint",
@@ -53,12 +54,14 @@ export class LeaderboardHintComponent implements OnInit {
         Week: "this week",
         Month: "this month",
     };
+    public isUTCNextDay = false;
 
     public get isDayFormat() {
         return this.selectedTimeframe !== "Month";
     }
 
     public ngOnInit() {
+        this.isUTCNextDay = isUtcNextDay();
         this.leaderboardService.topics$
             .pipe(
                 tap((topics) => {
