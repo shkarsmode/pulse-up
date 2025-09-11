@@ -91,28 +91,32 @@
                     <li>
                         <app-dropdown-link
                             [link]="'/' + AppRoutes.Landing.MAP"
-                            [accent]="true">
+                            [accent]="true"
+                            (handleclick)="closeDropdown()">
                             Map
                         </app-dropdown-link>
                     </li>
                     <li>
                         <app-dropdown-link
                             [link]="'/' + AppRoutes.Landing.LEADERBOARD"
-                            [accent]="true">
+                            [accent]="true"
+                            (handleclick)="closeDropdown()">
                             Leaderboard
                         </app-dropdown-link>
                     </li>
                     <li>
                         <app-dropdown-link
                             [link]="'/' + AppRoutes.Landing.TOPICS"
-                            [accent]="true">
+                            [accent]="true"
+                            (handleclick)="closeDropdown()">
                             Topics
                         </app-dropdown-link>
                     </li>
                     <li>
                         <app-dropdown-link
                             [link]="'/' + AppRoutes.Landing.ABOUT"
-                            [accent]="true">
+                            [accent]="true"
+                            (handleclick)="closeDropdown()">
                             About
                         </app-dropdown-link>
                     </li>
@@ -120,7 +124,8 @@
                         <li>
                             <app-dropdown-link
                                 [link]="'/' + AppRoutes.Profile.OVERVIEW"
-                                [accent]="true">
+                                [accent]="true"
+                                (handleclick)="closeDropdown()">
                                 Profile
                             </app-dropdown-link>
                         </li>
@@ -128,26 +133,30 @@
                         <li>
                             <app-dropdown-link
                                 [link]="'/' + AppRoutes.Auth.SIGN_IN"
-                                [accent]="true">
+                                [accent]="true"
+                                (handleclick)="closeDropdown()">
                                 Login
                             </app-dropdown-link>
                         </li>
                     }
                     <li>
                         <app-dropdown-link
-                            [link]="'/' + AppRoutes.Community.TERMS">
+                            [link]="'/' + AppRoutes.Community.TERMS"
+                            (handleclick)="closeDropdown()">
                             Terms of Use
                         </app-dropdown-link>
                     </li>
                     <li>
                         <app-dropdown-link
-                            [link]="'/' + AppRoutes.Community.PRIVACY">
+                            [link]="'/' + AppRoutes.Community.PRIVACY"
+                            (handleclick)="closeDropdown()">
                             Privacy Policy
                         </app-dropdown-link>
                     </li>
                     <li>
                         <app-dropdown-link
-                            [link]="'/' + AppRoutes.Community.SUPPORT">
+                            [link]="'/' + AppRoutes.Community.SUPPORT"
+                            (handleclick)="closeDropdown()">
                             Support
                         </app-dropdown-link>
                     </li>
