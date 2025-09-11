@@ -1,7 +1,7 @@
-import { Component, DestroyRef, inject, OnInit } from "@angular/core";
+import { Component, computed, DestroyRef, inject, OnInit } from "@angular/core";
 import { CommonModule, Location } from "@angular/common";
 import { ActivatedRoute, ParamMap, Router } from "@angular/router";
-import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
+import { takeUntilDestroyed, toSignal } from "@angular/core/rxjs-interop";
 import { SvgIconComponent } from "angular-svg-icon";
 import { catchError, map, Observable, of, switchMap, take, tap } from "rxjs";
 import { InfiniteScrollDirective } from "ngx-infinite-scroll";
@@ -19,10 +19,7 @@ import { IPaginator, IProfile, ITopic } from "@/app/shared/interfaces";
 import { FormatNumberPipe } from "@/app/shared/pipes/format-number.pipe";
 import { SettingsService } from "@/app/shared/services/api/settings.service";
 import { UserService } from "@/app/shared/services/api/user.service";
-import { DialogService } from "@/app/shared/services/core/dialog.service";
-import { TopicQRCodePopupData } from "../../interfaces/topic-qrcode-popup-data.interface";
 import { InfiniteLoaderService } from "../../services/infinite-loader.service";
-import { TopicQrcodePopupComponent } from "../../ui/topic-qrcode-popup/topic-qrcode-popup.component";
 import { UserAvatarComponent } from "../../ui/user-avatar/user-avatar.component";
 import { BackButtonComponent } from "@/app/shared/components/ui-kit/buttons/back-button/back-button.component";
 import { VotesService } from "@/app/shared/services/votes/votes.service";
@@ -63,10 +60,11 @@ export class UserComponent implements OnInit {
     private readonly location = inject(Location);
     private readonly route = inject(ActivatedRoute);
     private readonly userService = inject(UserService);
-    private readonly dialogService = inject(DialogService);
     private readonly settingsService = inject(SettingsService);
     private readonly infiniteLoaderService = inject(InfiniteLoaderService<ITopic>);
     private readonly votesService = inject(VotesService);
+
+    private settings = toSignal(this.settingsService.settings$);
 
     public user: IProfile | null = null;
     public topics: ITopic[] = [];
@@ -76,9 +74,11 @@ export class UserComponent implements OnInit {
     public loading$: Observable<boolean>;
     public votes$ = this.votesService.votesByTopicId$;
 
-    public shareProfileUrl$ = this.settingsService.settings$.pipe(
-        map((settings) => settings.shareUserBaseUrl + this.user?.username),
-    );
+    public shareProfileUrl = computed(() => {
+        const settings = this.settings();
+        if (!settings) return "";
+        return settings.shareUserBaseUrl + this.user?.username;
+    });
 
     constructor() {
         this.pulseId = this.router.getCurrentNavigation()?.extras?.state?.["pulseId"] || "";
@@ -124,7 +124,7 @@ export class UserComponent implements OnInit {
                     this.user = user;
                     this.isLoading = false;
                 }),
-                catchError((error: unknown) => {    
+                catchError((error: unknown) => {
                     console.log("Error fetching user profile:", error);
                     this.isLoading = false;
                     if (isHttpErrorResponse(error) && error.status === 404) {
@@ -179,22 +179,5 @@ export class UserComponent implements OnInit {
 
     public onCopyLink(event: MouseEvent) {
         event.stopPropagation();
-    }
-
-    public openQrCodePopup(): void {
-        this.shareProfileUrl$
-            .pipe(takeUntilDestroyed(this.destroyRef))
-            .subscribe((shareProfileUrl) => {
-                this.dialogService.open<TopicQrcodePopupComponent, TopicQRCodePopupData>(
-                    TopicQrcodePopupComponent,
-                    {
-                        width: "400px",
-                        data: {
-                            link: shareProfileUrl,
-                            type: "profile",
-                        },
-                    },
-                );
-            });
     }
 }

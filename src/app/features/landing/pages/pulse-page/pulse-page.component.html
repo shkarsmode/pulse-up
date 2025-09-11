@@ -201,7 +201,7 @@
         <app-socials-button
             [variant]="'email'"
             [url]="topicUrl()" />
-        <app-qrcode-button [url]="topicUrl()" />
+        <app-qrcode-button [data]="{ link: topicUrl(), type: 'topic' }" />
     </div>
 </ng-template>
 

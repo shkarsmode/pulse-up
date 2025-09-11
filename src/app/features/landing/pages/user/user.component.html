@@ -67,7 +67,7 @@
 
 <ng-template #menuContent>
     <div class="social-share-menu">
-        <ng-container *ngIf="shareProfileUrl$ | async as shareProfileUrl">
+        <ng-container *ngIf="shareProfileUrl() as shareProfileUrl">
             <app-copy-button
                 link="{{ shareProfileUrl }}"
                 (handleClick)="onCopyLink($event)" />
@@ -80,7 +80,7 @@
             <app-socials-button
                 [variant]="'email'"
                 [url]="shareProfileUrl" />
-            <app-qrcode-button [url]="shareProfileUrl" />
+            <app-qrcode-button [data]="{ link: shareProfileUrl, type: 'profile' }" />
         </ng-container>
     </div>
 </ng-template>

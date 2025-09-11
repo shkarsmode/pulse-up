@@ -87,7 +87,7 @@
             <app-socials-button
                 [variant]="'email'"
                 [url]="shareProfileUrl" />
-            <app-qrcode-button [url]="shareProfileUrl" />
+            <app-qrcode-button [data]="{ link: shareProfileUrl, type: 'profile' }" />
         </ng-container>
     </div>
 </ng-template>

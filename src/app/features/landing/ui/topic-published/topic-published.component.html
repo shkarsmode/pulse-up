@@ -50,7 +50,7 @@
             <app-socials-button
                 [variant]="'email'"
                 [url]="link" />
-            <app-qrcode-button [url]="link" />
+            <app-qrcode-button [data]="{ link: link, type: 'topic' }" />
         </ng-container>
     </div>
 </ng-template>

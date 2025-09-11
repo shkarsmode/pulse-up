@@ -11,11 +11,13 @@ import { TopicQRCodePopupData, TopicQrcodePopupType } from "../../interfaces/top
 const dialogDescription: Record<TopicQrcodePopupType, string> = {
     topic: "Open the topic on your phone by scanning the QR code below.",
     profile: "Open the profile on your phone by scanning the QR code below.",
+    leaderboard: "Open the leaderboard on your phone by scanning the QR code below.",
 };
 
 const dialogLabel: Record<TopicQrcodePopupType, string> = {
     topic: "Topic QR Code",
     profile: "Profile QR Code",
+    leaderboard: "Leaderboard QR Code",
 };
 
 

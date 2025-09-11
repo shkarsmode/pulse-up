@@ -24,6 +24,6 @@
         <app-socials-button
             [variant]="'email'"
             [url]="pageUrl" />
-        <app-qrcode-button [url]="pageUrl" />
+        <app-qrcode-button [data]="{ link: pageUrl, type: 'leaderboard' }" />
     </div>
 </ng-template>
