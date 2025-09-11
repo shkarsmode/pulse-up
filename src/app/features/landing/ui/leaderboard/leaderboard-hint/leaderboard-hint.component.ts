@@ -61,7 +61,7 @@ export class LeaderboardHintComponent implements OnInit {
     }
 
     public ngOnInit() {
-        this.isUTCNextDay = isUtcNextDay();
+        this.isUTCNextDay = isUtcNextDay(this.selectedDate || new Date());
         this.leaderboardService.topics$
             .pipe(
                 tap((topics) => {

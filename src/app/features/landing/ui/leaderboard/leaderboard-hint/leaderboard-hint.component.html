@@ -23,7 +23,7 @@
                 class="leaderboard-hint__progress"
                 [percentage]="elapsedTimePercentage()" />
         }
-        @if (isUTCNextDay) {
+        @if (isUTCNextDay && timeframeStatus !== "Active") {
             <app-leaderboard-current-utc />
         }
         <app-link-button
