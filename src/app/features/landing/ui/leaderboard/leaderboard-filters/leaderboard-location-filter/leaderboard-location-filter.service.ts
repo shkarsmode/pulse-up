@@ -16,6 +16,7 @@ import { PulseService } from "@/app/shared/services/api/pulse.service";
 import { LeaderboardService } from "../../leaderboard.service";
 import { DateUtils } from "@/app/features/landing/helpers/date-utils";
 import { MapboxFeature } from "@/app/shared/interfaces";
+import { createLocationOption } from "@/app/features/landing/helpers/createLocationOption";
 
 const initGlobalOption: ILeaderboardLocationOption = {
     id: "global",
@@ -86,7 +87,7 @@ export class LeaderboardLocationFilterService {
                         return;
                     }
                     const options = countries.map((country) =>
-                        this.createOption({
+                        createLocationOption({
                             location: { country },
                             label: country,
                         }),
@@ -115,7 +116,7 @@ export class LeaderboardLocationFilterService {
                                     return;
                                 }
                                 const stateOptions = locations.map(({ country, state }) =>
-                                    this.createOption({
+                                    createLocationOption({
                                         location: { country, region: state },
                                         label: state,
                                     }),
@@ -129,7 +130,7 @@ export class LeaderboardLocationFilterService {
                     const isCountryAdded = !!this.localCountryOptions.getValue().length;
                     if (isCountryAdded) return;
                     this.localCountryOptions.next([
-                        this.createOption({
+                        createLocationOption({
                             location: { country },
                             label: country,
                         }),
@@ -183,7 +184,7 @@ export class LeaderboardLocationFilterService {
             const location = this.mapFeatureToLocationData(feature);
             if (!location.country) return acc;
             acc.push(
-                this.createOption({
+                createLocationOption({
                     location: {
                         country: location.country,
                         region: location.region,
@@ -226,29 +227,6 @@ export class LeaderboardLocationFilterService {
         }
     }
 
-    private createOption({
-        location,
-        label,
-    }: {
-        location: {
-            country: string;
-            region?: string | null;
-            city?: string | null;
-        };
-        label: string;
-    }): ILeaderboardLocationOption {
-        const { country, region, city } = location;
-        const optionId = Object.values(location).filter(Boolean).join("-");
-        return {
-            id: optionId,
-            label,
-            data: {
-                country: country,
-                region: region || null,
-                city: city || null,
-            },
-        };
-    }
 
     private markSelectedOption(
         options: ILeaderboardLocationOption[],
