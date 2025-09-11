@@ -4,6 +4,7 @@ import { LeaderboardTimeframeExtended } from "@/app/shared/interfaces";
 import { LeaderboardService } from "../leaderboard.service";
 import { DateUtils } from "../../../helpers/date-utils";
 import { ILeaderboardLocationOption } from "../../../interfaces/leaderboard-filter.interface";
+import { getTimeframeStatus } from "../../../helpers/getTimeframeStatus";
 
 interface Option {
     value: LeaderboardTimeframeExtended;
@@ -34,22 +35,32 @@ export class LeaderboardFiltersService {
     );
     public dateFormatted$ = combineLatest([this.date$, this.timeframe$]).pipe(
         map(([date, timeframe]) => {
+            let dateFormatted = "";
+            const status = getTimeframeStatus(date || new Date(), timeframe);
             switch (timeframe) {
                 case "last24Hours":
-                    return "";
+                    dateFormatted = "";
+                    break;
                 case "Day":
-                    return date ? DateUtils.format(date, "MMM DD") : "";
+                    dateFormatted = date ? DateUtils.format(date, "MMM DD") : "";
+                    break;
                 case "Week":
-                    return date
+                    dateFormatted = date
                         ? `${DateUtils.format(DateUtils.getStartOfWeek(date), "MMM DD")} - ${DateUtils.format(DateUtils.getEndOfWeek(date), "MMM DD")}`
                         : "";
+                    break;
                 case "Month":
-                    return date ? DateUtils.format(date, "MMM YYYY") : "";
+                    dateFormatted = date ? DateUtils.format(date, "MMM YYYY") : "";
+                    break;
                 default:
-                    return "";
+                    dateFormatted = "";
             }
+
+            if (status === "Active") {
+                dateFormatted += ` UTC`;
+            }
+            return dateFormatted;
         }),
-        map((text) => text + " UTC")
     );
     public location$ = this.leaderboardService.tempFilters$.pipe(
         map((filters) => filters.location),

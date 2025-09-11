@@ -6,7 +6,6 @@ import { distinctUntilChanged, filter, map, tap } from "rxjs";
 import { SelectComponent } from "@/app/shared/components/material/select/select.component";
 import { LeaderboardTimeframeExtended } from "@/app/shared/interfaces";
 import { LeaderboardDatepickerComponent } from "../../leaderboard-datepicker/leaderboard-datepicker.component";
-import { LeaderboardLocationFilterComponent } from "../leaderboard-location-filter/leaderboard-location-filter.component";
 import { LeaderboardFiltersService } from "../leaderboard-filters.service";
 
 @Component({
@@ -16,7 +15,6 @@ import { LeaderboardFiltersService } from "../leaderboard-filters.service";
         CommonModule,
         SelectComponent,
         LeaderboardDatepickerComponent,
-        LeaderboardLocationFilterComponent,
     ],
     templateUrl: "./leaderboard-date-filter.component.html",
     styleUrl: "./leaderboard-date-filter.component.scss",
