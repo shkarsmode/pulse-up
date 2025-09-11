@@ -4,7 +4,8 @@ import { PulseService } from "@/app/shared/services/api/pulse.service";
 import { LeaderboardService } from "../leaderboard.service";
 import { DateUtils } from "../../../helpers/date-utils";
 import { LeaderboardFiltersService } from "../leaderboard-filters/leaderboard-filters.service";
-import { ILeaderboardLocation } from "../../../interfaces/leaderboard-filter.interface";
+import { ILeaderboardLocationOption } from "../../../interfaces/leaderboard-filter.interface";
+import { createLocationOption } from "../../../helpers/createLocationOption";
 
 @Injectable({
     providedIn: "root",
@@ -65,21 +66,24 @@ export class LeaderboardNoResultsService {
                                 map((locations) =>
                                     locations.filter((location) => !!location.state),
                                 ),
-                                map((locations) => locations.reduce((acc, curr) => {
-                                    if (!acc.find((loc) => loc.state === curr.state)) {
-                                        acc.push(curr);
-                                    }
-                                    return acc;
-                                }, [] as typeof locations)),
+                                map((locations) =>
+                                    locations.reduce(
+                                        (acc, curr) => {
+                                            if (!acc.find((loc) => loc.state === curr.state)) {
+                                                acc.push(curr);
+                                            }
+                                            return acc;
+                                        },
+                                        [] as typeof locations,
+                                    ),
+                                ),
                                 map((locations) => locations.slice(0, 3)),
                                 map((locations) =>
-                                    locations.map(
-                                        (location) =>
-                                            ({
-                                                country: location.country,
-                                                region: location.state,
-                                                city: null,
-                                            }) as ILeaderboardLocation,
+                                    locations.map((location) =>
+                                        createLocationOption({
+                                            location,
+                                            label: location.state,
+                                        }),
                                     ),
                                 ),
                             );
@@ -92,29 +96,34 @@ export class LeaderboardNoResultsService {
 
                                 .pipe(
                                     catchError(() => {
-                                        console.log("Error fetching leaderboard locations by country");
+                                        console.log(
+                                            "Error fetching leaderboard locations by country",
+                                        );
                                         return of([]);
                                     }),
                                     map((locations) =>
                                         locations.filter((location) => !!location.country),
                                     ),
                                     map((locations) =>
-                                        locations.reduce((acc, curr) => {
-                                            if (!acc.find((loc) => loc.country === curr.country)) {
-                                                acc.push(curr);
-                                            }
-                                            return acc;
-                                        }, [] as typeof locations),
+                                        locations.reduce(
+                                            (acc, curr) => {
+                                                if (
+                                                    !acc.find((loc) => loc.country === curr.country)
+                                                ) {
+                                                    acc.push(curr);
+                                                }
+                                                return acc;
+                                            },
+                                            [] as typeof locations,
+                                        ),
                                     ),
                                     map((locations) => locations.slice(0, 3)),
                                     map((locations) =>
-                                        locations.map(
-                                            (location) =>
-                                                ({
-                                                    country: location.country,
-                                                    region: null,
-                                                    city: null,
-                                                }) as ILeaderboardLocation,
+                                        locations.map((location) =>
+                                            createLocationOption({
+                                                location,
+                                                label: location.country,
+                                            }),
                                         ),
                                     ),
                                 );
@@ -125,13 +134,7 @@ export class LeaderboardNoResultsService {
         }),
     );
 
-    public setSuggestedLocation(location: ILeaderboardLocation) {
-        const { country, region } = location;
-        if (!country || !region) return;
-        this.leaderboardFiltersService.changeLocation({
-            id: `${country}-${region}`,
-            label: region,
-            data: location,
-        });
+    public setSuggestedLocation(option: ILeaderboardLocationOption) {
+        this.leaderboardFiltersService.changeLocation(option);
     }
 }
