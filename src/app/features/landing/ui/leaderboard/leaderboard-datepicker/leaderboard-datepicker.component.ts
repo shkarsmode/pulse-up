@@ -10,7 +10,8 @@ import {
     ChangeDetectionStrategy,
     Injectable,
     inject,
-    DestroyRef,
+    DestroyRef, 
+    OnChanges,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { TemplatePortal } from "@angular/cdk/portal";
@@ -66,7 +67,7 @@ export class WeekRangeSelectionStrategy<D = Date> implements MatDateRangeSelecti
     ],
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class LeaderboardDatepickerComponent {
+export class LeaderboardDatepickerComponent implements OnChanges {
     private overlay = inject(Overlay);
     private destroyRef = inject(DestroyRef);
     private viewContainerRef = inject(ViewContainerRef);
@@ -87,7 +88,7 @@ export class LeaderboardDatepickerComponent {
     public readonly calendarMaxDate = new Date();
     public overlayRef: OverlayRef | null = null;
     public currentView: MatCalendarView = "month";
-    public selectedDateRange: DateRange<Date> = this.getStartWeekRange();
+    public selectedDateRange: DateRange<Date>;
 
     public get isMonthView(): boolean {
         return this.timeframe === "Month" || this.timeframe === "last24Hours";
@@ -97,6 +98,10 @@ export class LeaderboardDatepickerComponent {
     }
     public get isDayView(): boolean {
         return this.timeframe === "Day";
+    }
+
+    ngOnChanges(): void {
+        this.selectedDateRange = this.getWeekRange(this.date || new Date());
     }
 
     public openCalendar(): void {
@@ -165,7 +170,7 @@ export class LeaderboardDatepickerComponent {
         }
         this.currentView = view;
         this.dateChange.emit(null);
-        this.selectedDateRange = this.getStartWeekRange();
+        this.selectedDateRange = this.getWeekRange(new Date());
     }
 
     public onWeekSelected(date: Date): void {
@@ -191,8 +196,7 @@ export class LeaderboardDatepickerComponent {
         this.overlayRef?.dispose();
     }
 
-    private getStartWeekRange(): DateRange<Date> {
-        const today = new Date();
-        return new DateRange<Date>(DateUtils.getStartOfWeek(today), DateUtils.getEndOfWeek(today));
+    private getWeekRange(date: Date): DateRange<Date> {
+        return new DateRange<Date>(DateUtils.getStartOfWeek(date), DateUtils.getEndOfWeek(date));
     }
 }
