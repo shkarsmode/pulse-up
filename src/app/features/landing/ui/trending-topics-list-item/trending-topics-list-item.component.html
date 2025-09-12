@@ -92,7 +92,12 @@
             <app-socials-button
                 [variant]="'email'"
                 [url]="topicUrl" />
-            <app-qrcode-button [url]="topicUrl" />
+            <app-qrcode-button
+                [link]="topicUrl"
+                popupTitle="Topic QR code"
+                [popupSubtitle]="qrCodePopupText"
+                [bannerTitle]="qrCodeBannerTitle"
+                [bannerSubtitle]="qrCodeBannerText" />
         </ng-container>
     </div>
 </ng-template>

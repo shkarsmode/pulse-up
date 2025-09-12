@@ -17,4 +17,7 @@
     @include media-lg {
         padding: 48px 24px;
     }
+    @include media-sm {
+        padding: 48px 16px;
+    }
 }

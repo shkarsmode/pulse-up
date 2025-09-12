@@ -1,0 +1,38 @@
+<app-popup>
+    <app-popup-close-button (close)="onClose()" />
+    <app-popup-subtitle> {{ data.popup.title }} </app-popup-subtitle>
+    <app-popup-text
+        textAlign="center"
+        class="description">
+        {{ data.popup.subtitle }}
+    </app-popup-text>
+    <app-qrcode
+        [data]="data.link"
+        [rounded]="true"
+        [accessibleLabel]="data.popup.title"
+        [size]="220"
+        (qrCodeURL)="onChangeURL($event)" />
+    <app-popup-footer class="actions">
+        <app-primary-button
+            [fullWidth]="true"
+            size="large"
+            class="action-button"
+            (handleClick)="onCopy()">
+            <svg-icon
+                src="assets/svg/copy.svg"
+                class="icon" />
+            Copy
+        </app-primary-button>
+        <a
+            class="download-link"
+            [href]="qrCodeDownloadLink()"
+            download="qrcode"
+            appRippleEffect
+            rippleColor="#6d6d6d24">
+            <svg-icon
+                src="assets/svg/download.svg"
+                class="icon" />
+            Download
+        </a>
+    </app-popup-footer>
+</app-popup>

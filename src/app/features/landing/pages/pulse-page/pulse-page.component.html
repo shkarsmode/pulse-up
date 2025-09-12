@@ -1,3 +1,5 @@
+@let shareTopicUrl = topicUrl();
+
 @if (isLoading()) {
     <app-spinner />
 } @else if (topic) {
@@ -190,18 +192,23 @@
 <ng-template #menuContent>
     <div class="social-share-menu">
         <app-copy-button
-            link="{{ topicUrl() }}"
+            [link]="shareTopicUrl"
             (handleClick)="onCopyLink($event)" />
         <app-socials-button
             [variant]="'facebook'"
-            [url]="topicUrl()" />
+            [url]="shareTopicUrl" />
         <app-socials-button
             [variant]="'x'"
-            [url]="topicUrl()" />
+            [url]="shareTopicUrl" />
         <app-socials-button
             [variant]="'email'"
-            [url]="topicUrl()" />
-        <app-qrcode-button [url]="topicUrl()" />
+            [url]="shareTopicUrl" />
+        <app-qrcode-button
+            [link]="shareTopicUrl"
+            [popupSubtitle]="qrCodePopupText()"
+            popupTitle="Topic QR code"
+            [bannerTitle]="qrCodeBannerTitle()"
+            [bannerSubtitle]="qrCodeBannerText()" />
     </div>
 </ng-template>
 

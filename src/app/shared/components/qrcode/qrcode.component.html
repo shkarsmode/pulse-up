@@ -7,5 +7,6 @@
         [cssClass]="'center'"
         [width]="size"
         [scale]="1"
-        [ariaLabel]="accessibleLabel" />
+        [ariaLabel]="accessibleLabel" 
+        (qrCodeURL)="onChangeURL($event)"/>
 </div>

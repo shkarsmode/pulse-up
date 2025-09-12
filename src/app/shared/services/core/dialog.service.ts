@@ -1,4 +1,4 @@
-import { Injectable } from "@angular/core";
+import { inject, Injectable } from "@angular/core";
 import { MatDialog, MatDialogConfig, MatDialogRef } from "@angular/material/dialog";
 import { ComponentType } from "@angular/cdk/portal";
 
@@ -6,7 +6,7 @@ import { ComponentType } from "@angular/cdk/portal";
     providedIn: "root",
 })
 export class DialogService {
-    constructor(private readonly dialog: MatDialog) {}
+    private dialog = inject(MatDialog);
 
     open<TComponent, TConfig = any, TResult = any>(
         component: ComponentType<TComponent>,

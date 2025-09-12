@@ -24,6 +24,11 @@
         <app-socials-button
             [variant]="'email'"
             [url]="pageUrl" />
-        <app-qrcode-button [url]="pageUrl" />
+        <app-qrcode-button
+            [link]="pageUrl"
+            popupTitle="Leaderboard QR code"
+            popupSubtitle="Share the leaderboard with this QR code."
+            bannerTitle="Scan me!"
+            bannerSubtitle="Scan this QR code to view the profile" />
     </div>
 </ng-template>

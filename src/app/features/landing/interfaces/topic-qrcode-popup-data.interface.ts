@@ -1,6 +1,13 @@
-export type TopicQrcodePopupType = "topic" | "profile";
+export type TopicQrcodePopupType = "topic" | "profile" | "leaderboard";
 
 export interface TopicQRCodePopupData {
     link: string;
-    type: TopicQrcodePopupType;
+    popup: {
+        title: string;
+        subtitle: string;
+    };
+    banner: {
+        title: string;
+        subtitle: string;
+    };
 }
