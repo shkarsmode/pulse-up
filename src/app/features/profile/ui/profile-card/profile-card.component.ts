@@ -51,6 +51,7 @@ export class ProfileCardComponent {
     );
     public editProfileRoute = "/" + AppRoutes.Profile.EDIT;
     public deleteAccountRoute = "/" + AppRoutes.Profile.DELETE_ACCOUNT;
+    public qrCodePopupText$ = this.name$.pipe(map(name => `Share ${name}'s profile with this QR code.`));
 
     public logout() {
         this.authenticationService.logout()

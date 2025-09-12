@@ -20,7 +20,7 @@
                 size="large"
                 [fullWidth]="true"
                 (handleClick)="copyLink()">
-                {{ copied ? "Link copied!" : "Copy link" }}
+                {{ copied() ? "Link copied!" : "Copy link" }}
             </app-primary-button>
         </div>
         <div class="footer__button">
@@ -37,7 +37,7 @@
 
 <ng-template #menuContent>
     <div class="social-share-menu">
-        <ng-container *ngIf="link$ | async as link">
+        <ng-container *ngIf="link() as link">
             <app-copy-button
                 link="{{ link }}"
                 (handleClick)="onCopySocialLink($event)" />
@@ -50,7 +50,10 @@
             <app-socials-button
                 [variant]="'email'"
                 [url]="link" />
-            <app-qrcode-button [data]="{ link: link, type: 'topic' }" />
+            <app-qrcode-button
+                [link]="link"
+                [title]="'Topic QR code'"
+                [subtitle]="qrCodePopupText" />
         </ng-container>
     </div>
 </ng-template>

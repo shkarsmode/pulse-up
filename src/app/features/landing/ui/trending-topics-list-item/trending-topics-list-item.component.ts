@@ -62,6 +62,10 @@ export class TrendingTopicsListItemComponent implements OnInit {
     );
     public isCampaignBadgeVisible: boolean;
 
+    public get qrCodePopupText(): string {
+        return `Share the '${this.data.title}' topic with this QR code.`;
+    }
+
     public ngOnInit() {
         this.isCampaignBadgeVisible =
             !!this.data.campaign && this.isCampaignActive(this.data.campaign);

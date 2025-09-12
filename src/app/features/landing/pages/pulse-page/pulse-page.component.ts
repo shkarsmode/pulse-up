@@ -25,14 +25,13 @@ import {
     ViewChild,
     OnDestroy,
     ChangeDetectionStrategy,
+    effect,
 } from "@angular/core";
 import { takeUntilDestroyed, toObservable } from "@angular/core/rxjs-interop";
 import { ActivatedRoute, ParamMap, RouterModule } from "@angular/router";
 import { SvgIconComponent } from "angular-svg-icon";
 import { combineLatest, distinctUntilChanged, filter, map, tap } from "rxjs";
-import { TopicQRCodePopupData } from "../../interfaces/topic-qrcode-popup-data.interface";
 import { MapComponent } from "@/app/shared/components/map/map.component";
-import { TopicQrcodePopupComponent } from "../../ui/topic-qrcode-popup/topic-qrcode-popup.component";
 import { UserVoteButtonComponent } from "../../ui/vote-button/user-vote-button/user-vote-button.component";
 import { PulseCampaignComponent } from "../../ui/pulse-campaign/pulse-campaign.component";
 import { VotesService } from "@/app/shared/services/votes/votes.service";
@@ -43,6 +42,7 @@ import { SettingsService } from "@/app/shared/services/api/settings.service";
 import { TimeFromNowPipe } from "@/app/shared/pipes/time-from-now.pipe";
 import { GuestVoteButtonComponent } from "../../ui/vote-button/guest-vote-button/guest-vote-button.component";
 import { DisbledVoteButtonComponent } from "../../ui/vote-button/disbled-vote-button/disbled-vote-button.component";
+import { ITopic } from "@/app/shared/interfaces";
 
 @Component({
     selector: "app-pulse-page",
@@ -96,6 +96,8 @@ export class PulsePageComponent implements OnInit, OnDestroy {
     private description?: ElementRef<HTMLDivElement>;
     private mutationObserver: MutationObserver | null = null;
 
+    private isJustCreatedTopicPopupShown = false;
+
     public isReadMore = false;
     public map: mapboxgl.Map | null = null;
     public get topic() {
@@ -109,6 +111,7 @@ export class PulsePageComponent implements OnInit, OnDestroy {
     public suggestions = this.pulsePageService.suggestions;
     public isLoading = this.pulsePageService.isLoading;
     public isArchived = this.pulsePageService.isArchived;
+    public qrCodePopupText = this.pulsePageService.qrCodePopupText;
     public topicIcon$ = combineLatest([
         toObservable(this.pulsePageService.topic),
         this.settingsService.settings$,
@@ -124,9 +127,21 @@ export class PulsePageComponent implements OnInit, OnDestroy {
         return this.pulsePageService.lastPulseTime();
     }
 
+    constructor() {
+        effect(() => {
+            if (
+                this.pulseService.isJustCreatedTopic &&
+                this.topic &&
+                !this.isJustCreatedTopicPopupShown
+            ) {
+                this.isJustCreatedTopicPopupShown = true;
+                this.openJustCreatedTopicPopup(this.topic);
+            }
+        });
+    }
+
     ngOnInit(): void {
         this.updatePageData();
-        this.openJustCreatedTopicPopup();
         window.scrollTo({
             top: 0,
             left: 0,
@@ -154,19 +169,6 @@ export class PulsePageComponent implements OnInit, OnDestroy {
     public onVoteExpired() {
         this.pulsePageService.setVoteAsExpired();
     }
-
-    public openQrCodePopup = (): void => {
-        this.dialogService.open<TopicQrcodePopupComponent, TopicQRCodePopupData>(
-            TopicQrcodePopupComponent,
-            {
-                width: "400px",
-                data: {
-                    link: this.topicUrl(),
-                    type: "topic",
-                },
-            },
-        );
-    };
 
     public onVoted(vote: IVote): void {
         const topic = this.topic;
@@ -218,16 +220,17 @@ export class PulsePageComponent implements OnInit, OnDestroy {
             .subscribe();
     }
 
-    private openJustCreatedTopicPopup(): void {
-        if (this.pulseService.isJustCreatedTopic) {
-            setTimeout(() => {
-                this.dialogService.open(TopicPublishedComponent, {
+    private openJustCreatedTopicPopup(topic: ITopic): void {
+        setTimeout(() => {
+            this.dialogService.open<TopicPublishedComponent, { topic: ITopic }>(
+                TopicPublishedComponent,
+                {
                     data: {
-                        shareKey: this.topic?.shareKey,
+                        topic,
                     },
-                });
-            }, 1000);
-        }
+                },
+            );
+        }, 1000);
     }
 
     private checkIfDescriptionTruncated(): void {

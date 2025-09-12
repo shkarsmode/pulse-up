@@ -74,7 +74,10 @@
             <app-socials-button
                 [variant]="'email'"
                 [url]="topicUrl" />
-            <app-qrcode-button [data]="{ link: topicUrl, type: 'topic' }" />
+            <app-qrcode-button
+                [link]="topicUrl"
+                title="Topic QR code"
+                [subtitle]="qrCodePopupText" />
         </ng-container>
     </div>
 </ng-template>

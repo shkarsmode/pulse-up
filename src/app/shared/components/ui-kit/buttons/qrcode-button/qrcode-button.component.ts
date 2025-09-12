@@ -14,14 +14,20 @@ import { DialogService } from "@/app/shared/services/core/dialog.service";
 export class QrcodeButtonComponent {
     private readonly dialogService = inject(DialogService);
 
-    @Input() data: TopicQRCodePopupData;
+    @Input() link: TopicQRCodePopupData["link"];
+    @Input() title: TopicQRCodePopupData["title"];
+    @Input() subtitle: TopicQRCodePopupData["subtitle"];
 
     public onClick(): void {
         this.dialogService.open<TopicQrcodePopupComponent, TopicQRCodePopupData>(
             TopicQrcodePopupComponent,
             {
-                width: "400px",
-                data: this.data,
+                width: "630px",
+                data: {
+                    link: this.link,
+                    title: this.title,
+                    subtitle: this.subtitle,
+                },
             },
         );
     }

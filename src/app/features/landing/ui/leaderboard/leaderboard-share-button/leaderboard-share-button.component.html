@@ -24,6 +24,9 @@
         <app-socials-button
             [variant]="'email'"
             [url]="pageUrl" />
-        <app-qrcode-button [data]="{ link: pageUrl, type: 'leaderboard' }" />
+        <app-qrcode-button
+            [link]="pageUrl"
+            title="Leaderboard QR code"
+            subtitle="Share the leaderboard with this QR code." />
     </div>
 </ng-template>

@@ -56,6 +56,9 @@ export class UserTopicsListItemComponent {
                 !!this.vote && VoteUtils.isActiveVote(this.vote, settings.minVoteInterval),
         ),
     );
+    public get qrCodePopupText(): string {
+        return `Share the "${this.data.title}" topic with this QR code.`;
+    }
 
     public get isArchived(): boolean {
         return this.data.state === TopicState.Archived;

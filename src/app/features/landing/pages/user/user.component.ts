@@ -80,6 +80,10 @@ export class UserComponent implements OnInit {
         return settings.shareUserBaseUrl + this.user?.username;
     });
 
+    public get qrCodePopupText(): string {
+        return `Share ${this.user?.name}’s profile with this QR code.`;
+    }
+
     constructor() {
         this.pulseId = this.router.getCurrentNavigation()?.extras?.state?.["pulseId"] || "";
     }

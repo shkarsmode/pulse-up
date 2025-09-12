@@ -158,6 +158,10 @@ export class PulsePageService {
         return this.topicQuery.data()?.stats?.timestamp;
     });
 
+    public qrCodePopupText = computed(() => {
+        return `Share the '${this.topicQuery.data()?.title}' topic with this QR code.`;
+    });
+
     public setTopicId(id: number) {
         this.topicId.set(id);
     }

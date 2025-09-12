@@ -1,3 +1,5 @@
+@let qrCodePopupText = qrCodePopupText$ | async;
+
 <div class="profile-main-info">
     <app-user-avatar
         [width]="140"
@@ -87,7 +89,12 @@
             <app-socials-button
                 [variant]="'email'"
                 [url]="shareProfileUrl" />
-            <app-qrcode-button [data]="{ link: shareProfileUrl, type: 'profile' }" />
+            @if (qrCodePopupText) {
+                <app-qrcode-button
+                    [link]="shareProfileUrl"
+                    title="Profile QR code"
+                    [subtitle]="qrCodePopupText" />
+            }
         </ng-container>
     </div>
 </ng-template>

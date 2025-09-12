@@ -66,4 +66,8 @@ export class MyTopicsListItemComponent {
     public get isArchived(): boolean {
         return this.data.state === TopicState.Archived;
     }
+
+    public get qrCodePopupText(): string {
+        return `Share the '${this.data.title}' topic with this QR code.`;
+    }
 }
