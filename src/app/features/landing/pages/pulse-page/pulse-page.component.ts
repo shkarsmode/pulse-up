@@ -112,6 +112,8 @@ export class PulsePageComponent implements OnInit, OnDestroy {
     public isLoading = this.pulsePageService.isLoading;
     public isArchived = this.pulsePageService.isArchived;
     public qrCodePopupText = this.pulsePageService.qrCodePopupText;
+    public qrCodeBannerTitle = this.pulsePageService.qrCodeBannerTitle;
+    public qrCodeBannerText = this.pulsePageService.qrCodeBannerText;
     public topicIcon$ = combineLatest([
         toObservable(this.pulsePageService.topic),
         this.settingsService.settings$,

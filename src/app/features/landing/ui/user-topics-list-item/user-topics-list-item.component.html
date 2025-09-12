@@ -74,8 +74,10 @@
                 [url]="topicUrl" />
             <app-qrcode-button
                 [link]="topicUrl"
-                title="Topic QR code"
-                [subtitle]="qrCodePopupText" />
+                popupTitle="Topic QR code"
+                [popupSubtitle]="qrCodePopupText"
+                [bannerTitle]="qrCodeBannerTitle"
+                [bannerSubtitle]="qrCodeBannerSubtitle" />
         </ng-container>
     </div>
 </ng-template>

@@ -45,6 +45,12 @@ export class TopicPublishedComponent {
     public get qrCodePopupText(): string {
         return `Share the '${this.data.topic.title}' topic with this QR code.`;
     }
+    public get qrCodeBannerTitle(): string {
+        return this.data.topic.title;
+    }
+    public get qrCodeBannerSubtitle(): string {
+        return this.data.topic.description;
+    }
 
     onCloseDialog(): void {
         this.dialogRef.close();

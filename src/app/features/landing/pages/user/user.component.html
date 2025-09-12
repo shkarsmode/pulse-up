@@ -82,8 +82,10 @@
                 [url]="shareProfileUrl" />
             <app-qrcode-button
                 [link]="shareProfileUrl"
-                title="Profile QR code"
-                [subtitle]="qrCodePopupText" />
+                popupTitle="Profile QR code"
+                [popupSubtitle]="qrCodePopupText"
+                bannerTitle="Scan me!"
+                bannerSubtitle="Scan this QR code to view the profile" />
         </ng-container>
     </div>
 </ng-template>

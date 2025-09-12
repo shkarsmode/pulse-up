@@ -204,9 +204,11 @@
             [variant]="'email'"
             [url]="shareTopicUrl" />
         <app-qrcode-button
-            title="Topic QR code"
-            [subtitle]="qrCodePopupText()"
-            [link]="shareTopicUrl" />
+            [link]="shareTopicUrl"
+            [popupSubtitle]="qrCodePopupText()"
+            popupTitle="Topic QR code"
+            [bannerTitle]="qrCodeBannerTitle()"
+            [bannerSubtitle]="qrCodeBannerText()" />
     </div>
 </ng-template>
 
