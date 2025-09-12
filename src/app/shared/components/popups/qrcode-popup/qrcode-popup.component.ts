@@ -87,8 +87,6 @@ export class QrcodePopupComponent {
     }
 
     private dataURLToBlob(dataURL: string): Blob {
-        console.log({ dataURL });
-
         const [header, base64] = dataURL.split(",");
         const mime = header.match(/:(.*?);/)![1];
         const byteString = atob(base64);
@@ -97,8 +95,6 @@ export class QrcodePopupComponent {
             array[i] = byteString.charCodeAt(i);
         }
         const blob = new Blob([array], { type: mime });
-        console.log({ blob });
-
         return blob;
     }
 }
