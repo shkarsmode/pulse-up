@@ -1,3 +1,7 @@
+@let isActiveVote = isActiveVote$ | async;
+@let isActiveTimeframe = isActiveTimeframe$ | async;
+@let isSupportersVisible = isSupportersVisible$ | async;
+
 <app-large-pulse
     [pulse]="topic"
     class="leaderboard-item"
@@ -20,7 +24,7 @@
             {{ topic.title }}
         </app-large-pulse-title>
         <div class="card-heading-meta">
-            @if (isActiveTimeframe && (isActiveVote$ | async)) {
+            @if (isActiveTimeframe && isActiveVote) {
                 <app-large-pulse-meta
                     [text]="'Pulses: ' + (votes | formatNumber)"
                     label="number of pulses">
@@ -40,10 +44,12 @@
                     icon="assets/svg/pulse.svg"
                     label="number of pulses" />
             }
-            <app-large-pulse-meta
-                [text]="'Supporters: ' + (users | formatNumber)"
-                icon="assets/svg/fans.svg"
-                label="number of supporters" />
+            @if (isSupportersVisible) {
+                <app-large-pulse-meta
+                    [text]="'Supporters: ' + (users | formatNumber)"
+                    icon="assets/svg/fans.svg"
+                    label="number of supporters" />
+            }
             @if (lastPulse) {
                 <app-large-pulse-meta
                     [text]="lastPulse | timeFromNow"
