@@ -18,8 +18,6 @@ import { PopupLayoutComponent } from "@/app/shared/components/ui-kit/popup/popup
 import { SharedModule } from "@/app/shared/modules/shared.module";
 import { TopicQRCodePopupData } from "../../../../features/landing/interfaces/topic-qrcode-popup-data.interface";
 import { PrimaryButtonComponent } from "../../ui-kit/buttons/primary-button/primary-button.component";
-import { QRCodeBannerGenerator } from "@/app/shared/helpers/qrcode-banner-generator";
-import { RippleEffectDirective } from "@/app/shared/directives/ripple-effect";
 import { NotificationService } from "@/app/shared/services/core/notification.service";
 
 @Component({
@@ -34,9 +32,7 @@ import { NotificationService } from "@/app/shared/services/core/notification.ser
         SharedModule,
         PopupFooterComponent,
         PrimaryButtonComponent,
-        RippleEffectDirective,
     ],
-    providers: [QRCodeBannerGenerator],
     templateUrl: "./qrcode-popup.component.html",
     styleUrl: "./qrcode-popup.component.scss",
     changeDetection: ChangeDetectionStrategy.OnPush,
@@ -45,12 +41,11 @@ export class QrcodePopupComponent {
     @Output() qrCodeURL = new EventEmitter<SafeUrl>();
 
     private readonly sanitizer = inject(DomSanitizer);
-    private readonly qrCodeBannerGenerator = inject(QRCodeBannerGenerator);
     private readonly dialogRef = inject(MatDialogRef<QrcodePopupComponent>);
     private readonly notificationService = inject(NotificationService);
     public readonly data: TopicQRCodePopupData = inject(MAT_DIALOG_DATA);
 
-    private imageBlob: Blob | null = null;
+    private qrCodeImageBlob: Blob | null = null;
 
     public qrCodeDownloadLink = signal<SafeUrl>("");
 
@@ -61,23 +56,35 @@ export class QrcodePopupComponent {
     public async onChangeURL(url: SafeUrl) {
         this.qrCodeURL.emit(url);
         const objectUrl = this.sanitizer.sanitize(4, url);
+
         if (!objectUrl) return;
-        const finalUrl = await this.qrCodeBannerGenerator.generateBanner({
-            qrImageUrl: objectUrl,
+
+        const [{ TopicBannerGenerator }, { BannerContext }] = await Promise.all([
+            import("@/app/shared/services/banner-generator/strategies/topic-banner-generator"),
+            import("@/app/shared/services/banner-generator/banner-context"),
+        ]);
+
+        const context = new BannerContext(new TopicBannerGenerator({
+            icon: this.data.banner.icon,
             title: this.data.banner.title,
-            description: this.data.banner.subtitle,
-            qrSize: 1600,
-        });
+            description:
+                this.data.banner.subtitle + this.data.banner.subtitle + this.data.banner.subtitle,
+            qrCode: objectUrl,
+        }));
+        const finalUrl = await context.generate();
+
+        if (!finalUrl) return;
+
         this.qrCodeDownloadLink.set(this.sanitizer.bypassSecurityTrustUrl(finalUrl));
-        this.imageBlob = this.dataURLToBlob(finalUrl);
+        this.qrCodeImageBlob = this.dataURLToBlob(finalUrl);
     }
 
     public onCopy() {
-        if (!this.imageBlob) return;
+        if (!this.qrCodeImageBlob) return;
         try {
             navigator.clipboard.write([
                 new ClipboardItem({
-                    "image/png": this.imageBlob,
+                    "image/png": this.qrCodeImageBlob,
                 }),
             ]);
         } catch (error) {

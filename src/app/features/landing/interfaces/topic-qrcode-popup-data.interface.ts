@@ -7,6 +7,7 @@ export interface TopicQRCodePopupData {
         subtitle: string;
     };
     banner: {
+        icon: string;
         title: string;
         subtitle: string;
     };

@@ -17,6 +17,7 @@ export class QrcodeButtonComponent {
     @Input() link: string;
     @Input() popupTitle: string;
     @Input() popupSubtitle: string;
+    @Input() bannerIcon: string;
     @Input() bannerTitle: string;
     @Input() bannerSubtitle: string;
 
@@ -30,6 +31,7 @@ export class QrcodeButtonComponent {
                     subtitle: this.popupSubtitle,
                 },
                 banner: {
+                    icon: this.bannerIcon,
                     title: this.bannerTitle,
                     subtitle: this.bannerSubtitle,
                 },
