@@ -14,19 +14,27 @@ import { FooterComponent } from "@/app/shared/components/footer/footer.component
         </div>
 
         @if (isToShowFooter) {
-        <app-footer />
+            <app-footer />
         }
     `,
     styles: `
-        :host { 
+        :host {
             display: flex;
             flex-direction: column;
-            height: 100%; 
+            height: 100%;
             width: 100%;
+            background-color: var(--white-color);
         }
-        .user-page { flex: 1 1 auto; padding: 0 20px 30px 20px;}
+        .user-page {
+            flex: 1 1 auto;
+            padding: 0 20px 30px 20px;
+        }
 
-        @media screen and (max-width: 650px) {.user-page { padding: 24px 20px }}
+        @media screen and (max-width: 650px) {
+            .user-page {
+                padding: 24px 20px;
+            }
+        }
     `,
     standalone: true,
     imports: [RouterOutlet, HeaderComponent, FooterComponent],
