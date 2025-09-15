@@ -26,7 +26,7 @@
         <a
             class="download-link"
             [href]="qrCodeDownloadLink()"
-            download="qrcode"
+            [download]="'PulseUp - ' + data.banner.title"
             appRippleEffect
             rippleColor="#6d6d6d24">
             <svg-icon
