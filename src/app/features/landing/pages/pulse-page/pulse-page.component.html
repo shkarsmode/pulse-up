@@ -13,7 +13,7 @@
                 [src]="topicIcon$ | async"
                 width="160"
                 height="160"
-                alt="pulse icon" />
+                alt="pulse icon"/>
             <div class="pulse__header-title">
                 <h2>{{ topic.title }}</h2>
                 <a
@@ -207,6 +207,7 @@
             [link]="shareTopicUrl"
             [popupSubtitle]="qrCodePopupText()"
             popupTitle="Topic QR code"
+            [bannerIcon]="(topicIcon$ | async) || ''"
             [bannerTitle]="qrCodeBannerTitle()"
             [bannerSubtitle]="qrCodeBannerText()" />
     </div>

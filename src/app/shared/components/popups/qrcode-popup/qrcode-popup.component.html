@@ -19,14 +19,14 @@
             class="action-button"
             (handleClick)="onCopy()">
             <svg-icon
-                src="assets/svg/copy.svg"
+                [src]="isCopied() ? 'assets/svg/checked.svg' : 'assets/svg/copy.svg'"
                 class="icon" />
-            Copy
+            {{ isCopied() ? "Copied" : "Copy" }}
         </app-primary-button>
         <a
             class="download-link"
-            [href]="qrCodeDownloadLink()"
-            download="qrcode"
+            [href]="downloadLink()"
+            [download]="'PulseUp - ' + data.banner.title"
             appRippleEffect
             rippleColor="#6d6d6d24">
             <svg-icon
