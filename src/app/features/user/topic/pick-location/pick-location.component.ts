@@ -15,13 +15,23 @@ import { MapComponent } from "@/app/shared/components/map/map.component";
 import { PrimaryButtonComponent } from "@/app/shared/components/ui-kit/buttons/primary-button/primary-button.component";
 import { AngularSvgIconModule } from "angular-svg-icon";
 import { SpinnerComponent } from "@/app/shared/components/ui-kit/spinner/spinner.component";
+import { FlatButtonDirective } from "@/app/shared/components/ui-kit/buttons/flat-button/flat-button.directive";
+import { RippleEffectDirective } from "@/app/shared/directives/ripple-effect";
 
 @Component({
     selector: "app-pick-location",
     templateUrl: "./pick-location.component.html",
     styleUrl: "./pick-location.component.scss",
     standalone: true,
-    imports: [CommonModule, MapComponent, PrimaryButtonComponent, AngularSvgIconModule, SpinnerComponent],
+    imports: [
+        CommonModule,
+        MapComponent,
+        PrimaryButtonComponent,
+        AngularSvgIconModule,
+        SpinnerComponent,
+        FlatButtonDirective,
+        RippleEffectDirective,
+    ],
 })
 export class PickLocationComponent implements OnInit, OnDestroy {
     private readonly router = inject(Router);
