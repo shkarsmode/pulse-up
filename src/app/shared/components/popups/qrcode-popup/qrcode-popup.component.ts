@@ -18,7 +18,7 @@ import { PopupLayoutComponent } from "@/app/shared/components/ui-kit/popup/popup
 import { SharedModule } from "@/app/shared/modules/shared.module";
 import { TopicQRCodePopupData } from "../../../../features/landing/interfaces/topic-qrcode-popup-data.interface";
 import { PrimaryButtonComponent } from "../../ui-kit/buttons/primary-button/primary-button.component";
-import { QRCodeBannerGenerator } from "@/app/shared/helpers/QRCodeBannerGenerator";
+import { QRCodeBannerGenerator } from "@/app/shared/helpers/qrcode-banner-generator";
 import { RippleEffectDirective } from "@/app/shared/directives/ripple-effect";
 import { NotificationService } from "@/app/shared/services/core/notification.service";
 
