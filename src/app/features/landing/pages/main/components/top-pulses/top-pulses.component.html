@@ -15,29 +15,33 @@
         <div></div>
     } @else {
         @for (topicData of topics(); track topicData.topic.id; let i = $index) {
-            <app-small-pulse class="pulses__item">
-                <app-small-pulse-header>
-                    <app-small-pulse-icon
-                        [url]="topicData.topic.icon"
-                        [label]="topicData.topic.title">
-                        <app-small-pulse-badge
-                            [text]="(i + 1).toString()"
-                            [leftIcon]="i === 0 ? 'assets/svg/cup.svg' : undefined" />
-                    </app-small-pulse-icon>
-                    <app-small-pulse-stats>
-                        <app-small-pulse-stats-item
-                            [value]="topicData.uniqueUsers | formatNumber"
-                            icon="assets/svg/fans.svg" />
-                        <app-small-pulse-stats-item
-                            [value]="topicData.votes | formatNumber"
-                            icon="assets/svg/pulse.svg" />
-                    </app-small-pulse-stats>
-                </app-small-pulse-header>
-                <app-small-pulse-title>{{ topicData.topic.title }}</app-small-pulse-title>
-                <app-small-pulse-subtitle>{{
-                    topicData.topic.author.name
-                }}</app-small-pulse-subtitle>
-            </app-small-pulse>
+            <a
+                class="pulses__item"
+                [routerLink]="'/topic/' + topicData.topic.id">
+                <app-small-pulse>
+                    <app-small-pulse-header>
+                        <app-small-pulse-icon
+                            [url]="topicData.topic.icon"
+                            [label]="topicData.topic.title">
+                            <app-small-pulse-badge
+                                [text]="(i + 1).toString()"
+                                [leftIcon]="i === 0 ? 'assets/svg/cup.svg' : undefined" />
+                        </app-small-pulse-icon>
+                        <app-small-pulse-stats>
+                            <app-small-pulse-stats-item
+                                [value]="topicData.uniqueUsers | formatNumber"
+                                icon="assets/svg/fans.svg" />
+                            <app-small-pulse-stats-item
+                                [value]="topicData.votes | formatNumber"
+                                icon="assets/svg/pulse.svg" />
+                        </app-small-pulse-stats>
+                    </app-small-pulse-header>
+                    <app-small-pulse-title>{{ topicData.topic.title }}</app-small-pulse-title>
+                    <app-small-pulse-subtitle>{{
+                        topicData.topic.author.name
+                    }}</app-small-pulse-subtitle>
+                </app-small-pulse>
+            </a>
         }
     }
 </div>
