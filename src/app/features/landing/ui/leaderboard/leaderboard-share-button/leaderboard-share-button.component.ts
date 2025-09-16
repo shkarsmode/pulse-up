@@ -25,9 +25,7 @@ import { LeaderboardShareButtonService } from "./leaderboard-share-button.servic
 export class LeaderboardShareButtonComponent {
     private leaderboardShareButtonService = inject(LeaderboardShareButtonService);
 
-    public get pageUrl() {
-        return this.leaderboardShareButtonService.getShareUrl();
-    }
+    public shareUrl = this.leaderboardShareButtonService.shareUrl;
 
     public onCopyLink(event: MouseEvent): void {
         event.stopPropagation();

@@ -82,7 +82,6 @@ export class LeaderboardNoResultsService {
                                     locations.map((location) =>
                                         createLocationOption({
                                             location,
-                                            label: location.state,
                                         }),
                                     ),
                                 ),
@@ -122,7 +121,6 @@ export class LeaderboardNoResultsService {
                                         locations.map((location) =>
                                             createLocationOption({
                                                 location,
-                                                label: location.country,
                                             }),
                                         ),
                                     ),

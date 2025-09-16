@@ -1,3 +1,5 @@
+@let link = shareUrl();
+
 <app-menu [content]="menuContent">
     <button
         host
@@ -11,24 +13,26 @@
 </app-menu>
 
 <ng-template #menuContent>
-    <div class="social-share-menu">
-        <app-copy-button
-            link="{{ pageUrl }}"
-            (handleClick)="onCopyLink($event)" />
-        <app-socials-button
-            [variant]="'facebook'"
-            [url]="pageUrl" />
-        <app-socials-button
-            [variant]="'x'"
-            [url]="pageUrl" />
-        <app-socials-button
-            [variant]="'email'"
-            [url]="pageUrl" />
-        <app-qrcode-button
-            [link]="pageUrl"
-            popupTitle="Leaderboard QR code"
-            popupSubtitle="Share the leaderboard with this QR code."
-            bannerTitle="Scan me!"
-            bannerSubtitle="Scan this QR code to view the profile" />
-    </div>
+    @if (link) {
+        <div class="social-share-menu">
+            <app-copy-button
+                link="{{ link }}"
+                (handleClick)="onCopyLink($event)" />
+            <app-socials-button
+                [variant]="'facebook'"
+                [url]="link" />
+            <app-socials-button
+                [variant]="'x'"
+                [url]="link" />
+            <app-socials-button
+                [variant]="'email'"
+                [url]="link" />
+            <app-qrcode-button
+                [link]="link"
+                popupTitle="Leaderboard QR code"
+                popupSubtitle="Share the leaderboard with this QR code."
+                bannerTitle="Scan me!"
+                bannerSubtitle="Scan this QR code to view the profile" />
+        </div>
+    }
 </ng-template>
