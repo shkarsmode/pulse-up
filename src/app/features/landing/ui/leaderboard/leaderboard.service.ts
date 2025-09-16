@@ -26,6 +26,8 @@ import {
 } from "../../interfaces/leaderboard-filter.interface";
 import { DateUtils } from "../../helpers/date-utils";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
+import { createLocationId } from "../../helpers/createLocationId";
+import { createLocationName } from "../../helpers/createLocationName";
 
 const initialTempFilter: ILeaderboardTempFilter = {
     date: null,
@@ -222,28 +224,17 @@ export class LeaderboardService {
         const {
             date,
             timeframe,
-            location: {
-                id,
-                label,
-                data: { country, region, city },
-            },
+            location: { label },
         } = this.tempFilters.getValue();
-        const queryParams: Record<string, string> = {
-            timeframe,
-            locationId: id,
-            locationName: label,
-        };
-        if (date) {
-            queryParams["date"] = DateUtils.toISOString(DateUtils.getStatrtOfDay(date));
+        const queryParams: Record<string, string> = {};
+        if (timeframe !== "last24Hours") {
+            queryParams["t"] = timeframe;
         }
-        if (country) {
-            queryParams["country"] = country;
+        if (date && timeframe !== "last24Hours") {
+            queryParams["d"] = DateUtils.format(date, "YYYY-MM-DD");
         }
-        if (region) {
-            queryParams["region"] = region;
-        }
-        if (city) {
-            queryParams["city"] = city;
+        if (label !== "Global") {
+            queryParams["n"] = label;
         }
         this.router.navigate([], {
             queryParams,
@@ -253,22 +244,27 @@ export class LeaderboardService {
 
     private syncFiltersWithQueryParams() {
         const filtersFromurl = this.route.snapshot.queryParamMap;
-        const date = filtersFromurl.get("date");
-        const timeframe = filtersFromurl.get("timeframe") as LeaderboardTimeframeExtended;
-        const country = filtersFromurl.get("country");
-        const region = filtersFromurl.get("region");
-        const city = filtersFromurl.get("city");
-        const locationId = filtersFromurl.get("locationId")!;
-        const locationName = filtersFromurl.get("locationName")!;
+        const date = filtersFromurl.get("d");
+        const timeframe = filtersFromurl.get("t") as LeaderboardTimeframeExtended;
+        const locationName = filtersFromurl.get("n");
+
+        const isGlobal = !locationName || locationName === "Global";
+
+        const [country, region, city] = !locationName
+            ? []
+            : locationName
+                  .split(",")
+                  .map((part) => part.trim())
+                  .reverse();
 
         const filters: ILeaderboardTempFilter = {
             date: date ? new Date(date) : null,
             timeframe: timeframe || initialTempFilter.timeframe,
-            ...(locationId && locationName
+            ...(!isGlobal
                 ? {
                       location: {
-                          id: locationId,
-                          label: locationName,
+                          id: createLocationId({ country, region, city }),
+                          label: createLocationName({ country, region, city }),
                           data: {
                               country: country || null,
                               region: region || null,

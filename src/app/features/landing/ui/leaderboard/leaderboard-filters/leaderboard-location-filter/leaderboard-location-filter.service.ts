@@ -89,7 +89,6 @@ export class LeaderboardLocationFilterService {
                     const options = countries.map((country) =>
                         createLocationOption({
                             location: { country },
-                            label: country,
                         }),
                     );
                     this.globalCountriesOptions.next([initGlobalOption, ...options]);
@@ -118,7 +117,6 @@ export class LeaderboardLocationFilterService {
                                 const stateOptions = locations.map(({ country, state }) =>
                                     createLocationOption({
                                         location: { country, region: state },
-                                        label: state,
                                     }),
                                 );
                                 this.localStatesOptions.next(stateOptions);
@@ -132,7 +130,6 @@ export class LeaderboardLocationFilterService {
                     this.localCountryOptions.next([
                         createLocationOption({
                             location: { country },
-                            label: country,
                         }),
                     ]);
                 }),
@@ -190,7 +187,6 @@ export class LeaderboardLocationFilterService {
                         region: location.region,
                         city: location.city,
                     },
-                    label: feature.properties.full_address,
                 }),
             );
             return acc;
