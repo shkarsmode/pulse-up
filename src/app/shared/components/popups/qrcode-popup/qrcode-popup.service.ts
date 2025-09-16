@@ -1,6 +1,5 @@
-import { inject, Injectable, signal } from "@angular/core";
-import { DomSanitizer, SafeUrl } from "@angular/platform-browser";
-import { TopicQRCodePopupData } from "@/app/features/landing/interfaces/topic-qrcode-popup-data.interface";
+import { inject, Injectable } from "@angular/core";
+import { DomSanitizer } from "@angular/platform-browser";
 
 @Injectable({
     providedIn: "root",
@@ -8,17 +7,17 @@ import { TopicQRCodePopupData } from "@/app/features/landing/interfaces/topic-qr
 export class QrcodePopupService {
     private readonly sanitizer = inject(DomSanitizer);
 
-    private qrCodeDownloadLink = signal<SafeUrl>("");
-    private qrCodeImageBlob = signal<Blob | null>(null);
-
-    public downloadBannerLink = this.qrCodeDownloadLink.asReadonly();
-    public bannerImageBlob = this.qrCodeImageBlob.asReadonly();
-
-    public async generateBanner(url: string, topicData: TopicQRCodePopupData) {
-        const objectUrl = this.sanitizer.sanitize(4, url);
-
-        if (!objectUrl) return;
-
+    public async generateBannerLink({
+        qrCodeUrl,
+        iconUrl,
+        title,
+        subtitle,
+    }: {
+        qrCodeUrl: string;
+        iconUrl: string;
+        title: string;
+        subtitle: string;
+    }) {
         const [{ TopicBannerGenerator }, { BannerContext }] = await Promise.all([
             import("@/app/shared/services/banner-generator/strategies/topic-banner-generator"),
             import("@/app/shared/services/banner-generator/banner-context"),
@@ -26,22 +25,40 @@ export class QrcodePopupService {
 
         const context = new BannerContext(
             new TopicBannerGenerator({
-                icon: topicData.banner.icon,
-                title: topicData.banner.title,
-                description:
-                    topicData.banner.subtitle,
-                qrCode: objectUrl,
+                qrCode: qrCodeUrl,
+                icon: iconUrl,
+                title: title,
+                description: subtitle,
             }),
         );
         const finalUrl = await context.generate();
 
-        if (!finalUrl) return;
+        if (!finalUrl) return null;
 
-        this.qrCodeDownloadLink.set(this.sanitizer.bypassSecurityTrustUrl(finalUrl));
-        this.qrCodeImageBlob.set(this.dataURLToBlob(finalUrl));
+        return this.sanitizer.bypassSecurityTrustUrl(finalUrl);
     }
 
-    private dataURLToBlob(dataURL: string): Blob {
+    public async getBase64Image(imageUrl: string): Promise<string | null> {
+        try {
+            const response = await fetch(
+                `https://api.allorigins.win/raw?url=${encodeURIComponent(imageUrl)}`,
+            );
+            if (!response.ok) return null;
+
+            const blob = await response.blob();
+            return await new Promise<string>((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onloadend = () => resolve(reader.result as string);
+                reader.onerror = () => reject("Failed to convert blob to base64");
+                reader.readAsDataURL(blob);
+            });
+        } catch (error) {
+            console.error("Error fetching image:", error);
+            return null;
+        }
+    }
+
+    public dataURLToBlob(dataURL: string): Blob {
         const [header, base64] = dataURL.split(",");
         const mime = header.match(/:(.*?);/)![1];
         const byteString = atob(base64);

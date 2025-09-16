@@ -28,15 +28,13 @@ export class TopicBannerGenerator extends BaseBannerGenerator {
           align-items: center;
           justify-content: center;
           flex-direction: column;
-          /* row-gap: 24px; */
-          border: 1px solid #000;
           text-align: center;
           background-color: #fff;
           font-family: "SFProText", sans-serif;
         }
         .banner-template-icon {
-          width: 60px;
-          height: 60px;
+          width: 80px;
+          height: 80px;
           object-fit: contain;
         }
         .banner-template-title {
@@ -72,9 +70,7 @@ export class TopicBannerGenerator extends BaseBannerGenerator {
       
       <div class="banner-template-container">
         <img src="assets/svg/logo.svg" class="banner-template-logo" alt="Logo" />
-      
-        <!-- <img src="${this.icon}" class="banner-template-icon" /> -->
-        
+        <img src="${this.icon}" class="banner-template-icon" />
         <h1 class="banner-template-title">${this.title}</h1>
         <p class="banner-template-description" data-linkify>
           ${this.description}
