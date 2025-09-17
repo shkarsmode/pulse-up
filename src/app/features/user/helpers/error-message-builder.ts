@@ -1,8 +1,7 @@
 import { AbstractControl } from "@angular/forms";
-import { ca } from "intl-tel-input/i18n";
 
 export class ErrorMessageBuilder {
-    public static getErrorMessage(control: AbstractControl<any, any>, name: string): string | null {
+    public static getErrorMessage(control: AbstractControl<string, string>, name: string): string | null {
         
         if (!control || !(control.touched) || control.valid) {
             return null;
@@ -40,6 +39,13 @@ export class ErrorMessageBuilder {
             minlength: "Description must be at least 150 characters long",
             maxlength: "Description must be at most 600 characters long",
             noConsecutiveNewlines: "Description cannot contain consecutive newlines",
+        },
+        picture: {
+            required: "Picture is required",
+            missingName: "Picture must have a name",
+            invalidType: "Picture must be an image",
+            invalidExtension: "Picture must have one of the following extensions: .png, .jpg, .jpeg",
+            fileTooLarge: "Picture must be less than 10 MB",
         },
         category: {
             required: "Category is required",

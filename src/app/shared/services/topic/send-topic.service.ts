@@ -1,6 +1,16 @@
 import { inject, Injectable } from "@angular/core";
 import { FormBuilder, FormGroup, Validators } from "@angular/forms";
-import { BehaviorSubject, catchError, map, Observable, of, switchMap, take, tap, throwError } from "rxjs";
+import {
+    BehaviorSubject,
+    catchError,
+    map,
+    Observable,
+    of,
+    switchMap,
+    take,
+    tap,
+    throwError,
+} from "rxjs";
 import { v4 as uuidv4 } from "uuid";
 import { PulseService } from "../api/pulse.service";
 import { pictureValidator } from "../../helpers/validators/picture.validator";
@@ -68,7 +78,7 @@ export class SendTopicService {
             ],
             category: ["", Validators.required],
             keywords: [[], [Validators.required, arrayLengthValidator(1, 3)]],
-            picture: [""],
+            picture: ["", [Validators.required, pictureValidator()]],
             location: "",
         });
     }
@@ -117,49 +127,45 @@ export class SendTopicService {
             shareKey: "",
         };
         this.submitting.next(true);
-        return this.pulseService
-            .getShareKeyFromTitle(values.headline)
-            .pipe(
-                take(1),
-                tap((shareKey) => {
-                    params["shareKey"] = shareKey ? shareKey : uuidv4();
-                }),
-                switchMap(() => this.pulseService.create(params)),
-                switchMap((topic) => {
-                    return this.profileService.refreshProfile().pipe(
-                        map(() => topic)
-                    )
-                }),
-                tap(() => {
-                    this.currentTopic.reset();
-                    this.pulseService.isJustCreatedTopic = true;
-                    this.submitting.next(false);
-                    this.startTopicLocatoinWarningShown = false;
-                }),
-                catchError((error) => {
-                    console.error(error);
-                    this.submitting.next(false);
+        return this.pulseService.getShareKeyFromTitle(values.headline).pipe(
+            take(1),
+            tap((shareKey) => {
+                params["shareKey"] = shareKey ? shareKey : uuidv4();
+            }),
+            switchMap(() => this.pulseService.create(params)),
+            switchMap((topic) => {
+                return this.profileService.refreshProfile().pipe(map(() => topic));
+            }),
+            tap(() => {
+                this.currentTopic.reset();
+                this.pulseService.isJustCreatedTopic = true;
+                this.submitting.next(false);
+                this.startTopicLocatoinWarningShown = false;
+            }),
+            catchError((error) => {
+                console.error(error);
+                this.submitting.next(false);
 
-                    const fallbackMessage = "Failed to create topic.";
+                const fallbackMessage = "Failed to create topic.";
 
-                    if (error.status !== 400) {
-                        return throwError(() => new Error(fallbackMessage));
-                    }
+                if (error.status !== 400) {
+                    return throwError(() => new Error(fallbackMessage));
+                }
 
-                    const errors = error.error?.errors;
-                    if (!errors || typeof errors !== "object") {
-                        return throwError(() => new Error(fallbackMessage));
-                    }
+                const errors = error.error?.errors;
+                if (!errors || typeof errors !== "object") {
+                    return throwError(() => new Error(fallbackMessage));
+                }
 
-                    const firstFieldErrors = Object.values(errors)[0];
+                const firstFieldErrors = Object.values(errors)[0];
 
-                    if (Array.isArray(firstFieldErrors) && firstFieldErrors.length > 0) {
-                        return throwError(() => new Error(firstFieldErrors[0]));
-                    } else {
-                        return throwError(() => new Error(fallbackMessage));
-                    }
-                })
-            );
+                if (Array.isArray(firstFieldErrors) && firstFieldErrors.length > 0) {
+                    return throwError(() => new Error(firstFieldErrors[0]));
+                } else {
+                    return throwError(() => new Error(fallbackMessage));
+                }
+            }),
+        );
     }
 
     public markAsReadyForPreview(): void {
