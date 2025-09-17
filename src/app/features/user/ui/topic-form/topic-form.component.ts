@@ -49,7 +49,7 @@ interface Topic {
     ],
 })
 export class TopicFormComponent implements OnInit {
-    @Output() public submit = new EventEmitter<void>();
+    @Output() public handleSubmit = new EventEmitter<void>();
 
     private readonly dialog = inject(MatDialog);
     public readonly pulseService: PulseService = inject(PulseService);
@@ -139,7 +139,7 @@ export class TopicFormComponent implements OnInit {
         this.topicForm.markAllAsTouched();
         this.topicForm.updateValueAndValidity();
         if (this.topicForm.valid) {
-            this.submit.emit();
+            this.handleSubmit.emit();
             this.sendTopicService.markAsReadyForPreview();
         }
     }

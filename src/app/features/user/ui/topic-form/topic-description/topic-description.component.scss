@@ -16,11 +16,13 @@
     &.topic-description--focus {
         .description-pictures {
             border-color: var(--accent-color);
+            border-top-color: var(--light-grey-color);
         }
     }
     &.topic-description--error {
         .description-pictures {
             border-color: var(--error-color);
+            border-top-color: var(--light-grey-color);
         }
     }
 }
@@ -32,10 +34,10 @@
     background-color: var(--white-color);
     border: 1px solid var(--light-grey-color);
     border-radius: 10px;
-    border-top-width: 0;
+    border-top-color: var(--light-grey-color);
     border-top-right-radius: 0;
     border-top-left-radius: 0;
-    padding: 8px 15px 15px;
+    padding: 12px 16px;
     transition: all 0.02s;
 
     svg-icon {
@@ -69,10 +71,15 @@
     }
 }
 
-.description-pictures__buttons {
+.description-pictures__footer {
     width: 100%;
     display: flex;
-    justify-self: center;
+    align-items: center;
+    justify-content: space-between;
+    column-gap: 16px;
+}
+.description-pictures__buttons {
+    display: flex;
     align-items: center;
     column-gap: 16px;
 }
