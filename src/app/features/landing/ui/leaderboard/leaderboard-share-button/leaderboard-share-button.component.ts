@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject } from "@angular/core";
+import { ChangeDetectionStrategy, Component, inject, signal } from "@angular/core";
 import { MatButtonModule } from "@angular/material/button";
 import { AngularSvgIconModule } from "angular-svg-icon";
 import { MenuComponent } from "@/app/shared/components/ui-kit/menu/menu.component";
@@ -25,7 +25,11 @@ import { LeaderboardShareButtonService } from "./leaderboard-share-button.servic
 export class LeaderboardShareButtonComponent {
     private leaderboardShareButtonService = inject(LeaderboardShareButtonService);
 
-    public shareUrl = this.leaderboardShareButtonService.shareUrl;
+    public shareUrl = signal("");
+
+    public onClick() {
+        this.shareUrl.set(this.leaderboardShareButtonService.getShareUrl());
+    }
 
     public onCopyLink(event: MouseEvent): void {
         event.stopPropagation();
