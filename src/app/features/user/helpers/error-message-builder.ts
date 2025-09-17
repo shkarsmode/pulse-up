@@ -59,6 +59,7 @@ export class ErrorMessageBuilder {
             required: "At least one keyword is required",
             minLengthArray: "At least one keyword is required",
             maxLengthArray: "You can add up to 3 keywords",
+            keywordMatchesCategory: "Keywords cannot match the category",
         },
         location: {
             required: "Location is required",

@@ -20,6 +20,7 @@ import { arrayLengthValidator } from "../../helpers/validators/array-length-vali
 import { TopicLocation } from "@/app/features/user/interfaces/topic-location.interface";
 import { ProfileService } from "../profile/profile.service";
 import { ITopic } from "../../interfaces";
+import { keywordsDuplicationValidator } from "../../helpers/validators/keywords-duplication.validator";
 
 interface TopicFormValues {
     icon: File;
@@ -52,35 +53,40 @@ export class SendTopicService {
     private readonly profileService = inject(ProfileService);
 
     constructor() {
-        this.currentTopic = this.formBuilder.group({
-            icon: [null, [Validators.required, pictureValidator()]],
-            headline: [
-                "",
-                [Validators.required, Validators.minLength(6), Validators.maxLength(60)],
-                [
-                    asyncValidator({
-                        validationFn: this.pulseService.validateTitle.bind(this.pulseService),
-                        error: {
-                            notUnique:
-                                "A topic with this name already exists. Please choose a different name.",
-                        },
-                    }),
+        this.currentTopic = this.formBuilder.group(
+            {
+                icon: [null, [Validators.required, pictureValidator()]],
+                headline: [
+                    "",
+                    [Validators.required, Validators.minLength(6), Validators.maxLength(60)],
+                    [
+                        asyncValidator({
+                            validationFn: this.pulseService.validateTitle.bind(this.pulseService),
+                            error: {
+                                notUnique:
+                                    "A topic with this name already exists. Please choose a different name.",
+                            },
+                        }),
+                    ],
                 ],
-            ],
-            description: [
-                "",
-                [
-                    Validators.required,
-                    Validators.minLength(150),
-                    Validators.maxLength(600),
-                    noConsecutiveNewlinesValidator(),
+                description: [
+                    "",
+                    [
+                        Validators.required,
+                        Validators.minLength(150),
+                        Validators.maxLength(600),
+                        noConsecutiveNewlinesValidator(),
+                    ],
                 ],
-            ],
-            category: ["", Validators.required],
-            keywords: [[], [Validators.required, arrayLengthValidator(1, 3)]],
-            picture: ["", [Validators.required, pictureValidator()]],
-            location: "",
-        });
+                category: ["", Validators.required],
+                keywords: [[], [Validators.required, arrayLengthValidator(1, 3)]],
+                picture: ["", [Validators.required, pictureValidator()]],
+                location: "",
+            },
+            {
+                validators: [keywordsDuplicationValidator],
+            },
+        );
     }
 
     public setTopicLocation(location: TopicLocation) {
