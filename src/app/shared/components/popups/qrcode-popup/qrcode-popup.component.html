@@ -1,4 +1,4 @@
-<app-popup>
+<app-popup class="qrcode-popup">
     <app-popup-close-button (close)="onClose()" />
     <app-popup-subtitle> {{ data.popup.title }} </app-popup-subtitle>
     <app-popup-text
@@ -12,27 +12,38 @@
         [accessibleLabel]="data.popup.title"
         [size]="220"
         (qrCodeURL)="onChangeURL($event)" />
-    <app-popup-footer class="actions">
-        <app-primary-button
-            [fullWidth]="true"
-            size="large"
-            class="action-button"
-            (handleClick)="onCopy()">
-            <svg-icon
-                [src]="isCopied() ? 'assets/svg/checked.svg' : 'assets/svg/copy.svg'"
-                class="icon" />
-            {{ isCopied() ? "Copied" : "Copy" }}
-        </app-primary-button>
-        <a
-            class="download-link"
-            [href]="downloadLink()"
-            [download]="'PulseUp - ' + data.banner.title"
-            appRippleEffect
-            rippleColor="#6d6d6d24">
-            <svg-icon
-                src="assets/svg/download.svg"
-                class="icon" />
-            Download
-        </a>
-    </app-popup-footer>
+    @if (isLoading()) {
+        <div class="loading-container">
+            <app-spinner />
+            <p>Generating the banner...</p>
+        </div>
+    } @else if (!isFailed()) {
+        <app-popup-footer class="actions">
+            @if (bannerImage()) {
+                <app-primary-button
+                    [fullWidth]="true"
+                    size="large"
+                    class="action-button"
+                    (handleClick)="onCopy()">
+                    <svg-icon
+                        [src]="isCopied() ? 'assets/svg/checked.svg' : 'assets/svg/copy.svg'"
+                        class="icon" />
+                    {{ isCopied() ? "Copied" : "Copy" }}
+                </app-primary-button>
+            }
+            @if (bannerLink()) {
+                <a
+                    class="download-link"
+                    [href]="bannerLink()"
+                    [download]="'PulseUp - ' + data.banner.title"
+                    appRippleEffect
+                    rippleColor="#6d6d6d24">
+                    <svg-icon
+                        src="assets/svg/download.svg"
+                        class="icon" />
+                    Download
+                </a>
+            }
+        </app-popup-footer>
+    }
 </app-popup>
