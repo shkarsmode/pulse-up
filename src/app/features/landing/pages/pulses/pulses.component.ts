@@ -69,6 +69,11 @@ export class PulsesComponent implements OnInit {
 
     public ngOnInit() {
         this.refetchQueries();
+        this.topicsService.syncFiltersWithQueryParams();
+        if (this.selectedCategory === "trending" && this.isEmptyLocalTopics()) {
+            console.log("Switching to newest category because local topics are empty");
+            this.topicsService.setCategory("newest");
+        }
     }
 
     public loadMore() {

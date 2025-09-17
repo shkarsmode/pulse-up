@@ -37,6 +37,7 @@ export class InputSearchComponent implements OnInit {
             .subscribe((value) => {
                 this.handleValueChange.emit(value);
             });
+        this.inputSearchService.syncValueWithQueryParams();
     }
 
     public onFocus(): void {
