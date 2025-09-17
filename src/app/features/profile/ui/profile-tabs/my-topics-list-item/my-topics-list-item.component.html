@@ -45,20 +45,22 @@
                 [text]="data.stats?.totalVotes || 0 | formatNumber"
                 icon="assets/svg/chart-simple.svg" />
         </div>
-        <div class="card-footer__right">
-            <app-menu [content]="menuContent">
-                <button
-                    mat-icon-button
-                    aria-label="Share topic">
-                    <svg-icon
-                        src="assets/svg/icon_share.svg"
-                        ariaLabel="share icon" />
-                </button>
-            </app-menu>
-            <app-copy-topic-button
-                *ngIf="topicUrl$ | async as topicUrl"
-                [topicUrl]="topicUrl" />
-        </div>
+        @if (!isArchived) {
+            <div class="card-footer__right">
+                <app-menu [content]="menuContent">
+                    <button
+                        mat-icon-button
+                        aria-label="Share topic">
+                        <svg-icon
+                            src="assets/svg/icon_share.svg"
+                            ariaLabel="share icon" />
+                    </button>
+                </app-menu>
+                <app-copy-topic-button
+                    *ngIf="topicUrl$ | async as topicUrl"
+                    [topicUrl]="topicUrl" />
+            </div>
+        }
     </div>
 </app-large-pulse>
 
