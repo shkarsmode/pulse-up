@@ -35,7 +35,7 @@
     border-top-width: 0;
     border-top-right-radius: 0;
     border-top-left-radius: 0;
-    padding: 8px 15px 15px;
+    padding: 16px;
     transition: all 0.02s;
 
     svg-icon {
@@ -69,10 +69,15 @@
     }
 }
 
-.description-pictures__buttons {
+.description-pictures__footer {
     width: 100%;
     display: flex;
-    justify-self: center;
+    align-items: center;
+    justify-content: space-between;
+    column-gap: 16px;
+}
+.description-pictures__buttons {
+    display: flex;
     align-items: center;
     column-gap: 16px;
 }

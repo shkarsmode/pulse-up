@@ -11,7 +11,7 @@ import {
 import { CommonModule } from "@angular/common";
 import { AbstractControl } from "@angular/forms";
 import { MatDialog } from "@angular/material/dialog";
-import { take } from "rxjs";
+import { map, Observable, of, take } from "rxjs";
 import { SvgIconComponent } from "angular-svg-icon";
 import { PickerComponent } from "@ctrl/ngx-emoji-mart";
 import { TextareaComponent } from "../../../../../shared/components/ui-kit/textarea/textarea.component";
@@ -21,16 +21,23 @@ import {
 } from "../../crop-image-popup/crop-image-popup.component";
 import { CropResult } from "../../../interfaces/crop-result.interface";
 import { NotificationService } from "@/app/shared/services/core/notification.service";
+import { TopicDescriptionCounterComponent } from "./topic-description-counter/topic-description-counter.component";
 
 @Component({
     selector: "app-topic-description",
     standalone: true,
-    imports: [CommonModule, SvgIconComponent, PickerComponent, TextareaComponent],
+    imports: [
+        CommonModule,
+        SvgIconComponent,
+        PickerComponent,
+        TextareaComponent,
+        TopicDescriptionCounterComponent,
+    ],
     templateUrl: "./topic-description.component.html",
     styleUrl: "./topic-description.component.scss",
 })
 export class TopicDescriptionComponent implements OnInit {
-    @Input() public textControl: AbstractControl | null = null;
+    @Input() public textControl: AbstractControl<string, string> | null = null;
     @Input() public pictureControl: AbstractControl | null = null;
     @Output() public handleBlur = new EventEmitter<void>();
     @Output() public handleFocus = new EventEmitter<void>();
@@ -45,6 +52,7 @@ export class TopicDescriptionComponent implements OnInit {
     public selectedPicture: string | ArrayBuffer | null;
     public selectedTypeOfPicture: "img" | "gif" | "smile" | "";
     public showEmojiPicker = false;
+    public descriptionLength$: Observable<number> = of(0);
 
     public get hasErrorClass(): boolean {
         return (
@@ -55,6 +63,11 @@ export class TopicDescriptionComponent implements OnInit {
 
     ngOnInit(): void {
         this.updateSelectedFile(this.pictureControl?.value || null);
+        if (this.textControl) {
+            this.descriptionLength$ = this.textControl.valueChanges.pipe(
+                map((value) => (value ? value.length : 0)),
+            );
+        }
     }
 
     public onFocus(): void {
@@ -105,7 +118,10 @@ export class TopicDescriptionComponent implements OnInit {
                     },
                 },
             );
-            dialogRef.afterClosed().pipe(take(1)).subscribe((result) => this.onCroppedImage(result));
+            dialogRef
+                .afterClosed()
+                .pipe(take(1))
+                .subscribe((result) => this.onCroppedImage(result));
         }
     }
 

@@ -1,5 +1,10 @@
 import { AbstractControl } from "@angular/forms";
 
+export const MAX_DESCRIPTION_LENGTH = 600;
+export const MIN_DESCRIPTION_LENGTH = 150;
+export const MIN_TITLE_LENGTH = 6;
+export const MAX_TITLE_LENGTH = 60;
+
 export class ErrorMessageBuilder {
     public static getErrorMessage(control: AbstractControl<string, string>, name: string): string | null {
         
@@ -30,14 +35,14 @@ export class ErrorMessageBuilder {
         },
         headline: {
             required: "Headline is required",
-            minlength: "Headline must be at least 6 characters long",
-            maxlength: "Headline must be at most 60 characters long",
+            minlength: `Headline must be at least ${MIN_TITLE_LENGTH} characters long`,
+            maxlength: `Headline must be at most ${MAX_TITLE_LENGTH} characters long`,
             notUnique: "A topic with this name already exists. Please choose a different name.",
         },
         description: {
             required: "Description is required",
-            minlength: "Description must be at least 150 characters long",
-            maxlength: "Description must be at most 600 characters long",
+            minlength: `Description must be at least ${MIN_DESCRIPTION_LENGTH} characters long`,
+            maxlength: `Description must be at most ${MAX_DESCRIPTION_LENGTH} characters long`,
             noConsecutiveNewlines: "Description cannot contain consecutive newlines",
         },
         picture: {

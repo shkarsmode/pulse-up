@@ -1,0 +1,6 @@
+@use "../../../../../../../styles/mixins" as *;
+
+.topic-description-counter {
+    @include text-14px;
+    color: var(--dark-grey-color);
+}

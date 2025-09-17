@@ -8,6 +8,7 @@
         id="description"
         name="description"
         label="Description"
+        placeholder="Explain why this topic matters in a short, engaging way"
         [value]="textControl?.value || ''"
         formControlName="description"
         [hasErrorClass]="hasErrorClass"
@@ -17,35 +18,39 @@
 
     <div class="description-pictures">
         @if (selectedPicture) {
-        <img
-            [src]="selectedPicture"
-            width="370"
-            height="370"
-            alt="Selected Picture"
-            class="description-pictures__preview" />
-        } @if (pictureControl.value?.name) {
-        <button
-            class="description-picture"
-            (click)="deleteChosenPicture()">
-            <span>
-                {{ pictureControl.value.name }}
-            </span>
-            <svg-icon src="assets/svg/close.svg" />
-        </button>
+            <img
+                [src]="selectedPicture"
+                width="370"
+                height="370"
+                alt="Selected Picture"
+                class="description-pictures__preview" />
         }
-        <div class="description-pictures__buttons">
-            <svg-icon
-                [class.active]="selectedTypeOfPicture === 'img'"
-                (click)="openInputForDescription('img')"
-                src="assets/svg/form/image.svg" />
-            <svg-icon
-                [class.active]="selectedTypeOfPicture === 'gif'"
-                (click)="openInputForDescription('gif')"
-                src="assets/svg/form/gif.svg" />
-            <svg-icon
-                [class.active]="showEmojiPicker"
-                (click)="toggleEmojiPicker()"
-                src="assets/svg/form/smile.svg" />
+        @if (pictureControl.value?.name) {
+            <button
+                class="description-picture"
+                (click)="deleteChosenPicture()">
+                <span>
+                    {{ pictureControl.value.name }}
+                </span>
+                <svg-icon src="assets/svg/close.svg" />
+            </button>
+        }
+        <div class="description-pictures__footer">
+            <div class="description-pictures__buttons">
+                <svg-icon
+                    [class.active]="selectedTypeOfPicture === 'img'"
+                    (click)="openInputForDescription('img')"
+                    src="assets/svg/form/image.svg" />
+                <svg-icon
+                    [class.active]="selectedTypeOfPicture === 'gif'"
+                    (click)="openInputForDescription('gif')"
+                    src="assets/svg/form/gif.svg" />
+                <svg-icon
+                    [class.active]="showEmojiPicker"
+                    (click)="toggleEmojiPicker()"
+                    src="assets/svg/form/smile.svg" />
+            </div>
+            <app-topic-description-counter [length]="(descriptionLength$ | async) || 0" />
         </div>
         <emoji-mart
             class="emoji-mart"
