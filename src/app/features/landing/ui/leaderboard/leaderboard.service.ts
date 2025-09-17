@@ -226,15 +226,12 @@ export class LeaderboardService {
             timeframe,
             location: { label },
         } = this.tempFilters.getValue();
-        const queryParams: Record<string, string> = {};
-        if (timeframe !== "last24Hours") {
-            queryParams["t"] = timeframe;
-        }
+        const queryParams: Record<string, string> = {
+            timeframe,
+            locationName: label
+        };
         if (date && timeframe !== "last24Hours") {
-            queryParams["d"] = DateUtils.format(date, "YYYY-MM-DD");
-        }
-        if (label !== "Global") {
-            queryParams["n"] = label;
+            queryParams["date"] = DateUtils.format(date, "YYYY-MM-DD");
         }
         this.router.navigate([], {
             queryParams,
@@ -244,9 +241,9 @@ export class LeaderboardService {
 
     private syncFiltersWithQueryParams() {
         const filtersFromurl = this.route.snapshot.queryParamMap;
-        const date = filtersFromurl.get("d");
-        const timeframe = filtersFromurl.get("t") as LeaderboardTimeframeExtended;
-        const locationName = filtersFromurl.get("n");
+        const date = filtersFromurl.get("date");
+        const timeframe = filtersFromurl.get("timeframe") as LeaderboardTimeframeExtended;
+        const locationName = filtersFromurl.get("locationName");
 
         const isGlobal = !locationName || locationName === "Global";
 

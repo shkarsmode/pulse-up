@@ -10,5 +10,6 @@ export interface ISettings {
     minVoteInterval: number;
     shareTopicBaseUrl: string;
     shareUserBaseUrl: string;
+    shareLeaderboardBaseUrl: string;
     leaderboardSize: number;
 }

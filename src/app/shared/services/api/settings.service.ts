@@ -12,7 +12,7 @@ export class SettingsService {
     private readonly http: HttpClient = inject(HttpClient);
 
     private readonly defaultSettings: ISettings = {
-        apiVersion: "2506.1",
+        apiVersion: "",
         appStoreUrl: "https://apps.apple.com/us/app/pulse-up-what-matters-today/id6744602366",
         blobUrlPrefix: "https://pulsedevdata.blob.core.windows.net",
         defaultActiveTopicsLimit: 10,
@@ -22,14 +22,12 @@ export class SettingsService {
         latestAppVersionNumber: 1,
         leaderboardSize: 50,
         minVoteInterval: 1440,
-        shareTopicBaseUrl:
-            "https://app-pulselinks-dev-drcjbxbjbgbabjhv.eastus2-01.azurewebsites.net/t/",
-        shareUserBaseUrl:
-            "https://app-pulselinks-dev-drcjbxbjbgbabjhv.eastus2-01.azurewebsites.net/u/",
+        shareTopicBaseUrl: "",
+        shareUserBaseUrl: "",
+        shareLeaderboardBaseUrl: "",
     };
 
-    public settings$ = this.http.get<ISettings>(`${this.apiUrl}/settings`).pipe(
-        startWith(this.defaultSettings),
-        shareReplay({ bufferSize: 1, refCount: true }),
-    );
+    public settings$ = this.http
+        .get<ISettings>(`${this.apiUrl}/settings`)
+        .pipe(startWith(this.defaultSettings), shareReplay({ bufferSize: 1, refCount: true }));
 }
