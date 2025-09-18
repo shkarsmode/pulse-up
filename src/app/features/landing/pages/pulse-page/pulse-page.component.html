@@ -13,7 +13,7 @@
                 [src]="topicIcon$ | async"
                 width="160"
                 height="160"
-                alt="pulse icon"/>
+                alt="pulse icon" />
             <div class="pulse__header-title">
                 <h2>{{ topic.title }}</h2>
                 <a
@@ -137,8 +137,8 @@
                 }
             </div>
             <div class="pulse__info-keywords">
-                @for (keyword of topic.keywords; track keyword) {
-                    <div>{{ keyword }}</div>
+                @for (keyword of keywords(); track keyword.label) {
+                    <app-keyword-button [keyword]="keyword" />
                 }
             </div>
             <div class="pulse__info-activity">

@@ -1,4 +1,5 @@
-import { computed, effect, inject, Injectable, signal } from "@angular/core";
+import { computed, inject, Injectable, signal } from "@angular/core";
+import { ActivatedRoute, Router } from "@angular/router";
 import { injectInfiniteQuery, injectQuery } from "@tanstack/angular-query-experimental";
 import { concat, first, lastValueFrom, map, of, shareReplay, switchMap } from "rxjs";
 import { toSignal } from "@angular/core/rxjs-interop";
@@ -11,6 +12,8 @@ import { StringUtils } from "@/app/shared/helpers/string-utils";
 
 @Injectable({ providedIn: "root" })
 export class TopicsService {
+    private router = inject(Router);
+    private route = inject(ActivatedRoute);
     private pulseService = inject(PulseService);
     private pendingTopicsService = inject(PendingTopicsService);
     private readonly ipLocationService = inject(IpLocationService);
@@ -99,25 +102,44 @@ export class TopicsService {
         return !isLoading && !hasLocalTopics;
     });
 
-    constructor() {
-        effect(
-            () => {
-                if (this.isEmptyLocalTopics()) {
-                    this.categorySignal.set("newest");
-                }
-            },
-            {
-                allowSignalWrites: true,
-            },
-        );
-    }
 
     public setSearchText(text: string) {
         this.searchTextSignal.set(text);
+        this.updateQueryParams();
     }
 
     public setCategory(category: string) {
         this.categorySignal.set(category);
+        this.updateQueryParams();
+    }
+
+    public syncFiltersWithQueryParams() {
+        const params = this.route.snapshot.queryParamMap;
+        const search = params.get("search");
+        const category = params.get("category");
+        if (search !== null) {
+            this.setSearchText(search);
+        }
+        if (category !== null) {
+            this.setCategory(category);
+        }
+    }
+
+    private updateQueryParams() {
+        const search = this.searchText();
+        const category = this.category();
+        const queryParams: Record<string, string> = {};
+        
+        if (search.length) {
+            queryParams["search"] = search;
+        }
+        if (category) {
+            queryParams["category"] = category;
+        }
+        this.router.navigate([], {
+            queryParams,
+            queryParamsHandling: "replace",
+        });
     }
 
     private getLocalTopics() {

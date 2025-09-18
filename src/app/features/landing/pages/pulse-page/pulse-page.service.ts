@@ -1,6 +1,15 @@
 import { computed, effect, inject, Injectable, signal } from "@angular/core";
 import { Router } from "@angular/router";
-import { catchError, EMPTY, lastValueFrom, Observable, of, switchMap } from "rxjs";
+import {
+    catchError,
+    combineLatest,
+    EMPTY,
+    lastValueFrom,
+    map,
+    Observable,
+    of,
+    switchMap,
+} from "rxjs";
 import { ITopic, TopicState } from "@/app/shared/interfaces";
 import { PulseService } from "@/app/shared/services/api/pulse.service";
 import { isHttpErrorResponse } from "@/app/shared/helpers/errors/isHttpErrorResponse";
@@ -16,6 +25,7 @@ import { SuggestedTopicsService } from "@/app/shared/services/topic/suggested-to
 import { QUERY_KEYS } from "@/app/shared/constants";
 import { injectQuery } from "@tanstack/angular-query-experimental";
 import { IVote } from "@/app/shared/interfaces/vote.interface";
+import { ITopicKeyword } from "../../interfaces/topic-keyword.interface";
 
 @Injectable({
     providedIn: "root",
@@ -72,6 +82,8 @@ export class PulsePageService {
             refetchOnWindowFocus: false,
         },
     }));
+    private topicKeywords = computed(() => this.topicQuery.data()?.keywords || []);
+    private topicKeywords$ = toObservable(this.topicKeywords);
 
     public isLoading = computed(() => {
         return this.topicQuery.isLoading();
@@ -165,6 +177,25 @@ export class PulsePageService {
     public qrCodeBannerTitle = computed(() => this.topicQuery.data()?.title || "");
     
     public qrCodeBannerText = computed(() => this.topicQuery.data()?.description || "");
+
+    public keywords = toSignal(
+        combineLatest([this.topicKeywords$, this.pulseService.categories$]).pipe(
+            map(([keywords, categories]) => [
+                keywords,
+                categories.map((category) => category.name),
+            ]),
+            map(([keywords, categories]) => {
+                return keywords.map(
+                    (keyword) =>
+                        ({
+                            label: keyword,
+                            type: categories.includes(keyword) ? "static" : "dynamic",
+                        }) as ITopicKeyword,
+                );
+            }),
+        ),
+        { initialValue: [] as ITopicKeyword[] },
+    );
 
     public setTopicId(id: number) {
         this.topicId.set(id);

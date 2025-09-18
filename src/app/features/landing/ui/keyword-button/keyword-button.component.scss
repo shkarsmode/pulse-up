@@ -1,0 +1,10 @@
+@use "../../../../../styles/mixins" as *;
+
+.keyword-button {
+    background: rgb(from var(--accent-color) r g b / 0.1);
+    padding: 2px 8px;
+    border-radius: 20px;
+
+    @include text-16px;
+    color: var(--accent-color);
+}
