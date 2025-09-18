@@ -43,6 +43,7 @@ import { TimeFromNowPipe } from "@/app/shared/pipes/time-from-now.pipe";
 import { GuestVoteButtonComponent } from "../../ui/vote-button/guest-vote-button/guest-vote-button.component";
 import { DisbledVoteButtonComponent } from "../../ui/vote-button/disbled-vote-button/disbled-vote-button.component";
 import { ITopic } from "@/app/shared/interfaces";
+import { KeywordButtonComponent } from "../../ui/keyword-button/keyword-button.component";
 
 @Component({
     selector: "app-pulse-page",
@@ -72,6 +73,7 @@ import { ITopic } from "@/app/shared/interfaces";
         UserVoteButtonComponent,
         GuestVoteButtonComponent,
         DisbledVoteButtonComponent,
+        KeywordButtonComponent,
     ],
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -114,6 +116,7 @@ export class PulsePageComponent implements OnInit, OnDestroy {
     public qrCodePopupText = this.pulsePageService.qrCodePopupText;
     public qrCodeBannerTitle = this.pulsePageService.qrCodeBannerTitle;
     public qrCodeBannerText = this.pulsePageService.qrCodeBannerText;
+    public keywords = this.pulsePageService.keywords;
     public topicIcon$ = combineLatest([
         toObservable(this.pulsePageService.topic),
         this.settingsService.settings$,

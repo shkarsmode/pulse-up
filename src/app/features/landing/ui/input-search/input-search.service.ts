@@ -1,7 +1,7 @@
 import { inject, Injectable } from "@angular/core";
 import { ActivatedRoute } from "@angular/router";
 import { toSignal } from "@angular/core/rxjs-interop";
-import { asyncScheduler, BehaviorSubject, debounceTime, distinctUntilChanged } from "rxjs";
+import { BehaviorSubject, debounceTime, distinctUntilChanged } from "rxjs";
 import { StringUtils } from "@/app/shared/helpers/string-utils";
 
 @Injectable({
@@ -13,7 +13,7 @@ export class InputSearchService {
 
     public inputValue = toSignal(this.inputValueSubject.asObservable());
     public inputValueChanged$ = this.inputValueSubject.pipe(
-        debounceTime(400, asyncScheduler),
+        debounceTime(400),
         distinctUntilChanged((prev, curr) => {
             return StringUtils.normalizeWhitespace(prev) === StringUtils.normalizeWhitespace(curr);
         }),
@@ -26,8 +26,8 @@ export class InputSearchService {
     public syncValueWithQueryParams(): void {
         const params = this.route.snapshot.queryParamMap;
         const search = params.get("search");
-        if (search !== null && search.length) {
-            this.setValue(search);
+        if (search !== null) {
+            this.inputValueSubject.next(StringUtils.normalizeWhitespace(search));
         }
     }
 }

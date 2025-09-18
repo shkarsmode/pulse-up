@@ -117,7 +117,7 @@ export class TopicsService {
         const params = this.route.snapshot.queryParamMap;
         const search = params.get("search");
         const category = params.get("category");
-        if (search !== null && search.length) {
+        if (search !== null) {
             this.setSearchText(search);
         }
         if (category !== null) {
