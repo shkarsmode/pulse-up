@@ -1,8 +1,9 @@
-import { Component, inject, Input, OnInit } from "@angular/core";
+import { Component, computed, inject, input } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { RouterModule } from "@angular/router";
 import { AngularSvgIconModule } from "angular-svg-icon";
 import { MatButtonModule } from "@angular/material/button";
+import { toSignal } from "@angular/core/rxjs-interop";
 import { map } from "rxjs";
 import { LargePulseComponent } from "@/app/shared/components/pulses/large-pulse/large-pulse.component";
 import { LargePulseIconComponent } from "@/app/shared/components/pulses/large-pulse/large-pulse-icon/large-pulse-icon.component";
@@ -45,39 +46,44 @@ import { WaveAnimationDirective } from "@/app/shared/directives/wave-animation/w
     templateUrl: "./trending-topics-list-item.component.html",
     styleUrl: "./trending-topics-list-item.component.scss",
 })
-export class TrendingTopicsListItemComponent implements OnInit {
+export class TrendingTopicsListItemComponent {
     private readonly settingsService = inject(SettingsService);
 
-    @Input({ required: true }) data: ITopic;
-    @Input() vote?: IVote | null = null;
+    data = input<ITopic>();
+    vote = input<IVote | null>(null);
 
-    public topicUrl$ = this.settingsService.settings$.pipe(
-        map((settings) => `${settings.shareTopicBaseUrl}${this.data.shareKey}`),
+    private shareTopicBaseUrl = toSignal(
+        this.settingsService.settings$.pipe(map((settings) => settings.shareTopicBaseUrl)),
+        { initialValue: "" },
     );
-    public isVoteActive$ = this.settingsService.settings$.pipe(
-        map(
-            (settings) =>
-                !!this.vote && VoteUtils.isActiveVote(this.vote, settings.minVoteInterval),
-        ),
+    private blobUrlPrefix = toSignal(
+        this.settingsService.settings$.pipe(map((settings) => settings.blobUrlPrefix)),
+        { initialValue: "" },
     );
-    public isCampaignBadgeVisible: boolean;
+    private minVoteInterval = toSignal(
+        this.settingsService.settings$.pipe(map((settings) => settings.minVoteInterval)),
+        { initialValue: 1440 },
+    );
+    private shareKey = computed(() => this.data()?.shareKey ?? "");
 
-    public get qrCodePopupText(): string {
-        return `Share the '${this.data.title}' topic with this QR code.`;
-    }
-
-    public get qrCodeBannerTitle(): string {
-        return this.data.title;
-    }
-
-    public get qrCodeBannerText(): string {
-        return this.data.description;
-    }
-
-    public ngOnInit() {
-        this.isCampaignBadgeVisible =
-            !!this.data.campaign && this.isCampaignActive(this.data.campaign);
-    }
+    public topicUrl = computed(
+        () => `${this.shareTopicBaseUrl()}${this.shareKey()}`,
+    );
+    public isVoteActive = computed(() =>{
+        const vote = this.vote();
+        const minVoteInterval = this.minVoteInterval();
+        return !!vote && VoteUtils.isActiveVote(vote, minVoteInterval);
+    });
+    public qrCodePopupText = computed(() => `Share the '${this.data()?.title}' topic with this QR code.`);
+    public qrCodeBannerTitle = computed(() => this.data()?.title ?? '');
+    public qrCodeBannerText = computed(() => this.data()?.description ?? '');
+    public qrCodeBannerIcon = computed(() => {
+        return this.blobUrlPrefix() + (this.data()?.icon ?? '');
+    });
+    public isCampaignBadgeVisible = computed(() => {
+        const campaign = this.data()?.campaign;
+        return !!campaign && this.isCampaignActive(campaign);
+    })
 
     private isCampaignActive(campaign: Campaign): boolean {
         return (

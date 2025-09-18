@@ -51,6 +51,9 @@ export class TopicPublishedComponent {
     public get qrCodeBannerSubtitle(): string {
         return this.data.topic.description;
     }
+    public qrCodeBannerIcon = toSignal(this.settingsService.settings$.pipe(
+        map((settings) => settings.blobUrlPrefix + this.data.topic.icon),
+    ), { initialValue: "" });
 
     onCloseDialog(): void {
         this.dialogRef.close();

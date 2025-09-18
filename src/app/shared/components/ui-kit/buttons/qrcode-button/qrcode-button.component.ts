@@ -20,6 +20,7 @@ export class QrcodeButtonComponent {
     @Input() bannerIcon: string;
     @Input() bannerTitle: string;
     @Input() bannerSubtitle: string;
+    @Input() generateBanner = true;
 
     public onClick(): void {
         this.dialogService.open<QrcodePopupComponent, TopicQRCodePopupData>(QrcodePopupComponent, {
@@ -30,11 +31,11 @@ export class QrcodeButtonComponent {
                     title: this.popupTitle,
                     subtitle: this.popupSubtitle,
                 },
-                banner: {
+                banner: this.generateBanner ? {
                     icon: this.bannerIcon,
                     title: this.bannerTitle,
                     subtitle: this.bannerSubtitle,
-                },
+                } : false,
             },
         });
     }

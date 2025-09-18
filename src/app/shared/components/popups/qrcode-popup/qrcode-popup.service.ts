@@ -38,26 +38,6 @@ export class QrcodePopupService {
         return this.sanitizer.bypassSecurityTrustUrl(finalUrl);
     }
 
-    public async getBase64Image(imageUrl: string): Promise<string | null> {
-        try {
-            const response = await fetch(
-                `https://api.allorigins.win/raw?url=${encodeURIComponent(imageUrl)}`,
-            );
-            if (!response.ok) return null;
-
-            const blob = await response.blob();
-            return await new Promise<string>((resolve, reject) => {
-                const reader = new FileReader();
-                reader.onloadend = () => resolve(reader.result as string);
-                reader.onerror = () => reject("Failed to convert blob to base64");
-                reader.readAsDataURL(blob);
-            });
-        } catch (error) {
-            console.error("Error fetching image:", error);
-            return null;
-        }
-    }
-
     public dataURLToBlob(dataURL: string): Blob {
         const [header, base64] = dataURL.split(",");
         const mime = header.match(/:(.*?);/)![1];

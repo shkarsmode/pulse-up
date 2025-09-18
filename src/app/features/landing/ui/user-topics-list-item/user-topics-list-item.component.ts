@@ -1,5 +1,6 @@
-import { Component, inject, Input } from "@angular/core";
+import { Component, computed, inject, input } from "@angular/core";
 import { CommonModule } from "@angular/common";
+import { toSignal } from "@angular/core/rxjs-interop";
 import { map } from "rxjs";
 import { LargePulseComponent } from "@/app/shared/components/pulses/large-pulse/large-pulse.component";
 import { LargePulseIconComponent } from "@/app/shared/components/pulses/large-pulse/large-pulse-icon/large-pulse-icon.component";
@@ -44,29 +45,42 @@ import { PulseIconLabelComponent } from "@/app/shared/components/pulses/pulse-ic
 export class UserTopicsListItemComponent {
     private readonly settingsService = inject(SettingsService);
 
-    @Input({ required: true }) data: ITopic;
-    @Input() vote?: IVote | null = null;
+    data = input<ITopic>();
+    vote = input<IVote | null>(null);
 
-    public topicUrl$ = this.settingsService.settings$.pipe(
-        map((settings) => settings.shareTopicBaseUrl + this.data.shareKey),
-    );
-    public isVoteActive$ = this.settingsService.settings$.pipe(
-        map(
-            (settings) =>
-                !!this.vote && VoteUtils.isActiveVote(this.vote, settings.minVoteInterval),
-        ),
-    );
-    public get qrCodePopupText(): string {
-        return `Share the "${this.data.title}" topic with this QR code.`;
-    }
-    public get qrCodeBannerTitle(): string {
-        return this.data.title;
-    }
-    public get qrCodeBannerSubtitle(): string {
-        return this.data.description;
-    }
+    private shareTopicBaseUrl = toSignal(this.settingsService.settings$.pipe(
+        map((settings) => settings.shareTopicBaseUrl),
+    ), { initialValue: '' });
+    private blobUrlPrefix = toSignal(this.settingsService.settings$.pipe(
+        map((settings) => settings.blobUrlPrefix),
+    ), { initialValue: '' });
+    private minVoteInterval = toSignal(this.settingsService.settings$.pipe(
+        map((settings) => settings.minVoteInterval),
+    ), { initialValue: 1440 });
+    private title = computed(() => this.data()?.title ?? '');
+    private description = computed(() => this.data()?.description ?? '');
+    private icon = computed(() => this.data()?.icon ?? '');
+    private shareKey = computed(() => this.data()?.shareKey ?? '');
 
-    public get isArchived(): boolean {
-        return this.data.state === TopicState.Archived;
-    }
+    public topicUrl = computed(() => {
+        const shareKey = this.shareKey();
+        const baseUrl = this.shareTopicBaseUrl();
+        return shareKey ? `${baseUrl}${shareKey}` : "";
+    })
+    public isVoteActive = computed(() => {
+        const vote = this.vote();
+        const minVoteInterval = this.minVoteInterval();
+        return !!vote && VoteUtils.isActiveVote(vote, minVoteInterval);
+    })
+    public qrCodePopupText = computed(() => {
+        return `Share the "${this.title()}" topic with this QR code.`;
+    });
+    public qrCodeBannerTitle = this.title;
+    public qrCodeBannerSubtitle = this.description;
+    public qrCodeBannerIcon = computed(() => {
+        return this.blobUrlPrefix() + this.icon();
+    });
+    public isArchived = computed(() => {
+        return this.data()?.state === TopicState.Archived;
+    });
 }

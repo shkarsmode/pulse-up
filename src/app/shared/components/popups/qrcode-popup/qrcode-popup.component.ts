@@ -10,7 +10,7 @@ import {
 import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
 import { DomSanitizer, SafeUrl } from "@angular/platform-browser";
 import { AngularSvgIconModule } from "angular-svg-icon";
-import { combineLatest, tap } from "rxjs";
+import { tap } from "rxjs";
 import { PopupCloseButtonComponent } from "@/app/shared/components/ui-kit/popup/popup-close-button/popup-close-button.component";
 import { PopupFooterComponent } from "@/app/shared/components/ui-kit/popup/popup-footer/popup-footer.component";
 import { PopupSubtitleComponent } from "@/app/shared/components/ui-kit/popup/popup-subtitle/popup-subtitle.component";
@@ -52,27 +52,28 @@ export class QrcodePopupComponent implements OnDestroy, OnInit {
 
     private timeout: NodeJS.Timeout | null = null;
     private qrCodeUrl = signal<string | null>(null);
-    private iconUrl = signal<string | null>(null);
     private qrCodeUrl$ = toObservable(this.qrCodeUrl);
-    private iconUrl$ = toObservable(this.iconUrl);
     public isCopied = signal(false);
     public isFailed = signal(false);
     public isLoading = signal(true);
     public bannerLink = signal<SafeUrl | null>(null);
+    public bannerFileName = signal("");
     public bannerImage = signal<Blob | null>(null);
 
     ngOnInit() {
-        this.fetchIcon();
-
-        combineLatest([this.qrCodeUrl$, this.iconUrl$])
-            .pipe(
-                tap(async ([qrCodeUrl, iconUrl]) => {
-                    if (!qrCodeUrl || !iconUrl || this.bannerLink()) return;
+        if (this.data.banner === false) {
+            this.isLoading.set(false);
+            return;
+        }
+        this.qrCodeUrl$.pipe(
+                tap(async (qrCodeUrl) => {
+                    if (this.data.banner === false || !qrCodeUrl || this.bannerLink()) return;
+                    const { icon, title, subtitle } = this.data.banner;
                     const bannerLink = await this.qrcodePopupService.generateBannerLink({
                         qrCodeUrl,
-                        iconUrl,
-                        title: this.data.banner.title,
-                        subtitle: this.data.banner.subtitle,
+                        iconUrl: icon,
+                        title,
+                        subtitle,
                     });
                     if (!bannerLink) {
                         this.isFailed.set(true);
@@ -88,6 +89,7 @@ export class QrcodePopupComponent implements OnDestroy, OnInit {
                         this.bannerImage.set(bannerBlob);
                     }
                     this.bannerLink.set(bannerLink);
+                    this.bannerFileName.set(`PulseUp - ${this.data.banner.title}`);
                     this.isLoading.set(false);
                     this.isFailed.set(false);
                 }),
@@ -104,6 +106,7 @@ export class QrcodePopupComponent implements OnDestroy, OnInit {
     }
 
     public async onChangeURL(url: SafeUrl) {
+        if (this.data.banner === false) return;
         const objectUrl = this.sanitizer.sanitize(4, url);
         if (!objectUrl) {
             this.isFailed.set(true);
@@ -143,18 +146,5 @@ export class QrcodePopupComponent implements OnDestroy, OnInit {
                 this.timeout = null;
             }
         }, 1500);
-    }
-
-    private async fetchIcon() {
-        const base64Icon = await this.qrcodePopupService.getBase64Image(this.data.banner.icon);
-        if (!base64Icon) {
-            this.isFailed.set(true);
-            this.isLoading.set(false);
-            this.notificationService.error(
-                "Failed to generate QR code banner. Please reload the page and try again.",
-            );
-            return;
-        }
-        this.iconUrl.set(base64Icon);
     }
 }

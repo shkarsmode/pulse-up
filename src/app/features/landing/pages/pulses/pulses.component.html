@@ -58,7 +58,7 @@
                             @for (topic of page; track topic.id) {
                                 <app-trending-topics-list-item
                                     [data]="topic"
-                                    [vote]="userVotesMap()?.get(topic.id)"
+                                    [vote]="userVotesMap()?.get(topic.id) || null"
                                     *ngIf="!globalTopicsQuery.isLoading()" />
                             }
                         }
@@ -85,7 +85,7 @@
                         @for (topic of localTopics(); track topic.id) {
                             <app-trending-topics-list-item
                                 [data]="topic"
-                                [vote]="userVotesMap()?.get(topic.id)" />
+                                [vote]="userVotesMap()?.get(topic.id) || null" />
                         }
                     </div>
                     @if (isEmptyLocalTopics()) {

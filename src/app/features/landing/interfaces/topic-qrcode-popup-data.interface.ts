@@ -10,5 +10,5 @@ export interface TopicQRCodePopupData {
         icon: string;
         title: string;
         subtitle: string;
-    };
+    } | false;
 }
