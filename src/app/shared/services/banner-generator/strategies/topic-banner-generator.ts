@@ -133,9 +133,6 @@ export class TopicBannerGenerator extends BaseBannerGenerator {
           </defs>
       </svg>
       <img
-          src="assets/svg/logo.png"
-          class="banner-template-logo" />
-      <img
           src="${this.icon}"
           class="banner-template-icon" />
       <h1 class="banner-template-title">${this.title}</h1>

@@ -1,88 +1,82 @@
-<app-large-pulse
-    [pulse]="data"
-    [showArrow]="false"
-    [showTopBadge]="isCampaignBadgeVisible">
-    <div
-        card-top-badge
-        class="card-top-badge">
-        <svg-icon
-            src="assets/svg/goal.svg"
-            class="card-top-badge__icon" />
-        Campaign attached
-    </div>
-    <app-large-pulse-icon
-        [src]="data.icon"
-        size="md"
-        [label]="data.title"
-        ngProjectAs="card-icon" />
-    <div ngProjectAs="card-heading">
-        <app-large-pulse-title>
-            {{ data.title }}
-        </app-large-pulse-title>
-        <div class="card-heading-meta">
-            <app-large-pulse-meta
-                [text]="data.author.name"
-                label="author" />
+@let topic = data();
+
+@if (topic) {
+    <app-large-pulse
+        [pulse]="topic"
+        [showArrow]="false"
+        [showTopBadge]="isCampaignBadgeVisible()">
+        <div
+            card-top-badge
+            class="card-top-badge">
+            <svg-icon
+                src="assets/svg/goal.svg"
+                class="card-top-badge__icon" />
+            Campaign attached
         </div>
-    </div>
-    <app-large-pulse-description ngProjectAs="card-body">
-        {{ data.description }}
-    </app-large-pulse-description>
-    <div
-        class="card-footer"
-        ngProjectAs="card-footer">
-        <div class="card-footer__left">
-            <app-large-pulse-metric
-                [text]="data.stats?.lastDayVotes || 0 | formatNumber"
-                [accent]="isVoteActive$ | async">
-                @if (isVoteActive$ | async) {
-                    <div class="card-footer-icon-wrap card-footer-icon-wrap--active">
-                        <svg-icon
-                            appWavesAnimation
-                            src="assets/svg/logo/logo-v2.svg"
-                            ariaLabel="pulse icon"
-                            class="card-footer-icon" />
-                    </div>
-                } @else {
-                    <svg-icon
-                        src="assets/svg/pulse.svg"
-                        ariaLabel="pulse icon" />
-                }
-            </app-large-pulse-metric>
-            <app-large-pulse-metric
-                [text]="data.stats?.totalVotes || 0 | formatNumber"
-                icon="assets/svg/chart-simple.svg" />
-        </div>
-        <div class="card-footer__right">
-            <app-menu [content]="menuContent">
-                <button
-                    mat-icon-button
-                    aria-label="Share topic">
-                    <svg-icon
-                        src="assets/svg/icon_share.svg"
-                        ariaLabel="share icon" />
-                </button>
-            </app-menu>
-            <app-copy-topic-button
-                *ngIf="topicUrl$ | async as topicUrl"
-                [topicUrl]="topicUrl" />
-        </div>
-        <!-- @if (isCampaignAttached) {
-            <div class="card-footer__campaign">
-                <div class="card-footer-campaign">
-                    <svg-icon
-                        src="assets/svg/goal.svg"
-                        class="card-footer-campaign__icon" />
-                    Campaign attached
-                </div>
+        <app-large-pulse-icon
+            [src]="topic.icon"
+            size="md"
+            [label]="topic.title"
+            ngProjectAs="card-icon" />
+        <div ngProjectAs="card-heading">
+            <app-large-pulse-title>
+                {{ topic.title }}
+            </app-large-pulse-title>
+            <div class="card-heading-meta">
+                <app-large-pulse-meta
+                    [text]="topic.author.name"
+                    label="author" />
             </div>
-        } -->
-    </div>
-</app-large-pulse>
+        </div>
+        <app-large-pulse-description ngProjectAs="card-body">
+            {{ topic.description }}
+        </app-large-pulse-description>
+        <div
+            class="card-footer"
+            ngProjectAs="card-footer">
+            <div class="card-footer__left">
+                <app-large-pulse-metric
+                    [text]="topic.stats?.lastDayVotes || 0 | formatNumber"
+                    [accent]="isVoteActive()">
+                    @if (isVoteActive()) {
+                        <div class="card-footer-icon-wrap card-footer-icon-wrap--active">
+                            <svg-icon
+                                appWavesAnimation
+                                src="assets/svg/logo/logo-v2.svg"
+                                ariaLabel="pulse icon"
+                                class="card-footer-icon" />
+                        </div>
+                    } @else {
+                        <svg-icon
+                            src="assets/svg/pulse.svg"
+                            ariaLabel="pulse icon" />
+                    }
+                </app-large-pulse-metric>
+                <app-large-pulse-metric
+                    [text]="topic.stats?.totalVotes || 0 | formatNumber"
+                    icon="assets/svg/chart-simple.svg" />
+            </div>
+            <div class="card-footer__right">
+                <app-menu [content]="menuContent">
+                    <button
+                        mat-icon-button
+                        aria-label="Share topic">
+                        <svg-icon
+                            src="assets/svg/icon_share.svg"
+                            ariaLabel="share icon" />
+                    </button>
+                </app-menu>
+                <app-copy-topic-button
+                    *ngIf="topicUrl() as topicUrl"
+                    [topicUrl]="topicUrl" />
+            </div>
+        </div>
+    </app-large-pulse>
+}
 
 <ng-template #menuContent>
     <div class="card-footer__socials">
-        <ng-container *ngIf="topicUrl$ | async as topicUrl">
+        <ng-container *ngIf="topicUrl() as topicUrl">
             <app-socials-button
                 [variant]="'facebook'"
                 [url]="topicUrl" />
@@ -95,9 +89,10 @@
             <app-qrcode-button
                 [link]="topicUrl"
                 popupTitle="Topic QR code"
-                [popupSubtitle]="qrCodePopupText"
-                [bannerTitle]="qrCodeBannerTitle"
-                [bannerSubtitle]="qrCodeBannerText" />
+                [popupSubtitle]="qrCodePopupText()"
+                [bannerTitle]="qrCodeBannerTitle()"
+                [bannerSubtitle]="qrCodeBannerText()"
+                [bannerIcon]="qrCodeBannerIcon()" />
         </ng-container>
     </div>
 </ng-template>

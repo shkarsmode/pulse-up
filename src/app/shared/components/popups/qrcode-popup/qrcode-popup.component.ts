@@ -57,12 +57,17 @@ export class QrcodePopupComponent implements OnDestroy, OnInit {
     public isFailed = signal(false);
     public isLoading = signal(true);
     public bannerLink = signal<SafeUrl | null>(null);
+    public bannerFileName = signal("");
     public bannerImage = signal<Blob | null>(null);
 
     ngOnInit() {
+        if (this.data.banner === false) {
+            this.isLoading.set(false);
+            return;
+        }
         this.qrCodeUrl$.pipe(
                 tap(async (qrCodeUrl) => {
-                    if (!qrCodeUrl || this.bannerLink()) return;
+                    if (this.data.banner === false || !qrCodeUrl || this.bannerLink()) return;
                     const { icon, title, subtitle } = this.data.banner;
                     const bannerLink = await this.qrcodePopupService.generateBannerLink({
                         qrCodeUrl,
@@ -84,6 +89,7 @@ export class QrcodePopupComponent implements OnDestroy, OnInit {
                         this.bannerImage.set(bannerBlob);
                     }
                     this.bannerLink.set(bannerLink);
+                    this.bannerFileName.set(`PulseUp - ${this.data.banner.title}`);
                     this.isLoading.set(false);
                     this.isFailed.set(false);
                 }),
@@ -100,6 +106,7 @@ export class QrcodePopupComponent implements OnDestroy, OnInit {
     }
 
     public async onChangeURL(url: SafeUrl) {
+        if (this.data.banner === false) return;
         const objectUrl = this.sanitizer.sanitize(4, url);
         if (!objectUrl) {
             this.isFailed.set(true);

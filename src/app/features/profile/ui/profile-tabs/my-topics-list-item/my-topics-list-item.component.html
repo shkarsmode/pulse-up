@@ -1,87 +1,93 @@
-<app-large-pulse
-    [pulse]="data"
-    [showArrow]="false">
-    <app-large-pulse-icon
-        [src]="data.icon"
-        size="md"
-        [label]="data.title"
-        ngProjectAs="card-icon">
-        @if (isArchived) {
-            <app-pulse-icon-label text="Archived" />
-        }
-    </app-large-pulse-icon>
-    <div ngProjectAs="card-heading">
-        <app-large-pulse-title>
-            {{ data.title }}
-        </app-large-pulse-title>
-        <app-large-pulse-meta
-            [text]="'Created: ' + (data.createdAt | date: 'MMM d, y') || ''"
-            class="card-heading-meta"
-            label="created at" />
-    </div>
-    <app-large-pulse-description ngProjectAs="card-body">
-        {{ data.description }}
-    </app-large-pulse-description>
-    <div
-        class="card-footer"
-        ngProjectAs="card-footer">
-        <div class="card-footer__left">
-            <app-large-pulse-metric
-                [text]="data.stats?.lastDayVotes || 0 | formatNumber"
-                [accent]="isVoteActive$ | async">
-                @if (isVoteActive$ | async) {
-                    <div class="card-footer-icon-wrap card-footer-icon-wrap--active">
-                        <svg-icon
-                            appWavesAnimation
-                            src="assets/svg/logo/logo-v2.svg"
-                            ariaLabel="pulse icon"
-                            class="card-footer-icon" />
-                    </div>
-                } @else {
-                    <app-pulse-icon />
-                }
-            </app-large-pulse-metric>
-            <app-large-pulse-metric
-                [text]="data.stats?.totalVotes || 0 | formatNumber"
-                icon="assets/svg/chart-simple.svg" />
+@let topic = data();
+@let topicShareUrl = topicUrl();
+
+@if (topic) {
+    <app-large-pulse
+        [pulse]="topic"
+        [showArrow]="false">
+        <app-large-pulse-icon
+            [src]="topic.icon"
+            size="md"
+            [label]="topic.title"
+            ngProjectAs="card-icon">
+            @if (isArchived()) {
+                <app-pulse-icon-label text="Archived" />
+            }
+        </app-large-pulse-icon>
+        <div ngProjectAs="card-heading">
+            <app-large-pulse-title>
+                {{ topic.title }}
+            </app-large-pulse-title>
+            <app-large-pulse-meta
+                [text]="'Created: ' + (topic.createdAt | date: 'MMM d, y') || ''"
+                class="card-heading-meta"
+                label="created at" />
         </div>
-        @if (!isArchived) {
-            <div class="card-footer__right">
-                <app-menu [content]="menuContent">
-                    <button
-                        mat-icon-button
-                        aria-label="Share topic">
-                        <svg-icon
-                            src="assets/svg/icon_share.svg"
-                            ariaLabel="share icon" />
-                    </button>
-                </app-menu>
-                <app-copy-topic-button
-                    *ngIf="topicUrl$ | async as topicUrl"
-                    [topicUrl]="topicUrl" />
+        <app-large-pulse-description ngProjectAs="card-body">
+            {{ topic.description }}
+        </app-large-pulse-description>
+        <div
+            class="card-footer"
+            ngProjectAs="card-footer">
+            <div class="card-footer__left">
+                <app-large-pulse-metric
+                    [text]="topic.stats?.lastDayVotes || 0 | formatNumber"
+                    [accent]="isVoteActive()">
+                    @if (isVoteActive()) {
+                        <div class="card-footer-icon-wrap card-footer-icon-wrap--active">
+                            <svg-icon
+                                appWavesAnimation
+                                src="assets/svg/logo/logo-v2.svg"
+                                ariaLabel="pulse icon"
+                                class="card-footer-icon" />
+                        </div>
+                    } @else {
+                        <app-pulse-icon />
+                    }
+                </app-large-pulse-metric>
+                <app-large-pulse-metric
+                    [text]="topic.stats?.totalVotes || 0 | formatNumber"
+                    icon="assets/svg/chart-simple.svg" />
             </div>
-        }
-    </div>
-</app-large-pulse>
+            @if (!isArchived()) {
+                <div class="card-footer__right">
+                    <app-menu [content]="menuContent">
+                        <button
+                            mat-icon-button
+                            aria-label="Share topic">
+                            <svg-icon
+                                src="assets/svg/icon_share.svg"
+                                ariaLabel="share icon" />
+                        </button>
+                    </app-menu>
+                    <app-copy-topic-button
+                        *ngIf="topicShareUrl"
+                        [topicUrl]="topicShareUrl" />
+                </div>
+            }
+        </div>
+    </app-large-pulse>
+}
 
 <ng-template #menuContent>
     <div class="card-footer__socials">
-        <ng-container *ngIf="topicUrl$ | async as topicUrl">
+        <ng-container *ngIf="topicShareUrl">
             <app-socials-button
                 [variant]="'facebook'"
-                [url]="topicUrl" />
+                [url]="topicShareUrl" />
             <app-socials-button
                 [variant]="'x'"
-                [url]="topicUrl" />
+                [url]="topicShareUrl" />
             <app-socials-button
                 [variant]="'email'"
-                [url]="topicUrl" />
+                [url]="topicShareUrl" />
             <app-qrcode-button
-                [link]="topicUrl"
+                [link]="topicShareUrl"
                 popupTitle="Topic QR code"
-                [popupSubtitle]="qrCodePopupText"
-                [bannerTitle]="qrCodeBannerTitle"
-                [bannerSubtitle]="qrCodeBannerSubtitle" />
+                [popupSubtitle]="qrCodePopupText()"
+                [bannerTitle]="qrCodeBannerTitle()"
+                [bannerSubtitle]="qrCodeBannerSubtitle()"
+                [bannerIcon]="qrCodeBannerIcon()" />
         </ng-container>
     </div>
 </ng-template>
