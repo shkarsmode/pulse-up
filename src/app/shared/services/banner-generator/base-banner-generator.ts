@@ -19,10 +19,10 @@ export abstract class BaseBannerGenerator implements BannerStrategy {
         if (!root) {
             root = document.createElement("div");
             root.id = "banner-template-root";
-            root.style.zIndex = '-1';
-            root.style.position = 'fixed';
-            root.style.top = '0';
-            root.style.left = '0';
+            root.style.zIndex = "-1";
+            root.style.position = "fixed";
+            root.style.top = "0";
+            root.style.left = "0";
             root.ariaHidden = "true";
             document.body.appendChild(root);
         }
@@ -41,7 +41,10 @@ export abstract class BaseBannerGenerator implements BannerStrategy {
             const { toPng } = await import("html-to-image");
 
             const root = document.getElementById("banner-template-root");
-            if (!root) throw new Error("Banner template root not found");
+            if (!root) {
+                this.container.innerHTML = "";
+                throw new Error("Banner template root not found");
+            }
 
             const dataUrl = await toPng(root, {
                 width: root.scrollWidth,

@@ -69,7 +69,7 @@ export class TopicBannerGenerator extends BaseBannerGenerator {
       </style>
       
       <div class="banner-template-container">
-        <img src="assets/svg/logo.svg" class="banner-template-logo" alt="Logo" />
+        <img src="assets/svg/logo.svg" class="banner-template-logo" />
         <img src="${this.icon}" class="banner-template-icon" />
         <h1 class="banner-template-title">${this.title}</h1>
         <p class="banner-template-description" data-linkify>

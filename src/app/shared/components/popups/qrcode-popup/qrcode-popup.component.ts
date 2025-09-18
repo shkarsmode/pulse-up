@@ -10,7 +10,7 @@ import {
 import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
 import { DomSanitizer, SafeUrl } from "@angular/platform-browser";
 import { AngularSvgIconModule } from "angular-svg-icon";
-import { combineLatest, tap } from "rxjs";
+import { tap } from "rxjs";
 import { PopupCloseButtonComponent } from "@/app/shared/components/ui-kit/popup/popup-close-button/popup-close-button.component";
 import { PopupFooterComponent } from "@/app/shared/components/ui-kit/popup/popup-footer/popup-footer.component";
 import { PopupSubtitleComponent } from "@/app/shared/components/ui-kit/popup/popup-subtitle/popup-subtitle.component";
@@ -52,9 +52,7 @@ export class QrcodePopupComponent implements OnDestroy, OnInit {
 
     private timeout: NodeJS.Timeout | null = null;
     private qrCodeUrl = signal<string | null>(null);
-    private iconUrl = signal<string | null>(null);
     private qrCodeUrl$ = toObservable(this.qrCodeUrl);
-    private iconUrl$ = toObservable(this.iconUrl);
     public isCopied = signal(false);
     public isFailed = signal(false);
     public isLoading = signal(true);
@@ -62,17 +60,15 @@ export class QrcodePopupComponent implements OnDestroy, OnInit {
     public bannerImage = signal<Blob | null>(null);
 
     ngOnInit() {
-        this.fetchIcon();
-
-        combineLatest([this.qrCodeUrl$, this.iconUrl$])
-            .pipe(
-                tap(async ([qrCodeUrl, iconUrl]) => {
-                    if (!qrCodeUrl || !iconUrl || this.bannerLink()) return;
+        this.qrCodeUrl$.pipe(
+                tap(async (qrCodeUrl) => {
+                    if (!qrCodeUrl || this.bannerLink()) return;
+                    const { icon, title, subtitle } = this.data.banner;
                     const bannerLink = await this.qrcodePopupService.generateBannerLink({
                         qrCodeUrl,
-                        iconUrl,
-                        title: this.data.banner.title,
-                        subtitle: this.data.banner.subtitle,
+                        iconUrl: icon,
+                        title,
+                        subtitle,
                     });
                     if (!bannerLink) {
                         this.isFailed.set(true);
@@ -143,18 +139,5 @@ export class QrcodePopupComponent implements OnDestroy, OnInit {
                 this.timeout = null;
             }
         }, 1500);
-    }
-
-    private async fetchIcon() {
-        const base64Icon = await this.qrcodePopupService.getBase64Image(this.data.banner.icon);
-        if (!base64Icon) {
-            this.isFailed.set(true);
-            this.isLoading.set(false);
-            this.notificationService.error(
-                "Failed to generate QR code banner. Please reload the page and try again.",
-            );
-            return;
-        }
-        this.iconUrl.set(base64Icon);
     }
 }
