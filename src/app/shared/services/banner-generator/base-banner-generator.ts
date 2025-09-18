@@ -61,7 +61,6 @@ export abstract class BaseBannerGenerator implements BannerStrategy {
     }
 
     protected abstract renderTemplate(data: BannerData): HTMLElement;
-    protected abstract getFileName(): string;
 
     private async applyLinkify(root: HTMLElement) {
         const linkifyHtml = await import("linkify-html").then((module) => module.default);
