@@ -31,7 +31,7 @@
                     <li>
                         <app-my-topics-list-item
                             [data]="topic"
-                            [vote]="(votes$ | async)?.get(topic.id)" />
+                            [vote]="(votes$ | async)?.get(topic.id) || null" />
                     </li>
                     }
                 </ul>

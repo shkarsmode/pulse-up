@@ -22,6 +22,7 @@ import {
 import { CropResult } from "../../../interfaces/crop-result.interface";
 import { NotificationService } from "@/app/shared/services/core/notification.service";
 import { TopicDescriptionCounterComponent } from "./topic-description-counter/topic-description-counter.component";
+import { StringUtils } from "@/app/shared/helpers/string-utils";
 
 @Component({
     selector: "app-topic-description",
@@ -65,7 +66,7 @@ export class TopicDescriptionComponent implements OnInit {
         this.updateSelectedFile(this.pictureControl?.value || null);
         if (this.textControl) {
             this.descriptionLength$ = this.textControl.valueChanges.pipe(
-                map((value) => (value ? value.length : 0)),
+                map((value) => (value ? StringUtils.toCRLF(value).length : 0)),
             );
         }
     }
