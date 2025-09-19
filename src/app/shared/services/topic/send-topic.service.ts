@@ -22,6 +22,11 @@ import { ProfileService } from "../profile/profile.service";
 import { ITopic } from "../../interfaces";
 import { keywordsDuplicationValidator } from "../../helpers/validators/keywords-duplication.validator";
 import { reservedKeywordsValidator } from "../../helpers/validators/reservedKeywordsValidator";
+import { descriptionLengthValidator } from "../../helpers/validators/descriptionLength.validator";
+import {
+    MAX_DESCRIPTION_LENGTH,
+    MIN_DESCRIPTION_LENGTH,
+} from "@/app/features/user/helpers/error-message-builder";
 
 interface TopicFormValues {
     icon: File;
@@ -72,18 +77,23 @@ export class SendTopicService {
                 ),
                 description: new FormControl("", [
                     Validators.required,
-                    Validators.minLength(150),
-                    Validators.maxLength(600),
+                    descriptionLengthValidator({
+                        min: MIN_DESCRIPTION_LENGTH,
+                        max: MAX_DESCRIPTION_LENGTH,
+                    }),
                     noConsecutiveNewlinesValidator(),
                 ]),
                 category: new FormControl("", Validators.required),
-                keywords: new FormControl([], [arrayLengthValidator(1, 3), reservedKeywordsValidator()]),
+                keywords: new FormControl(
+                    [],
+                    [arrayLengthValidator(1, 3), reservedKeywordsValidator()],
+                ),
                 picture: new FormControl("", [Validators.required, pictureValidator()]),
                 location: new FormControl(""),
             },
             {
                 validators: [keywordsDuplicationValidator],
-            }
+            },
         );
     }
 
