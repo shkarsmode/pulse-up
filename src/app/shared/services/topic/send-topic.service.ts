@@ -1,5 +1,5 @@
 import { inject, Injectable } from "@angular/core";
-import { FormBuilder, FormGroup, Validators } from "@angular/forms";
+import { FormBuilder, FormControl, FormGroup, Validators } from "@angular/forms";
 import {
     BehaviorSubject,
     catchError,
@@ -53,10 +53,10 @@ export class SendTopicService {
     private readonly profileService = inject(ProfileService);
 
     constructor() {
-        this.currentTopic = this.formBuilder.group(
+        this.currentTopic = new FormGroup(
             {
-                icon: [null, [Validators.required, pictureValidator()]],
-                headline: [
+                icon: new FormControl(null, [Validators.required, pictureValidator()]),
+                headline: new FormControl(
                     "",
                     [Validators.required, Validators.minLength(6), Validators.maxLength(60)],
                     [
@@ -68,24 +68,21 @@ export class SendTopicService {
                             },
                         }),
                     ],
-                ],
-                description: [
-                    "",
-                    [
-                        Validators.required,
-                        Validators.minLength(150),
-                        Validators.maxLength(600),
-                        noConsecutiveNewlinesValidator(),
-                    ],
-                ],
-                category: ["", Validators.required],
-                keywords: [[], [Validators.required, arrayLengthValidator(1, 3)]],
-                picture: ["", [Validators.required, pictureValidator()]],
-                location: "",
+                ),
+                description: new FormControl("", [
+                    Validators.required,
+                    Validators.minLength(150),
+                    Validators.maxLength(600),
+                    noConsecutiveNewlinesValidator(),
+                ]),
+                category: new FormControl("", Validators.required),
+                keywords: new FormControl([], [arrayLengthValidator(1, 3)]),
+                picture: new FormControl("", [Validators.required, pictureValidator()]),
+                location: new FormControl(""),
             },
             {
                 validators: [keywordsDuplicationValidator],
-            },
+            }
         );
     }
 

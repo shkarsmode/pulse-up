@@ -71,6 +71,7 @@ export class ChipsInputComponent implements ControlValueAccessor {
             if (!this.chips.includes(chip)) {
                 this.chips.push(chip);
                 this.onChange(this.chips);
+                this.onTouched();
             }
             this.inputValue = "";
             event.preventDefault();
@@ -79,6 +80,7 @@ export class ChipsInputComponent implements ControlValueAccessor {
 
         if (event.key === "Backspace" && this.inputValue === "") {
             this.chips.pop();
+            this.onTouched();
         }
     }
 
@@ -93,6 +95,7 @@ export class ChipsInputComponent implements ControlValueAccessor {
             if (!this.chips.includes(chip)) {
                 this.chips.push(chip);
                 this.onChange(this.chips);
+                this.onTouched();
             }
             this.inputValue = "";
             this.chipsInput.nativeElement.focus();
@@ -102,6 +105,7 @@ export class ChipsInputComponent implements ControlValueAccessor {
     public removeChip(index: number): void {
         this.chips.splice(index, 1);
         this.onChange(this.chips);
+        this.onTouched();
         this.chipsInput.nativeElement.focus();
     }
 }
