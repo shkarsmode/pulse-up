@@ -16,8 +16,9 @@ import { HeaderComponent } from "@/app/shared/components/header/header.component
     `,
     styles: `
         :host {
-            display: flex;
-            flex-direction: column;
+            flex: 1;
+            display: grid;
+            grid-template-rows: auto 1fr auto;
             height: 100%;
         }
         .page {
