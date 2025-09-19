@@ -1,6 +1,6 @@
-import { AbstractControl } from "@angular/forms";
+import { AbstractControl, ValidationErrors } from "@angular/forms";
 
-export const keywordsDuplicationValidator = (group: AbstractControl): null => {
+export const keywordsDuplicationValidator = (group: AbstractControl): ValidationErrors | null => {
     const [keywords, category] = [
         (group.get("keywords")!.value as string[]) || [],
         (group.get("category")!.value as string) || "",
@@ -9,7 +9,9 @@ export const keywordsDuplicationValidator = (group: AbstractControl): null => {
     const lowerCategory = category.trim().toLowerCase();
     const hasDuplicate = keywords.some((keyword) => keyword.trim().toLowerCase() === lowerCategory);
 
-    group.get("keywords")!.setErrors(hasDuplicate ? { keywordMatchesCategory: true } : null);
+    if (hasDuplicate) {
+        group.get("keywords")?.setErrors({ keywordMatchesCategory: true });
+    }
 
     return null;
 };
