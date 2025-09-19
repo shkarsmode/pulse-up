@@ -19,8 +19,9 @@ import { FooterComponent } from "@/app/shared/components/footer/footer.component
     `,
     styles: `
         :host {
-            display: flex;
-            flex-direction: column;
+            flex: 1;
+            display: grid;
+            grid-template-rows: auto 1fr;
             height: 100%;
             width: 100%;
             background-color: var(--white-color);
