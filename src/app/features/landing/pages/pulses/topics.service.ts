@@ -4,7 +4,7 @@ import { injectInfiniteQuery, injectQuery } from "@tanstack/angular-query-experi
 import { concat, first, lastValueFrom, map, of, shareReplay, switchMap } from "rxjs";
 import { toSignal } from "@angular/core/rxjs-interop";
 import { geoToH3 } from "h3-js";
-import { QUERY_KEYS } from "@/app/shared/constants";
+import { AppConstants, QUERY_KEYS } from "@/app/shared/constants";
 import { PulseService } from "@/app/shared/services/api/pulse.service";
 import { PendingTopicsService } from "@/app/shared/services/topic/pending-topics.service";
 import { IpLocationService } from "@/app/shared/services/core/ip-location.service";
@@ -19,14 +19,14 @@ export class TopicsService {
     private readonly ipLocationService = inject(IpLocationService);
 
     private searchTextSignal = signal("");
-    private categorySignal = signal<string>("trending");
+    private categorySignal = signal<string>(AppConstants.DEFAULT_CATEGORIES[0]);
 
     public searchText = this.searchTextSignal.asReadonly();
     public category = this.categorySignal.asReadonly();
     public categories = toSignal(
         this.pulseService.categories$.pipe(
             map((categories) => categories.map((category) => category.name)),
-            map((categories) => ["trending", "newest", ...categories]),
+            map((categories) => [...AppConstants.DEFAULT_CATEGORIES, ...categories]),
         ),
         {
             initialValue: [],

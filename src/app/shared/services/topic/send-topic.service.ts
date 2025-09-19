@@ -21,6 +21,7 @@ import { TopicLocation } from "@/app/features/user/interfaces/topic-location.int
 import { ProfileService } from "../profile/profile.service";
 import { ITopic } from "../../interfaces";
 import { keywordsDuplicationValidator } from "../../helpers/validators/keywords-duplication.validator";
+import { reservedKeywordsValidator } from "../../helpers/validators/reservedKeywordsValidator";
 
 interface TopicFormValues {
     icon: File;
@@ -76,7 +77,7 @@ export class SendTopicService {
                     noConsecutiveNewlinesValidator(),
                 ]),
                 category: new FormControl("", Validators.required),
-                keywords: new FormControl([], [arrayLengthValidator(1, 3)]),
+                keywords: new FormControl([], [arrayLengthValidator(1, 3), reservedKeywordsValidator()]),
                 picture: new FormControl("", [Validators.required, pictureValidator()]),
                 location: new FormControl(""),
             },

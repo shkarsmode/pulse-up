@@ -22,8 +22,7 @@ import { FlatButtonDirective } from "../ui-kit/buttons/flat-button/flat-button.d
 import { AngularSvgIconModule } from "angular-svg-icon";
 import { CategoryFilterMenuItemComponent } from "./category-filter-menu-item/category-filter-menu-item.component";
 import { IFilterCategory } from "../../interfaces/category.interface";
-
-const DEFAULT_CATEGORY = "trending";
+import { AppConstants } from "../../constants";
 
 @Component({
     selector: "app-category-filter-menu",
@@ -68,7 +67,7 @@ export class CategoryFilterMenuComponent implements OnInit, OnDestroy, OnChanges
     }
 
     public ngOnDestroy(): void {
-        this.activeCategory = DEFAULT_CATEGORY;
+        this.activeCategory = AppConstants.DEFAULT_CATEGORIES[0];
         this.filteredCategories = [...this.options];
     }
 

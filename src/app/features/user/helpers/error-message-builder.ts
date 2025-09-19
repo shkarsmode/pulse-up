@@ -6,9 +6,11 @@ export const MIN_TITLE_LENGTH = 6;
 export const MAX_TITLE_LENGTH = 60;
 
 export class ErrorMessageBuilder {
-    public static getErrorMessage(control: AbstractControl<string, string>, name: string): string | null {
-        
-        if (!control || !(control.touched) || control.valid) {
+    public static getErrorMessage(
+        control: AbstractControl<string, string>,
+        name: string,
+    ): string | null {
+        if (!control || !control.touched || control.valid) {
             return null;
         }
 
@@ -18,7 +20,7 @@ export class ErrorMessageBuilder {
 
         for (const [errorKey, message] of Object.entries(messages)) {
             if (control.hasError(errorKey)) {
-                return message;
+                return message || (control.getError(errorKey) as string);
             }
         }
 
@@ -49,7 +51,8 @@ export class ErrorMessageBuilder {
             required: "Picture is required",
             missingName: "Picture must have a name",
             invalidType: "Picture must be an image",
-            invalidExtension: "Picture must have one of the following extensions: .png, .jpg, .jpeg",
+            invalidExtension:
+                "Picture must have one of the following extensions: .png, .jpg, .jpeg",
             fileTooLarge: "Picture must be less than 10 MB",
         },
         category: {
@@ -60,6 +63,7 @@ export class ErrorMessageBuilder {
             minLengthArray: "At least one keyword is required",
             maxLengthArray: "You can add up to 3 keywords",
             keywordMatchesCategory: "Keywords cannot match the category",
+            reservedKeywords: null,
         },
         location: {
             required: "Location is required",
