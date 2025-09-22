@@ -1,5 +1,5 @@
 import { inject, Pipe, PipeTransform } from "@angular/core";
-import { DomSanitizer, SafeHtml } from "@angular/platform-browser";
+import { DomSanitizer } from "@angular/platform-browser";
 import linkifyHtml from "linkify-html";
 import { Opts } from "linkifyjs";
 import escape from "lodash.escape";
@@ -10,7 +10,7 @@ import escape from "lodash.escape";
 export class LinkifyPipe implements PipeTransform {
     private readonly sanitizer = inject(DomSanitizer);
 
-    transform(text: string | null | undefined): SafeHtml | string {
+    transform(text: string | null | undefined) {
         if (!text) return "";
 
         const linkifyOptions: Opts = {
@@ -23,8 +23,8 @@ export class LinkifyPipe implements PipeTransform {
         // Converts the characters "&", "<", ">", '"', and "'" in string to their corresponding HTML entities.
         const escaped = escape(text);
         // Linkify and format newlines
-        const formatted = linkifyHtml(escaped.replace(/\n/g, "<br>"), linkifyOptions);
+        const formatted = linkifyHtml(escaped, linkifyOptions);
 
-        return this.sanitizer.bypassSecurityTrustHtml(formatted);
+        return this.sanitizer.bypassSecurityTrustHtml(formatted) as string;
     }
 }

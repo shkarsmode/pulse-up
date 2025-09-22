@@ -1,0 +1,14 @@
+<div class="description">
+    <div
+        class="description__text"
+        [class.description__text--expanded]="!isCollapsed()"
+        #description
+        [innerHTML]="isCollapsed() ? shortDescription : longDescription"></div>
+    @if (isCollapsed()) {
+        <button
+            class="description__read-more"
+            (click)="toggleCollapse()">
+            Read More
+        </button>
+    }
+</div>

@@ -8,20 +8,6 @@
     padding: 18px 20px 48px;
 }
 
-.pulse__info-description-text::ng-deep a {
-    text-decoration: underline;
-    &:hover {
-        opacity: 0.7;
-    }
-
-    &:active {
-        color: var(--accent-color);
-    }
-
-    cursor: pointer;
-    transition: all 0.2s;
-}
-
 .pulse {
     display: flex;
     flex-direction: column;
@@ -172,34 +158,6 @@
     }
 
     &__info {
-        &-description {
-            &-text {
-                @include text-16px;
-                color: black;
-                overflow: hidden;
-                text-overflow: ellipsis;
-                display: -webkit-box;
-                -webkit-line-clamp: 4;
-                -webkit-box-orient: vertical;
-
-                white-space: pre-wrap;
-
-                &--read-more {
-                    -webkit-line-clamp: unset;
-                }
-            }
-
-            &-read-more {
-                display: inline-block;
-                @include link-16px;
-                color: var(--accent-color);
-                margin-top: 4px;
-                font-weight: 600;
-                cursor: pointer;
-            }
-
-            margin-bottom: 10px;
-        }
 
         &-keywords {
             display: flex;

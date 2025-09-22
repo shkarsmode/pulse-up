@@ -122,20 +122,10 @@
         <hr class="divider" />
 
         <div class="pulse__info">
-            <div class="pulse__info-description">
-                <div
-                    class="pulse__info-description-text"
-                    [class.pulse__info-description-text--read-more]="isReadMore"
-                    #description
-                    [innerHTML]="isReadMore ? topic.description : shortPulseDescription()"></div>
-                @if (!isReadMore) {
-                    <button
-                        class="pulse__info-description-read-more"
-                        (click)="onReadMore()">
-                        Read More
-                    </button>
-                }
-            </div>
+            <app-pulse-description
+                [longDescription]="topic.description | linkify"
+                [shortDescription]="shortPulseDescription() | linkify" />
+
             <div class="pulse__info-keywords">
                 @for (keyword of keywords(); track keyword.label) {
                     <app-keyword-button [keyword]="keyword" />
