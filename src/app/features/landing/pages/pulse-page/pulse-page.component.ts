@@ -19,10 +19,8 @@ import { CommonModule } from "@angular/common";
 import {
     Component,
     DestroyRef,
-    ElementRef,
     inject,
     OnInit,
-    ViewChild,
     OnDestroy,
     ChangeDetectionStrategy,
     effect,
@@ -44,6 +42,8 @@ import { GuestVoteButtonComponent } from "../../ui/vote-button/guest-vote-button
 import { DisbledVoteButtonComponent } from "../../ui/vote-button/disbled-vote-button/disbled-vote-button.component";
 import { ITopic } from "@/app/shared/interfaces";
 import { KeywordButtonComponent } from "../../ui/keyword-button/keyword-button.component";
+import { PulseDescriptionComponent } from "../../ui/pulse-description/pulse-description.component";
+import { LinkifyPipe } from "@/app/shared/pipes/linkify.pipe";
 
 @Component({
     selector: "app-pulse-page",
@@ -74,6 +74,8 @@ import { KeywordButtonComponent } from "../../ui/keyword-button/keyword-button.c
         GuestVoteButtonComponent,
         DisbledVoteButtonComponent,
         KeywordButtonComponent,
+        PulseDescriptionComponent,
+        LinkifyPipe,
     ],
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -88,14 +90,6 @@ export class PulsePageComponent implements OnInit, OnDestroy {
     private readonly pulsePageService = inject(PulsePageService);
     private readonly settingsService = inject(SettingsService);
 
-    @ViewChild("description", { static: false })
-    set descriptionElement(el: ElementRef<HTMLDivElement> | undefined) {
-        if (el) {
-            this.description = el;
-            this.checkIfDescriptionTruncated();
-        }
-    }
-    private description?: ElementRef<HTMLDivElement>;
     private mutationObserver: MutationObserver | null = null;
 
     private isJustCreatedTopicPopupShown = false;
@@ -236,18 +230,6 @@ export class PulsePageComponent implements OnInit, OnDestroy {
                 },
             );
         }, 1000);
-    }
-
-    private checkIfDescriptionTruncated(): void {
-        const textElement = this.description?.nativeElement;
-        if (!textElement) return;
-
-        const fullHeight = textElement.scrollHeight;
-        const visibleHeight = textElement.clientHeight + 2;
-        const heightDiff = fullHeight - visibleHeight;
-        const isTruncated = heightDiff > 19;
-
-        this.isReadMore = !isTruncated;
     }
 
     // TOPICS_TO_TEST = {

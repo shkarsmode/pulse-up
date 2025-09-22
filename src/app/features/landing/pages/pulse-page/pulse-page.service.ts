@@ -98,9 +98,7 @@ export class PulsePageService {
 
     public topic = computed(() => {
         const topic = this.topicQuery.data();
-        if (!topic) return null;
-        const r = this.replaceDescriptionLink(topic);
-        return r;
+        return topic || null;
     });
 
     public votes = computed(() => {
@@ -258,25 +256,5 @@ export class PulsePageService {
             }),
         );
         return votes$;
-    }
-
-    private replaceDescriptionLink(topic: ITopic): ITopic {
-        const link = this.extractUrl(topic.description);
-
-        if (!link || !this.topic) return topic;
-
-        const description =
-            topic.description.replace(link, "") +
-            `<a href="${link}" rel="nofollow" target="_blank">${link}</a>`;
-        return { ...topic, description };
-    }
-
-    private extractUrl(value: string): string | null {
-        // Regular expression to match URLs (basic version)
-        const urlRegex = /(https?:\/\/[^\s]+)/g;
-        const match = value.match(urlRegex);
-
-        // If there's a match, return the first URL, otherwise return null
-        return match ? match[0] : null;
     }
 }
