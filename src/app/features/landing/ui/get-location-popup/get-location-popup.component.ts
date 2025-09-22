@@ -17,6 +17,7 @@ import {
     delay,
     dematerialize,
     filter,
+    from,
     map,
     materialize,
     take,
@@ -79,8 +80,7 @@ export class GetLocationPopupComponent implements OnInit {
     getCurrentGeolocation() {
         this.isError = false;
 
-        this.geolocationService
-            .getCurrentGeolocation()
+        from(this.geolocationService.getCurrentGeolocationAsync())
             .pipe(
                 materialize(),
                 take(1),

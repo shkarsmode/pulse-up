@@ -1,7 +1,17 @@
 import { Component, inject, OnDestroy, OnInit } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { Router } from "@angular/router";
-import { BehaviorSubject, catchError, map, Subject, take, takeUntil, tap, throwError } from "rxjs";
+import {
+    BehaviorSubject,
+    catchError,
+    from,
+    map,
+    Subject,
+    take,
+    takeUntil,
+    tap,
+    throwError,
+} from "rxjs";
 import mapboxgl from "mapbox-gl";
 import * as h3 from "h3-js";
 import { MatDialog } from "@angular/material/dialog";
@@ -100,13 +110,14 @@ export class PickLocationComponent implements OnInit, OnDestroy {
 
     getMyPosition = () => {
         this.isGeolocationRequestInProgress.next(true);
-        this.geolocationService
-            .getCurrentGeolocation()
+        from(this.geolocationService.getCurrentGeolocationAsync({enableHighAccuracy: false}))
             .pipe(
                 catchError(() => {
                     return throwError(() => new Error("Geolocation not available."));
                 }),
                 tap((geolocation) => {
+                    console.log("Geolocation retrieved:", geolocation);
+                    
                     const { latitude, longitude } = geolocation.geolocationPosition.coords;
                     this.map?.jumpTo({
                         center: [longitude, latitude],
