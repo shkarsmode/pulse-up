@@ -3,6 +3,7 @@
 .cropper {
     position: relative;
     min-height: 300px;
+    width: 100%;
     display: flex;
     align-items: center;
 }
@@ -26,6 +27,7 @@
 }
 
 .cropper__wrap {
+    width: 100%;
     opacity: 0;
     overflow: hidden;
     transition: opacity 0.2s ease-in-out;
@@ -33,6 +35,17 @@
     &.cropper__wrap--visible {
         opacity: 1;
         overflow: visible;
+    }
+
+    image-cropper {
+        width: 100%;
+
+        &::ng-deep {
+            img {
+                min-height: 300px;
+                width: 100%;
+            }
+        }
     }
 }
 
