@@ -11,7 +11,6 @@ import { AcceptRulesPopupComponent } from "@/app/features/landing/ui/accept-rule
 import { ConfirmPhoneNumberPopupComponent } from "@/app/features/landing/ui/confirm-phone-number-popup/confirm-phone-number-popup.component";
 import { SigninRequiredPopupComponent } from "../../components/popups/signin-required-popup/signin-required-popup.component";
 import { DialogService } from "../core/dialog.service";
-import { GetLocationPopupComponent } from "@/app/features/landing/ui/get-location-popup/get-location-popup.component";
 
 @Injectable({
     providedIn: "root",
@@ -88,9 +87,6 @@ export class VotingService {
         this.showAcceptRulesPopup();
     }
 
-    askForGeolocation() {
-        this.showGetGeolocationPopup();
-    }
 
     signInWithGeolocation() {
         this.isGeolocationRetrieved = true;
@@ -124,10 +120,6 @@ export class VotingService {
 
     private showAcceptRulesPopup() {
         this.dialogService.open(AcceptRulesPopupComponent);
-    }
-
-    private showGetGeolocationPopup() {
-        this.dialogService.open(GetLocationPopupComponent);
     }
 
     private showWelcomePopup() {
