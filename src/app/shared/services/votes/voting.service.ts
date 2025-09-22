@@ -1,5 +1,5 @@
 import { inject, Injectable } from "@angular/core";
-import { BehaviorSubject, catchError, switchMap, take, tap, throwError } from "rxjs";
+import { BehaviorSubject, catchError, from, switchMap, take, tap, throwError } from "rxjs";
 import { GeolocationService } from "../core/geolocation.service";
 import { AuthenticationService } from "../api/authentication.service";
 import { VotingError, VotingErrorCode } from "../../helpers/errors/voting-error";
@@ -28,7 +28,7 @@ export class VotingService {
     isAnonymousUserSignedIn$ = this.isAnonymousUserSignedIn.asObservable();
     isGeolocationRetrieved = false;
     shouldVoteAutomatically = false;
-    
+
     get anonymousUserValue() {
         return this.authService.anonymousUserValue;
     }
@@ -50,7 +50,7 @@ export class VotingService {
 
         this.isVoting.next(true);
 
-        return this.geolocationService.getCurrentGeolocation().pipe(
+        return from(this.geolocationService.getCurrentGeolocationAsync()).pipe(
             catchError(() => {
                 this.isVoting.next(false);
                 return throwError(
@@ -119,7 +119,7 @@ export class VotingService {
     }
 
     backToWelcomePopup() {
-        this.showWelcomePopup()
+        this.showWelcomePopup();
     }
 
     private showAcceptRulesPopup() {
@@ -132,21 +132,27 @@ export class VotingService {
 
     private showWelcomePopup() {
         const dialogRef = this.dialogService.open(WelcomePopupComponent);
-        dialogRef.afterClosed().pipe(take(1)).subscribe((result) => {
-            if (result?.stopSignInProcess) {
-                this.isGeolocationRetrieved = false;
-            }
-        });
+        dialogRef
+            .afterClosed()
+            .pipe(take(1))
+            .subscribe((result) => {
+                if (result?.stopSignInProcess) {
+                    this.isGeolocationRetrieved = false;
+                }
+            });
     }
 
     private showConfirmPhoneNumberPopup() {
         const dialogRef = this.dialogService.open(ConfirmPhoneNumberPopupComponent);
-         dialogRef.afterClosed().pipe(take(1)).subscribe((result) => {
-            if (result?.stopSignInprocess) {
-                this.authService.stopSignInProcess();
-                this.isGeolocationRetrieved = false;
-            }
-        });
+        dialogRef
+            .afterClosed()
+            .pipe(take(1))
+            .subscribe((result) => {
+                if (result?.stopSignInprocess) {
+                    this.authService.stopSignInProcess();
+                    this.isGeolocationRetrieved = false;
+                }
+            });
     }
 
     private showSuccessfulVotePopupForJustSignedInUser() {
