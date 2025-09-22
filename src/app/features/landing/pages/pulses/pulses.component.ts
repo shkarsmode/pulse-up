@@ -1,9 +1,10 @@
-import { ChangeDetectionStrategy, Component, inject, OnInit } from "@angular/core";
+import { ChangeDetectionStrategy, Component, DestroyRef, inject, OnInit } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { RouterModule } from "@angular/router";
 import { AngularSvgIconModule } from "angular-svg-icon";
-import { toSignal } from "@angular/core/rxjs-interop";
+import { takeUntilDestroyed, toObservable, toSignal } from "@angular/core/rxjs-interop";
 import { InfiniteScrollDirective } from "ngx-infinite-scroll";
+import { BehaviorSubject, combineLatest, tap } from "rxjs";
 import { InputSearchComponent } from "../../ui/input-search/input-search.component";
 import { InfiniteLoaderService } from "../../services/infinite-loader.service";
 import { LoadingIndicatorComponent } from "@/app/shared/components/loading-indicator/loading-indicator.component";
@@ -41,6 +42,7 @@ import { TopicsService } from "./topics.service";
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PulsesComponent implements OnInit {
+    private readonly destroyRef = inject(DestroyRef);
     private readonly votesService = inject(VotesService);
     public readonly topicsService = inject(TopicsService);
 
@@ -48,6 +50,9 @@ export class PulsesComponent implements OnInit {
     public suggestTopicRoute = "/" + AppRoutes.User.Topic.SUGGEST;
     public globalTopicsQuery = this.topicsService.globalTopicsQuery;
     public localTopicsQuery = this.topicsService.localTopicsQuery;
+    private isEmptyLocalTopics$ = toObservable(this.topicsService.isEmptyLocalTopics);
+    private selectedCategory$ = toObservable(this.topicsService.category);
+    private isSwitchedCategory = new BehaviorSubject(false);
 
     public categories = this.topicsService.categories;
     public localTopics = this.topicsService.localTopics;
@@ -70,10 +75,17 @@ export class PulsesComponent implements OnInit {
     public ngOnInit() {
         this.refetchQueries();
         this.topicsService.syncFiltersWithQueryParams();
-        if (this.selectedCategory === "trending" && this.isEmptyLocalTopics()) {
-            console.log("Switching to newest category because local topics are empty");
-            this.topicsService.setCategory("newest");
-        }
+
+
+        combineLatest([this.isEmptyLocalTopics$, this.selectedCategory$, this.isSwitchedCategory]).pipe(
+            tap(([isEmpty, selectedCategory, isSwitched]) => {
+                if (isEmpty && selectedCategory === "trending" && !isSwitched) {
+                    this.topicsService.setCategory("newest");
+                    this.isSwitchedCategory.next(true);
+                }
+            }),
+            takeUntilDestroyed(this.destroyRef),
+        ).subscribe();
     }
 
     public loadMore() {
