@@ -1,3 +1,8 @@
+:host {
+    position: relative;
+    z-index: 10;
+}
+
 .topic-description {
     position: relative;
     app-textarea {
