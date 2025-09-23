@@ -10,7 +10,7 @@ import {
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { AbstractControl } from "@angular/forms";
-import { map, Observable, of } from "rxjs";
+import { map, Observable, of, startWith } from "rxjs";
 import { SvgIconComponent } from "angular-svg-icon";
 import { PickerComponent } from "@ctrl/ngx-emoji-mart";
 import { TextareaComponent } from "../../../../../shared/components/ui-kit/textarea/textarea.component";
@@ -55,6 +55,7 @@ export class TopicDescriptionComponent implements OnInit {
         if (this.textControl) {
             this.descriptionLength$ = this.textControl.valueChanges.pipe(
                 map((value) => (value ? StringUtils.toCRLF(value).length : 0)),
+                startWith(this.textControl.value ? StringUtils.toCRLF(this.textControl.value).length : 0),
             );
         }
     }
