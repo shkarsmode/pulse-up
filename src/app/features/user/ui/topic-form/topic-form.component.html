@@ -5,7 +5,7 @@
                 <app-picture-picker
                     id="icon"
                     name="icon"
-                    label="Icon"
+                    label="Icon *"
                     [invalid]="!!control('icon')?.invalid && !!control('icon')?.touched"
                     [picture]="selectedIcon"
                     (pictureSelected)="onSelectIcon($event)"
@@ -32,7 +32,7 @@
                 placeholder="Enter an engaging headline"
                 id="headline"
                 name="headline"
-                label="Headline"
+                label="Headline *"
                 formControlName="headline"
                 [hasErrorClass]="!!control('headline')?.invalid && !!control('headline')?.touched"
                 (emitBlur)="onBlur('headline')" />
@@ -48,7 +48,7 @@
             <app-select
                 id="category"
                 name="category"
-                label="Category"
+                label="Category *"
                 formControlName="category"
                 [options]="(categoriesForForm | async) || []"
                 [hasErrorClass]="!!control('category')?.invalid && !!control('category')?.touched"
@@ -64,16 +64,21 @@
         <div class="group">
             <app-topic-description
                 [textControl]="control('description')"
-                [pictureControl]="control('picture')"
                 (handleBlur)="onBlur('description')" />
             <div *ngIf="getErrorMessage('description') as error">
                 <span class="group__error">{{ error }}</span>
             </div>
-            <div *ngIf="getErrorMessage('picture') as error">
-                <span class="group__error">{{ error }}</span>
-            </div>
             <div class="group__info">
                 <app-topic-info [text]="tooltipText.description" />
+            </div>
+        </div>
+
+        <div class="group">
+            <app-description-image-picker
+                formControlName="picture"
+                [invalid]="(control('picture')?.invalid && control('picture')?.touched) || false" />
+            <div *ngIf="getErrorMessage('picture') as error">
+                <span class="group__error">{{ error }}</span>
             </div>
         </div>
 

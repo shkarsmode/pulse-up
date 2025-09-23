@@ -88,7 +88,7 @@ export class SendTopicService {
                     [],
                     [arrayLengthValidator(1, 3), reservedKeywordsValidator()],
                 ),
-                picture: new FormControl("", [Validators.required, pictureValidator()]),
+                picture: new FormControl(null, [Validators.required, pictureValidator()]),
                 location: new FormControl(""),
             },
             {

@@ -23,6 +23,7 @@ import { TopicDescriptionComponent } from "./topic-description/topic-description
 import { ChipsInputComponent } from "@/app/shared/components/ui-kit/chips-input/chips-input.component";
 import { LocationPickerComponent } from "./location-picker/location-picker.component";
 import { PrimaryButtonComponent } from "@/app/shared/components/ui-kit/buttons/primary-button/primary-button.component";
+import { DescriptionImagePickerComponent } from "./description-image-picker/description-image-picker.component";
 
 interface Topic {
     name: string;
@@ -46,6 +47,7 @@ interface Topic {
         ChipsInputComponent,
         LocationPickerComponent,
         PrimaryButtonComponent,
+        DescriptionImagePickerComponent,
     ],
 })
 export class TopicFormComponent implements OnInit {

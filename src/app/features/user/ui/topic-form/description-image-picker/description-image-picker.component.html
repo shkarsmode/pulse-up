@@ -1,0 +1,30 @@
+@let img = imgSrc();
+
+<span class="image-picker-label"> Image * </span>
+<div
+    class="image-picker"
+    [class.image-picker--selected]="img"
+    [class.image-picker--invalid]="invalid()">
+    @if (img) {
+        <img
+            [src]="img"
+            alt="image"
+            class="file-upload-preview"
+            role="presentation" />
+    }
+
+    <label class="file-upload">
+        @if (!img) {
+            <svg-icon
+                src="assets/svg/plus.svg"
+                role="presentation" />
+        }
+        <span class="file-upload__text visualy-hidden"> Add an image </span>
+        <input
+            class="file-upload__input visualy-hidden"
+            #fileInput
+            type="file"
+            accept=".jpg,.png,.jpeg"
+            (change)="onImageSelected($event)" />
+    </label>
+</div>
