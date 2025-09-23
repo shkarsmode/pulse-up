@@ -64,16 +64,21 @@
         <div class="group">
             <app-topic-description
                 [textControl]="control('description')"
-                [pictureControl]="control('picture')"
                 (handleBlur)="onBlur('description')" />
             <div *ngIf="getErrorMessage('description') as error">
                 <span class="group__error">{{ error }}</span>
             </div>
-            <div *ngIf="getErrorMessage('picture') as error">
-                <span class="group__error">{{ error }}</span>
-            </div>
             <div class="group__info">
                 <app-topic-info [text]="tooltipText.description" />
+            </div>
+        </div>
+
+        <div class="group">
+            <app-description-image-picker
+                formControlName="picture"
+                [invalid]="(control('picture')?.invalid && control('picture')?.touched) || false" />
+            <div *ngIf="getErrorMessage('picture') as error">
+                <span class="group__error">{{ error }}</span>
             </div>
         </div>
 
