@@ -1,10 +1,6 @@
-:host {
-    position: relative;
-    z-index: 10;
-}
-
 .topic-description {
     position: relative;
+    z-index: 2;
     app-textarea {
         height: 164px;
     }
