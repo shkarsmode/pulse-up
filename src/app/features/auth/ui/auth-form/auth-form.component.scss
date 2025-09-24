@@ -21,3 +21,7 @@
 .form__input {
     @include text-16px;
 }
+
+.form__password-visibility-toggle {
+    margin-right: 8px;
+}

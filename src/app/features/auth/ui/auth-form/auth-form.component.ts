@@ -1,15 +1,24 @@
-import { ChangeDetectionStrategy, Component, inject, Input } from "@angular/core";
+import { ChangeDetectionStrategy, Component, inject, Input, signal } from "@angular/core";
 import { MatInputModule } from "@angular/material/input";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { ReactiveFormsModule } from "@angular/forms";
+import { MatIconButton } from "@angular/material/button";
 import { AuthFormService } from "./auth-form.service";
 import { PrimaryButtonComponent } from "@/app/shared/components/ui-kit/buttons/primary-button/primary-button.component";
 import { IAuthMode } from "../../interface/auth-mode.interface";
+import { AngularSvgIconModule } from "angular-svg-icon";
 
 @Component({
     selector: "app-auth-form",
     standalone: true,
-    imports: [MatInputModule, MatFormFieldModule, ReactiveFormsModule, PrimaryButtonComponent],
+    imports: [
+        MatInputModule,
+        MatFormFieldModule,
+        MatIconButton,
+        ReactiveFormsModule,
+        PrimaryButtonComponent,
+        AngularSvgIconModule,
+    ],
     providers: [AuthFormService],
     templateUrl: "./auth-form.component.html",
     styleUrl: "./auth-form.component.scss",
@@ -20,6 +29,7 @@ export class AuthFormComponent {
     private authFormService = inject(AuthFormService);
     protected form = this.authFormService.form;
     protected isSubmitting = this.authFormService.isSubmitting;
+    protected isVisiblePassword = signal(false);
     protected labels: Record<IAuthMode, string> = {
         "sign-in": "Sign In",
         "sign-up": "Sign Up",
@@ -36,6 +46,10 @@ export class AuthFormComponent {
         return errors && Object.keys(errors).length
             ? this.mapErrorKeyToMessage(Object.keys(errors)[0])
             : "";
+    }
+
+    protected togglePasswordVisibility() {
+        this.isVisiblePassword.update((value) => !value);
     }
 
     protected onSubmit() {
