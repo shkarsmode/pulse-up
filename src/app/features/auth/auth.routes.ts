@@ -11,7 +11,9 @@ export const AUTH_ROUTES: Routes = [
             {
                 path: AppRoutes.Auth.SIGN_IN,
                 loadComponent: () =>
-                    import("./pages/sign-in/sign-in.component").then((m) => m.SignInComponent),
+                    import(
+                        "./pages/sign-in-with-phone-number/sign-in-with-phone-number.component"
+                    ).then((m) => m.SignInWithPhoneNumberComponent),
                 canActivate: [SignInPageGuard],
             },
             {

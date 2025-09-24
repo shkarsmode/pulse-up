@@ -24,10 +24,10 @@ import { RouterLoadingIndicatorService } from "@/app/shared/components/router-lo
         AuthDisclaimerComponent,
     ],
     providers: [SignInFormService],
-    templateUrl: "./sign-in.component.html",
-    styleUrl: "./sign-in.component.scss",
+    templateUrl: "./sign-in-with-phone-number.component.html",
+    styleUrl: "./sign-in-with-phone-number.component.scss",
 })
-export class SignInComponent {
+export class SignInWithPhoneNumberComponent {
     private router = inject(Router);
     private destroyRef = inject(DestroyRef);
     private authenticationService = inject(AuthenticationService);
