@@ -417,9 +417,9 @@ export class AuthenticationService {
                 LocalStorageService.remove(LOCAL_STORAGE_KEYS.anonymousToken);
             }),
             switchMap(() => this.profileService.refreshProfile()),
-            tap(() => this.isConfirmInProgress$.next(false)),
+            tap(() => this.isSigninInProgress$.next(false)),
             catchError((error: unknown) => {
-                this.isConfirmInProgress$.next(false);
+                this.isSigninInProgress$.next(false);
                 return this.handleSignInWithEmailAndPasswordError(error);
             }),
         );
