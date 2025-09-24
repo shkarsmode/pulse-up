@@ -1,0 +1,1 @@
+export type IAuthMode = "sign-in" | "sign-up";

@@ -93,7 +93,7 @@ export class DeleteAccountPopupComponent {
                 next: () => {
                     this.notificationService.success("Account deleted successfully.");
                     this.dialogRef.close();
-                    this.router.navigateByUrl("/" + AppRoutes.Auth.SIGN_IN);
+                    this.router.navigateByUrl("/" + AppRoutes.Auth.SIGN_IN_WITH_PHONE);
                 },
                 error: (error: unknown) => {
                     let errorMessage = "An error occurred while deleting the account.";

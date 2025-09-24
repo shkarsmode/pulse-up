@@ -1,5 +1,5 @@
 import { inject, Injectable } from "@angular/core";
-import { HttpClient } from "@angular/common/http";
+import { HttpClient, HttpHeaders } from "@angular/common/http";
 import { catchError, map, Observable, of } from "rxjs";
 import { API_URL } from "../../tokens/tokens";
 import { IProfile } from "../../interfaces";
@@ -24,6 +24,17 @@ export class IdentityService {
             );
     }
 
+    public checkByEmail(email?: string): Observable<boolean> {
+        return this.http
+            .post(`${this.baseUrl}/check`, {
+                email,
+            })
+            .pipe(
+                map(() => true),
+                catchError(() => of(false)),
+            );
+    }
+
     public getByToken(token: string): Observable<IProfile | null> {
         return this.http
             .get<IProfile>(`${this.baseUrl}`, {
@@ -40,14 +51,15 @@ export class IdentityService {
     }
 
     public createWithToken(token: string): Observable<IProfile | null> {
+        const httpHeaders = new HttpHeaders({
+            Authorization: `Bearer ${token}`,
+        });
         return this.http
             .post<IProfile>(
                 `${this.baseUrl}/create:withToken`,
                 { idToken: token },
                 {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
+                    headers: httpHeaders,
                 },
             )
             .pipe(

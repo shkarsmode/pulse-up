@@ -14,7 +14,7 @@ import { PrimaryButtonComponent } from "../../ui-kit/buttons/primary-button/prim
 })
 export class SigninRequiredPopupComponent {
   private readonly router: Router = inject(Router);
-  private readonly dialogRef: MatDialogRef<any> = inject(MatDialogRef);
+  private readonly dialogRef: MatDialogRef<SigninRequiredPopupComponent> = inject(MatDialogRef);
 
   public onCloseDialog(): void {
     this.dialogRef.close();
@@ -22,6 +22,6 @@ export class SigninRequiredPopupComponent {
 
   public logout(): void {
     this.dialogRef.close();
-    this.router.navigateByUrl(`/${AppRoutes.Auth.SIGN_IN}?redirect=${AppRoutes.Profile.CHANGE_EMAIL}`)
+    this.router.navigateByUrl(`/${AppRoutes.Auth.SIGN_IN_WITH_PHONE}?redirect=${AppRoutes.Profile.CHANGE_EMAIL}`)
   }
 }
