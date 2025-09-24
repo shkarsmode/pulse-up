@@ -19,12 +19,8 @@ export class CollectUserInfoService {
         const accountsIds =
             LocalStorageService.get<string[]>(LOCAL_STORAGE_KEYS.personalInfoPopupShownForProfiles) || [];
         this.profileService.profile$.pipe(first((profile) => !!profile)).subscribe((profile) => {
-            console.log({ profile, accountsIds, currentUrl });
-            
             if (!profile?.id) return;
             const alreadyShown = accountsIds && accountsIds.includes(profile.id);
-            console.log({ alreadyShown, isOpened: this.isOpened, currentUrl, profile });
-            
             if (
                 !this.isOpened &&
                 !alreadyShown &&
