@@ -1,28 +1,30 @@
 import { inject, Injectable } from "@angular/core";
 import { MatDialog } from "@angular/material/dialog";
-import { Router } from "@angular/router";
 import { first, take } from "rxjs";
-import { PersonalInfoPopupComponent } from "../../components/popups/personal-info-popup/personal-info-popup.component";
-import { LOCAL_STORAGE_KEYS, LocalStorageService } from "../core/local-storage.service";
-import { ProfileService } from "../profile/profile.service";
+import { ProfileService } from "@/app/shared/services/profile/profile.service";
+import { LOCAL_STORAGE_KEYS, LocalStorageService } from "@/app/shared/services/core/local-storage.service";
+import { PersonalInfoPopupComponent } from "../ui/personal-info-popup/personal-info-popup.component";
 
 @Injectable({
     providedIn: "root",
 })
 export class CollectUserInfoService {
-    private readonly router = inject(Router);
     private readonly dialog = inject(MatDialog);
     private readonly profileService = inject(ProfileService);
 
     private isOpened = false;
 
     public collectPersonalInfo(): void {
-        const currentUrl = this.router.url;
+        const currentUrl = window.location.pathname;
         const accountsIds =
             LocalStorageService.get<string[]>(LOCAL_STORAGE_KEYS.personalInfoPopupShownForProfiles) || [];
         this.profileService.profile$.pipe(first((profile) => !!profile)).subscribe((profile) => {
+            console.log({ profile, accountsIds, currentUrl });
+            
             if (!profile?.id) return;
             const alreadyShown = accountsIds && accountsIds.includes(profile.id);
+            console.log({ alreadyShown, isOpened: this.isOpened, currentUrl, profile });
+            
             if (
                 !this.isOpened &&
                 !alreadyShown &&

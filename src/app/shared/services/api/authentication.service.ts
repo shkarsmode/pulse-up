@@ -1,9 +1,10 @@
 import { HttpHeaders } from "@angular/common/http";
-import { DestroyRef, inject, Inject, Injectable } from "@angular/core";
+import { DestroyRef, inject, Injectable } from "@angular/core";
 import { Router } from "@angular/router";
 import { FirebaseApp, FirebaseError, initializeApp } from "firebase/app";
 import {
     Auth,
+    createUserWithEmailAndPassword,
     EmailAuthProvider,
     getAuth,
     isSignInWithEmailLink,
@@ -12,6 +13,7 @@ import {
     RecaptchaVerifier,
     sendSignInLinkToEmail,
     signInAnonymously,
+    signInWithEmailAndPassword,
     signInWithPhoneNumber,
     signOut,
     updatePhoneNumber,
@@ -20,7 +22,7 @@ import {
     verifyBeforeUpdateEmail,
 } from "firebase/auth";
 import { jwtDecode, JwtPayload } from "jwt-decode";
-import { BehaviorSubject, forkJoin, from, Observable, of, throwError } from "rxjs";
+import { BehaviorSubject, firstValueFrom, forkJoin, from, Observable, of, throwError } from "rxjs";
 import { catchError, map, switchMap, take, tap } from "rxjs/operators";
 import { AppConstants } from "../../constants";
 import {
@@ -51,6 +53,7 @@ export class AuthenticationService {
     private readonly profileService: ProfileService = inject(ProfileService);
     private readonly identityService: IdentityService = inject(IdentityService);
     private readonly routerLoadingIndicatorService = inject(RouterLoadingIndicatorService);
+    private readonly firebaseConfig: IFirebaseConfig = inject(FIREBASE_CONFIG);
 
     private anonymousUser$: BehaviorSubject<string | null>;
     private userToken$: BehaviorSubject<string | null>;
@@ -73,7 +76,7 @@ export class AuthenticationService {
     public user$ = this.userSubject.asObservable();
     public firebaseUser$ = this.firebaseUserSubject.asObservable();
 
-    constructor(@Inject(FIREBASE_CONFIG) private readonly firebaseConfig: IFirebaseConfig) {
+    constructor() {
         this.firebaseApp = this.initFirebaseAppWithConfig();
         this.anonymousUser$ = new BehaviorSubject(
             LocalStorageService.get<string>(LOCAL_STORAGE_KEYS.anonymousToken),
@@ -371,6 +374,58 @@ export class AuthenticationService {
         );
     };
 
+    public signUpWithEmailAndPassword = (email: string, password: string) => {
+        this.isSigninInProgress$.next(true);
+        const response$ = this.loginAsAnonymousThroughTheFirebase().pipe(
+            switchMap(() =>
+                this.identityService
+                    .checkByEmail(email)
+                    .pipe(switchMap((result) => this.handleIdentityCheckByEmail(result))),
+            ),
+            switchMap(() => this.signOutFromFirebase()),
+            switchMap(() => createUserWithEmailAndPassword(this.firebaseAuth, email, password)),
+            switchMap((userCredential) => this.getIdToken(userCredential)),
+            switchMap((token) => this.createUserWithToken(token)),
+            tap(({ token }) => {
+                this.userToken$.next(token);
+                LocalStorageService.set(LOCAL_STORAGE_KEYS.userToken, token);
+
+                this.anonymousUser$.next(null);
+                LocalStorageService.set(LOCAL_STORAGE_KEYS.isAnonymous, false);
+                LocalStorageService.remove(LOCAL_STORAGE_KEYS.anonymousToken);
+            }),
+            switchMap(() => this.profileService.refreshProfile()),
+            tap(() => this.isConfirmInProgress$.next(false)),
+            catchError((error: unknown) => {
+                this.isConfirmInProgress$.next(false);
+                return this.handleSignUpWithEmailAndPasswordError(error);
+            }),
+        );
+        return firstValueFrom(response$);
+    };
+
+    public signInWithEmailAndPassword = (email: string, password: string) => {
+        this.isSigninInProgress$.next(true);
+        const response$ =  from(signInWithEmailAndPassword(this.firebaseAuth, email, password)).pipe(
+            switchMap((userCredential) => this.getIdToken(userCredential)),
+            tap((token) => {
+                this.userToken$.next(token);
+                LocalStorageService.set(LOCAL_STORAGE_KEYS.userToken, token);
+
+                this.anonymousUser$.next(null);
+                LocalStorageService.set(LOCAL_STORAGE_KEYS.isAnonymous, false);
+                LocalStorageService.remove(LOCAL_STORAGE_KEYS.anonymousToken);
+            }),
+            switchMap(() => this.profileService.refreshProfile()),
+            tap(() => this.isSigninInProgress$.next(false)),
+            catchError((error: unknown) => {
+                this.isSigninInProgress$.next(false);
+                return this.handleSignInWithEmailAndPasswordError(error);
+            }),
+        );
+        return firstValueFrom(response$);
+    };
+
     public signOutFromFirebase = () => {
         return from(signOut(this.firebaseAuth)).pipe(
             tap(() => {
@@ -488,7 +543,7 @@ export class AuthenticationService {
     private decodeToken(token: string): JwtPayload | null {
         try {
             return jwtDecode<JwtPayload>(token);
-        } catch (error) {
+        } catch {
             return null;
         }
     }
@@ -514,6 +569,18 @@ export class AuthenticationService {
                 () =>
                     new AuthenticationError(
                         "Registration temporarily unavailable for this phone number",
+                        AuthenticationErrorCode.INVALID_CREDENTIALS,
+                    ),
+            );
+        return of(true);
+    };
+
+    private handleIdentityCheckByEmail = (identityCheckResult: boolean): Observable<boolean> => {
+        if (!identityCheckResult)
+            return throwError(
+                () =>
+                    new AuthenticationError(
+                        "Registration temporarily unavailable for this email",
                         AuthenticationErrorCode.INVALID_CREDENTIALS,
                     ),
             );
@@ -642,7 +709,7 @@ export class AuthenticationService {
         return from(provider.verifyPhoneNumber(phoneNumber, applicationVerifier));
     };
 
-    private handleLoginWithPhoneNumberError = (error: any) => {
+    private handleLoginWithPhoneNumberError = (error: unknown) => {
         console.log("Error sending verification code", error);
         LocalStorageService.remove(LOCAL_STORAGE_KEYS.phoneNumberForSigning);
 
@@ -660,7 +727,7 @@ export class AuthenticationService {
         );
     };
 
-    private handleResendPhoneNumberError = (error: any) => {
+    private handleResendPhoneNumberError = (error: unknown) => {
         console.log("Error resending verification code", error);
 
         if (error instanceof AuthenticationError) return throwError(() => error);
@@ -677,7 +744,7 @@ export class AuthenticationService {
         );
     };
 
-    private handleConfirmCodeVerificationError = (error: any): Observable<never> => {
+    private handleConfirmCodeVerificationError = (error: unknown): Observable<never> => {
         if (error instanceof AuthenticationError) return throwError(() => error);
 
         let errorMessage = "Failed to verify confirmation code. Please try again.";
@@ -692,7 +759,7 @@ export class AuthenticationService {
         );
     };
 
-    private handleEmailVerificationError = (error: any) => {
+    private handleEmailVerificationError = (error: unknown) => {
         LocalStorageService.remove(LOCAL_STORAGE_KEYS.verifyEmail);
 
         if (error instanceof AuthenticationError) return throwError(() => error);
@@ -709,7 +776,7 @@ export class AuthenticationService {
         );
     };
 
-    private handleEmailChangingError = (error: any) => {
+    private handleEmailChangingError = (error: unknown) => {
         console.log("Error changing email", error);
         LocalStorageService.remove(LOCAL_STORAGE_KEYS.changeEmail);
 
@@ -739,7 +806,7 @@ export class AuthenticationService {
         );
     };
 
-    private handleChangePhoneNumberError = (error: any) => {
+    private handleChangePhoneNumberError = (error: unknown) => {
         console.log("Error sending verification code to a new phone number", error);
         this.isChangePhoneNumberInProgress$.next(false);
         LocalStorageService.remove(LOCAL_STORAGE_KEYS.verificationId);
@@ -771,7 +838,7 @@ export class AuthenticationService {
         );
     };
 
-    private handleConfirmNewPhoneNumberError = (error: any) => {
+    private handleConfirmNewPhoneNumberError = (error: unknown) => {
         console.log("Error confirming new phone number", error);
         this.isConfirmInProgress$.next(false);
 
@@ -810,4 +877,34 @@ export class AuthenticationService {
         }
         return of(isValid);
     };
+
+    private handleSignUpWithEmailAndPasswordError = (error: unknown): Observable<never> => {
+        if (error instanceof AuthenticationError) return throwError(() => error);
+
+        let errorMessage = "Failed to sign up. Please try again.";
+        if (error instanceof FirebaseError) {
+            errorMessage = formatFirebaseError(error) || errorMessage;
+            return throwError(
+                () => new AuthenticationError(errorMessage, AuthenticationErrorCode.FIREBASE_ERROR),
+            );
+        }
+        return throwError(
+            () => new AuthenticationError(errorMessage, AuthenticationErrorCode.UNKNOWN_ERROR),
+        );
+    };
+
+    private handleSignInWithEmailAndPasswordError = (error: unknown): Observable<never> => {
+        if (error instanceof AuthenticationError) return throwError(() => error);
+
+        let errorMessage = "Failed to sign in. Please try again.";
+        if (error instanceof FirebaseError) {
+            errorMessage = formatFirebaseError(error) || errorMessage;
+            return throwError(
+                () => new AuthenticationError(errorMessage, AuthenticationErrorCode.FIREBASE_ERROR),
+            );
+        }
+        return throwError(
+            () => new AuthenticationError(errorMessage, AuthenticationErrorCode.UNKNOWN_ERROR),
+        );
+    }
 }

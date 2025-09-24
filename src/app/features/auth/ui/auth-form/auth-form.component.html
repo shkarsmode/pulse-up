@@ -1,0 +1,62 @@
+<form
+    class="form"
+    [formGroup]="form"
+    (ngSubmit)="onSubmit()">
+    <div class="form__item">
+        <label
+            for="email"
+            class="form__label">
+            Email
+        </label>
+        <mat-form-field appearance="outline">
+            <input
+                matInput
+                id="email"
+                name="email"
+                class="form__input"
+                type="email"
+                inputmode="email"
+                autocomplete="email"
+                formControlName="email" />
+            <mat-error>{{ emailError }}</mat-error>
+        </mat-form-field>
+    </div>
+    <div class="form__item">
+        <label
+            for="password"
+            class="form__label">
+            Password
+        </label>
+        <mat-form-field appearance="outline">
+            <input
+                matInput
+                id="password"
+                name="password"
+                class="form__input"
+                [type]="isVisiblePassword() ? 'text' : 'password'"
+                autocomplete="off"
+                formControlName="password" />
+            <button
+                type="button"
+                class="form__password-visibility-toggle"
+                mat-icon-button
+                matSuffix
+                (click)="togglePasswordVisibility()"
+                [attr.aria-label]="isVisiblePassword() ? 'Hide password' : 'Show password'"
+                [attr.aria-pressed]="isVisiblePassword()">
+                <svg-icon
+                    [src]="isVisiblePassword() ? 'assets/svg/eye.svg' : 'assets/svg/eye-off.svg'"
+                    size="24" />
+            </button>
+            <mat-error>{{ passwordError }}</mat-error>
+        </mat-form-field>
+    </div>
+    <app-primary-button
+        [fullWidth]="true"
+        size="large"
+        type="submit"
+        [loading]="isSubmitting()"
+        [disabled]="isSubmitting()">
+        {{ labels[mode] }}
+    </app-primary-button>
+</form>

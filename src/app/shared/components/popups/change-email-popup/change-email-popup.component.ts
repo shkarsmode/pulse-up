@@ -16,7 +16,7 @@ export class ChangeEmailPopupComponent {
   @Input() public mode: 'verifyEmail' | 'changeEmail' = 'verifyEmail';
 
   private readonly router: Router = inject(Router);
-  private readonly dialogRef: MatDialogRef<any> = inject(MatDialogRef);
+  private readonly dialogRef: MatDialogRef<ChangeEmailPopupComponent> = inject(MatDialogRef);
   private readonly data: { mode: 'verifyEmail' | 'changeEmail' } = inject(MAT_DIALOG_DATA);
 
   public get isVerifyEmailMode(): boolean {
@@ -29,6 +29,6 @@ export class ChangeEmailPopupComponent {
 
   public logout(): void {
     this.dialogRef.close();
-    this.router.navigateByUrl(`/${AppRoutes.Auth.SIGN_IN}?redirect=${AppRoutes.Profile.EDIT}`)
+    this.router.navigateByUrl(`/${AppRoutes.Auth.SIGN_IN_WITH_PHONE}?redirect=${AppRoutes.Profile.EDIT}`)
   }
 }

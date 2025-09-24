@@ -18,7 +18,7 @@ export class ProfileButtonComponent {
     private authenticationService = inject(AuthenticationService);
 
     public profileRoute = "/" + AppRoutes.Profile.OVERVIEW;
-    public loginRoute = "/" + AppRoutes.Auth.SIGN_IN;
+    public loginRoute = "/" + AppRoutes.Auth.SIGN_IN_WITH_PHONE;
     public get isAuthenticated(): boolean {
         return !!this.authenticationService.userTokenValue;
     }

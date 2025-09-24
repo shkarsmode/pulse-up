@@ -3,7 +3,6 @@ import { LandingComponent } from "./landing.component";
 import { AppRoutes } from "@/app/shared/enums/app-routes.enum";
 import { HeaderGuard } from "@/app/shared/components/header/header.guard";
 import { PublicPageGuard } from "@/app/shared/helpers/guards/public-page.guard";
-import { CollectPersonalInfoGuard } from "@/app/shared/helpers/guards/collect-personal-info.guard";
 import { HeaderCleanupGuard } from "@/app/shared/components/header/header-cleanup.guard";
 import { metaTagsData } from "@/assets/data/meta-tags";
 import { FooterGuard } from "@/app/shared/components/footer/footer.guard";
@@ -20,7 +19,7 @@ export const LANDING_ROUTES: Routes = [
                 path: Landing.HOME,
                 loadComponent: () =>
                     import("./pages/main/main.component").then((m) => m.MainComponent),
-                canActivate: [HeaderGuard, PublicPageGuard, CollectPersonalInfoGuard],
+                canActivate: [HeaderGuard, PublicPageGuard],
                 canDeactivate: [HeaderCleanupGuard],
                 data: metaTagsData.home,
             },

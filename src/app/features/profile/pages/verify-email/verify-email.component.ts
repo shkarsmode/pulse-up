@@ -30,7 +30,7 @@ export class VerifyEmailComponent implements OnInit {
     if (mode === "verifyEmail") {
       this.email = LocalStorageService.get<string>(LOCAL_STORAGE_KEYS.verifyEmail);
       if (!this.email) {
-        this.router.navigate(['/', AppRoutes.Auth.SIGN_IN]);
+        this.router.navigate(['/', AppRoutes.Auth.SIGN_IN_WITH_PHONE]);
         return;
       }
 
@@ -49,7 +49,7 @@ export class VerifyEmailComponent implements OnInit {
     } else if (mode === "changeEmail") {
       this.email = LocalStorageService.get<string>(LOCAL_STORAGE_KEYS.changeEmail);
       if (!this.email) {
-        this.router.navigate(['/', AppRoutes.Auth.SIGN_IN]);
+        this.router.navigate(['/', AppRoutes.Auth.SIGN_IN_WITH_PHONE]);
         return;
       }
 

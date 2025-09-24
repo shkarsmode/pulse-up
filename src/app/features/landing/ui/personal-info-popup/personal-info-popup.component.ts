@@ -10,13 +10,13 @@ import {
 } from "@angular/forms";
 import { take } from "rxjs";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
-import { InputComponent } from "../../ui-kit/input/input.component";
-import { CloseButtonComponent } from "../../ui-kit/buttons/close-button/close-button.component";
-import { PrimaryButtonComponent } from "../../ui-kit/buttons/primary-button/primary-button.component";
 import { UserService } from "@/app/shared/services/api/user.service";
 import { atLeastOneLetterValidator } from "@/app/shared/helpers/validators/at-least-one-letter.validator";
 import { usernameUniqueValidator } from "@/app/shared/helpers/validators/username-unique.validator";
 import { ProfileService } from "@/app/shared/services/profile/profile.service";
+import { CloseButtonComponent } from "@/app/shared/components/ui-kit/buttons/close-button/close-button.component";
+import { InputComponent } from "@/app/shared/components/ui-kit/input/input.component";
+import { PrimaryButtonComponent } from "@/app/shared/components/ui-kit/buttons/primary-button/primary-button.component";
 
 export class ErrorMessageBuilder {
     public static getErrorMessage(
