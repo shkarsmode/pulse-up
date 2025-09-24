@@ -139,8 +139,6 @@ export class ProfileFormComponent implements OnInit {
 
     public previewUrl$ = this.settingsService.settings$.pipe(
         map((settings) => {
-            console.log({initialValues: this.initialValues});
-            
             if (this.initialValues.picture) {
                 return `${settings.blobUrlPrefix}${this.initialValues.picture}`;
             }
