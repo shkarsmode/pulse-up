@@ -1,9 +1,9 @@
 import { Component, inject, Input } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { PrimaryButtonComponent } from "../../ui-kit/buttons/primary-button/primary-button.component";
-import { Router } from '@angular/router';
 import { AppRoutes } from '@/app/shared/enums/app-routes.enum';
+import { AuthenticationService } from '@/app/shared/services/api/authentication.service';
+import { PrimaryButtonComponent } from "../../ui-kit/buttons/primary-button/primary-button.component";
 
 @Component({
   selector: 'app-change-email-popup',
@@ -15,7 +15,7 @@ import { AppRoutes } from '@/app/shared/enums/app-routes.enum';
 export class ChangeEmailPopupComponent {
   @Input() public mode: 'verifyEmail' | 'changeEmail' = 'verifyEmail';
 
-  private readonly router: Router = inject(Router);
+  private readonly authenticationService = inject(AuthenticationService);
   private readonly dialogRef: MatDialogRef<ChangeEmailPopupComponent> = inject(MatDialogRef);
   private readonly data: { mode: 'verifyEmail' | 'changeEmail' } = inject(MAT_DIALOG_DATA);
 
@@ -29,6 +29,8 @@ export class ChangeEmailPopupComponent {
 
   public logout(): void {
     this.dialogRef.close();
-    this.router.navigateByUrl(`/${AppRoutes.Auth.SIGN_IN_WITH_PHONE}?redirect=${AppRoutes.Profile.EDIT}`)
+    this.authenticationService.logout({
+      navigationUrl: `/${AppRoutes.Auth.SIGN_IN_WITH_PHONE}?redirect=${AppRoutes.Profile.EDIT}`
+    })
   }
 }

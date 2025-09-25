@@ -406,7 +406,7 @@ export class AuthenticationService {
 
     public signInWithEmailAndPassword = (email: string, password: string) => {
         this.isSigninInProgress$.next(true);
-        const response$ =  from(signInWithEmailAndPassword(this.firebaseAuth, email, password)).pipe(
+        const response$ = from(signInWithEmailAndPassword(this.firebaseAuth, email, password)).pipe(
             switchMap((userCredential) => this.getIdToken(userCredential)),
             tap((token) => {
                 this.userToken$.next(token);
@@ -446,13 +446,14 @@ export class AuthenticationService {
         );
     };
 
-    public logout = () => {
+    public logout = (options?: { navigationUrl?: string }) => {
+        const { navigationUrl = `/${AppRoutes.Landing.HOME}` } = options || {};
         this.routerLoadingIndicatorService.setLoading(true);
         this.signOutFromFirebase()
             .pipe(
                 switchMap(() => this.loginAsAnonymousThroughTheFirebase()),
                 tap(() => {
-                    this.router.navigateByUrl("/" + AppRoutes.Landing.HOME, {
+                    this.router.navigateByUrl(navigationUrl, {
                         replaceUrl: true,
                     });
                     this.routerLoadingIndicatorService.setLoading(false);
@@ -906,5 +907,5 @@ export class AuthenticationService {
         return throwError(
             () => new AuthenticationError(errorMessage, AuthenticationErrorCode.UNKNOWN_ERROR),
         );
-    }
+    };
 }

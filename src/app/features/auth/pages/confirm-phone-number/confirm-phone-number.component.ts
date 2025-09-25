@@ -123,7 +123,7 @@ export class ConfirmPhoneNumberComponent implements OnInit, AfterViewInit, OnDes
     private navigateToNextPage() {
         const redirectUrl = this.getRedirectUrl();
         const navigationUrl = redirectUrl || AppRoutes.Landing.HOME;
-        this.router.navigateByUrl(navigationUrl);
+        this.router.navigateByUrl(navigationUrl, { replaceUrl: true });
     }
 
     private getRedirectUrl(): string | null {
