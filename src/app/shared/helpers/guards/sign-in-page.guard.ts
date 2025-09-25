@@ -8,7 +8,7 @@ import { AuthenticationService } from "../../services/api/authentication.service
 export class SignInPageGuard implements CanActivate {
     private readonly authenticationService = inject(AuthenticationService);
     canActivate() {
-        const isAuthenticated = !!this.authenticationService.userTokenValue || !this.authenticationService.anonymousUserValue;
+        const isAuthenticated = !!this.authenticationService.userTokenValue;
         if (!isAuthenticated) {
             return true;
         }
