@@ -22,7 +22,6 @@ export const AUTH_ROUTES: Routes = [
                     import("./pages/confirm-phone-number/confirm-phone-number.component").then(
                         (m) => m.ConfirmPhoneNumberComponent,
                     ),
-                canActivate: [SignInPageGuard],
             },
             {
                 path: AppRoutes.Auth.SIGN_IN_WITH_EMAIL_AND_PASSWORD,
