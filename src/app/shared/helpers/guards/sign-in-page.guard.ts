@@ -1,6 +1,5 @@
 import { inject, Injectable } from "@angular/core";
 import { CanActivate } from "@angular/router";
-import { catchError, map, Observable, of } from "rxjs";
 import { AuthenticationService } from "../../services/api/authentication.service";
 
 @Injectable({
@@ -8,12 +7,11 @@ import { AuthenticationService } from "../../services/api/authentication.service
 })
 export class SignInPageGuard implements CanActivate {
     private readonly authenticationService = inject(AuthenticationService);
-    canActivate(): Observable<boolean> {
-        return this.authenticationService.signOutFromFirebase().pipe(
-            catchError(() => {
-                return of(false);
-            }),
-            map(() => true),
-        )
+    canActivate() {
+        const isAuthenticated = !!this.authenticationService.userTokenValue || !this.authenticationService.anonymousUserValue;
+        if (!isAuthenticated) {
+            return true;
+        }
+        return false;
     }
 }

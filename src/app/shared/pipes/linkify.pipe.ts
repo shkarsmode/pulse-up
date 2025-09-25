@@ -10,7 +10,7 @@ import escape from "lodash.escape";
 export class LinkifyPipe implements PipeTransform {
     private readonly sanitizer = inject(DomSanitizer);
 
-    transform(text: string | null | undefined) {
+    transform(text: string | null | undefined): string {
         if (!text) return "";
 
         const linkifyOptions: Opts = {
