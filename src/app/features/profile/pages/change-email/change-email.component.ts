@@ -24,6 +24,7 @@ import {
 } from "@/app/shared/helpers/errors/authentication-error";
 import { SecondaryButtonComponent } from "@/app/shared/components/ui-kit/buttons/secondary-button/secondary-button.component";
 import { ProfileHeaderComponent } from "../../ui/profile-header/profile-header.component";
+import { isErrorWithMessage } from "@/app/shared/helpers/errors/is-error-with-message";
 
 @Component({
     selector: "app-change-email",
@@ -86,7 +87,8 @@ export class ChangeEmailComponent {
     }
 
     public onSubmit(): void {
-        if (this.form.invalid || this.submitting) {
+        const email: string = this.form.value.email?.trim() || "";
+        if (this.form.invalid || this.submitting || !email) {
             return;
         }
 
@@ -98,7 +100,7 @@ export class ChangeEmailComponent {
 
         this.authenticationService
             .changeEmail({
-                email: this.emailControl?.value || "",
+                email,
                 continueUrl:
                     window.location.origin +
                     `/profile/verify-email?action=${action}&showPopup=true`,
@@ -112,7 +114,7 @@ export class ChangeEmailComponent {
                         { replaceUrl: true },
                     );
                 },
-                error: (error) => {
+                error: (error: unknown) => {
                     this.submitting = false;
 
                     if (
@@ -127,8 +129,12 @@ export class ChangeEmailComponent {
                         return;
                     }
 
+                    if (isErrorWithMessage(error)) {
+                        this.errorMessage = error.message;
+                        return;
+                    }
+
                     this.errorMessage =
-                        error.message ||
                         "An error occurred while changing the email. Please try again.";
                 },
             });

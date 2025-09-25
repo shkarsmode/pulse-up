@@ -19,7 +19,8 @@ import {
     updatePhoneNumber,
     User,
     UserCredential,
-    verifyBeforeUpdateEmail,
+    updateEmail,
+    sendEmailVerification,
 } from "firebase/auth";
 import { jwtDecode, JwtPayload } from "jwt-decode";
 import { BehaviorSubject, firstValueFrom, forkJoin, from, Observable, of, throwError } from "rxjs";
@@ -288,11 +289,11 @@ export class AuthenticationService {
             );
         }
         return from(
-            verifyBeforeUpdateEmail(user, email, {
-                url: continueUrl,
-                handleCodeInApp: true,
-            }),
+            updateEmail(user, email)
         ).pipe(
+            switchMap(() => sendEmailVerification(user, {
+                url: continueUrl,
+            })),
             tap(() => {
                 LocalStorageService.set(LOCAL_STORAGE_KEYS.changeEmail, email);
             }),
