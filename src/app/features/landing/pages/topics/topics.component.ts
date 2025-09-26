@@ -49,15 +49,15 @@ export class TopicsComponent implements OnInit {
     public userVotesMap = toSignal(this.votesService.votesByTopicId$);
     public suggestTopicRoute = "/" + AppRoutes.User.Topic.SUGGEST;
     public globalTopicsQuery = this.topicsService.globalTopicsQuery;
-    public localTopicsQuery = this.topicsService.localTopicsQuery;
-    private isEmptyLocalTopics$ = toObservable(this.topicsService.isEmptyLocalTopics);
+    public isTrendingTopicsLoading = this.topicsService.isTrendingTopicsLoading;
+    private isEmptyTrendingTopics$ = toObservable(this.topicsService.isEmptyTrendingTopics);
     private selectedCategory$ = toObservable(this.topicsService.category);
     private isSwitchedCategory = new BehaviorSubject(false);
 
     public categories = this.topicsService.categories;
-    public localTopics = this.topicsService.localTopics;
+    public trendingTopics = this.topicsService.trendingTopics;
     public isEmptyGlobalTopics = this.topicsService.isEmptyGlobalTopics;
-    public isEmptyLocalTopics = this.topicsService.isEmptyLocalTopics;
+    public isEmptyTrendingTopics = this.topicsService.isEmptyTrendingTopics;
 
     public get searchText() {
         return this.topicsService.searchText();
@@ -73,11 +73,11 @@ export class TopicsComponent implements OnInit {
     }
 
     public ngOnInit() {
-        this.refetchQueries();
+        this.topicsService.refetchTopics();
         this.topicsService.syncFiltersWithQueryParams();
 
 
-        combineLatest([this.isEmptyLocalTopics$, this.selectedCategory$, this.isSwitchedCategory]).pipe(
+        combineLatest([this.isEmptyTrendingTopics$, this.selectedCategory$, this.isSwitchedCategory]).pipe(
             tap(([isEmpty, selectedCategory, isSwitched]) => {
                 if (isEmpty && selectedCategory === "trending" && !isSwitched) {
                     this.topicsService.setCategory("newest");
@@ -99,17 +99,5 @@ export class TopicsComponent implements OnInit {
 
     public onCategorySelected(category: string): void {
         this.topicsService.setCategory(category);
-    }
-
-    private refetchQueries() {
-        const localTopics = this.localTopicsQuery.data();
-        const globalTopics = this.globalTopicsQuery.data()?.pages.flat();
-
-        if (localTopics) {
-            this.localTopicsQuery.refetch();
-        }
-        if (globalTopics) {
-            this.globalTopicsQuery.refetch();
-        }
     }
 }

@@ -76,19 +76,19 @@
                 </div>
             } @else {
                 <div class="pulses__list-wrap">
-                    @if (localTopicsQuery.isLoading()) {
+                    @if (isTrendingTopicsLoading()) {
                         <p class="pulses__loading">
                             <app-loading-indicator />
                         </p>
                     }
                     <div class="pulses__list">
-                        @for (topic of localTopics(); track topic.id) {
+                        @for (topic of trendingTopics(); track topic.id) {
                             <app-trending-topics-list-item
                                 [data]="topic"
                                 [vote]="userVotesMap()?.get(topic.id) || null" />
                         }
                     </div>
-                    @if (isEmptyLocalTopics()) {
+                    @if (isEmptyTrendingTopics()) {
                         <app-topics-empty-list
                             [message]="[
                                 'There are no topics nearby.',
