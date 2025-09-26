@@ -41,8 +41,6 @@ enum ProfileRoutes {
 
 enum AuthRoutes {
     SIGN_IN_WITH_PHONE = 'sign-in',
-    SIGN_IN_WITH_EMAIL_AND_PASSWORD = 'sign-in-with-email',
-    SIGN_UP_WITH_EMAIL_AND_PASSWORD = 'sign-up-with-email',
     CONFIRM_PHONE_NUMBER = 'confirm-phone-number',
 }
 
