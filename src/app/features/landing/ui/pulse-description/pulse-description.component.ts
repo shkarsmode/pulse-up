@@ -16,7 +16,7 @@ export class PulseDescriptionComponent {
     set descriptionElement(el: ElementRef<HTMLDivElement> | undefined) {
         if (el) {
             this.description = el;
-            // this.checkIfDescriptionTruncated();
+            this.checkIfDescriptionTruncated();
         }
     }
     private description?: ElementRef<HTMLDivElement>;
@@ -27,15 +27,15 @@ export class PulseDescriptionComponent {
         this.isCollapsed.update((value) => !value);
     }
 
-    // private checkIfDescriptionTruncated(): void {
-    //     const textElement = this.description?.nativeElement;
-    //     if (!textElement) return;
+    private checkIfDescriptionTruncated(): void {
+        const textElement = this.description?.nativeElement;
+        if (!textElement) return;
 
-    //     const fullHeight = textElement.scrollHeight;
-    //     const visibleHeight = textElement.clientHeight + 2;
-    //     const heightDiff = fullHeight - visibleHeight;
-    //     const isTruncated = heightDiff > 19;
+        const fullHeight = textElement.scrollHeight;
+        const visibleHeight = textElement.clientHeight;
+        const heightDiff = fullHeight - visibleHeight;
+        const isTruncated = heightDiff > 28; // 28px is approx. height of 2 lines of text
 
-    //     this.isCollapsed.set(!isTruncated);
-    // }
+        this.isCollapsed.set(isTruncated);
+    }
 }
