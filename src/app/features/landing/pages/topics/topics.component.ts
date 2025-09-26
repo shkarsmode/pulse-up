@@ -20,9 +20,9 @@ import { AppRoutes } from "@/app/shared/enums/app-routes.enum";
 import { TopicsService } from "./topics.service";
 
 @Component({
-    selector: "app-pulses",
-    templateUrl: "./pulses.component.html",
-    styleUrl: "./pulses.component.scss",
+    selector: "app-topics",
+    templateUrl: "./topics.component.html",
+    styleUrl: "./topics.component.scss",
     standalone: true,
     imports: [
         CommonModule,
@@ -41,7 +41,7 @@ import { TopicsService } from "./topics.service";
     providers: [InfiniteLoaderService, PulsesPaginationService],
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class PulsesComponent implements OnInit {
+export class TopicsComponent implements OnInit {
     private readonly destroyRef = inject(DestroyRef);
     private readonly votesService = inject(VotesService);
     public readonly topicsService = inject(TopicsService);
