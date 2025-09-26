@@ -15,7 +15,7 @@ export class IpLocationService {
 
     private readonly ipInfoUrl = "https://api.ipinfo.io/lite/";
 
-    public countryCoodinates$ = new Observable<ILocationCoordinates>((observer) => {
+    public countryCoordinates$ = new Observable<ILocationCoordinates>((observer) => {
         this.getMapboxFeatureFromIp()
             .then((feature) => {
                 observer.next({

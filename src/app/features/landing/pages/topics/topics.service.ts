@@ -1,14 +1,14 @@
 import { computed, inject, Injectable, signal } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
-import { injectInfiniteQuery, injectQuery } from "@tanstack/angular-query-experimental";
-import { concat, first, lastValueFrom, map, of, shareReplay, switchMap } from "rxjs";
-import { toSignal } from "@angular/core/rxjs-interop";
-import { geoToH3 } from "h3-js";
+import { injectInfiniteQuery } from "@tanstack/angular-query-experimental";
+import { combineLatest, lastValueFrom, map, shareReplay, tap } from "rxjs";
+import { toObservable, toSignal } from "@angular/core/rxjs-interop";
 import { AppConstants, QUERY_KEYS } from "@/app/shared/constants";
 import { PulseService } from "@/app/shared/services/api/pulse.service";
 import { PendingTopicsService } from "@/app/shared/services/topic/pending-topics.service";
-import { IpLocationService } from "@/app/shared/services/core/ip-location.service";
 import { StringUtils } from "@/app/shared/helpers/string-utils";
+import { TrendingTopicsService } from "../../services/trending-topics/trending-topics.service";
+import { ITopic } from "@/app/shared/interfaces";
 
 @Injectable({ providedIn: "root" })
 export class TopicsService {
@@ -16,13 +16,18 @@ export class TopicsService {
     private route = inject(ActivatedRoute);
     private pulseService = inject(PulseService);
     private pendingTopicsService = inject(PendingTopicsService);
-    private readonly ipLocationService = inject(IpLocationService);
+    private trendingTopicsService = inject(TrendingTopicsService);
 
     private searchTextSignal = signal("");
+    private searchText$ = toObservable(this.searchTextSignal);
     private categorySignal = signal<string>(AppConstants.DEFAULT_CATEGORIES[0]);
+    private trendingTopicsSignal = signal<ITopic[] | null>(null);
+    private isTrendingTopicsLoadingSignal = signal(false);
+    private trendingTopics$ = toObservable(this.trendingTopicsSignal);
 
     public searchText = this.searchTextSignal.asReadonly();
     public category = this.categorySignal.asReadonly();
+    public isTrendingTopicsLoading = this.isTrendingTopicsLoadingSignal.asReadonly();
     public categories = toSignal(
         this.pulseService.categories$.pipe(
             map((categories) => categories.map((category) => category.name)),
@@ -64,31 +69,25 @@ export class TopicsService {
         enabled: this.category() !== "trending",
     }));
 
-    public localTopicsQuery = injectQuery(() => ({
-        queryKey: [
-            QUERY_KEYS.topics,
-            this.category(),
-            this.pendingTopicsService.pendingTopicsIds(),
-        ],
-        queryFn: () => lastValueFrom(this.getLocalTopics()),
-        enabled: this.category() === "trending",
-    }));
-
-    public localTopics = computed(() => {
-        const localTopics = this.localTopicsQuery.data() || [];
-        const searchText = this.searchText();
-        const searchTextNormalized = StringUtils.normalizeWhitespace(searchText.toLowerCase());
-        if (searchText) {
-            return localTopics.filter(
-                (topic) =>
-                    topic.title.toLowerCase().includes(searchTextNormalized) ||
-                    topic.keywords.some((keyword) =>
-                        keyword.toLowerCase().includes(searchTextNormalized),
-                    ),
-            );
-        }
-        return localTopics;
-    });
+    public trendingTopics = toSignal(
+        combineLatest([this.trendingTopics$, this.searchText$]).pipe(
+            map(([topics, searchText]) => {
+                const searchTextNormalized = StringUtils.normalizeWhitespace(
+                    searchText.toLowerCase(),
+                );
+                if (searchTextNormalized && topics) {
+                    return topics.filter(
+                        (topic) =>
+                            topic.title.toLowerCase().includes(searchTextNormalized) ||
+                            topic.keywords.some((keyword) =>
+                                keyword.toLowerCase().includes(searchTextNormalized),
+                            ),
+                    );
+                }
+                return topics;
+            }),
+        ),
+    );
 
     public isEmptyGlobalTopics = computed(() => {
         const isLoading = this.globalTopicsQuery.isLoading();
@@ -96,12 +95,17 @@ export class TopicsService {
         return !isLoading && !hasTopics;
     });
 
-    public isEmptyLocalTopics = computed(() => {
-        const isLoading = this.localTopicsQuery.isLoading();
-        const hasLocalTopics = !!this.localTopics().length;
-        return !isLoading && !hasLocalTopics;
+    public isEmptyTrendingTopics = computed(() => {
+        const trendingTopics = this.trendingTopics();
+        const isLoading = this.isTrendingTopicsLoadingSignal();
+        return !isLoading && trendingTopics && !trendingTopics.length;
     });
 
+    constructor() {
+        this.loadTrendingTopics().then((topics) => {
+            this.trendingTopicsSignal.set(topics);
+        });
+    }
 
     public setSearchText(text: string) {
         this.searchTextSignal.set(text);
@@ -125,11 +129,25 @@ export class TopicsService {
         }
     }
 
+    public refetchTopics() {
+        const globalTopics = this.globalTopicsQuery.data()?.pages.flat();
+        if (globalTopics) {
+            this.globalTopicsQuery.refetch();
+        }
+
+        const trendingTopics = this.trendingTopicsSignal();
+        if (trendingTopics) {
+            this.reloadTrendingTopics().then((topics) => {
+                this.trendingTopicsSignal.set(topics);
+            });
+        }
+    }
+
     private updateQueryParams() {
         const search = this.searchText();
         const category = this.category();
         const queryParams: Record<string, string> = {};
-        
+
         if (search.length) {
             queryParams["search"] = search;
         }
@@ -142,22 +160,24 @@ export class TopicsService {
         });
     }
 
-    private getLocalTopics() {
-        return this.ipLocationService.countryCoodinates$.pipe(
-            map(({ latitude, longitude }) => geoToH3(latitude, longitude, 0)),
-            switchMap((h3Index) => {
-                return concat(this.pulseService.getTopicsByCellIndex(h3Index)).pipe(
-                    first((topics) => topics.length > 0, []),
-                );
-            }),
-            switchMap((topics) => {
-                if (topics.length === 0) return of([]);
-                const topicsIds = topics.map(({ id }) => id);
-                return this.pulseService.get({
-                    id: topicsIds,
-                });
-            }),
-            shareReplay({ bufferSize: 1, refCount: true }),
-        );
+    private async loadTrendingTopics() {
+        try {
+            this.isTrendingTopicsLoadingSignal.set(true);
+            return await this.trendingTopicsService.getTopics();
+        } catch (error) {
+            console.log("Error fetching trending topics:", error);
+            return [] as ITopic[];
+        } finally {
+            this.isTrendingTopicsLoadingSignal.set(false);
+        }
+    }
+
+    private async reloadTrendingTopics() {
+        try {
+            return await this.trendingTopicsService.getTopics();
+        } catch (error) {
+            console.log("Error fetching trending topics:", error);
+            return [] as ITopic[];
+        }
     }
 }
