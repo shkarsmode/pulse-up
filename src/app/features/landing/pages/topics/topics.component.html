@@ -1,103 +1,105 @@
-<app-container>
-    <div class="pulses">
-        <main class="pulses__main">
-            <div class="pulses__header">
-                <div class="pulses__title-wrap">
-                    <h1 class="pulses__title">Support What Matters</h1>
-                    <app-primary-button
-                        class="pulses__add-topic-button add-topic-button add-topic-button--desktop"
-                        size="large"
-                        [fullWidth]="true"
-                        [routerLink]="suggestTopicRoute">
-                        Start a Topic
-                    </app-primary-button>
-                    <app-primary-button
-                        class="pulses__add-topic-button add-topic-button add-topic-button--mobile"
-                        size="large"
-                        [circle]="true"
-                        [routerLink]="suggestTopicRoute">
-                        <svg-icon
-                            src="assets/svg/plus.svg"
-                            class="add-topic-button__icon"></svg-icon>
-                        <span class="visualy-hidden">Start a Topic</span>
-                    </app-primary-button>
-                </div>
-                <div class="pulses__search-wrap">
-                    <app-input-search
-                        class="pulses__search"
-                        (handleValueChange)="onSearchValueChange($event)" />
-                    <app-category-filter-menu
-                        class="pulses__filter"
-                        [options]="categories()"
-                        [activeCategory]="selectedCategory"
-                        (selectedCategory)="onCategorySelected($event)" />
+<app-lending-page-layout>
+    <app-container>
+        <div class="pulses">
+            <main class="pulses__main">
+                <div class="pulses__header">
+                    <div class="pulses__title-wrap">
+                        <h1 class="pulses__title">Support What Matters</h1>
+                        <app-primary-button
+                            class="pulses__add-topic-button add-topic-button add-topic-button--desktop"
+                            size="large"
+                            [fullWidth]="true"
+                            [routerLink]="suggestTopicRoute">
+                            Start a Topic
+                        </app-primary-button>
+                        <app-primary-button
+                            class="pulses__add-topic-button add-topic-button add-topic-button--mobile"
+                            size="large"
+                            [circle]="true"
+                            [routerLink]="suggestTopicRoute">
+                            <svg-icon
+                                src="assets/svg/plus.svg"
+                                class="add-topic-button__icon"></svg-icon>
+                            <span class="visualy-hidden">Start a Topic</span>
+                        </app-primary-button>
+                    </div>
+                    <div class="pulses__search-wrap">
+                        <app-input-search
+                            class="pulses__search"
+                            (handleValueChange)="onSearchValueChange($event)" />
+                        <app-category-filter-menu
+                            class="pulses__filter"
+                            [options]="categories()"
+                            [activeCategory]="selectedCategory"
+                            (selectedCategory)="onCategorySelected($event)" />
+                    </div>
+                    @if (!isTrendingCategorySelected) {
+                        <div class="pulses__selection">
+                            <app-category-filter-selection
+                                [category]="selectedCategory"
+                                [cancelable]="!isTrendingCategorySelected"
+                                (cancelSelection)="onCategorySelected('trending')" />
+                        </div>
+                    }
                 </div>
                 @if (!isTrendingCategorySelected) {
-                    <div class="pulses__selection">
-                        <app-category-filter-selection
-                            [category]="selectedCategory"
-                            [cancelable]="!isTrendingCategorySelected"
-                            (cancelSelection)="onCategorySelected('trending')" />
-                    </div>
-                }
-            </div>
-            @if (!isTrendingCategorySelected) {
-                <div class="pulses__list-wrap">
-                    @if (globalTopicsQuery.isLoading()) {
-                        <p class="pulses__loading">
-                            <app-loading-indicator />
-                        </p>
-                    }
-                    <div
-                        class="pulses__list"
-                        infiniteScroll
-                        [infiniteScrollDistance]="2"
-                        [infiniteScrollThrottle]="150"
-                        (scrolled)="loadMore()">
-                        @for (page of globalTopicsQuery.data()?.pages; track $index) {
-                            @for (topic of page; track topic.id) {
-                                <app-trending-topics-list-item
-                                    [data]="topic"
-                                    [vote]="userVotesMap()?.get(topic.id) || null"
-                                    *ngIf="!globalTopicsQuery.isLoading()" />
-                            }
-                        }
-                        @if (isLoadingMore) {
+                    <div class="pulses__list-wrap">
+                        @if (globalTopicsQuery.isLoading()) {
                             <p class="pulses__loading">
                                 <app-loading-indicator />
                             </p>
                         }
-                    </div>
-                    @if (isEmptyGlobalTopics()) {
-                        <app-topics-empty-list
-                            [searchString]="searchText"
-                            class="pulses__empty-list" />
-                    }
-                </div>
-            } @else {
-                <div class="pulses__list-wrap">
-                    @if (isTrendingTopicsLoading()) {
-                        <p class="pulses__loading">
-                            <app-loading-indicator />
-                        </p>
-                    }
-                    <div class="pulses__list">
-                        @for (topic of trendingTopics(); track topic.id) {
-                            <app-trending-topics-list-item
-                                [data]="topic"
-                                [vote]="userVotesMap()?.get(topic.id) || null" />
+                        <div
+                            class="pulses__list"
+                            infiniteScroll
+                            [infiniteScrollDistance]="2"
+                            [infiniteScrollThrottle]="150"
+                            (scrolled)="loadMore()">
+                            @for (page of globalTopicsQuery.data()?.pages; track $index) {
+                                @for (topic of page; track topic.id) {
+                                    <app-trending-topics-list-item
+                                        [data]="topic"
+                                        [vote]="userVotesMap()?.get(topic.id) || null"
+                                        *ngIf="!globalTopicsQuery.isLoading()" />
+                                }
+                            }
+                            @if (isLoadingMore) {
+                                <p class="pulses__loading">
+                                    <app-loading-indicator />
+                                </p>
+                            }
+                        </div>
+                        @if (isEmptyGlobalTopics()) {
+                            <app-topics-empty-list
+                                [searchString]="searchText"
+                                class="pulses__empty-list" />
                         }
                     </div>
-                    @if (isEmptyTrendingTopics()) {
-                        <app-topics-empty-list
-                            [message]="[
-                                'There are no topics nearby.',
-                                'Start the first topic in your area!',
-                            ]"
-                            class="pulses__empty-list" />
-                    }
-                </div>
-            }
-        </main>
-    </div>
-</app-container>
+                } @else {
+                    <div class="pulses__list-wrap">
+                        @if (isTrendingTopicsLoading()) {
+                            <p class="pulses__loading">
+                                <app-loading-indicator />
+                            </p>
+                        }
+                        <div class="pulses__list">
+                            @for (topic of trendingTopics(); track topic.id) {
+                                <app-trending-topics-list-item
+                                    [data]="topic"
+                                    [vote]="userVotesMap()?.get(topic.id) || null" />
+                            }
+                        </div>
+                        @if (isEmptyTrendingTopics()) {
+                            <app-topics-empty-list
+                                [message]="[
+                                    'There are no topics nearby.',
+                                    'Start the first topic in your area!',
+                                ]"
+                                class="pulses__empty-list" />
+                        }
+                    </div>
+                }
+            </main>
+        </div>
+    </app-container>
+</app-lending-page-layout>

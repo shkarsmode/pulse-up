@@ -44,6 +44,7 @@ import { ITopic } from "@/app/shared/interfaces";
 import { KeywordButtonComponent } from "../../ui/keyword-button/keyword-button.component";
 import { PulseDescriptionComponent } from "../../ui/pulse-description/pulse-description.component";
 import { LinkifyPipe } from "@/app/shared/pipes/linkify.pipe";
+import { LendingPageLayoutComponent } from "../../ui/lending-page-layout/lending-page-layout.component";
 
 @Component({
     selector: "app-pulse-page",
@@ -76,6 +77,7 @@ import { LinkifyPipe } from "@/app/shared/pipes/linkify.pipe";
         KeywordButtonComponent,
         PulseDescriptionComponent,
         LinkifyPipe,
+        LendingPageLayoutComponent,
     ],
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -111,6 +113,7 @@ export class PulsePageComponent implements OnInit, OnDestroy {
     public qrCodeBannerTitle = this.pulsePageService.qrCodeBannerTitle;
     public qrCodeBannerText = this.pulsePageService.qrCodeBannerText;
     public keywords = this.pulsePageService.keywords;
+    public mapCenterCoordinates = this.pulsePageService.mapCenterCoordinates;
     public topicIcon$ = combineLatest([
         toObservable(this.pulsePageService.topic),
         this.settingsService.settings$,

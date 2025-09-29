@@ -18,6 +18,7 @@ import { TopicsEmptyListComponent } from "../../ui/topics-empty-list/topics-empt
 import { PrimaryButtonComponent } from "@/app/shared/components/ui-kit/buttons/primary-button/primary-button.component";
 import { AppRoutes } from "@/app/shared/enums/app-routes.enum";
 import { TopicsService } from "./topics.service";
+import { LendingPageLayoutComponent } from "../../ui/lending-page-layout/lending-page-layout.component";
 
 @Component({
     selector: "app-topics",
@@ -37,6 +38,7 @@ import { TopicsService } from "./topics.service";
         TopicsEmptyListComponent,
         PrimaryButtonComponent,
         AngularSvgIconModule,
+        LendingPageLayoutComponent,
     ],
     providers: [InfiniteLoaderService, PulsesPaginationService],
     changeDetection: ChangeDetectionStrategy.OnPush,
@@ -76,16 +78,21 @@ export class TopicsComponent implements OnInit {
         this.topicsService.refetchTopics();
         this.topicsService.syncFiltersWithQueryParams();
 
-
-        combineLatest([this.isEmptyTrendingTopics$, this.selectedCategory$, this.isSwitchedCategory]).pipe(
-            tap(([isEmpty, selectedCategory, isSwitched]) => {
-                if (isEmpty && selectedCategory === "trending" && !isSwitched) {
-                    this.topicsService.setCategory("newest");
-                    this.isSwitchedCategory.next(true);
-                }
-            }),
-            takeUntilDestroyed(this.destroyRef),
-        ).subscribe();
+        combineLatest([
+            this.isEmptyTrendingTopics$,
+            this.selectedCategory$,
+            this.isSwitchedCategory,
+        ])
+            .pipe(
+                tap(([isEmpty, selectedCategory, isSwitched]) => {
+                    if (isEmpty && selectedCategory === "trending" && !isSwitched) {
+                        this.topicsService.setCategory("newest");
+                        this.isSwitchedCategory.next(true);
+                    }
+                }),
+                takeUntilDestroyed(this.destroyRef),
+            )
+            .subscribe();
     }
 
     public loadMore() {

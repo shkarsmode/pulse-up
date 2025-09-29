@@ -1,17 +1,21 @@
-<app-main-hero />
+<app-lending-page-layout>
 
-<div class="page-container">
-    <div class="main_container">
-        @defer {
-            <section class="section pulses-section">
-                <app-top-pulses />
-            </section>
-            <section class="section">
-                <app-about-section />
-            </section>
-            <section class="section">
-                <app-ad-banner #appAdBanner />
-            </section>
-        }
+    <app-main-hero />
+
+    <div class="page-container">
+        <div class="main_container">
+            @defer {
+                <section class="section pulses-section">
+                    <app-top-pulses />
+                </section>
+                <section class="section">
+                    <app-about-section />
+                </section>
+                <section class="section">
+                    <app-ad-banner #appAdBanner />
+                </section>
+            }
+        </div>
     </div>
-</div>
+    
+</app-lending-page-layout>

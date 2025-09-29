@@ -6,7 +6,6 @@ import { PublicPageGuard } from "@/app/shared/helpers/guards/public-page.guard";
 import { HeaderCleanupGuard } from "@/app/shared/components/header/header-cleanup.guard";
 import { metaTagsData } from "@/assets/data/meta-tags";
 import { FooterGuard } from "@/app/shared/components/footer/footer.guard";
-import { FooterCleanupGuard } from "@/app/shared/components/footer/footerCleanup.guard";
 
 const Landing = AppRoutes.Landing;
 
@@ -28,7 +27,6 @@ export const LANDING_ROUTES: Routes = [
                 loadComponent: () =>
                     import("./pages/map-page/map-page.component").then((m) => m.MapPageComponent),
                 canActivate: [FooterGuard, PublicPageGuard],
-                canDeactivate: [FooterCleanupGuard],
             },
             {
                 path: Landing.TOPICS,

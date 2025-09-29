@@ -1,4 +1,4 @@
-import { Component, DestroyRef, effect, inject, OnInit } from "@angular/core";
+import { Component, computed, DestroyRef, effect, inject, OnInit } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { ActivatedRoute, ParamMap, Router } from "@angular/router";
 import { takeUntilDestroyed, toSignal } from "@angular/core/rxjs-interop";
@@ -13,8 +13,10 @@ import { MapComponent } from "@/app/shared/components/map/map.component";
 import { FadeInDirective } from "@/app/shared/animations/fade-in.directive";
 import { FormatNumberPipe } from "@/app/shared/pipes/format-number.pipe";
 import { LoadImgPathDirective } from "@/app/shared/directives/load-img-path/load-img-path.directive";
-import { BackButtonComponent } from "@/app/shared/components/ui-kit/buttons/back-button/back-button.component";
 import { MapHeatmapLayerComponent } from "@/app/shared/components/map/map-heatmap-layer/map-heatmap-layer.component";
+import { HeaderComponent } from "@/app/shared/components/header/header.component";
+import { AppConstants } from "@/app/shared/constants";
+import { IpLocationService } from "@/app/shared/services/core/ip-location.service";
 
 @Component({
     selector: "app-pulse-heatmap-page",
@@ -27,19 +29,21 @@ import { MapHeatmapLayerComponent } from "@/app/shared/components/map/map-heatma
         FadeInDirective,
         FormatNumberPipe,
         LoadImgPathDirective,
-        BackButtonComponent,
         MapHeatmapLayerComponent,
+        HeaderComponent,
     ],
 })
 export class PulseHeatmapPageComponent implements OnInit {
-    private readonly destroyRef = inject(DestroyRef);
-    private readonly router: Router = inject(Router);
-    private readonly route: ActivatedRoute = inject(ActivatedRoute);
-    private readonly pulseService: PulseService = inject(PulseService);
+    private destroyRef = inject(DestroyRef);
+    private router: Router = inject(Router);
+    private route: ActivatedRoute = inject(ActivatedRoute);
+    private pulseService: PulseService = inject(PulseService);
+    private ipLocationService = inject(IpLocationService);
     private mediaService = inject(MediaQueryService);
 
     private isMobile = toSignal(this.mediaService.mediaQuery("max", "SM"));
     private isSmallMobile = toSignal(this.mediaService.mediaQuery("max", "XS"));
+    private coordinates = toSignal(this.ipLocationService.countryCoordinates$);
     private readonly configMap: Record<"xs" | "sm" | "default", ResponsiveMapConfig> = {
         xs: {
             zoom: [1.9],
@@ -73,7 +77,12 @@ export class PulseHeatmapPageComponent implements OnInit {
     public zoom: [number] = this.configMap.default.zoom;
     public minZoom: number = this.configMap.default.minZoom;
     public maxBounds: mapboxgl.LngLatBoundsLike = this.configMap.default.maxBounds;
-    public center: [number, number] = [-100.661, 37.7749];
+    public mapCenterCoordinates = computed(() => {
+        const coordinates = this.coordinates();
+        return coordinates
+            ? [coordinates.longitude, coordinates.latitude] as [number, number]
+            : AppConstants.MAP_CENTER_COORDINATES;
+    });
 
     constructor() {
         effect(() => {
@@ -86,7 +95,6 @@ export class PulseHeatmapPageComponent implements OnInit {
             this.zoom = config.zoom;
             this.minZoom = config.minZoom;
             this.maxBounds = config.maxBounds;
-            this.center = [...this.center];
         });
     }
 
@@ -99,7 +107,9 @@ export class PulseHeatmapPageComponent implements OnInit {
     }
 
     private initPulseUrlIdListener(): void {
-        this.route.paramMap.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(this.handlePulseUrlIdListener.bind(this));
+        this.route.paramMap
+            .pipe(takeUntilDestroyed(this.destroyRef))
+            .subscribe(this.handlePulseUrlIdListener.bind(this));
     }
 
     private handlePulseUrlIdListener(data: ParamMap): void {
