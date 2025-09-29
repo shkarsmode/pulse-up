@@ -3,32 +3,30 @@
     fadeIn
     [childrenFadeIn]="true"
     *ngIf="!isLoading">
-    <div class="pulse__back pulse-container">
-        <app-back-button />
-    </div>
-    <div class="pulse__header pulse-header pulse-container">
-        <div class="pulse-header__row">
+    <div class="pulse-header">
+        <!-- <app-back-button class="pulse-header__back" /> -->
+        <div class="pulse-header__topic">
             <img
-                class="pulse__header-logo"
+                class="pulse-header__logo"
                 [src]="pulse.icon"
-                width="160"
-                height="160"
+                width="40"
+                height="40"
                 alt="pulse icon"
                 appLoadImgPath />
-            <div class="pulse__header-title">
+            <div class="pulse-header__title">
                 <h2>{{ pulse.title }}</h2>
                 <div>
                     {{ pulse.author.name }}
                 </div>
-                <div class="pulse__last-votes">
+                <div class="pulse-header__last-votes">
                     {{ pulse.stats?.lastDayVotes || 0 | formatNumber }}
                     Pulses received in last 24 hours
                 </div>
             </div>
         </div>
     </div>
-
     <app-map
+        class="pulse__map"
         [center]="center"
         [zoom]="zoom"
         [minZoom]="minZoom"
