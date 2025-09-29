@@ -77,7 +77,7 @@ export class PulseHeatmapPageComponent implements OnInit {
     public zoom: [number] = this.configMap.default.zoom;
     public minZoom: number = this.configMap.default.minZoom;
     public maxBounds: mapboxgl.LngLatBoundsLike = this.configMap.default.maxBounds;
-    public countryCoordinates = computed(() => {
+    public mapCenterCoordinates = computed(() => {
         const coordinates = this.coordinates();
         return coordinates
             ? [coordinates.longitude, coordinates.latitude] as [number, number]

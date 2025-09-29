@@ -158,6 +158,7 @@
                             [zoom]="[1.5]"
                             [minZoom]="1.5"
                             [weights]="{ enabled: true }"
+                            [center]="mapCenterCoordinates()"
                             (mapLoaded)="onMapLoaded($event)">
                             <ng-container *ngIf="map">
                                 <app-map-heatmap-layer

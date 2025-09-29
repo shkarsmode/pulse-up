@@ -22,23 +22,25 @@ import { toObservable, toSignal } from "@angular/core/rxjs-interop";
 import { MetadataService } from "@/app/shared/services/core/metadata.service";
 import { VoteUtils } from "@/app/shared/helpers/vote-utils";
 import { SuggestedTopicsService } from "@/app/shared/services/topic/suggested-topics.service";
-import { QUERY_KEYS } from "@/app/shared/constants";
+import { AppConstants, QUERY_KEYS } from "@/app/shared/constants";
 import { injectQuery } from "@tanstack/angular-query-experimental";
 import { IVote } from "@/app/shared/interfaces/vote.interface";
+import { IpLocationService } from "@/app/shared/services/core/ip-location.service";
 import { ITopicKeyword } from "../../interfaces/topic-keyword.interface";
 
 @Injectable({
     providedIn: "root",
 })
 export class PulsePageService {
-    private readonly router = inject(Router);
-    private readonly voteService = inject(VoteService);
-    private readonly pulseService = inject(PulseService);
-    private readonly authService = inject(AuthenticationService);
-    private readonly settingsService = inject(SettingsService);
-    private readonly notificationService = inject(NotificationService);
-    private readonly metadataService = inject(MetadataService);
-    private readonly suggestedTopicsService = inject(SuggestedTopicsService);
+    private router = inject(Router);
+    private voteService = inject(VoteService);
+    private pulseService = inject(PulseService);
+    private authService = inject(AuthenticationService);
+    private settingsService = inject(SettingsService);
+    private notificationService = inject(NotificationService);
+    private metadataService = inject(MetadataService);
+    private suggestedTopicsService = inject(SuggestedTopicsService);
+    private ipLocationService = inject(IpLocationService);
 
     constructor() {
         effect(() => {
@@ -51,6 +53,7 @@ export class PulsePageService {
 
     private anonymousUser = toSignal(this.authService.anonymousUser, { initialValue: null });
     private settings = toSignal(this.settingsService.settings$);
+    private coordinates = toSignal(this.ipLocationService.countryCoordinates$);
 
     private topicId = signal<number | null>(null);
     private topicShareKey = signal<string | null>(null);
@@ -173,7 +176,7 @@ export class PulsePageService {
     });
 
     public qrCodeBannerTitle = computed(() => this.topicQuery.data()?.title || "");
-    
+
     public qrCodeBannerText = computed(() => this.topicQuery.data()?.description || "");
 
     public keywords = toSignal(
@@ -194,6 +197,13 @@ export class PulsePageService {
         ),
         { initialValue: [] as ITopicKeyword[] },
     );
+
+    public mapCenterCoordinates = computed(() => {
+        const coordinates = this.coordinates();
+        return coordinates
+            ? ([coordinates.longitude, coordinates.latitude] as [number, number])
+            : AppConstants.MAP_CENTER_COORDINATES;
+    });
 
     public setTopicId(id: number) {
         this.topicId.set(id);

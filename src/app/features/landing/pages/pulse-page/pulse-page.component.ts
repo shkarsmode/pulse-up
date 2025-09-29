@@ -113,6 +113,7 @@ export class PulsePageComponent implements OnInit, OnDestroy {
     public qrCodeBannerTitle = this.pulsePageService.qrCodeBannerTitle;
     public qrCodeBannerText = this.pulsePageService.qrCodeBannerText;
     public keywords = this.pulsePageService.keywords;
+    public mapCenterCoordinates = this.pulsePageService.mapCenterCoordinates;
     public topicIcon$ = combineLatest([
         toObservable(this.pulsePageService.topic),
         this.settingsService.settings$,
