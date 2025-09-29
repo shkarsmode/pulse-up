@@ -447,14 +447,14 @@ export class AuthenticationService {
         );
     };
 
-    public logout = (options?: { navigationUrl?: string }) => {
-        const { navigationUrl = `/${AppRoutes.Landing.HOME}` } = options || {};
+    public logout = (options?: { redirectUrl?: string }) => {
+        const { redirectUrl = `/${AppRoutes.Landing.HOME}` } = options || {};
         this.routerLoadingIndicatorService.setLoading(true);
         this.signOutFromFirebase()
             .pipe(
                 switchMap(() => this.loginAsAnonymousThroughTheFirebase()),
                 tap(() => {
-                    this.router.navigateByUrl(navigationUrl, {
+                    this.router.navigateByUrl(redirectUrl, {
                         replaceUrl: true,
                     });
                     this.routerLoadingIndicatorService.setLoading(false);
