@@ -4,13 +4,20 @@ import { TopPulsesComponent } from "./components/top-pulses/top-pulses.component
 import { AboutSectionComponent } from "./components/about-section/about-section.component";
 import { AdBannerComponent } from "@/app/shared/components/banners/ad-banner/ad-banner.component";
 import { CollectUserInfoService } from "../../services/collect-user-info.service";
+import { LendingPageLayoutComponent } from "../../ui/lending-page-layout/lending-page-layout.component";
 
 @Component({
     selector: "app-main",
     templateUrl: "./main.component.html",
     styleUrl: "./main.component.scss",
     standalone: true,
-    imports: [AdBannerComponent, MainHeroComponent, TopPulsesComponent, AboutSectionComponent],
+    imports: [
+        AdBannerComponent,
+        MainHeroComponent,
+        TopPulsesComponent,
+        AboutSectionComponent,
+        LendingPageLayoutComponent,
+    ],
 })
 export class MainComponent implements OnInit {
     private collectUserInfoService = inject(CollectUserInfoService);

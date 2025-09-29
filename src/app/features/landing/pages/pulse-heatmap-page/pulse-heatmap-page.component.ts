@@ -13,8 +13,8 @@ import { MapComponent } from "@/app/shared/components/map/map.component";
 import { FadeInDirective } from "@/app/shared/animations/fade-in.directive";
 import { FormatNumberPipe } from "@/app/shared/pipes/format-number.pipe";
 import { LoadImgPathDirective } from "@/app/shared/directives/load-img-path/load-img-path.directive";
-import { BackButtonComponent } from "@/app/shared/components/ui-kit/buttons/back-button/back-button.component";
 import { MapHeatmapLayerComponent } from "@/app/shared/components/map/map-heatmap-layer/map-heatmap-layer.component";
+import { HeaderComponent } from "@/app/shared/components/header/header.component";
 
 @Component({
     selector: "app-pulse-heatmap-page",
@@ -27,8 +27,8 @@ import { MapHeatmapLayerComponent } from "@/app/shared/components/map/map-heatma
         FadeInDirective,
         FormatNumberPipe,
         LoadImgPathDirective,
-        BackButtonComponent,
         MapHeatmapLayerComponent,
+        HeaderComponent,
     ],
 })
 export class PulseHeatmapPageComponent implements OnInit {
@@ -99,7 +99,9 @@ export class PulseHeatmapPageComponent implements OnInit {
     }
 
     private initPulseUrlIdListener(): void {
-        this.route.paramMap.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(this.handlePulseUrlIdListener.bind(this));
+        this.route.paramMap
+            .pipe(takeUntilDestroyed(this.destroyRef))
+            .subscribe(this.handlePulseUrlIdListener.bind(this));
     }
 
     private handlePulseUrlIdListener(data: ParamMap): void {

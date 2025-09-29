@@ -1,10 +1,11 @@
-<div
+<app-header />
+
+<main
     class="pulse"
     fadeIn
     [childrenFadeIn]="true"
     *ngIf="!isLoading">
     <div class="pulse-header">
-        <!-- <app-back-button class="pulse-header__back" /> -->
         <div class="pulse-header__topic">
             <img
                 class="pulse-header__logo"
@@ -39,4 +40,4 @@
                 [topicId]="pulse.id" />
         </ng-container>
     </app-map>
-</div>
+</main>

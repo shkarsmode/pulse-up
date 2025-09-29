@@ -14,6 +14,7 @@ import { CategoryFilterSelectionComponent } from "@/app/shared/components/catego
 import { MapPageService } from "./map-page.service";
 import { MediaQueryService } from "@/app/shared/services/core/media-query.service";
 import { MapInfoButtonComponent } from "../../ui/map-info-button/map-info-button.component";
+import { HeaderComponent } from "@/app/shared/components/header/header.component";
 
 @Component({
     selector: "app-map-page",
@@ -28,6 +29,7 @@ import { MapInfoButtonComponent } from "../../ui/map-info-button/map-info-button
         CategoryFilterMenuComponent,
         CategoryFilterSelectionComponent,
         MapInfoButtonComponent,
+        HeaderComponent,
     ],
 })
 export class MapPageComponent implements OnInit, OnDestroy {
