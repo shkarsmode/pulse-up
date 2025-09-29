@@ -1,5 +1,4 @@
 import { Component, inject } from "@angular/core";
-import { Router } from "@angular/router";
 import { MatDialogRef } from "@angular/material/dialog";
 import { catchError, switchMap, take, tap, throwError } from "rxjs";
 import { PopupLayoutComponent } from "@/app/shared/components/ui-kit/popup/popup.component";
@@ -36,7 +35,6 @@ import { ProfileService } from "@/app/shared/services/profile/profile.service";
     styleUrl: "./delete-account-popup.component.scss",
 })
 export class DeleteAccountPopupComponent {
-    private readonly router = inject(Router);
     private readonly dialogRef = inject(MatDialogRef);
     private readonly profileService = inject(ProfileService);
     private readonly identityService = inject(IdentityService);
@@ -93,7 +91,9 @@ export class DeleteAccountPopupComponent {
                 next: () => {
                     this.notificationService.success("Account deleted successfully.");
                     this.dialogRef.close();
-                    this.router.navigateByUrl("/" + AppRoutes.Auth.SIGN_IN_WITH_PHONE);
+                    this.authenticationService.logout({
+                        redirectUrl: "/" + AppRoutes.Auth.SIGN_IN_WITH_PHONE,
+                    });
                 },
                 error: (error: unknown) => {
                     let errorMessage = "An error occurred while deleting the account.";

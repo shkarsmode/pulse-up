@@ -30,7 +30,7 @@ export class ChangeEmailPopupComponent {
   public logout(): void {
     this.dialogRef.close();
     this.authenticationService.logout({
-      navigationUrl: `/${AppRoutes.Auth.SIGN_IN_WITH_PHONE}?redirect=${AppRoutes.Profile.EDIT}`
+      redirectUrl: `/${AppRoutes.Auth.SIGN_IN_WITH_PHONE}?redirect=${AppRoutes.Profile.EDIT}`
     })
   }
 }

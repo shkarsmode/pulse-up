@@ -29,7 +29,9 @@ export class PrivatePageGuard implements CanActivate {
             return true;
         }
 
-        this.router.navigateByUrl(`/${this.appRoutes.Auth.SIGN_IN_WITH_PHONE}?redirect=${state.url}`);
+        this.authenticationService.logout({
+          redirectUrl: `/${this.appRoutes.Auth.SIGN_IN_WITH_PHONE}?redirect=${state.url}`
+        });
         return false;
     }
 }

@@ -23,7 +23,7 @@ export class SigninRequiredPopupComponent {
     public logout(): void {
         this.dialogRef.close();
         this.authenticationService.logout({
-            navigationUrl: `/${AppRoutes.Auth.SIGN_IN_WITH_PHONE}?redirect=${AppRoutes.Profile.CHANGE_EMAIL}`,
+            redirectUrl: `/${AppRoutes.Auth.SIGN_IN_WITH_PHONE}?redirect=${AppRoutes.Profile.CHANGE_EMAIL}`,
         });
     }
 }
