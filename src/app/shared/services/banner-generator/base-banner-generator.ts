@@ -48,6 +48,7 @@ export abstract class BaseBannerGenerator implements BannerStrategy {
             const dataUrl = await toPng(root, {
                 width: root.scrollWidth,
                 height: root.scrollHeight,
+                skipFonts: true,
             });
 
             return dataUrl;
