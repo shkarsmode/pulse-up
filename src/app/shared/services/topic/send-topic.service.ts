@@ -1,8 +1,9 @@
 import { inject, Injectable } from "@angular/core";
-import { FormBuilder, FormControl, FormGroup, Validators } from "@angular/forms";
+import { FormControl, FormGroup, Validators } from "@angular/forms";
 import {
     BehaviorSubject,
     catchError,
+    from,
     map,
     Observable,
     of,
@@ -54,7 +55,6 @@ export class SendTopicService {
     public isTopicEditing = false;
     public startTopicLocatoinWarningShown = false;
 
-    private readonly formBuilder = inject(FormBuilder);
     private readonly pulseService = inject(PulseService);
     private readonly profileService = inject(ProfileService);
 
@@ -148,7 +148,7 @@ export class SendTopicService {
             }),
             switchMap(() => this.pulseService.create(params)),
             switchMap((topic) => {
-                return this.profileService.refreshProfile().pipe(map(() => topic));
+                return from(this.profileService.refreshProfile()).pipe(map(() => topic));
             }),
             tap(() => {
                 this.currentTopic.reset();

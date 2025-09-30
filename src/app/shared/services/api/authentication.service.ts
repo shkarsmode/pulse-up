@@ -4,7 +4,6 @@ import { Router } from "@angular/router";
 import { FirebaseApp, FirebaseError, initializeApp } from "firebase/app";
 import {
     Auth,
-    createUserWithEmailAndPassword,
     EmailAuthProvider,
     getAuth,
     isSignInWithEmailLink,
@@ -13,7 +12,6 @@ import {
     RecaptchaVerifier,
     sendSignInLinkToEmail,
     signInAnonymously,
-    signInWithEmailAndPassword,
     signInWithPhoneNumber,
     signOut,
     updatePhoneNumber,
@@ -23,8 +21,9 @@ import {
     sendEmailVerification,
 } from "firebase/auth";
 import { jwtDecode, JwtPayload } from "jwt-decode";
-import { BehaviorSubject, firstValueFrom, forkJoin, from, Observable, of, throwError } from "rxjs";
+import { BehaviorSubject, forkJoin, from, Observable, of, throwError } from "rxjs";
 import { catchError, map, switchMap, take, tap } from "rxjs/operators";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { AppConstants } from "../../constants";
 import {
     AuthenticationError,
@@ -36,12 +35,10 @@ import { FIREBASE_CONFIG } from "../../tokens/tokens";
 import { Nullable } from "../../types";
 import { LOCAL_STORAGE_KEYS, LocalStorageService } from "../core/local-storage.service";
 import { WindowService } from "../core/window.service";
-import { ProfileService } from "../profile/profile.service";
 import { IdentityService } from "./identity.service";
 import { UserService } from "./user.service";
 import { RouterLoadingIndicatorService } from "../../components/router-loading-indicator/router-loading-indicator.service";
 import { AppRoutes } from "../../enums/app-routes.enum";
-import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 
 @Injectable({
     providedIn: "root",
@@ -51,7 +48,6 @@ export class AuthenticationService {
     private readonly destroyRef = inject(DestroyRef);
     private readonly windowService: WindowService = inject(WindowService);
     private readonly userService: UserService = inject(UserService);
-    private readonly profileService: ProfileService = inject(ProfileService);
     private readonly identityService: IdentityService = inject(IdentityService);
     private readonly routerLoadingIndicatorService = inject(RouterLoadingIndicatorService);
     private readonly firebaseConfig: IFirebaseConfig = inject(FIREBASE_CONFIG);
@@ -139,7 +135,7 @@ export class AuthenticationService {
         );
     }
 
-    public confirmVerificationCode(verificationCode: string): Observable<IProfile> {
+    public confirmVerificationCode(verificationCode: string) {
         const confirmationResult = this.windowRef.confirmationResult;
         if (!confirmationResult) {
             return throwError(
@@ -288,12 +284,12 @@ export class AuthenticationService {
                     ),
             );
         }
-        return from(
-            updateEmail(user, email)
-        ).pipe(
-            switchMap(() => sendEmailVerification(user, {
-                url: continueUrl,
-            })),
+        return from(updateEmail(user, email)).pipe(
+            switchMap(() =>
+                sendEmailVerification(user, {
+                    url: continueUrl,
+                }),
+            ),
             tap(() => {
                 LocalStorageService.set(LOCAL_STORAGE_KEYS.changeEmail, email);
             }),
@@ -375,69 +371,8 @@ export class AuthenticationService {
         );
     };
 
-    public signUpWithEmailAndPassword = (email: string, password: string) => {
-        this.isSigninInProgress$.next(true);
-        const response$ = this.loginAsAnonymousThroughTheFirebase().pipe(
-            switchMap(() =>
-                this.identityService
-                    .checkByEmail(email)
-                    .pipe(switchMap((result) => this.handleIdentityCheckByEmail(result))),
-            ),
-            switchMap(() => this.signOutFromFirebase()),
-            switchMap(() => createUserWithEmailAndPassword(this.firebaseAuth, email, password)),
-            switchMap((userCredential) => this.getIdToken(userCredential)),
-            switchMap((token) => this.createUserWithToken(token)),
-            tap(({ token }) => {
-                this.userToken$.next(token);
-                LocalStorageService.set(LOCAL_STORAGE_KEYS.userToken, token);
-
-                this.anonymousUser$.next(null);
-                LocalStorageService.set(LOCAL_STORAGE_KEYS.isAnonymous, false);
-                LocalStorageService.remove(LOCAL_STORAGE_KEYS.anonymousToken);
-            }),
-            switchMap(() => this.profileService.refreshProfile()),
-            tap(() => this.isConfirmInProgress$.next(false)),
-            catchError((error: unknown) => {
-                this.isConfirmInProgress$.next(false);
-                return this.handleSignUpWithEmailAndPasswordError(error);
-            }),
-        );
-        return firstValueFrom(response$);
-    };
-
-    public signInWithEmailAndPassword = (email: string, password: string) => {
-        this.isSigninInProgress$.next(true);
-        const response$ = from(signInWithEmailAndPassword(this.firebaseAuth, email, password)).pipe(
-            switchMap((userCredential) => this.getIdToken(userCredential)),
-            tap((token) => {
-                this.userToken$.next(token);
-                LocalStorageService.set(LOCAL_STORAGE_KEYS.userToken, token);
-
-                this.anonymousUser$.next(null);
-                LocalStorageService.set(LOCAL_STORAGE_KEYS.isAnonymous, false);
-                LocalStorageService.remove(LOCAL_STORAGE_KEYS.anonymousToken);
-            }),
-            switchMap(() => this.profileService.refreshProfile()),
-            tap(() => this.isSigninInProgress$.next(false)),
-            catchError((error: unknown) => {
-                this.isSigninInProgress$.next(false);
-                return this.handleSignInWithEmailAndPasswordError(error);
-            }),
-        );
-        return firstValueFrom(response$);
-    };
-
     public signOutFromFirebase = () => {
         return from(signOut(this.firebaseAuth)).pipe(
-            tap(() => {
-                LocalStorageService.remove(LOCAL_STORAGE_KEYS.userToken);
-                this.userToken$.next(null);
-
-                LocalStorageService.remove(LOCAL_STORAGE_KEYS.anonymousToken);
-                this.anonymousUser$.next(null);
-
-                LocalStorageService.remove(LOCAL_STORAGE_KEYS.isAnonymous);
-            }),
             catchError((error: unknown) => {
                 throw new AuthenticationError(
                     (error as Error).message,
@@ -452,6 +387,15 @@ export class AuthenticationService {
         this.routerLoadingIndicatorService.setLoading(true);
         this.signOutFromFirebase()
             .pipe(
+                tap(() => {
+                    LocalStorageService.remove(LOCAL_STORAGE_KEYS.userToken);
+                    this.userToken$.next(null);
+
+                    LocalStorageService.remove(LOCAL_STORAGE_KEYS.anonymousToken);
+                    this.anonymousUser$.next(null);
+
+                    LocalStorageService.remove(LOCAL_STORAGE_KEYS.isAnonymous);
+                }),
                 switchMap(() => this.loginAsAnonymousThroughTheFirebase()),
                 tap(() => {
                     this.router.navigateByUrl(redirectUrl, {
@@ -674,9 +618,7 @@ export class AuthenticationService {
         );
     };
 
-    private updateAuthenticatedUserdData = (
-        userData: IProfile & { token: string },
-    ): Observable<IProfile> => {
+    private updateAuthenticatedUserdData = (userData: IProfile & { token: string }) => {
         return of(userData).pipe(
             tap(({ token }) => {
                 LocalStorageService.set(LOCAL_STORAGE_KEYS.userToken, token);
@@ -690,9 +632,7 @@ export class AuthenticationService {
                 this.windowRef.recaptchaVerifier?.clear();
                 delete this.windowRef.recaptchaVerifier;
                 delete this.windowRef.confirmationResult;
-                this.profileService.refreshProfile().pipe(take(1)).subscribe();
             }),
-            map(({ token, ...profile }) => profile),
         );
     };
 

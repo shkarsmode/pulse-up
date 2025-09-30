@@ -93,15 +93,8 @@ export class ConfirmPhoneNumberComponent implements OnInit, AfterViewInit, OnDes
         this.confirmPhoneNumberService.initialize({
             mode: "signIn",
         });
-        this.code.valueChanges.pipe(takeUntilDestroyed(this.destroyed)).subscribe((value) => {
-            this.confirmPhoneNumberService.onConfirmationCodeChange(value || "").subscribe({
-                next: (result) => {
-                    if (result) {
-                        this.navigateToNextPage();
-                    }
-                },
-                error: this.handleError,
-            });
+        this.code.valueChanges.pipe(takeUntilDestroyed(this.destroyed)).subscribe({
+            next: (value) => this.onCodeChanged(value || ""),
         });
         this.cooldownSub = this.confirmPhoneNumberService.cooldown$.subscribe((seconds) => {
             this.cooldown = seconds;
@@ -118,6 +111,19 @@ export class ConfirmPhoneNumberComponent implements OnInit, AfterViewInit, OnDes
 
     resendCode(): void {
         this.confirmPhoneNumberService.resendCode();
+    }
+
+    private async onCodeChanged(value: string) {
+        try {
+            const result = await this.confirmPhoneNumberService.onConfirmationCodeChange(
+                value || "",
+            );
+            if (result) {
+                this.navigateToNextPage();
+            }
+        } catch (error) {
+            this.handleError(error);
+        }
     }
 
     private navigateToNextPage() {

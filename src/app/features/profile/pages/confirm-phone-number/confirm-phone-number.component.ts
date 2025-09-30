@@ -23,7 +23,10 @@ import { ConfirmPhoneNumberService } from "@/app/shared/services/core/confirm-ph
 import { LinkButtonComponent } from "@/app/shared/components/ui-kit/buttons/link-button/link-button.component";
 import { AppRoutes } from "@/app/shared/enums/app-routes.enum";
 import { NotificationService } from "@/app/shared/services/core/notification.service";
-import { AuthenticationError, AuthenticationErrorCode } from "@/app/shared/helpers/errors/authentication-error";
+import {
+    AuthenticationError,
+    AuthenticationErrorCode,
+} from "@/app/shared/helpers/errors/authentication-error";
 import { SigninRequiredPopupComponent } from "@/app/shared/components/popups/signin-required-popup/signin-required-popup.component";
 import { isErrorWithMessage } from "@/app/shared/helpers/errors/is-error-with-message";
 
@@ -89,17 +92,7 @@ export class ConfirmPhoneNumberComponent implements OnInit, AfterViewInit, OnDes
             mode: "changePhoneNumber",
         });
         this.code.valueChanges.pipe(takeUntilDestroyed(this.destroyed)).subscribe((value) => {
-            this.confirmPhoneNumberService.onConfirmationCodeChange(value || "").subscribe({
-                next: (result) => {
-                    if (result) {
-                        this.router.navigateByUrl(`/${AppRoutes.Profile.EDIT}`);
-                        this.notificationService.success(
-                            "Phone number has been changed successfully.",
-                        );
-                    }
-                },
-                error: this.handleError,
-            });
+            this.onCodeChanged(value || "");
         });
         this.cooldownSub = this.confirmPhoneNumberService.cooldown$.subscribe((seconds) => {
             this.cooldown = seconds;
@@ -116,6 +109,19 @@ export class ConfirmPhoneNumberComponent implements OnInit, AfterViewInit, OnDes
 
     resendCode(): void {
         this.confirmPhoneNumberService.resendCode();
+    }
+
+    private async onCodeChanged(value: string) {
+        try {
+            const isConfirmed =
+                await this.confirmPhoneNumberService.onConfirmationCodeChange(value);
+            if (isConfirmed) {
+                this.router.navigateByUrl(`/${AppRoutes.Profile.EDIT}`);
+                this.notificationService.success("Phone number has been changed successfully.");
+            }
+        } catch (error) {
+            this.handleError(error);
+        }
     }
 
     private handleError = (error: unknown) => {

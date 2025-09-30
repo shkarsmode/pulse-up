@@ -1,9 +1,9 @@
-import { Component, DestroyRef, inject, Input, OnInit } from "@angular/core";
+import { ChangeDetectionStrategy, Component, DestroyRef, inject, input, OnInit, signal } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { Router, RouterModule } from "@angular/router";
 import { MatDialog } from "@angular/material/dialog";
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
-import { map, take } from "rxjs";
+import { map, take   } from "rxjs";
 import { InputComponent } from "@/app/shared/components/ui-kit/input/input.component";
 import { atLeastOneLetterValidator } from "@/app/shared/helpers/validators/at-least-one-letter.validator";
 import { usernameUniqueValidator } from "@/app/shared/helpers/validators/username-unique.validator";
@@ -42,14 +42,15 @@ import { ProfileService } from "@/app/shared/services/profile/profile.service";
     ],
     templateUrl: "./profile-form.component.html",
     styleUrl: "./profile-form.component.scss",
+    changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ProfileFormComponent implements OnInit {
-    @Input() public initialValues: {
+    public initialValues = input.required<{
         name: string;
         username: string;
         bio: string;
         picture: string | null;
-    };
+    }>();
 
     private destroyed = inject(DestroyRef);
     private router = inject(Router);
@@ -61,13 +62,13 @@ export class ProfileFormComponent implements OnInit {
     private notificationService: NotificationService = inject(NotificationService);
     private authenticationService: AuthenticationService = inject(AuthenticationService);
 
-    private isPicturePristine = true;
-    private emailPlaceholder = "Add an email to secure your account";
+    private isPicturePristine = signal(true);
+    private emailPlaceholder = signal("Add an email to secure your account");
     public form: FormGroup;
-    public submitting = false;
-    public phoneNumber: string | null = null;
-    public email: string = this.emailPlaceholder;
-    public profilePicture: File | null = null;
+    public submitting = signal(false);
+    public phoneNumber = signal<string | null>(null);
+    public email = signal(this.emailPlaceholder());
+    public profilePicture = signal<File | null>(null);
     public chngeEmailRoute = "/" + AppRoutes.Profile.CHANGE_EMAIL;
     public chngePhoneNumberRoute = "/" + AppRoutes.Profile.CHANGE_PHONE_NUMBER;
     public classes = {
@@ -75,31 +76,23 @@ export class ProfileFormComponent implements OnInit {
     };
 
     constructor() {
-        this.form = this.fb.group({
-            name: "",
-            username: "",
-            bio: "",
-            profilePicture: null,
-        });
-
-        this.profilePicture = this.form.get("profilePicture")?.value || null;
-
         this.authenticationService.firebaseUser$
             .pipe(takeUntilDestroyed(this.destroyed))
             .subscribe((user) => {
                 if (user && user.email) {
-                    this.email = user.email;
+                    this.email.set(user.email);
                 }
                 if (user && user.phoneNumber) {
-                    this.phoneNumber = user.phoneNumber;
+                    this.phoneNumber.set(user.phoneNumber);
                 }
             });
     }
 
     ngOnInit() {
+        const values = this.initialValues();
         this.form = this.fb.group({
             name: [
-                this.initialValues.name,
+                values.name,
                 [
                     Validators.required,
                     Validators.maxLength(50),
@@ -107,7 +100,7 @@ export class ProfileFormComponent implements OnInit {
                 ],
             ],
             username: [
-                this.initialValues.username,
+                values.username,
                 [
                     Validators.required,
                     Validators.minLength(6),
@@ -115,46 +108,43 @@ export class ProfileFormComponent implements OnInit {
                     Validators.pattern(/^(?!.*__)(?:[A-Za-z0-9]*_?[A-Za-z0-9]*)$/),
                     atLeastOneLetterValidator(),
                 ],
-                [
-                    usernameUniqueValidator(
-                        this.userService.validateUsername,
-                        this.initialValues.username,
-                    ),
-                ],
+                [usernameUniqueValidator(this.userService.validateUsername, values.username)],
             ],
-            bio: [this.initialValues.bio, [optionalLengthValidator(3, 150)]],
+            bio: [values.bio, [optionalLengthValidator(3, 150)]],
             profilePicture: [null, [pictureValidator()]],
         });
         this.form
             .get("profilePicture")
             ?.valueChanges.pipe(takeUntilDestroyed(this.destroyed))
             .subscribe(() => {
-                this.isPicturePristine = false;
+                this.isPicturePristine.set(false);
             });
+        this.profilePicture.set(this.form.get("profilePicture")?.value || null);
         this.classes.email = {
             "profile-form__link": true,
-            "profile-form__link--placeholder": this.email === this.emailPlaceholder,
+            "profile-form__link--placeholder": this.email() === this.emailPlaceholder(),
         };
     }
 
     public previewUrl$ = this.settingsService.settings$.pipe(
         map((settings) => {
-            if (this.initialValues.picture) {
-                return `${settings.blobUrlPrefix}${this.initialValues.picture}`;
+            const picture = this.initialValues().picture;
+            if (picture) {
+                return `${settings.blobUrlPrefix}${picture}`;
             }
             return "assets/svg/plus-placeholder.svg";
-        })
-    )
+        }),
+    );
 
     private disabled = false;
 
     public isDisabled(): boolean {
         let disabled = false;
-        if (this.submitting) {
+        if (this.submitting()) {
             disabled = true;
         } else if (this.isPristine()) {
             disabled = true;
-        } else if (this.submitting || this.form.invalid) {
+        } else if (this.submitting() || this.form.invalid) {
             disabled = true;
         } else if (this.form.status === "PENDING") {
             disabled = this.disabled;
@@ -199,30 +189,25 @@ export class ProfileFormComponent implements OnInit {
         this.form.get("profilePicture")?.setValue(null);
     }
 
-    public onSubmit(event: MouseEvent) {
+    public async onSubmit(event: MouseEvent) {
         event.preventDefault();
         if (this.form.valid) {
             this.trimBioValue();
-            this.submitting = true;
-            this.profileService
-                .updateProfile(this.form.value)
-                .pipe(take(1))
-                .subscribe({
-                    next: () => {
-                        this.submitting = false;
-                        this.form.markAsPristine();
-                        this.form.markAsUntouched();
-                        this.isPicturePristine = true;
-                        this.notificationService.success("Profile updated successfully.");
-                        this.router.navigateByUrl("/" + AppRoutes.Profile.OVERVIEW);
-                    },
-                    error: () => {
-                        this.submitting = false;
-                        this.notificationService.error(
-                            "Failed to update profile. Please try again.",
-                        );
-                    },
-                });
+            this.submitting.set(true);
+
+            try {
+                await this.profileService.updateProfile(this.form.value);
+                this.submitting.set(false);
+                this.form.markAsPristine();
+                this.form.markAsUntouched();
+                this.isPicturePristine.set(true);
+                this.notificationService.success("Profile updated successfully.");
+                this.router.navigateByUrl("/" + AppRoutes.Profile.OVERVIEW);
+            } catch (error: unknown) {
+                console.log("Error updating profile:", error);
+                this.submitting.set(false);
+                this.notificationService.error("Failed to update profile. Please try again.");
+            }
         } else {
             this.form.markAllAsTouched();
         }
@@ -256,7 +241,7 @@ export class ProfileFormComponent implements OnInit {
             (this.form.get("name")?.pristine &&
                 this.form.get("username")?.pristine &&
                 this.form.get("bio")?.pristine &&
-                this.isPicturePristine) ||
+                this.isPicturePristine()) ||
             false
         );
     }
@@ -264,8 +249,8 @@ export class ProfileFormComponent implements OnInit {
     private onCroppedImage = (result: CropResult) => {
         if (result.success) {
             this.form.get("profilePicture")?.patchValue(result.imageFile);
-            this.isPicturePristine = false;
-            this.profilePicture = result.imageFile;
+            this.isPicturePristine.set(false);
+            this.profilePicture.set(result.imageFile);
         } else if (result.message) {
             this.notificationService.error(result.message);
         }

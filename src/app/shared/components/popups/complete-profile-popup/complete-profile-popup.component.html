@@ -1,3 +1,5 @@
+@let error = errorMessage();
+
 <div class="popup">
     <app-close-button
         class="popup__close"
@@ -40,17 +42,17 @@
                 <span>{{ error }}</span>
             </div>
         </div>
-        <div
-            *ngIf="errorMessage"
-            class="compllete-profile-form__error">
-            {{ errorMessage }}
-        </div>
+        @if (error) {
+            <div class="compllete-profile-form__error">
+                {{ error }}
+            </div>
+        }
         <div class="compllete-profile-form__submit">
             <app-primary-button
                 type="submit"
                 [fullWidth]="true"
-                [disabled]="form.invalid || loading"
-                [loading]="loading"
+                [disabled]="form.invalid || loading()"
+                [loading]="loading()"
                 (handleClick)="submit()">
                 Save
             </app-primary-button>

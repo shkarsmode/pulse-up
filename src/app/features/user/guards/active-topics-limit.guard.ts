@@ -1,14 +1,7 @@
 import { inject, Injectable } from "@angular/core";
 import { MatDialog } from "@angular/material/dialog";
 import { map } from "rxjs";
-import {
-    ActivatedRouteSnapshot,
-    CanActivate,
-    GuardResult,
-    MaybeAsync,
-    Router,
-    RouterStateSnapshot,
-} from "@angular/router";
+import { CanActivate, GuardResult, MaybeAsync, Router } from "@angular/router";
 import { ActiveTopicsLimitPopupComponent } from "../ui/active-topics-limit-popup/active-topics-limit-popup.component";
 import { AppRoutes } from "@/app/shared/enums/app-routes.enum";
 import { ProfileService } from "@/app/shared/services/profile/profile.service";
@@ -21,10 +14,7 @@ export class ActiveTopicsLimitGuard implements CanActivate {
     private profileService = inject(ProfileService);
     private dialog: MatDialog = inject(MatDialog);
 
-    canActivate(
-        route: ActivatedRouteSnapshot,
-        state: RouterStateSnapshot,
-    ): MaybeAsync<GuardResult> {
+    canActivate(): MaybeAsync<GuardResult> {
         return this.profileService.profile$.pipe(
             map((profile) => {
                 if (profile && profile.activeTopics >= profile.activeTopicsLimit) {

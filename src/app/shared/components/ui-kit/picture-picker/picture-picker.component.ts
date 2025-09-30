@@ -1,5 +1,15 @@
 import { CommonModule } from "@angular/common";
-import { Component, ElementRef, EventEmitter, Input, Output, SimpleChanges, ViewChild, OnInit, OnChanges } from "@angular/core";
+import {
+    Component,
+    ElementRef,
+    EventEmitter,
+    Output,
+    ViewChild,
+    ChangeDetectionStrategy,
+    input,
+    signal,
+    effect,
+} from "@angular/core";
 
 @Component({
     selector: "app-picture-picker",
@@ -7,39 +17,40 @@ import { Component, ElementRef, EventEmitter, Input, Output, SimpleChanges, View
     imports: [CommonModule],
     templateUrl: "./picture-picker.component.html",
     styleUrl: "./picture-picker.component.scss",
+    changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class PicturePickerComponent implements OnInit, OnChanges {
-    @Input() public id = "";
-    @Input() public name = "";
-    @Input() public label = "";
-    @Input() public picture: File | null = null;
-    @Input() public previewUrl = "";
-    @Input() public invalid = false;
+export class PicturePickerComponent {
+    public id = input("");
+    public name = input("");
+    public label = input("");
+    public picture = input<File | null>(null);
+    public previewUrl = input("");
+    public invalid = input(false);
 
     @Output() public pictureSelected = new EventEmitter<Event>();
     @Output() public pictureDeleted = new EventEmitter<void>();
 
-    @ViewChild("customIcon") public customIcon: ElementRef<HTMLInputElement>;
+    @ViewChild("customIcon") public customIcon!: ElementRef<HTMLInputElement>;
 
-    public selectedPicture: string | ArrayBuffer | null;
-    public selectedTypeOfPicture: "img" | "gif" | "smile" | "";
+    public selectedPicture = signal<string | ArrayBuffer | null>("");
+    public selectedTypeOfPicture = signal<"img" | "gif" | "smile" | "">("");
 
-    ngOnInit(): void {
-        this.selectedPicture = this.previewUrl;
-        if (this.picture) {
-            this.updateSelectedFile(this.picture);
-        }
-    }
+    constructor() {
+        effect(() => {
+            this.selectedPicture.set(this.previewUrl());
+        }, { allowSignalWrites: true });
 
-    ngOnChanges(changes: SimpleChanges): void {
-        if (changes["picture"]?.currentValue) {
-          this.updateSelectedFile(changes["picture"].currentValue);
-        }
+        effect(() => {
+            const file = this.picture();
+            if (file) {
+                this.updateSelectedFile(file);
+            }
+        });
     }
 
     public deleteChosenPicture(): void {
-        this.selectedTypeOfPicture = "";
-        this.selectedPicture = "";
+        this.selectedTypeOfPicture.set("");
+        this.selectedPicture.set("");
         this.pictureSelected.emit();
     }
 
@@ -51,20 +62,22 @@ export class PicturePickerComponent implements OnInit, OnChanges {
     }
 
     public clearInputValue(): void {
-        this.customIcon.nativeElement.value = "";
+        if (this.customIcon) {
+            this.customIcon.nativeElement.value = "";
+        }
     }
 
     private updateSelectedFile(file: File): void {
         const reader = new FileReader();
         reader.onload = () => {
-            this.selectedPicture = reader.result;
-            this.selectedTypeOfPicture = this.getSelectedTypeOfPicture();
+            this.selectedPicture.set(reader.result);
+            this.selectedTypeOfPicture.set(this.getSelectedTypeOfPicture());
         };
         reader.readAsDataURL(file);
     }
 
     private getSelectedTypeOfPicture(): "img" | "gif" | "smile" {
-        const extension = this.getExtensionFromBase64(this.selectedPicture);
+        const extension = this.getExtensionFromBase64(this.selectedPicture());
         switch (extension) {
             case "png":
             case "jpeg":
@@ -81,7 +94,7 @@ export class PicturePickerComponent implements OnInit, OnChanges {
         if (typeof dataUrl !== "string") {
             return null;
         }
-        const match = dataUrl.toString().match(/^data:(.+?);base64,/);
+        const match = dataUrl.match(/^data:(.+?);base64,/);
         if (match) {
             const mimeType = match[1];
             return mimeType.split("/")[1];

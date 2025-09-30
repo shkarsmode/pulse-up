@@ -1,3 +1,5 @@
+@let error = errorMessage();
+
 <div class="user-info-popup">
     <app-close-button
         class="user-info-popup__close"
@@ -39,17 +41,17 @@
                 <span>{{ error }}</span>
             </div>
         </div>
-        <div
-            *ngIf="errorMessage"
-            class="user-info-form__error">
-            {{ errorMessage }}
-        </div>
+        @if (error) {
+            <div class="user-info-form__error">
+                {{ error }}
+            </div>
+        }
         <div class="user-info-form__submit">
             <app-primary-button
                 type="submit"
                 [fullWidth]="true"
-                [disabled]="form.invalid || loading"
-                [loading]="loading">
+                [disabled]="form.invalid || loading()"
+                [loading]="loading()">
                 Save
             </app-primary-button>
         </div>

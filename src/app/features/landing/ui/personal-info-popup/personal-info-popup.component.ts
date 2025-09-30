@@ -1,4 +1,4 @@
-import { Component, inject } from "@angular/core";
+import { ChangeDetectionStrategy, Component, inject, signal } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { MatDialogRef } from "@angular/material/dialog";
 import {
@@ -8,7 +8,6 @@ import {
     ReactiveFormsModule,
     Validators,
 } from "@angular/forms";
-import { take } from "rxjs";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { UserService } from "@/app/shared/services/api/user.service";
 import { atLeastOneLetterValidator } from "@/app/shared/helpers/validators/at-least-one-letter.validator";
@@ -74,6 +73,7 @@ export class ErrorMessageBuilder {
         InputComponent,
         PrimaryButtonComponent,
     ],
+    changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PersonalInfoPopupComponent {
     private fb: FormBuilder = inject(FormBuilder);
@@ -82,8 +82,8 @@ export class PersonalInfoPopupComponent {
     private dialogRef: MatDialogRef<PersonalInfoPopupComponent> = inject(MatDialogRef);
 
     public form: FormGroup;
-    public loading = false;
-    public errorMessage: string | null = null;
+    public loading = signal(false);
+    public errorMessage = signal<string | null>(null);
 
     constructor() {
         this.form = this.fb.group({
@@ -114,7 +114,7 @@ export class PersonalInfoPopupComponent {
         });
 
         this.form.valueChanges.pipe(takeUntilDestroyed()).subscribe(() => {
-            this.errorMessage = null;
+            this.errorMessage.set(null);
         });
     }
 
@@ -125,22 +125,18 @@ export class PersonalInfoPopupComponent {
         }
     }
 
-    submit() {
+    async submit() {
         if (this.form.valid) {
-            this.loading = true;
-            this.profileService
-                .updateProfile(this.form.value)
-                .pipe(take(1))
-                .subscribe({
-                    next: (res) => {
-                        this.loading = false;
-                        this.dialogRef.close(res);
-                    },
-                    error: () => {
-                        this.loading = false;
-                        this.errorMessage = "Failed to update profile. Please try again.";
-                    },
-                });
+            this.loading.set(true);
+            try {
+                const profile = await this.profileService.updateProfile(this.form.value);
+                this.loading.set(false);
+                this.dialogRef.close(profile);
+            } catch (error: unknown) {
+                console.log("Error updating profile:", error);
+                this.loading.set(false);
+                this.errorMessage.set("Failed to update profile. Please try again.");
+            }
         } else {
             this.form.markAllAsTouched();
         }

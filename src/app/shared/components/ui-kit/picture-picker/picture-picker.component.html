@@ -1,11 +1,11 @@
-<label [htmlFor]="id">{{ label }}</label>
+<label [htmlFor]="id()">{{ label() }}</label>
 <div
     class="placeholder"
-    [class.placeholder--error]="invalid">
+    [class.placeholder--error]="invalid()">
     <input
         #customIcon
-        [id]="id"
-        [name]="name"
+        [id]="id()"
+        [name]="name()"
         type="file"
         accept=".jpg, .png, .jpeg"
         (change)="onFileSelected($event)" 
@@ -13,13 +13,13 @@
 
     <div class="custom-icon">
         <img
-            *ngIf="selectedPicture"
-            [src]="selectedPicture"
+            *ngIf="selectedPicture()"
+            [src]="selectedPicture()"
             width="98"
             height="98"
             alt="Selected Image" />
         <img
-            *ngIf="!selectedPicture"
+            *ngIf="!selectedPicture()"
             src="assets/svg/plus-placeholder.svg"
             width="98"
             height="98"

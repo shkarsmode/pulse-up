@@ -1,6 +1,5 @@
-import { Component, DestroyRef, inject, OnInit } from "@angular/core";
+import { ChangeDetectionStrategy, Component, computed, inject } from "@angular/core";
 import { CommonModule } from "@angular/common";
-import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { AngularSvgIconModule } from "angular-svg-icon";
 import { MatMenuModule } from "@angular/material/menu";
 import { MatButtonModule } from "@angular/material/button";
@@ -23,30 +22,30 @@ import { ProfileHeaderComponent } from "../../ui/profile-header/profile-header.c
     ],
     templateUrl: "./edit-profile.component.html",
     styleUrl: "./edit-profile.component.scss",
+    changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class EditProfileComponent implements OnInit {
-    private readonly destroyed = inject(DestroyRef);
-    public readonly profileService = inject(ProfileService);
-    public isLoading = true;
+export class EditProfileComponent {
+    private profileService = inject(ProfileService);
 
-    public profileFormvalues = {
+    private readonly initislValues = {
         name: "",
         username: "",
         bio: "",
         picture: null as string | null,
     };
 
-    ngOnInit() {
-        this.profileService.profile$
-            .pipe(takeUntilDestroyed(this.destroyed))
-            .subscribe((profile) => {
-                if (profile) {
-                    this.profileFormvalues.name = profile.name || "";
-                    this.profileFormvalues.username = profile.username || "";
-                    this.profileFormvalues.bio = profile.bio || "";
-                    this.profileFormvalues.picture = profile.picture || null;
-                }
-                this.isLoading = false;
-            });
-    }
+    public profile = this.profileService.profile;
+    public isLoading = computed(() => {
+        const profile = this.profileService.profile();
+        return profile === null;
+    });
+    public profileFormValues = computed(() => {
+        const profile = this.profileService.profile();
+        return {
+            name: profile?.name || this.initislValues.name,
+            username: profile?.username || this.initislValues.username,
+            bio: profile?.bio || this.initislValues.bio,
+            picture: profile?.picture || this.initislValues.picture,
+        };
+    });
 }

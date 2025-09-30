@@ -2,8 +2,10 @@ import { inject, Injectable } from "@angular/core";
 import { MatDialog } from "@angular/material/dialog";
 import { first, take } from "rxjs";
 import { ProfileService } from "@/app/shared/services/profile/profile.service";
-import { LOCAL_STORAGE_KEYS, LocalStorageService } from "@/app/shared/services/core/local-storage.service";
-import { PersonalInfoPopupComponent } from "../ui/personal-info-popup/personal-info-popup.component";
+import {
+    LOCAL_STORAGE_KEYS,
+    LocalStorageService,
+} from "@/app/shared/services/core/local-storage.service";
 
 @Injectable({
     providedIn: "root",
@@ -15,16 +17,18 @@ export class CollectUserInfoService {
     private isOpened = false;
 
     public collectPersonalInfo(): void {
-        const currentUrl = window.location.pathname;
         const accountsIds =
-            LocalStorageService.get<string[]>(LOCAL_STORAGE_KEYS.personalInfoPopupShownForProfiles) || [];
+            LocalStorageService.get<string[]>(
+                LOCAL_STORAGE_KEYS.personalInfoPopupShownForProfiles,
+            ) || [];
+
         this.profileService.profile$.pipe(first((profile) => !!profile)).subscribe((profile) => {
             if (!profile?.id) return;
             const alreadyShown = accountsIds && accountsIds.includes(profile.id);
+            
             if (
                 !this.isOpened &&
                 !alreadyShown &&
-                currentUrl === "/" &&
                 profile &&
                 (!profile.name || !profile.username)
             ) {
@@ -37,7 +41,10 @@ export class CollectUserInfoService {
         });
     }
 
-    private openDialog(): void {
+    private async openDialog(): Promise<void> {
+        const PersonalInfoPopupComponent = await import(
+            "../ui/personal-info-popup/personal-info-popup.component"
+        ).then((module) => module.PersonalInfoPopupComponent);
         this.isOpened = true;
         const dialogRef = this.dialog.open(PersonalInfoPopupComponent, {
             width: "500px",

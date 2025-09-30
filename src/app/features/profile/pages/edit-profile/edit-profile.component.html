@@ -1,6 +1,6 @@
-<app-profile-layout [isLoading]="isLoading">
+<app-profile-layout [isLoading]="isLoading()">
     <app-profile-header heading="Profile"> </app-profile-header>
-    <app-profile-form
-        [initialValues]="profileFormvalues"
-        *ngIf="profileService.profile$ | async" />
+    @if (profile()) {
+        <app-profile-form [initialValues]="profileFormValues()" />
+    }
 </app-profile-layout>
