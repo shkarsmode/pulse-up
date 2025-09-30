@@ -1,11 +1,10 @@
-import { Component, DestroyRef, inject, ViewChild, AfterViewInit, OnDestroy } from "@angular/core";
+import { Component, inject, ViewChild, AfterViewInit, OnDestroy, OnInit } from "@angular/core";
 import { FormGroup, ReactiveFormsModule } from "@angular/forms";
 import { Router } from "@angular/router";
-import { map, take, tap, throwError } from "rxjs";
+import { map, take, tap } from "rxjs";
 import { ErrorStateMatcher } from "@angular/material/core";
 import { MatInputModule } from "@angular/material/input";
 import { MatFormFieldModule } from "@angular/material/form-field";
-import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { CommonModule } from "@angular/common";
 import { AppRoutes } from "@/app/shared/enums/app-routes.enum";
 import { SignInFormService } from "@/app/shared/services/core/sign-in-form.service";
@@ -13,8 +12,8 @@ import { ProfileLayoutComponent } from "../../ui/profile-layout/profile-layout.c
 import { PrimaryButtonComponent } from "@/app/shared/components/ui-kit/buttons/primary-button/primary-button.component";
 import { AuthenticationService } from "@/app/shared/services/api/authentication.service";
 import { SecondaryButtonComponent } from "@/app/shared/components/ui-kit/buttons/secondary-button/secondary-button.component";
-import { NotificationService } from "@/app/shared/services/core/notification.service";
 import { isErrorWithMessage } from "@/app/shared/helpers/errors/is-error-with-message";
+import { NotificationService } from "@/app/shared/services/core/notification.service";
 
 @Component({
     selector: "app-change-phone-number",
@@ -32,10 +31,9 @@ import { isErrorWithMessage } from "@/app/shared/helpers/errors/is-error-with-me
     templateUrl: "./change-phone-number.component.html",
     styleUrl: "./change-phone-number.component.scss",
 })
-export class ChangePhoneNumberComponent implements AfterViewInit, OnDestroy {
+export class ChangePhoneNumberComponent implements AfterViewInit, OnDestroy, OnInit {
     private router: Router = inject(Router);
-    private destroyRef = inject(DestroyRef);
-    private readonly notificationService = inject(NotificationService);
+    private notificationService = inject(NotificationService);
     private signInFormService: SignInFormService = inject(SignInFormService);
     private authenticationService: AuthenticationService = inject(AuthenticationService);
     private appRotes = AppRoutes;
@@ -45,25 +43,10 @@ export class ChangePhoneNumberComponent implements AfterViewInit, OnDestroy {
 
     @ViewChild("telInput") telInput: { nativeElement: HTMLInputElement };
 
-    constructor() {
+    ngOnInit() {
         this.signInFormService.initialize({
             initialValue: "",
             mode: "changePhoneNumber",
-        });
-        this.signInFormService.submit$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
-            error: (error: unknown) => {
-                console.log("Error sending verification code:", error);
-                if (isErrorWithMessage(error)) {
-                    this.notificationService.error(error.message);
-                }
-                return throwError(() => error);
-            },
-            next: (result) => {
-                if (result) {
-                    console.log("Verification code sent successfully");
-                    this.navigateToConfirmPage();
-                }
-            },
         });
 
         this.authenticationService.firebaseUser$
@@ -106,8 +89,18 @@ export class ChangePhoneNumberComponent implements AfterViewInit, OnDestroy {
         this.signInFormService.onDestroy();
     }
 
-    public onSubmit() {
-        return this.signInFormService.submit();
+    public async onSubmit() {
+        try {
+            await this.signInFormService.submit();
+            this.navigateToConfirmPage();
+        } catch (error) {
+            console.log("Error changing phone number:", error);
+            if (isErrorWithMessage(error)) {
+                this.notificationService.error(error.message);
+            } else {
+                this.notificationService.error("Failed to change phone number. Please try again.");
+            }
+        }
     }
 
     public onCancel(): void {

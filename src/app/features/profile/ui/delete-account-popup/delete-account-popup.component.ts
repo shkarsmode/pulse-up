@@ -76,8 +76,8 @@ export class DeleteAccountPopupComponent {
                             mewAccountsIds,
                         );
                     }
+                    this.authenticationService.logout();
                 }),
-                switchMap(() => this.authenticationService.signOutFromFirebase()),
                 catchError(() => {
                     return throwError(
                         () =>

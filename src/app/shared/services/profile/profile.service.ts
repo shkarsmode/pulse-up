@@ -16,12 +16,12 @@ export class ProfileService {
     public profile$ = toObservable(this.profile);
 
     constructor() {
-        this.loadProfile();
-
         this.authService.userToken.pipe(
             distinctUntilChanged(),
             tap((token) => {
-                if (!token) {
+                if (token) {
+                    this.loadProfile();
+                } else {
                     this.clearProfile();
                 }
             }),
