@@ -12,8 +12,7 @@ import { FormGroup, ReactiveFormsModule } from "@angular/forms";
 import { MatInputModule } from "@angular/material/input";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { ErrorStateMatcher } from "@angular/material/core";
-import { takeUntilDestroyed, toSignal } from "@angular/core/rxjs-interop";
-import { throwError } from "rxjs";
+import { toSignal } from "@angular/core/rxjs-interop";
 import { PrimaryButtonComponent } from "@/app/shared/components/ui-kit/buttons/primary-button/primary-button.component";
 import { NotificationService } from "@/app/shared/services/core/notification.service";
 import { SignInFormService } from "@/app/shared/services/core/sign-in-form.service";
@@ -22,12 +21,7 @@ import { isErrorWithMessage } from "../../helpers/errors/is-error-with-message";
 @Component({
     selector: "app-auth-form",
     standalone: true,
-    imports: [
-        MatInputModule,
-        MatFormFieldModule,
-        ReactiveFormsModule,
-        PrimaryButtonComponent,
-    ],
+    imports: [MatInputModule, MatFormFieldModule, ReactiveFormsModule, PrimaryButtonComponent],
     templateUrl: "./auth-form.component.html",
     styleUrl: "./auth-form.component.scss",
 })
@@ -42,25 +36,6 @@ export class AuthFormComponent implements AfterViewInit, OnDestroy {
 
     constructor() {
         this.signInFormService.initialize();
-        this.signInFormService.submit$
-            .pipe(
-                takeUntilDestroyed(this.destroyRef),
-            )
-            .subscribe({
-                error: (error: unknown) => {
-                    console.log("Error sending verification code:", error);
-                    if (isErrorWithMessage(error)) {
-                        this.notificationService.error(error.message);
-                    }
-                    return throwError(() => error);
-                },
-                next: (result) => {
-                    if (result) {
-                        console.log("Verification code sent successfully");
-                        this.submitForm.emit();
-                    }
-                },
-            });
     }
 
     ngAfterViewInit(): void {
@@ -78,8 +53,20 @@ export class AuthFormComponent implements AfterViewInit, OnDestroy {
         return this.signInFormService.errorStateMatcher;
     }
 
-    public onSubmit() {
-        return this.signInFormService.submit();
+    public async onSubmit() {
+        try {
+            await this.signInFormService.submit();
+            this.submitForm.emit();
+        } catch (error) {
+            console.log("Error sending verification code:", error);
+            if (isErrorWithMessage(error)) {
+                this.notificationService.error(error.message);
+            } else {
+                this.notificationService.error(
+                    "Failed to send verification code. Please try again.",
+                );
+            }
+        }
     }
 
     public onFocus() {

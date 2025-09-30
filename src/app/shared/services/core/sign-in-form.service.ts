@@ -1,11 +1,10 @@
-// phone-form.service.ts
 import { inject } from "@angular/core";
 import { FormBuilder, FormControl, FormGroup } from "@angular/forms";
 import { ErrorStateMatcher } from "@angular/material/core";
 import { Router } from "@angular/router";
 import intlTelInput, { Iti } from "intl-tel-input";
 import { CountryCode, isValidPhoneNumber, validatePhoneNumberLength } from "libphonenumber-js";
-import { BehaviorSubject, delay, fromEvent, map, Subscription, take, tap } from "rxjs";
+import { delay, firstValueFrom, fromEvent, map, Subscription } from "rxjs";
 import { AppRoutes } from "@/app/shared/enums/app-routes.enum";
 import { AuthenticationService } from "@/app/shared/services/api/authentication.service";
 
@@ -17,13 +16,7 @@ export class SignInFormService {
     private readonly authenticationService: AuthenticationService = inject(AuthenticationService);
     private iti: Iti;
     private mode: ServiceWorkMode = "signIn";
-    private confirmPageUrls: Record<ServiceWorkMode, string> = {
-        signIn: AppRoutes.Auth.CONFIRM_PHONE_NUMBER,
-        changePhoneNumber: AppRoutes.Profile.CONFIRM_PHONE_NUMBER,
-    };
-    private confirmPageUrl: string = this.confirmPageUrls[this.mode];
     private subscriptions: Subscription[] = [];
-    private submitSubject = new BehaviorSubject<boolean | null>(null);
 
     public isValid = true;
     public countryCodeChanged = false;
@@ -34,7 +27,6 @@ export class SignInFormService {
     public isSigninInProgress = this.authenticationService.isSigninInProgress$;
     public isChangingPhoneNumberInProgress =
         this.authenticationService.isChangePhoneNumberInProgress$;
-    public submit$ = this.submitSubject.asObservable()
 
     constructor() {
         this.errorStateMatcher = new CustomErrorStateMatcher(() => this.isValid);
@@ -120,7 +112,6 @@ export class SignInFormService {
     }: { mode?: ServiceWorkMode; initialValue?: string } = {}) {
         this.form = this.createForm(initialValue);
         this.mode = mode;
-        this.confirmPageUrl = this.confirmPageUrls[this.mode];
     }
 
     public onFocus = () => {
@@ -159,8 +150,15 @@ export class SignInFormService {
             dropdownContainer: document.body,
         });
         this.subscriptions.push(
-            fromEvent(inputElement, "blur").pipe(delay(100), map(() => this.onBlur())).subscribe(),
-            fromEvent(inputElement, "focus").pipe(map(() => this.onFocus())).subscribe(),
+            fromEvent(inputElement, "blur")
+                .pipe(
+                    delay(100),
+                    map(() => this.onBlur()),
+                )
+                .subscribe(),
+            fromEvent(inputElement, "focus")
+                .pipe(map(() => this.onFocus()))
+                .subscribe(),
             fromEvent(inputElement, "countrychange")
                 .pipe(map(() => this.onCountryCodeChange()))
                 .subscribe(),
@@ -194,42 +192,23 @@ export class SignInFormService {
         this.isValid = valid;
     }
 
-    public submit = () => {
+    public submit = async () => {
         const dialCode = this.iti.getSelectedCountryData().dialCode;
         this.validateNumber();
         if (!this.isValid || !dialCode) {
-            this.submitSubject.next(null);
             return;
-        };
-        
+        }
+
         const phoneNumber = `+${dialCode}${this.form.value.phone}`;
 
         if (this.mode === "signIn") {
-            this.authenticationService.loginWithPhoneNumber(phoneNumber).pipe(
-                take(1),
-                tap(() => this.submitSubject.next(true)),
-            ).subscribe();
+            return await firstValueFrom(
+                this.authenticationService.loginWithPhoneNumber(phoneNumber),
+            );
         } else {
-            this.authenticationService.changePhoneNumber(phoneNumber).pipe(
-                take(1),
-                tap(() => this.submitSubject.next(true)),
-            ).subscribe();
+            return await firstValueFrom(this.authenticationService.changePhoneNumber(phoneNumber));
         }
     };
-
-    private navigateToConfirmPage() {
-        const redirectUrl = this.getRedirectUrl();
-        const params = new URLSearchParams({
-            ...(redirectUrl && { redirect: redirectUrl }),
-            mode: this.mode,
-        }).toString();
-        this.router.navigateByUrl(`${this.confirmPageUrl}?${params}`);
-    }
-
-    private getRedirectUrl(): string | null {
-        const tree = this.router.parseUrl(this.router.url);
-        return tree.queryParams["redirect"] || null;
-    }
 }
 
 class CustomErrorStateMatcher implements ErrorStateMatcher {
