@@ -80,14 +80,7 @@ export class ConfirmPhoneNumberFormComponent implements OnInit, AfterViewInit, O
             mode: this.mode,
         });
         this.code.valueChanges.pipe(takeUntilDestroyed(this.destroyed)).subscribe((value) => {
-            this.confirmPhoneNumberService.onConfirmationCodeChange(value || "").subscribe({
-                next: (isConfirmed) => {
-                    if (isConfirmed) {
-                        this.codeConfiramSuccess.emit();
-                    }
-                },
-                error: (error) => this.codeConfiramError.emit(error),
-            });
+            this.onCodeChanged(value || "");
         });
         this.cooldownSub = this.confirmPhoneNumberService.cooldown$.subscribe((seconds) => {
             this.cooldown = seconds;
@@ -107,5 +100,17 @@ export class ConfirmPhoneNumberFormComponent implements OnInit, AfterViewInit, O
 
     public resendCode(): void {
         this.confirmPhoneNumberService.resendCode();
+    }
+
+    private async onCodeChanged(value: string) {
+        try {
+            const isConfirmed =
+                await this.confirmPhoneNumberService.onConfirmationCodeChange(value);
+            if (isConfirmed) {
+                this.codeConfiramSuccess.emit();
+            }
+        } catch (error) {
+            this.codeConfiramError.emit(error);
+        }
     }
 }

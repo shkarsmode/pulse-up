@@ -1,13 +1,13 @@
-@if (isLoading) {
-<div class="profile-loading">
-    <app-logo></app-logo>
-</div>
-} @else {
-<app-container>
-    <div class="profile">
-        <div class="profile__container">
-            <ng-content></ng-content>
-        </div>
+@if (isLoading()) {
+    <div class="profile-loading">
+        <app-logo></app-logo>
     </div>
-</app-container>
+} @else {
+    <app-container>
+        <div class="profile">
+            <div class="profile__container">
+                <ng-content></ng-content>
+            </div>
+        </div>
+    </app-container>
 }

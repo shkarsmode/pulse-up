@@ -1,17 +1,5 @@
 import { inject } from "@angular/core";
-import {
-    BehaviorSubject,
-    catchError,
-    interval,
-    Observable,
-    of,
-    Subscription,
-    switchMap,
-    take,
-    takeWhile,
-    tap,
-    throwError,
-} from "rxjs";
+import { BehaviorSubject, firstValueFrom, interval, Subscription, take, takeWhile } from "rxjs";
 import { FormControl } from "@angular/forms";
 import { toSignal } from "@angular/core/rxjs-interop";
 import { MatDialog } from "@angular/material/dialog";
@@ -63,44 +51,23 @@ export class ConfirmPhoneNumberService {
         this.ngOtpInput = ngOtpInput;
     }
 
-    public onConfirmationCodeChange = (value: string): Observable<null | boolean> => {
-        if (value?.length !== 6) return of(null);
+    public onConfirmationCodeChange = async (value: string): Promise<null | boolean> => {
+        if (value?.length !== 6) return null;
 
         if (this.mode === "signIn") {
-            return this.authenticationService.confirmVerificationCode(value).pipe(
-                take(1),
-                catchError((error) => {
-                    this.resetInput();
-                    return throwError(() => error);
-                }),
-                tap(() => this.resetInput()),
-                switchMap(() => of(true)),
-            );
-            // .subscribe({
-            //     next: () => {
-            //         this.navigateToHomePage();
-            //         this.resetInput();
-            //     },
-            //     error: this.handleEror,
-            // });
+            try {
+                await firstValueFrom(this.authenticationService.confirmVerificationCode(value));
+                return true;
+            } finally {
+                this.resetInput();
+            }
         } else {
-            return this.authenticationService.confirmNewPhoneNumber(value).pipe(
-                take(1),
-                catchError((error) => {
-                    this.resetInput();
-                    return throwError(() => error);
-                }),
-                switchMap(() => of(true)),
-            );
-            // .subscribe({
-            //     next: (response) => {
-            //         this.router.navigateByUrl(`/${this.appRoutes.Profile.EDIT}`);
-            //         this.notificationService.success(
-            //             "Phone number has been changed successfully.",
-            //         );
-            //     },
-            //     error: this.handleEror,
-            // });
+            try {
+                await firstValueFrom(this.authenticationService.confirmNewPhoneNumber(value));
+                return true;
+            } finally {
+                this.resetInput();
+            }
         }
     };
 

@@ -57,12 +57,12 @@ export class MyTopicsTabComponent implements OnInit {
 
     constructor() {
         this.route.queryParamMap.pipe(
-            takeUntilDestroyed(this.destroyed),
             map((params) => params.get("tab")),
             tap((tab) => {
                 const tabFromUrl = Number(tab);
                 this.selectedTabIndex = isNaN(tabFromUrl) ? 0 : tabFromUrl;
-            })
+            }),
+            takeUntilDestroyed(this.destroyed),
         ).subscribe();
     }
 

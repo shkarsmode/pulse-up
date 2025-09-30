@@ -1,15 +1,7 @@
 import { inject, Injectable } from "@angular/core";
-import {
-    ActivatedRouteSnapshot,
-    CanActivate,
-    GuardResult,
-    MaybeAsync,
-    Router,
-    RouterStateSnapshot,
-} from "@angular/router";
+import { CanActivate, GuardResult, MaybeAsync, Router } from "@angular/router";
+import { first, map } from "rxjs";
 import { MatDialog } from "@angular/material/dialog";
-import { map } from "rxjs";
-import { CompleteProfilePopupComponent } from "@/app/shared/components/popups/complete-profile-popup/complete-profile-popup.component";
 import { AppRoutes } from "@/app/shared/enums/app-routes.enum";
 import { ProfileService } from "@/app/shared/services/profile/profile.service";
 
@@ -21,11 +13,13 @@ export class RequiredPersonalInformationGuard implements CanActivate {
     private profileService = inject(ProfileService);
     private dialog: MatDialog = inject(MatDialog);
 
-    canActivate(
-        route: ActivatedRouteSnapshot,
-        state: RouterStateSnapshot,
-    ): MaybeAsync<GuardResult> {
-        return this.profileService.hasPublicInformation$.pipe(
+    canActivate(): MaybeAsync<GuardResult> {
+        const hasPublicInformation$ = this.profileService.profile$.pipe(
+            first((profile) => profile !== null),
+            map((profile) => !!(profile?.name && profile?.username)),
+        );
+
+        return hasPublicInformation$.pipe(
             map((hasPublicInformation) => {
                 if (!hasPublicInformation) {
                     this.openPopup();
@@ -37,7 +31,10 @@ export class RequiredPersonalInformationGuard implements CanActivate {
         );
     }
 
-    private openPopup() {
+    private async openPopup() {
+        const CompleteProfilePopupComponent = await import(
+            "@/app/shared/components/popups/complete-profile-popup/complete-profile-popup.component"
+        ).then((module) => module.CompleteProfilePopupComponent);
         return this.dialog.open(CompleteProfilePopupComponent, {
             width: "630px",
             panelClass: "custom-dialog-container",

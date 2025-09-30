@@ -25,7 +25,8 @@ export class UserService {
 
     public getOwnProfile(): Observable<Nullable<IProfile>> {
         return this.http.get<IProfile>(`${this.apiUrl}/users/self`).pipe(
-            catchError(() => {
+            catchError((error: unknown) => {
+                console.error("Error loading profile:", error);
                 return of(null);
             }),
         );

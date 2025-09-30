@@ -1,4 +1,4 @@
-import { Component, effect, inject } from "@angular/core";
+import { Component, inject, signal } from "@angular/core";
 import { MatDialogRef } from "@angular/material/dialog";
 import { CommonModule } from "@angular/common";
 import { Router } from "@angular/router";
@@ -10,7 +10,6 @@ import {
     Validators,
 } from "@angular/forms";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
-import { filter, take } from "rxjs";
 import { UserService } from "@/app/shared/services/api/user.service";
 import { CloseButtonComponent } from "../../ui-kit/buttons/close-button/close-button.component";
 import { atLeastOneLetterValidator } from "@/app/shared/helpers/validators/at-least-one-letter.validator";
@@ -85,8 +84,8 @@ export class CompleteProfilePopupComponent {
     private readonly dialogRef: MatDialogRef<CompleteProfilePopupComponent> = inject(MatDialogRef);
 
     public form: FormGroup;
-    public loading = false;
-    public errorMessage: string | null = null;
+    public loading = signal(false);
+    public errorMessage = signal<string | null>(null);
 
     constructor() {
         this.form = this.fb.group({
@@ -112,11 +111,7 @@ export class CompleteProfilePopupComponent {
         });
 
         this.form.valueChanges.pipe(takeUntilDestroyed()).subscribe(() => {
-            this.errorMessage = null;
-        });
-
-        effect(() => {
-            console.log({ formErrors: this.form.errors });
+            this.errorMessage.set(null);
         });
     }
 
@@ -127,27 +122,19 @@ export class CompleteProfilePopupComponent {
         }
     }
 
-    submit() {
+    async submit() {
         if (this.form.valid) {
-            this.loading = true;
-            this.profileService
-                .updateProfile(this.form.value)
-                .pipe(take(1))
-                .subscribe({
-                    next: (profile) => {
-                        this.loading = false;
-                        this.dialogRef.close(profile);
-                        this.profileService.profile$
-                            .pipe(filter((profile) => !!profile?.name && !!profile?.username))
-                            .subscribe(() => {
-                                this.router.navigate([AppRoutes.User.Topic.SUGGEST]);
-                            });
-                    },
-                    error: () => {
-                        this.loading = false;
-                        this.errorMessage = "Failed to update profile. Please try again.";
-                    },
-                });
+            this.loading.set(true);
+            try {
+                const profile = await this.profileService.updateProfile(this.form.value);
+                this.loading.set(false);
+                this.dialogRef.close(profile);
+                this.router.navigate([AppRoutes.User.Topic.SUGGEST]);
+            } catch (error: unknown) {
+                console.log("Error updating profile:", error);
+                this.loading.set(false);
+                this.errorMessage.set("Failed to update profile. Please try again.");
+            }
         } else {
             this.form.markAllAsTouched();
         }
