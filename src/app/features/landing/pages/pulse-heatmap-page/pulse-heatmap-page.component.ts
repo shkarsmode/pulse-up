@@ -1,7 +1,9 @@
 import { Component, computed, DestroyRef, effect, inject, OnInit } from "@angular/core";
-import { CommonModule } from "@angular/common";
+import { CommonModule, Location } from "@angular/common";
 import { ActivatedRoute, ParamMap, Router } from "@angular/router";
 import { takeUntilDestroyed, toSignal } from "@angular/core/rxjs-interop";
+import { MatIconButton } from "@angular/material/button";
+import { AngularSvgIconModule } from "angular-svg-icon";
 import { catchError, throwError } from "rxjs";
 import mapboxgl from "mapbox-gl";
 import { ITopic } from "@/app/shared/interfaces";
@@ -14,7 +16,6 @@ import { FadeInDirective } from "@/app/shared/animations/fade-in.directive";
 import { FormatNumberPipe } from "@/app/shared/pipes/format-number.pipe";
 import { LoadImgPathDirective } from "@/app/shared/directives/load-img-path/load-img-path.directive";
 import { MapHeatmapLayerComponent } from "@/app/shared/components/map/map-heatmap-layer/map-heatmap-layer.component";
-import { HeaderComponent } from "@/app/shared/components/header/header.component";
 import { AppConstants } from "@/app/shared/constants";
 import { IpLocationService } from "@/app/shared/services/core/ip-location.service";
 
@@ -25,17 +26,19 @@ import { IpLocationService } from "@/app/shared/services/core/ip-location.servic
     standalone: true,
     imports: [
         CommonModule,
+        MatIconButton,
         MapComponent,
         FadeInDirective,
         FormatNumberPipe,
         LoadImgPathDirective,
         MapHeatmapLayerComponent,
-        HeaderComponent,
+        AngularSvgIconModule,
     ],
 })
 export class PulseHeatmapPageComponent implements OnInit {
     private destroyRef = inject(DestroyRef);
     private router: Router = inject(Router);
+    private location = inject(Location);
     private route: ActivatedRoute = inject(ActivatedRoute);
     private pulseService: PulseService = inject(PulseService);
     private ipLocationService = inject(IpLocationService);
@@ -80,7 +83,7 @@ export class PulseHeatmapPageComponent implements OnInit {
     public mapCenterCoordinates = computed(() => {
         const coordinates = this.coordinates();
         return coordinates
-            ? [coordinates.longitude, coordinates.latitude] as [number, number]
+            ? ([coordinates.longitude, coordinates.latitude] as [number, number])
             : AppConstants.MAP_CENTER_COORDINATES;
     });
 
@@ -104,6 +107,10 @@ export class PulseHeatmapPageComponent implements OnInit {
 
     public onMapLoaded(map: mapboxgl.Map): void {
         this.map = map;
+    }
+
+    public onClose(): void {
+        this.location.back();
     }
 
     private initPulseUrlIdListener(): void {
