@@ -1,11 +1,9 @@
-<app-header />
-
-<main
+<div
+    *ngIf="pulse"
     class="pulse"
     fadeIn
-    [childrenFadeIn]="true"
-    *ngIf="!isLoading">
-    <div class="pulse-header">
+    [childrenFadeIn]="true">
+    <header class="pulse-header">
         <div class="pulse-header__topic">
             <img
                 class="pulse-header__logo"
@@ -25,19 +23,29 @@
                 </div>
             </div>
         </div>
-    </div>
-    <app-map
-        class="pulse__map"
-        [center]="mapCenterCoordinates()"
-        [zoom]="zoom"
-        [minZoom]="minZoom"
-        [maxBounds]="maxBounds"
-        [weights]="{ enabled: true }"
-        (mapLoaded)="onMapLoaded($event)">
-        <ng-container *ngIf="map">
-            <app-map-heatmap-layer
-                [map]="map"
-                [topicId]="pulse.id" />
-        </ng-container>
-    </app-map>
-</main>
+        <button
+            mat-icon-button
+            class="pulse-header__close"
+            (click)="onClose()">
+            <svg-icon src="assets/svg/close.svg" />
+            <span class="visualy-hidden">Close</span>
+        </button>
+    </header>
+
+    <main class="pulse">
+        <app-map
+            class="pulse__map"
+            [center]="mapCenterCoordinates()"
+            [zoom]="zoom"
+            [minZoom]="minZoom"
+            [maxBounds]="maxBounds"
+            [weights]="{ enabled: true }"
+            (mapLoaded)="onMapLoaded($event)">
+            <ng-container *ngIf="map">
+                <app-map-heatmap-layer
+                    [map]="map"
+                    [topicId]="pulse.id" />
+            </ng-container>
+        </app-map>
+    </main>
+</div>
