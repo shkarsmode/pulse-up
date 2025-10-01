@@ -19,7 +19,7 @@
                 </div>
                 <div class="pulse-header__last-votes">
                     {{ pulse.stats?.lastDayVotes || 0 | formatNumber }}
-                    Pulses received in last 24 hours
+                    pulse{{ pulse.stats?.lastDayVotes === 1 ? '' : 's' }} received in last 24 hours
                 </div>
             </div>
         </div>
