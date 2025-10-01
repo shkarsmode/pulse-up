@@ -42,21 +42,21 @@ export abstract class BaseBannerGenerator implements BannerStrategy {
 
             const root = document.getElementById("banner-template-root");
             if (!root) {
-                this.container.innerHTML = "";
                 throw new Error("Banner template root not found");
             }
 
             const dataUrl = await toPng(root, {
                 width: root.scrollWidth,
                 height: root.scrollHeight,
+                skipFonts: true,
             });
-
-            this.container.innerHTML = "";
 
             return dataUrl;
         } catch (error) {
             console.log("Error generating banner:", error);
             throw new Error("Failed to generate banner");
+        } finally {
+            this.container.innerHTML = "";
         }
     }
 
