@@ -167,6 +167,11 @@ export class PulsePageService {
         return topic?.state === TopicState.Archived;
     });
 
+    public isClosed = computed(() => {
+        const topic = this.topicQuery.data();
+        return topic?.endsAt ? new Date(topic.endsAt) < new Date() : false;
+    });
+
     public lastPulseTime = computed(() => {
         return this.topicQuery.data()?.stats?.timestamp;
     });

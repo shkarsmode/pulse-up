@@ -1,4 +1,5 @@
 @let shareTopicUrl = topicUrl();
+@let isVotingDisabled = isArchived() || isClosed();
 
 <app-lending-page-layout>
     @if (isLoading()) {
@@ -82,7 +83,7 @@
                         }
                     </div>
                     <div class="pulse__buttons">
-                        @if (isArchived()) {
+                        @if (isVotingDisabled) {
                             <app-disbled-vote-button />
                         } @else if (isAnonymousUser()) {
                             <app-guest-vote-button />
@@ -146,27 +147,50 @@
                         [alt]="topic.title"
                         appLoadImgPath />
 
-                    <div
-                        class="pulse__info-media__map"
-                        [routerLink]="'/topic/' + topic.id + '/heatmap'">
-                        <div class="pulse__info-media__map-clickbait">
-                            <svg-icon src="assets/svg/time-icon-large.svg" />
-                            <h3>View Heatmap</h3>
-                        </div>
+                    @if (isVotingDisabled) {
+                        <div class="pulse__info-media__map pulse__info-media__map--disabled">
+                            <div class="pulse__info-media__map-clickbait">
+                                <svg-icon src="assets/svg/time-icon-large.svg" />
+                                <h3 class="pulse-map-text pulse-map-text--heading">Heatmap is not available</h3>
+                                <p class="pulse-map-text">Topic is archived</p>
+                            </div>
 
-                        <app-map
-                            [zoom]="[1.5]"
-                            [minZoom]="1.5"
-                            [weights]="{ enabled: true }"
-                            [center]="mapCenterCoordinates()"
-                            (mapLoaded)="onMapLoaded($event)">
-                            <ng-container *ngIf="map">
-                                <app-map-heatmap-layer
-                                    [map]="map"
-                                    [topicId]="topic.id" />
-                            </ng-container>
-                        </app-map>
-                    </div>
+                            <app-map
+                                [zoom]="[1.5]"
+                                [minZoom]="1.5"
+                                [weights]="{ enabled: true }"
+                                [center]="mapCenterCoordinates()"
+                                (mapLoaded)="onMapLoaded($event)">
+                                <ng-container *ngIf="map">
+                                    <app-map-heatmap-layer
+                                        [map]="map"
+                                        [topicId]="topic.id" />
+                                </ng-container>
+                            </app-map>
+                        </div>
+                    } @else {
+                        <div
+                            class="pulse__info-media__map"
+                            [routerLink]="'/topic/' + topic.id + '/heatmap'">
+                            <div class="pulse__info-media__map-clickbait">
+                                <svg-icon src="assets/svg/time-icon-large.svg" />
+                                <h3 class="pulse-map-text pulse-map-text--heading">View Heatmap</h3>
+                            </div>
+
+                            <app-map
+                                [zoom]="[1.5]"
+                                [minZoom]="1.5"
+                                [weights]="{ enabled: true }"
+                                [center]="mapCenterCoordinates()"
+                                (mapLoaded)="onMapLoaded($event)">
+                                <ng-container *ngIf="map">
+                                    <app-map-heatmap-layer
+                                        [map]="map"
+                                        [topicId]="topic.id" />
+                                </ng-container>
+                            </app-map>
+                        </div>
+                    }
                 </div>
             </div>
 
