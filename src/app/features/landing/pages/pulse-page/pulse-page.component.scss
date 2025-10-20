@@ -1,6 +1,5 @@
 @use "../../../../../styles/mixins" as *;
 
-
 .pulse {
     display: flex;
     flex-direction: column;
@@ -153,7 +152,6 @@
     }
 
     &__info {
-
         &-keywords {
             display: flex;
             flex-wrap: wrap;
@@ -221,17 +219,23 @@
                     flex-direction: column;
                     justify-content: center;
                     align-items: center;
+                    row-gap: 8px;
                     top: 50%;
                     left: 50%;
                     transform: translate(-50%, -50%);
                     z-index: 2;
 
-                    h3 {
-                        @include text-16px;
-                        color: var(--white-color);
+                    .pulse-map-text {
+                        @include text-12px;
                         font-weight: 600;
+                        color: var(--white-color);
                         text-align: center;
                         text-shadow: #0000004d 5px 5px 10px;
+
+                        &.pulse-map-text--heading {
+                            @include text-16px;
+                            font-weight: 600;
+                        }
                     }
                 }
 
@@ -333,4 +337,12 @@
     align-items: center;
     justify-content: center;
     flex-grow: 1;
+}
+
+.pulse__info-media__map--disabled {
+    filter: grayscale(1);
+    cursor: auto;
+    &::before {
+        background-color: rgba(#131420, 0.2);
+    }
 }

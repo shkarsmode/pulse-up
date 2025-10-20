@@ -109,6 +109,7 @@ export class PulsePageComponent implements OnInit, OnDestroy {
     public suggestions = this.pulsePageService.suggestions;
     public isLoading = this.pulsePageService.isLoading;
     public isArchived = this.pulsePageService.isArchived;
+    public isClosed = this.pulsePageService.isClosed;
     public qrCodePopupText = this.pulsePageService.qrCodePopupText;
     public qrCodeBannerTitle = this.pulsePageService.qrCodeBannerTitle;
     public qrCodeBannerText = this.pulsePageService.qrCodeBannerText;
