@@ -1,0 +1,222 @@
+@let shareTopicUrl = topicUrl();
+@let isVotingDisabled = isArchived() || isClosed();
+
+<app-lending-page-layout>
+    @if (isLoading()) {
+        <app-spinner class="pulse__spinner" />
+    } @else if (topic) {
+        <app-container size="lg">
+            <div class="page-bg">
+                <div
+                    class="pulse"
+                    fadeIn
+                    [childrenFadeIn]="true">
+                    <app-topic-section>
+                        <div class="header">
+                            <img
+                                class="header__logo"
+                                [src]="topicIcon$ | async"
+                                width="64"
+                                height="64"
+                                alt="pulse icon" />
+                            <div class="header__title">
+                                <h2>{{ topic.title }}</h2>
+                                <a
+                                    [routerLink]="['/user', topic.author.username]"
+                                    [state]="{ pulseId: topic.id }">
+                                    {{ topic.author.name }}
+                                </a>
+                            </div>
+                        </div>
+
+                        @if (topic.picture) {
+                            <img
+                                class="cover-image"
+                                [src]="topic.picture"
+                                width="538"
+                                height="400"
+                                [alt]="topic.title"
+                                appLoadImgPath />
+                        }
+
+                        <div class="stats">
+                            <div class="stats__wrap">
+                                <div>
+                                    <span class="stats__title">Supporters</span>
+                                    <div class="stats__icon">
+                                        <svg-icon src="assets/svg/fans.svg" />
+                                    </div>
+                                    <span class="stats__count">
+                                        {{ topic.stats?.totalUniqueUsers || 0 | formatNumber }}
+                                    </span>
+                                </div>
+                                <div>
+                                    <span class="stats__title">Lifetime</span>
+                                    <div class="stats__icon">
+                                        <svg-icon src="assets/svg/chart-simple.svg" />
+                                    </div>
+                                    <span class="stats__count">
+                                        {{ topic.stats?.totalVotes || 0 | formatNumber }}
+                                    </span>
+                                </div>
+                                <div>
+                                    <span class="stats__title">24 hours</span>
+                                    @if (isActiveVote()) {
+                                        <div class="stats__icon stats__icon--active">
+                                            <svg-icon
+                                                appWavesAnimation
+                                                src="assets/svg/logo/logo-v2.svg"
+                                                ariaLabel="pulse icon"
+                                                class="card-footer-icon" />
+                                        </div>
+                                    } @else {
+                                        <svg-icon src="assets/svg/pulse.svg" />
+                                    }
+                                    <span class="stats__count">
+                                        {{ topic.stats?.lastDayVotes || 0 | formatNumber }}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="actions">
+                            <div class="actions__buttons">
+                                @if (isVotingDisabled) {
+                                    <app-disbled-vote-button />
+                                } @else if (isAnonymousUser()) {
+                                    <app-guest-vote-button />
+                                } @else {
+                                    <app-user-vote-button
+                                        (voted)="onVoted($event)"
+                                        (voteExpired)="onVoteExpired()" />
+                                }
+                                <app-menu [content]="menuContent">
+                                    <button
+                                        flatButton
+                                        class="actions__share-button"
+                                        [class.actions__share-button--dark]="isActiveVote()">
+                                        <svg-icon src="assets/svg/icon_share.svg"></svg-icon>
+                                    </button>
+                                </app-menu>
+                            </div>
+                            @if (isActiveVote()) {
+                                <div class="active-pulse-location">
+                                    <svg-icon src="assets/svg/pin.svg" />
+                                    <div class="active-pulse-location__text">
+                                        {{ lastVoteInfo() }}
+                                    </div>
+                                </div>
+                            }
+                            @if (topic.campaign) {
+                                <app-pulse-campaign
+                                    [campaign]="topic.campaign"
+                                    [stats]="topic.stats" />
+                            }
+                        </div>
+
+                        <app-pulse-description
+                            [longDescription]="topic.description | linkify"
+                            [shortDescription]="shortPulseDescription() | linkify" />
+
+                        <div class="keywords">
+                            @for (keyword of keywords(); track keyword.label) {
+                                <app-keyword-button [keyword]="keyword" />
+                            }
+                        </div>
+
+                        <div class="activity">
+                            Active from {{ topic.startsAt | date: "MMM d, y" }}, to
+                            {{ topic.endsAt | date: "MMM d, y" }}
+                        </div>
+                    </app-topic-section>
+
+                    <div class="cols">
+                        <app-topic-section>
+                            @if (isVotingDisabled) {
+                                <div class="map map--disabled">
+                                    <div class="map__clickbait">
+                                        <svg-icon src="assets/svg/time-icon-large.svg" />
+                                        <h3 class="map__text map__text--heading">
+                                            Heatmap is not available
+                                        </h3>
+                                        <p class="map__text">Topic is archived</p>
+                                    </div>
+
+                                    <app-map
+                                        [zoom]="[1.5]"
+                                        [minZoom]="1.5"
+                                        [weights]="{ enabled: true }"
+                                        [center]="mapCenterCoordinates()"
+                                        (mapLoaded)="onMapLoaded($event)">
+                                        <ng-container *ngIf="map">
+                                            <app-map-heatmap-layer
+                                                [map]="map"
+                                                [topicId]="topic.id" />
+                                        </ng-container>
+                                    </app-map>
+                                </div>
+                            } @else {
+                                <div
+                                    class="map"
+                                    [routerLink]="'/topic/' + topic.id + '/heatmap'">
+                                    <div class="map__clickbait">
+                                        <svg-icon src="assets/svg/time-icon-large.svg" />
+                                        <h3 class="map__text map__text--heading">View Heatmap</h3>
+                                    </div>
+
+                                    <app-map
+                                        [zoom]="[1.5]"
+                                        [minZoom]="1.5"
+                                        [weights]="{ enabled: true }"
+                                        [center]="mapCenterCoordinates()"
+                                        (mapLoaded)="onMapLoaded($event)">
+                                        <ng-container *ngIf="map">
+                                            <app-map-heatmap-layer
+                                                [map]="map"
+                                                [topicId]="topic.id" />
+                                        </ng-container>
+                                    </app-map>
+                                </div>
+                            }
+                        </app-topic-section>
+                    </div>
+
+                    <!-- <h2 class="pulse__slider-title">You may also like</h2>
+                    <app-slider>
+                        @for (pulse of suggestions(); track pulse.id; let i = $index) {
+                            <li class="splide__slide">
+                                <app-top-pulse-card [pulse]="pulse" />
+                            </li>
+                        }
+                    </app-slider> -->
+                </div>
+            </div>
+        </app-container>
+    }
+
+    <ng-template #menuContent>
+        <div class="social-share-menu">
+            <app-copy-button
+                [link]="shareTopicUrl"
+                (handleClick)="onCopyLink($event)" />
+            <app-socials-button
+                [variant]="'facebook'"
+                [url]="shareTopicUrl" />
+            <app-socials-button
+                [variant]="'x'"
+                [url]="shareTopicUrl" />
+            <app-socials-button
+                [variant]="'email'"
+                [url]="shareTopicUrl" />
+            <app-qrcode-button
+                [link]="shareTopicUrl"
+                [popupSubtitle]="qrCodePopupText()"
+                popupTitle="Topic QR code"
+                [bannerIcon]="(topicIcon$ | async) || ''"
+                [bannerTitle]="qrCodeBannerTitle()"
+                [bannerSubtitle]="qrCodeBannerText()" />
+        </div>
+    </ng-template>
+
+    <div id="recaptcha-container"></div>
+</app-lending-page-layout>

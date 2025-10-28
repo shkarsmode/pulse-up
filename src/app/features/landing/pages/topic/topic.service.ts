@@ -31,7 +31,7 @@ import { ITopicKeyword } from "../../interfaces/topic-keyword.interface";
 @Injectable({
     providedIn: "root",
 })
-export class PulsePageService {
+export class TopicService {
     private router = inject(Router);
     private voteService = inject(VoteService);
     private pulseService = inject(PulseService);

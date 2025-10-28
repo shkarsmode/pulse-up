@@ -35,7 +35,7 @@ import { PulseCampaignComponent } from "../../ui/pulse-campaign/pulse-campaign.c
 import { VotesService } from "@/app/shared/services/votes/votes.service";
 import { MapHeatmapLayerComponent } from "@/app/shared/components/map/map-heatmap-layer/map-heatmap-layer.component";
 import { WaveAnimationDirective } from "@/app/shared/directives/wave-animation/wave-animation.directive";
-import { PulsePageService } from "./pulse-page.service";
+import { TopicService } from "./topic.service";
 import { SettingsService } from "@/app/shared/services/api/settings.service";
 import { TimeFromNowPipe } from "@/app/shared/pipes/time-from-now.pipe";
 import { GuestVoteButtonComponent } from "../../ui/vote-button/guest-vote-button/guest-vote-button.component";
@@ -45,11 +45,13 @@ import { KeywordButtonComponent } from "../../ui/keyword-button/keyword-button.c
 import { PulseDescriptionComponent } from "../../ui/pulse-description/pulse-description.component";
 import { LinkifyPipe } from "@/app/shared/pipes/linkify.pipe";
 import { LendingPageLayoutComponent } from "../../ui/lending-page-layout/lending-page-layout.component";
+import { ContainerComponent } from "@/app/shared/components/ui-kit/container/container.component";
+import { TopicSectionComponent } from "../../ui/topic-section/topic-section.component";
 
 @Component({
-    selector: "app-pulse-page",
-    templateUrl: "./pulse-page.component.html",
-    styleUrl: "./pulse-page.component.scss",
+    selector: "app-topic",
+    templateUrl: "./topic.component.html",
+    styleUrl: "./topic.component.scss",
     standalone: true,
     imports: [
         CommonModule,
@@ -78,10 +80,12 @@ import { LendingPageLayoutComponent } from "../../ui/lending-page-layout/lending
         PulseDescriptionComponent,
         LinkifyPipe,
         LendingPageLayoutComponent,
+        ContainerComponent,
+        TopicSectionComponent,
     ],
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class PulsePageComponent implements OnInit, OnDestroy {
+export class TopicComponent implements OnInit, OnDestroy {
     private readonly destroyRef = inject(DestroyRef);
     private readonly route = inject(ActivatedRoute);
     private readonly pulseService = inject(PulseService);
@@ -89,7 +93,7 @@ export class PulsePageComponent implements OnInit, OnDestroy {
     private readonly dialogService = inject(DialogService);
     private readonly pendingTopicsService = inject(PendingTopicsService);
     private readonly votesService = inject(VotesService);
-    private readonly pulsePageService = inject(PulsePageService);
+    private readonly topicService = inject(TopicService);
     private readonly settingsService = inject(SettingsService);
 
     private mutationObserver: MutationObserver | null = null;
@@ -99,24 +103,24 @@ export class PulsePageComponent implements OnInit, OnDestroy {
     public isReadMore = false;
     public map: mapboxgl.Map | null = null;
     public get topic() {
-        return this.pulsePageService.topic();
+        return this.topicService.topic();
     }
-    public isAnonymousUser = this.pulsePageService.isAnonymousUser;
-    public topicUrl = this.pulsePageService.topicUrl;
-    public isActiveVote = this.pulsePageService.isActiveVote;
-    public lastVoteInfo = this.pulsePageService.lastVoteInfo;
-    public shortPulseDescription = this.pulsePageService.shortPulseDescription;
-    public suggestions = this.pulsePageService.suggestions;
-    public isLoading = this.pulsePageService.isLoading;
-    public isArchived = this.pulsePageService.isArchived;
-    public isClosed = this.pulsePageService.isClosed;
-    public qrCodePopupText = this.pulsePageService.qrCodePopupText;
-    public qrCodeBannerTitle = this.pulsePageService.qrCodeBannerTitle;
-    public qrCodeBannerText = this.pulsePageService.qrCodeBannerText;
-    public keywords = this.pulsePageService.keywords;
-    public mapCenterCoordinates = this.pulsePageService.mapCenterCoordinates;
+    public isAnonymousUser = this.topicService.isAnonymousUser;
+    public topicUrl = this.topicService.topicUrl;
+    public isActiveVote = this.topicService.isActiveVote;
+    public lastVoteInfo = this.topicService.lastVoteInfo;
+    public shortPulseDescription = this.topicService.shortPulseDescription;
+    public suggestions = this.topicService.suggestions;
+    public isLoading = this.topicService.isLoading;
+    public isArchived = this.topicService.isArchived;
+    public isClosed = this.topicService.isClosed;
+    public qrCodePopupText = this.topicService.qrCodePopupText;
+    public qrCodeBannerTitle = this.topicService.qrCodeBannerTitle;
+    public qrCodeBannerText = this.topicService.qrCodeBannerText;
+    public keywords = this.topicService.keywords;
+    public mapCenterCoordinates = this.topicService.mapCenterCoordinates;
     public topicIcon$ = combineLatest([
-        toObservable(this.pulsePageService.topic),
+        toObservable(this.topicService.topic),
         this.settingsService.settings$,
     ]).pipe(
         map(([topic, settings]) => {
@@ -127,7 +131,7 @@ export class PulsePageComponent implements OnInit, OnDestroy {
         }),
     );
     public get lastPulseTime() {
-        return this.pulsePageService.lastPulseTime();
+        return this.topicService.lastPulseTime();
     }
 
     constructor() {
@@ -154,7 +158,7 @@ export class PulsePageComponent implements OnInit, OnDestroy {
 
     ngOnDestroy(): void {
         this.mutationObserver?.disconnect();
-        this.pulsePageService.clearPageData();
+        this.topicService.clearPageData();
     }
 
     public onMapLoaded(map: mapboxgl.Map): void {
@@ -170,7 +174,7 @@ export class PulsePageComponent implements OnInit, OnDestroy {
     }
 
     public onVoteExpired() {
-        this.pulsePageService.setVoteAsExpired();
+        this.topicService.setVoteAsExpired();
     }
 
     public onVoted(vote: IVote): void {
@@ -185,7 +189,7 @@ export class PulsePageComponent implements OnInit, OnDestroy {
             },
         });
         this.votesService.addVote(vote);
-        this.pulsePageService.refreshData();
+        this.topicService.refreshData();
     }
 
     private updatePageData(): void {
@@ -201,9 +205,9 @@ export class PulsePageComponent implements OnInit, OnDestroy {
                 }),
                 tap(({ topicId, shareKey }) => {
                     if (topicId) {
-                        this.pulsePageService.setTopicId(topicId);
+                        this.topicService.setTopicId(topicId);
                     } else if (shareKey) {
-                        this.pulsePageService.setTopicShareKey(shareKey);
+                        this.topicService.setTopicShareKey(shareKey);
                     }
                 }),
                 takeUntilDestroyed(this.destroyRef),
@@ -215,8 +219,8 @@ export class PulsePageComponent implements OnInit, OnDestroy {
                 distinctUntilChanged(),
                 filter((token) => !!token),
                 tap(() => {
-                    this.pulsePageService.refreshData();
-                    this.pulsePageService.setAsUpdatedAfterUserSignIn();
+                    this.topicService.refreshData();
+                    this.topicService.setAsUpdatedAfterUserSignIn();
                 }),
                 takeUntilDestroyed(this.destroyRef),
             )

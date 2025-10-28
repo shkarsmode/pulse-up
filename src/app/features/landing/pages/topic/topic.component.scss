@@ -1,0 +1,349 @@
+@use "../../../../../styles/mixins" as *;
+
+app-container::ng-deep .app-container {
+    @media screen and (max-width: 820px) {
+        padding: 0;
+    }
+}
+
+.page-bg {
+    width: 100%;
+    max-width: 1030px;
+    margin: 0 auto;
+    border-radius: 20px;
+    background-color: var(--white-popup);
+
+    @media screen and (max-width: 820px) {
+        border-radius: 0;
+    }
+}
+
+.pulse {
+    width: 100%;
+    max-width: 720px;
+    display: flex;
+    flex-direction: column;
+    row-gap: 24px;
+    margin: 0 auto 20px;
+    padding: 24px 20px;
+
+    @media screen and (max-width: 820px) {
+        padding: 16px;
+    }
+
+    &__slider-title {
+        text-align: center;
+        margin-top: 24px;
+        margin-bottom: -15px;
+    }
+
+    ::ng-deep .map-container {
+        height: 180px;
+        margin-top: 0px !important;
+    }
+}
+
+.header {
+    display: flex;
+    align-items: center;
+    column-gap: 16px;
+}
+
+.header__logo {
+    width: 64px;
+    height: 64px;
+    padding: 5px;
+    border-radius: 8px;
+    border: 1px solid var(--light-grey-color);
+}
+
+.header__title {
+    display: flex;
+    flex-direction: column;
+    row-gap: 4px;
+
+    h2 {
+        @include title-24px;
+    }
+
+    a {
+        @include text-14px;
+        text-decoration: underline;
+        color: var(--dark-grey-color);
+    }
+}
+
+.cover-image {
+    width: 100%;
+    height: auto;
+    max-height: 400px;
+    object-fit: cover;
+    border-radius: 10px;
+}
+
+.stats {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    justify-content: space-between;
+    row-gap: 24px;
+}
+
+.stats__wrap {
+    display: flex;
+    gap: 44px;
+
+    @media screen and (max-width: 650px) {
+        gap: 16px;
+    }
+
+    > div {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: space-between;
+        width: 64px;
+        @include text-14px;
+        color: var(--dark-grey-color);
+    }
+}
+
+.stats__title {
+    margin-bottom: 8px;
+    color: var(--dark-grey-color);
+}
+
+.stats__count {
+    @include text-14px;
+    margin-top: 6px;
+    font-weight: 600;
+    color: var(--dark-grey-color);
+}
+
+.stats__icon {
+    position: relative;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.stats__icon--active {
+    padding: 4px;
+    background-color: rgba(#5e00cc, 0.1);
+    border-radius: 50%;
+
+    svg-icon,
+    svg {
+        width: 100%;
+        height: 100%;
+    }
+}
+
+.actions {
+    width: 100%;
+    max-width: 400px;
+    margin: 0 auto;
+}
+
+.actions__info {
+    margin-bottom: 16px;
+}
+
+.actions__info--active {
+    margin-bottom: 8px;
+}
+
+.actions__last-vote {
+    @include text-14px;
+    display: flex;
+    align-items: center;
+    column-gap: 8px;
+    color: var(--dark-grey-color);
+}
+
+.actions__last-vote--time {
+    margin-bottom: 8px;
+
+    svg {
+        width: 16px;
+        height: 16px;
+    }
+}
+
+.actions__buttons {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+}
+
+.actions__share-button {
+    transition: background-color 0.15s linear;
+
+    svg-icon::ng-deep svg path {
+        transition: fill 0.15s linear;
+    }
+}
+
+.actions__share-button--dark {
+    background-color: var(--accent-color);
+
+    svg-icon::ng-deep svg path {
+        fill: var(--white-color);
+    }
+}
+
+.active-pulse-location {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    column-gap: 8px;
+    margin-top: 8px;
+}
+
+.active-pulse-location__text {
+    @include text-14px;
+    color: var(--dark-grey-color);
+}
+
+.keywords {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.activity {
+    @include text-12px;
+    color: var(--dark-grey-color);
+}
+
+.cols {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-row-gap: 20px;
+    grid-column-gap: 20px;
+
+    @include media-sm {
+        grid-template-columns: 100%;
+    }
+}
+
+.map {
+    position: relative;
+    width: 100%;
+    cursor: pointer;
+
+    &::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(#131420, 0.2);
+        border-radius: 10px;
+        z-index: 1;
+    }
+
+    app-map {
+        pointer-events: none;
+        width: 100%;
+        height: 100%;
+        cursor: pointer;
+
+        &::ng-deep {
+            .map-container {
+                border-radius: 10px;
+            }
+        }
+    }
+}
+
+.map--disabled {
+    filter: grayscale(1);
+    cursor: auto;
+    &::before {
+        background-color: rgba(#131420, 0.2);
+    }
+}
+
+.map__clickbait {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    row-gap: 8px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 2;
+}
+
+.map__text {
+    @include text-12px;
+    font-weight: 600;
+    color: var(--white-color);
+    text-align: center;
+    text-shadow: #0000004d 5px 5px 10px;
+
+    &.map__text--heading {
+        @include text-16px;
+        font-weight: 600;
+    }
+}
+
+@media screen and (max-width: 650px) {
+    // :host {
+    //     padding: 24px 20px 48px;
+    // }
+
+    // .pulse__info-media {
+    //     img {
+    //         width: auto;
+    //         max-width: 100%;
+    //         min-width: unset;
+    //     }
+
+    //     .pulse__info-media__map {
+    //         width: 100%;
+    //     }
+    // }
+
+    // .pulse__info-media {
+    //     flex-direction: column;
+    //     gap: 20px;
+    //     height: auto;
+    // }
+
+    // app-map::ng-deep .map-container {
+    //     margin-top: 0px !important;
+    //     aspect-ratio: 16/9;
+    //     height: auto !important;
+    // }
+}
+
+@media screen and (max-width: 500px) {
+    app-primary-button {
+        svg-icon svg {
+            transform: translateY(-1.5px);
+        }
+
+        display: block;
+        width: 100%;
+    }
+
+    app-primary-button::ng-deep button {
+        width: 100% !important;
+        gap: unset !important;
+    }
+}
+
+.pulse__spinner {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-grow: 1;
+}

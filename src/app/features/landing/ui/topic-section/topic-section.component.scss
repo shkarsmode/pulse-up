@@ -1,0 +1,12 @@
+:host {
+    display: block;
+}
+.topic-section {
+    display: flex;
+    flex-direction: column;
+    row-gap: 20px;
+    padding: 16px;
+    border-radius: 20px;
+    background-color: var(--white-color);
+    box-shadow: 0 0 10px 0px rgba(65, 65, 65, 0.1);
+}
