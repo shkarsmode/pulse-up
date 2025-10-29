@@ -65,7 +65,7 @@ export class TopicWarningMessageComponent implements OnChanges {
 
         if (dayjs(endDate).isBefore(dayjs())) {
             const archivingDate = dayjs(endDate).add(10, "day");
-            if (DateUtils.isWithinDaysBefore(archivingDate.toISOString(), 10)) {
+            if (DateUtils.isWithinDaysBefore(archivingDate.toISOString(), 10) && (!this.topic.stats?.lastDayVotes || this.topic.stats?.lastDayVotes < 3)) {
                 const timeToArchive = archivingDate.diff(dayjs(), "day");
                 this.severity.set("danger");
                 this.timeToArchive.set(timeToArchive);
@@ -73,7 +73,7 @@ export class TopicWarningMessageComponent implements OnChanges {
             } else {
                 this.isVisible.set(false);
             }
-        } else if (DateUtils.isWithinDaysBefore(endDate, 7)) {
+        } else if (DateUtils.isWithinDaysBefore(endDate, 7) && (!this.topic.stats?.lastDayVotes || this.topic.stats?.lastDayVotes < 3)) {
             this.severity.set("warning");
             this.isVisible.set(true);
         }
