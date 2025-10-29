@@ -13,7 +13,7 @@ export class VoteUtils {
     }
 
     public static parseVoteInfo(vote: IVote) {
-        return `${this.parseVoteLocation(vote.location)}\n${this.parseVoteDate(vote.updatedAt)}`;
+        return vote.location;
     }
 
     public static parseVoteLocation(location: string) {
