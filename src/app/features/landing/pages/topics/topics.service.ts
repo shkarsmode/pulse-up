@@ -8,7 +8,7 @@ import { PulseService } from "@/app/shared/services/api/pulse.service";
 import { PendingTopicsService } from "@/app/shared/services/topic/pending-topics.service";
 import { StringUtils } from "@/app/shared/helpers/string-utils";
 import { TrendingTopicsService } from "../../services/trending-topics/trending-topics.service";
-import { ITopic } from "@/app/shared/interfaces";
+import { ITopic, TopicState } from "@/app/shared/interfaces";
 
 @Injectable({ providedIn: "root" })
 export class TopicsService {
@@ -54,6 +54,7 @@ export class TopicsService {
                         category: category === "newest" ? undefined : category,
                         take: 20,
                         skip: pageParam * 20,
+                        state: this.searchText() ? TopicState.All : TopicState.Active,
                     })
                     .pipe(shareReplay({ bufferSize: 1, refCount: true })),
             );
