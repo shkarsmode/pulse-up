@@ -41,7 +41,7 @@ body .cdk-overlay-pane.mat-mdc-dialog-panel {
             selected-state-background-color: var(--accent-color),
             selected-state-text-color: var(--white-color),
             divider-color: transparent,
-            shape: 0,
+            // shape: 0,
             height: 32px,
         )
     );

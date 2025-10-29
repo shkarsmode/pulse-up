@@ -31,7 +31,7 @@ import { ITopicKeyword } from "../../interfaces/topic-keyword.interface";
 @Injectable({
     providedIn: "root",
 })
-export class PulsePageService {
+export class TopicService {
     private router = inject(Router);
     private voteService = inject(VoteService);
     private pulseService = inject(PulseService);
@@ -58,6 +58,7 @@ export class PulsePageService {
     private topicId = signal<number | null>(null);
     private topicShareKey = signal<string | null>(null);
     private _isUpdatedAfterUserSignIn = signal(false);
+    private topicEndDate = signal<Date | null>(null);
     private topicQuery = injectQuery(() => ({
         queryFn: () => {
             const topicId = this.topicId();
@@ -69,9 +70,6 @@ export class PulsePageService {
             return null;
         },
         queryKey: [QUERY_KEYS.topic, this.topicId(), this.topicShareKey()],
-        options: {
-            refetchOnWindowFocus: false,
-        },
     }));
     private votesQuery = injectQuery(() => ({
         queryFn: async () => {
@@ -81,9 +79,6 @@ export class PulsePageService {
             return votes;
         },
         queryKey: [QUERY_KEYS.votes, this.topicQuery.data()?.id, this.anonymousUser()],
-        options: {
-            refetchOnWindowFocus: false,
-        },
     }));
     private topicKeywords = computed(() => this.topicQuery.data()?.keywords || []);
     private topicKeywords$ = toObservable(this.topicKeywords);
@@ -101,7 +96,11 @@ export class PulsePageService {
 
     public topic = computed(() => {
         const topic = this.topicQuery.data();
-        return topic || null;
+        const customEndDate = this.topicEndDate();
+        return topic ? {
+            ...topic,
+            endsAt: customEndDate ? customEndDate.toISOString() : topic.endsAt,
+        } : null;
     });
 
     public votes = computed(() => {
@@ -271,5 +270,9 @@ export class PulsePageService {
             }),
         );
         return votes$;
+    }
+
+    public setTopicEndDate(endDate: Date | null) {
+        this.topicEndDate.set(endDate);
     }
 }

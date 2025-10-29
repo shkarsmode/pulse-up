@@ -23,7 +23,7 @@ import { AuthenticationService } from "@/app/shared/services/api/authentication.
 import { VotingError, VotingErrorCode } from "@/app/shared/helpers/errors/voting-error";
 import { isErrorWithMessage } from "@/app/shared/helpers/errors/is-error-with-message";
 import { WaveAnimationDirective } from "@/app/shared/directives/wave-animation/wave-animation.directive";
-import { PulsePageService } from "../../../pages/pulse-page/pulse-page.service";
+import { TopicService } from "../../../pages/topic/topic.service";
 import { VotingService } from "@/app/shared/services/votes/voting.service";
 
 function delayBetween<T>(delayMs: number, first = false) {
@@ -59,23 +59,22 @@ export class UserVoteButtonComponent implements OnInit {
     private votingService = inject(VotingService);
     private notificationService = inject(NotificationService);
     private authService = inject(AuthenticationService);
-    private pulsePageService = inject(PulsePageService);
+    private topicService = inject(TopicService);
 
     @Output() voteExpired = new EventEmitter<void>();
     @Output() voted = new EventEmitter<IVote>();
     @Output() pulse = new EventEmitter<{ justSignedIn?: boolean }>();
 
     private isAnimating = new BehaviorSubject(false);
-    private topic = this.pulsePageService.topic;
-    private isUpdated$ = toObservable(this.pulsePageService.isUpdatedAfterUserSignIn);
-    private isActiveVote$ = toObservable(this.pulsePageService.isActiveVote);
+    private topic = this.topicService.topic;
+    private isUpdated$ = toObservable(this.topicService.isUpdatedAfterUserSignIn);
+    private isActiveVote$ = toObservable(this.topicService.isActiveVote);
 
-    public votes = this.pulsePageService.votes;
-    public isVotesLoading = this.pulsePageService.isVotesLoading;
-    public isActiveVote = this.pulsePageService.isActiveVote;
-    public lastVoteInfo = this.pulsePageService.lastVoteInfo;
+    public votes = this.topicService.votes;
+    public isVotesLoading = this.topicService.isVotesLoading;
+    public isActiveVote = this.topicService.isActiveVote;
     public isAnimating$ = this.isAnimating.asObservable();
-    public votes$ = toObservable(this.pulsePageService.votes);
+    public votes$ = toObservable(this.topicService.votes);
     public isSignedInUserVoted = false;
     public isInProgress = false;
 

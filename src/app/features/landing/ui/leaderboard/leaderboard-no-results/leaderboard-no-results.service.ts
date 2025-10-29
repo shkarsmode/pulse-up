@@ -2,7 +2,7 @@ import { inject, Injectable } from "@angular/core";
 import { catchError, distinctUntilChanged, map, of, shareReplay, switchMap } from "rxjs";
 import { PulseService } from "@/app/shared/services/api/pulse.service";
 import { LeaderboardService } from "../leaderboard.service";
-import { DateUtils } from "../../../helpers/date-utils";
+import { DateUtils } from "@/app/shared/helpers/date-utils";
 import { LeaderboardFiltersService } from "../leaderboard-filters/leaderboard-filters.service";
 import { ILeaderboardLocationOption } from "../../../interfaces/leaderboard-filter.interface";
 import { createLocationOption } from "../../../helpers/createLocationOption";

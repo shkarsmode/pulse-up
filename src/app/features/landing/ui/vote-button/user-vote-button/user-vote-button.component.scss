@@ -13,11 +13,6 @@
 .pulse-button-wrap {
     position: relative;
     flex-grow: 1;
-    min-height: 60px;
-
-    @include media-2xs {
-        min-height: 60px;
-    }
 }
 
 .pulse-button {
@@ -114,7 +109,7 @@
     top: 0;
     left: 0;
     width: 100%;
-    max-width: 280px;
+    max-width: 480px;
     opacity: 0;
     z-index: -1;
     transition: opacity var(--duration-short) ease-in-out;
@@ -141,10 +136,13 @@
 }
 
 .active-pulse-info {
-    display: grid;
-    grid-template-columns: 14px 1fr;
-    grid-column-gap: 8px;
-    grid-row-gap: 8px;
+    min-height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    column-gap: 8px;
+    border: 1px solid var(--accent-color);
+    border-radius: 48px;
 }
 
 .active-pulse-info__text {
@@ -153,8 +151,4 @@
 
 .active-pulse-info__text--grey {
     color: var(--dark-grey-color);
-}
-
-.active-pulse-info__icon {
-    padding-top: 1px;
 }

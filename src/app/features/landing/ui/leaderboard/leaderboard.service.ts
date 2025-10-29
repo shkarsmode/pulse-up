@@ -24,7 +24,7 @@ import {
     ILeaderboardLocationOption,
     ILeaderboardTempFilter,
 } from "../../interfaces/leaderboard-filter.interface";
-import { DateUtils } from "../../helpers/date-utils";
+import { DateUtils } from "@/app/shared/helpers/date-utils";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { createLocationId } from "../../helpers/createLocationId";
 import { createLocationName } from "../../helpers/createLocationName";

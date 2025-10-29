@@ -1,0 +1,50 @@
+@use "../../../../../styles/mixins" as *;
+
+.message {
+    --color-warning: #d6903a;
+    --color-danger: #d73c28;
+
+    @include text-16px;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    row-gap: 8px;
+    padding: 16px 32px;
+    text-align: center;
+    background-color: #f5f5f8;
+    border: 1px solid #e6e7ed;
+    border-radius: 10px;
+
+    &.message--warning {
+        color: var(--color-warning);
+    }
+    &.message--danger {
+        color: var(--color-danger);
+    }
+}
+
+.message__icon {
+    svg {
+        width: 48px;
+        height: 48px;
+        path {
+            fill: currentColor;
+        }
+    }
+}
+
+.message__button {
+    position: absolute;
+    top: 50%;
+    right: 4px;
+    transform: translateY(-50%);
+
+    &::ng-deep {
+        .mat-mdc-button {
+            min-width: 0;
+            --mat-text-button-horizontal-padding: 8px;
+            --mdc-text-button-container-height: 32px;
+        }
+    }
+}

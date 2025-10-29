@@ -21,7 +21,7 @@ export class PulseDescriptionComponent {
     }
     private description?: ElementRef<HTMLDivElement>;
 
-    public isCollapsed = signal(true);
+    public isCollapsed = signal(false);
 
     public toggleCollapse(): void {
         this.isCollapsed.update((value) => !value);

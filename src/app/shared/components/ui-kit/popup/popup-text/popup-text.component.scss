@@ -1,5 +1,10 @@
 @use "../../../../../../styles/mixins" as *;
 
+:host {
+    display: block;
+    width: 100%;
+}
+
 .popup-text {
     @include text-16px;
     text-align: center;

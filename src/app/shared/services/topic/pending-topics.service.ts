@@ -1,10 +1,12 @@
 import { computed, Injectable, signal } from "@angular/core";
-import { ITopic, ITopicStats } from "../../interfaces";
+import { ITopic, ITopicStats, TopicStatsUnit, TopicVotingHistory } from "../../interfaces";
 import { LocalStorageService, LOCAL_STORAGE_KEYS } from "../core/local-storage.service";
+import { DateUtils } from "../../helpers/date-utils";
 
 interface IPendingTopic {
     id: number;
     stats: ITopicStats;
+    votingHistory?: Record<TopicStatsUnit, TopicVotingHistory>;
 }
 
 @Injectable({
@@ -14,20 +16,21 @@ export class PendingTopicsService {
     private readonly STORAGE_KEY = LOCAL_STORAGE_KEYS.pendingTopics;
     private pendingTopics = signal<IPendingTopic[]>([]);
 
-    public pendingTopicsIds = computed(() => this.pendingTopics().map(topic => topic.id));
+    public pendingTopicsIds = computed(() => this.pendingTopics().map((topic) => topic.id));
 
     constructor() {
         this.loadFromStorage();
     }
 
     get(id: number): IPendingTopic | null {
-        const topic = this.pendingTopics().find(topic => topic.id === id);
+        const topic = this.pendingTopics().find((topic) => topic.id === id);
         if (!topic) return null;
         return topic;
     }
 
     add(topic: ITopic): void {
-        
+        const hour = DateUtils.getUTCStartOfCurrentHour().format("YYYY-MM-DDTHH:mm:ss[Z]");
+        const day = DateUtils.getUTCStartOfCurrentDay().format("YYYY-MM-DDTHH:mm:ss[Z]");
         const newPendingTopic: IPendingTopic = {
             id: topic.id,
             stats: topic.stats || {
@@ -35,18 +38,26 @@ export class PendingTopicsService {
                 totalUniqueUsers: 0,
                 lastDayVotes: 0,
             },
+            votingHistory: {
+                hourly: {
+                    [hour]: 1,
+                },
+                daily: {
+                    [day]: 1,
+                },
+            },
         };
         const topics = this.pendingTopics();
 
         this.pendingTopics.set([
-            ...topics.filter((pendingTopic) => pendingTopic.id !== topic.id), 
-            newPendingTopic
+            ...topics.filter((pendingTopic) => pendingTopic.id !== topic.id),
+            newPendingTopic,
         ]);
         this.saveToStorage();
     }
 
     remove(topicId: number): void {
-        this.pendingTopics.set(this.pendingTopics().filter(topic => topic.id !== topicId));
+        this.pendingTopics.set(this.pendingTopics().filter((topic) => topic.id !== topicId));
         this.saveToStorage();
     }
 

@@ -1,0 +1,11 @@
+.toggler {
+    display: flex;
+    justify-content: center;
+    margin-top: 12px;
+
+    &::ng-deep {
+        .mat-button-toggle-button {
+            min-width: 94px;
+        }
+    }
+}

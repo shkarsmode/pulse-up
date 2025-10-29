@@ -37,8 +37,8 @@ export const LANDING_ROUTES: Routes = [
             {
                 path: Landing.TOPIC,
                 loadComponent: () =>
-                    import("./pages/pulse-page/pulse-page.component").then(
-                        (m) => m.PulsePageComponent,
+                    import("./pages/topic/topic.component").then(
+                        (m) => m.TopicComponent,
                     ),
                 canActivate: [PublicPageGuard],
             },

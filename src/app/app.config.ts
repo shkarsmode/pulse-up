@@ -10,6 +10,7 @@ import {
     popperVariation,
 } from "@ngneat/helipopper/config";
 import { provideTanStackQuery, QueryClient } from "@tanstack/angular-query-experimental";
+import { provideCharts, withDefaultRegisterables } from "ng2-charts";
 import {
     API_URL,
     FIREBASE_CONFIG,
@@ -60,6 +61,7 @@ export const appConfig: ApplicationConfig = {
                 popper: popperVariation,
             },
         }),
+        provideCharts(withDefaultRegisterables()),
         {
             provide: API_URL,
             useValue: environment.apiUrl,

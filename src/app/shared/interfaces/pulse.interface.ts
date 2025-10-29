@@ -48,6 +48,10 @@ export interface ITopicStats {
     timestamp?: string;
 }
 
+export type TopicStatsUnit = "daily" | "hourly";
+
+export type TopicVotingHistory = Record<string, number>;
+
 export interface CampaignGoal {
     reward: string;
     supporters?: number;

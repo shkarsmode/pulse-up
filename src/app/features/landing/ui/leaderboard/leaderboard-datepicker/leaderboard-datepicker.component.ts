@@ -27,7 +27,7 @@ import {
 import { AngularSvgIconModule } from "angular-svg-icon";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { LeaderboardTimeframeExtended } from "@/app/shared/interfaces";
-import { DateUtils } from "../../../helpers/date-utils";
+import { DateUtils } from "@/app/shared/helpers/date-utils";
 
 @Injectable()
 export class WeekRangeSelectionStrategy<D = Date> implements MatDateRangeSelectionStrategy<D> {
