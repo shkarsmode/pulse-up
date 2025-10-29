@@ -1,6 +1,9 @@
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
+import isBetween from "dayjs/plugin/isBetween";
+
 dayjs.extend(utc);
+dayjs.extend(isBetween);
 
 export class DateUtils {
     public static getStatrtOfDay(date: Date): Date {
@@ -42,4 +45,10 @@ export class DateUtils {
     public static getUTCStartOfCurrentDay = () => {
         return dayjs().utc().startOf("day");
     };
+
+    public static isWithinDaysBefore(futureDate: string, daysBefore: number): boolean {
+        const date = dayjs(futureDate);
+        const now = dayjs();
+        return now.isBetween(date.subtract(daysBefore, "day"), date, "day", "[]");
+    }
 }

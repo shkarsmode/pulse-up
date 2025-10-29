@@ -296,34 +296,10 @@ app-container::ng-deep .app-container {
     }
 }
 
-@media screen and (max-width: 650px) {
-    // :host {
-    //     padding: 24px 20px 48px;
-    // }
-
-    // .pulse__info-media {
-    //     img {
-    //         width: auto;
-    //         max-width: 100%;
-    //         min-width: unset;
-    //     }
-
-    //     .pulse__info-media__map {
-    //         width: 100%;
-    //     }
-    // }
-
-    // .pulse__info-media {
-    //     flex-direction: column;
-    //     gap: 20px;
-    //     height: auto;
-    // }
-
-    // app-map::ng-deep .map-container {
-    //     margin-top: 0px !important;
-    //     aspect-ratio: 16/9;
-    //     height: auto !important;
-    // }
+.warnings {
+    width: 100%;
+    max-width: 400px;
+    margin: 0 auto;
 }
 
 @media screen and (max-width: 500px) {

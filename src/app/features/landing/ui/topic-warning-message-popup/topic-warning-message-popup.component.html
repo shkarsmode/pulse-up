@@ -1,0 +1,16 @@
+<app-popup>
+    <app-popup-close-button (close)="closePopup()" />
+    <app-popup-subtitle>ℹ️ {{ popupsContent[severity].title }}</app-popup-subtitle>
+    @for (text of popupsContent[severity].text; track $index) {
+        <app-popup-text textAlign="center">{{ text }}</app-popup-text>
+    }
+    <app-popup-footer>
+        <app-primary-button
+            [fullWidth]="true"
+            size="medium"
+            (handleClick)="closePopup()"
+            class="close-button">
+            Ok
+        </app-primary-button>
+    </app-popup-footer>
+</app-popup>

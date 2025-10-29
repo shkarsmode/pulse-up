@@ -1,0 +1,19 @@
+@let messageType = severity();
+
+@if (messageType) {
+    <div
+        class="message"
+        [class.message--warning]="messageType === 'warning'"
+        [class.message--danger]="messageType === 'danger'">
+        <svg-icon
+            src="assets/svg/warn-triangle-filled.svg"
+            class="message__icon" />
+        <span>{{ messages[messageType] }}</span>
+        <app-link-button
+            class="message__button"
+            (click)="openPopup()">
+            <span class="visualy-hidden">Show more information</span>
+            <svg-icon src="assets/svg/info.svg" />
+        </app-link-button>
+    </div>
+}

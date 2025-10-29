@@ -48,6 +48,7 @@ import { LendingPageLayoutComponent } from "../../ui/lending-page-layout/lending
 import { ContainerComponent } from "@/app/shared/components/ui-kit/container/container.component";
 import { TopicSectionComponent } from "../../ui/topic-section/topic-section.component";
 import { TopicChrtsComponent } from "../../ui/topic-charts/topic-charts.component";
+import { TopicWarningMessageComponent } from "../../ui/topic-warning-message/topic-warning-message.component";
 
 @Component({
     selector: "app-topic",
@@ -84,6 +85,7 @@ import { TopicChrtsComponent } from "../../ui/topic-charts/topic-charts.componen
         ContainerComponent,
         TopicSectionComponent,
         TopicChrtsComponent,
+        TopicWarningMessageComponent,
     ],
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
