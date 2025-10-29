@@ -49,6 +49,7 @@ import { ContainerComponent } from "@/app/shared/components/ui-kit/container/con
 import { TopicSectionComponent } from "../../ui/topic-section/topic-section.component";
 import { TopicChrtsComponent } from "../../ui/topic-charts/topic-charts.component";
 import { TopicWarningMessageComponent } from "../../ui/topic-warning-message/topic-warning-message.component";
+import { TopicEndDateFormComponent } from "../../ui/topic-end-date-form/topic-end-date-form.component";
 
 @Component({
     selector: "app-topic",
@@ -86,6 +87,7 @@ import { TopicWarningMessageComponent } from "../../ui/topic-warning-message/top
         TopicSectionComponent,
         TopicChrtsComponent,
         TopicWarningMessageComponent,
+        TopicEndDateFormComponent,
     ],
     changeDetection: ChangeDetectionStrategy.OnPush,
 })

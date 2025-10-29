@@ -58,6 +58,7 @@ export class TopicService {
     private topicId = signal<number | null>(null);
     private topicShareKey = signal<string | null>(null);
     private _isUpdatedAfterUserSignIn = signal(false);
+    private topicEndDate = signal<Date | null>(null);
     private topicQuery = injectQuery(() => ({
         queryFn: () => {
             const topicId = this.topicId();
@@ -95,7 +96,11 @@ export class TopicService {
 
     public topic = computed(() => {
         const topic = this.topicQuery.data();
-        return topic || null;
+        const customEndDate = this.topicEndDate();
+        return topic ? {
+            ...topic,
+            endsAt: customEndDate ? customEndDate.toISOString() : topic.endsAt,
+        } : null;
     });
 
     public votes = computed(() => {
@@ -265,5 +270,9 @@ export class TopicService {
             }),
         );
         return votes$;
+    }
+
+    public setTopicEndDate(endDate: Date | null) {
+        this.topicEndDate.set(endDate);
     }
 }

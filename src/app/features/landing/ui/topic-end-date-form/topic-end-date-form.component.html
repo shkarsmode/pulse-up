@@ -1,0 +1,25 @@
+<form
+    [formGroup]="form"
+    (ngSubmit)="onApply()"
+    class="form-container">
+    <mat-form-field
+        appearance="outline"
+        class="w-full">
+        <mat-label>Topic end date</mat-label>
+        <input
+            matInput
+            [matDatepicker]="picker"
+            formControlName="endDate" />
+        <mat-datepicker-toggle
+            matIconSuffix
+            [for]="picker"></mat-datepicker-toggle>
+        <mat-datepicker #picker></mat-datepicker>
+    </mat-form-field>
+
+    <button
+        mat-raised-button
+        color="primary"
+        type="submit">
+        Apply
+    </button>
+</form>

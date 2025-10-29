@@ -1,6 +1,6 @@
 @let messageType = severity();
 
-@if (messageType) {
+@if (isVisible() && messageType) {
     <div
         class="message"
         [class.message--warning]="messageType === 'warning'"

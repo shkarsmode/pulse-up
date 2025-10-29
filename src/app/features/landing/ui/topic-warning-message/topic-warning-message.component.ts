@@ -29,12 +29,16 @@ export class TopicWarningMessageComponent implements OnChanges {
 
     private dialogService = inject(DialogService);
 
+    public isVisible = signal<boolean>(false);
     public timeToArchive = signal<number>(0);
     public severity = signal<WarningMessageSeverity | null>(null);
 
     public ngOnChanges(changes: SimpleChanges): void {
-        if (changes["topic"] && changes["topic"].firstChange) {
-            this.defineMessageType();
+        if (changes["topic"]) {
+            this.isVisible.set(false);
+            this.timeToArchive.set(0);
+            this.severity.set(null);
+            this.defineMessageType(changes["topic"].currentValue);
         }
     }
 
@@ -51,18 +55,27 @@ export class TopicWarningMessageComponent implements OnChanges {
         });
     }
 
-    private defineMessageType(): void {
-        const endDate = this.topic.endsAt;
+    private defineMessageType(topic: ITopic): void {
+        const endDate = topic.endsAt;
+        console.log({
+            endDate,
+            isBefore: dayjs(endDate).isBefore(dayjs()),
+            isWithin7Day: DateUtils.isWithinDaysBefore(endDate, 7),
+        });
+
         if (dayjs(endDate).isBefore(dayjs())) {
             const archivingDate = dayjs(endDate).add(10, "day");
             if (DateUtils.isWithinDaysBefore(archivingDate.toISOString(), 10)) {
                 const timeToArchive = archivingDate.diff(dayjs(), "day");
                 this.severity.set("danger");
                 this.timeToArchive.set(timeToArchive);
+                this.isVisible.set(true);
+            } else {
+                this.isVisible.set(false);
             }
-        }
-        if (DateUtils.isWithinDaysBefore(endDate, 7)) {
+        } else if (DateUtils.isWithinDaysBefore(endDate, 7)) {
             this.severity.set("warning");
+            this.isVisible.set(true);
         }
         // if (dayjs(endDate).isBefore(dayjs())) return;
         // if (
