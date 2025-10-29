@@ -1,8 +1,8 @@
 <mat-tab-group
     preserveContent
     dynamicHeight
-    class="profile-tabs"
-    [selectedIndex]="selectedTabIndex"
+    class="tabs"
+    [selectedIndex]="selectedTabIndex()"
     (selectedIndexChange)="onTabChange($event)">
     <mat-tab label="History">
         <app-history-tab />

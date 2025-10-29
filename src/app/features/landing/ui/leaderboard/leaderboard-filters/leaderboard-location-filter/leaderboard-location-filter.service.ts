@@ -14,7 +14,7 @@ import { LeaderboardFiltersService } from "../leaderboard-filters.service";
 import { IpLocationService } from "@/app/shared/services/core/ip-location.service";
 import { PulseService } from "@/app/shared/services/api/pulse.service";
 import { LeaderboardService } from "../../leaderboard.service";
-import { DateUtils } from "@/app/features/landing/helpers/date-utils";
+import { DateUtils } from "@/app/shared/helpers/date-utils";
 import { MapboxFeature } from "@/app/shared/interfaces";
 import { createLocationOption } from "@/app/features/landing/helpers/createLocationOption";
 

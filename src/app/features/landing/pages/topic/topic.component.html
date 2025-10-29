@@ -107,11 +107,6 @@
                                     </div>
                                 </div>
                             }
-                            @if (topic.campaign) {
-                                <app-pulse-campaign
-                                    [campaign]="topic.campaign"
-                                    [stats]="topic.stats" />
-                            }
                         </div>
 
                         <app-pulse-description
@@ -129,6 +124,14 @@
                             {{ topic.endsAt | date: "MMM d, y" }}
                         </div>
                     </app-topic-section>
+
+                    @if (topic.campaign) {
+                        <app-topic-section>
+                            <app-pulse-campaign
+                                [campaign]="topic.campaign"
+                                [stats]="topic.stats" />
+                        </app-topic-section>
+                    }
 
                     <div class="cols">
                         <app-topic-section>
@@ -179,6 +182,11 @@
                                 </div>
                             }
                         </app-topic-section>
+
+                        <app-topic-section>
+                            <app-topic-chrts />
+                        </app-topic-section>
+                        
                     </div>
 
                     <!-- <h2 class="pulse__slider-title">You may also like</h2>

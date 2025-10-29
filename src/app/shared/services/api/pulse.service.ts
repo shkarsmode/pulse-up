@@ -1,7 +1,13 @@
 import { HttpClient } from "@angular/common/http";
 import { inject, Injectable } from "@angular/core";
 import { catchError, map, Observable, of, shareReplay, tap } from "rxjs";
-import { ICellTopic, ITopic, TopicState } from "../../interfaces";
+import {
+    ICellTopic,
+    ITopic,
+    TopicState,
+    TopicStatsUnit,
+    TopicVotingHistory,
+} from "../../interfaces";
 import { API_URL } from "../../tokens/tokens";
 import { IValidateTopicTitleResponse } from "../../interfaces/validate-topic-title.response";
 import { ICategory } from "../../interfaces/category.interface";
@@ -258,9 +264,13 @@ export class PulseService {
     public getTopicsByCellIndex(cellIndex: string): Observable<ICellTopic[]> {
         return this.http.get<ICellTopic[]>(`${this.apiUrl}/map/cell`, {
             params: {
-                id: cellIndex
-            }
+                id: cellIndex,
+            },
         });
+    }
+
+    public getTopicsStats(topicId: number, unit: TopicStatsUnit): Observable<TopicVotingHistory> {
+        return this.http.get<TopicVotingHistory>(`${this.apiUrl}/topics/${topicId}/stats/${unit}`);
     }
 
     public validateTitle(value: string) {
@@ -275,8 +285,8 @@ export class PulseService {
     }
 
     public categories$ = this.http
-            .get<ICategory[]>(`${this.apiUrl}/topics/categories`)
-            .pipe(shareReplay({ bufferSize: 1, refCount: true }));
+        .get<ICategory[]>(`${this.apiUrl}/topics/categories`)
+        .pipe(shareReplay({ bufferSize: 1, refCount: true }));
 
     public getShareKeyFromTitle(title: string): Observable<string> {
         return this.http
@@ -304,11 +314,14 @@ export class PulseService {
     public getLeaderboardLocations(
         params: IGetLeaderboardLocationsRequest,
     ): Observable<IGetLeaderboardLocationsResponse> {
-        return this.http.get<IGetLeaderboardLocationsResponse>(`${this.apiUrl}/topics/leaderboard/locations`, {
-            params: {
-                ...params,
+        return this.http.get<IGetLeaderboardLocationsResponse>(
+            `${this.apiUrl}/topics/leaderboard/locations`,
+            {
+                params: {
+                    ...params,
+                },
             },
-        });
+        );
     }
 
     private syncPendingTopics(topic: ITopic): ITopic {

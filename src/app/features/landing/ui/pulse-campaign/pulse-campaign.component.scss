@@ -7,11 +7,9 @@
     align-items: center;
     justify-content: center;
     background-color: #f5f5f8;
-    margin-top: 15px;
     border: 1px solid #e6e7ed;
     border-radius: 10px;
     padding: 16px 20px;
-    margin-bottom: 10px;
 
     &__title {
         @include text-16px;

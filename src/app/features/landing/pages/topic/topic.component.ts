@@ -47,6 +47,7 @@ import { LinkifyPipe } from "@/app/shared/pipes/linkify.pipe";
 import { LendingPageLayoutComponent } from "../../ui/lending-page-layout/lending-page-layout.component";
 import { ContainerComponent } from "@/app/shared/components/ui-kit/container/container.component";
 import { TopicSectionComponent } from "../../ui/topic-section/topic-section.component";
+import { TopicChrtsComponent } from "../../ui/topic-charts/topic-charts.component";
 
 @Component({
     selector: "app-topic",
@@ -82,6 +83,7 @@ import { TopicSectionComponent } from "../../ui/topic-section/topic-section.comp
         LendingPageLayoutComponent,
         ContainerComponent,
         TopicSectionComponent,
+        TopicChrtsComponent,
     ],
     changeDetection: ChangeDetectionStrategy.OnPush,
 })

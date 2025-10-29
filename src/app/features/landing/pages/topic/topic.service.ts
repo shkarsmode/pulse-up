@@ -69,9 +69,6 @@ export class TopicService {
             return null;
         },
         queryKey: [QUERY_KEYS.topic, this.topicId(), this.topicShareKey()],
-        options: {
-            refetchOnWindowFocus: false,
-        },
     }));
     private votesQuery = injectQuery(() => ({
         queryFn: async () => {
@@ -81,9 +78,6 @@ export class TopicService {
             return votes;
         },
         queryKey: [QUERY_KEYS.votes, this.topicQuery.data()?.id, this.anonymousUser()],
-        options: {
-            refetchOnWindowFocus: false,
-        },
     }));
     private topicKeywords = computed(() => this.topicQuery.data()?.keywords || []);
     private topicKeywords$ = toObservable(this.topicKeywords);

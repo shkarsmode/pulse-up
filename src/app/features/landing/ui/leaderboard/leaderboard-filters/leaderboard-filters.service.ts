@@ -2,7 +2,7 @@ import { inject, Injectable } from "@angular/core";
 import { combineLatest, distinctUntilChanged, map } from "rxjs";
 import { LeaderboardTimeframeExtended } from "@/app/shared/interfaces";
 import { LeaderboardService } from "../leaderboard.service";
-import { DateUtils } from "../../../helpers/date-utils";
+import { DateUtils } from "@/app/shared/helpers/date-utils";
 import { ILeaderboardLocationOption } from "../../../interfaces/leaderboard-filter.interface";
 import { getTimeframeStatus } from "../../../helpers/getTimeframeStatus";
 
