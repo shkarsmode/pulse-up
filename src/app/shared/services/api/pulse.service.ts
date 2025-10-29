@@ -38,7 +38,7 @@ export class PulseService {
             country?: string;
             state?: string;
             city?: string;
-            topicState?: string;
+            topicState?: TopicState;
             skip?: number;
             take?: number;
             id?: number[];
@@ -46,7 +46,6 @@ export class PulseService {
         } = {},
     ): Observable<ITopic[]> {
         const requestParams = this.sanitizeRequestParams(params);
-        requestParams["topicState"] = params.topicState || "All";
         return this.http.get<ITopic[]>(`${this.apiUrl}/topics`, { params: requestParams }).pipe(
             tap((pulses) =>
                 pulses.forEach((pulse) => {

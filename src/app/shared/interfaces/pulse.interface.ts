@@ -34,6 +34,7 @@ export enum TopicState {
     Active = "Active",
     Archived = "Archived",
     Blocked = "Blocked",
+    All = "All",
 }
 
 interface Location {
