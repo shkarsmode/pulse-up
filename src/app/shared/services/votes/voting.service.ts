@@ -11,6 +11,9 @@ import { AcceptRulesPopupComponent } from "@/app/features/landing/ui/accept-rule
 import { ConfirmPhoneNumberPopupComponent } from "@/app/features/landing/ui/confirm-phone-number-popup/confirm-phone-number-popup.component";
 import { SigninRequiredPopupComponent } from "../../components/popups/signin-required-popup/signin-required-popup.component";
 import { DialogService } from "../core/dialog.service";
+import { VotesService } from "./votes.service";
+import { ITopic } from "../../interfaces";
+import { PendingTopicsService } from "../topic/pending-topics.service";
 
 @Injectable({
     providedIn: "root",
@@ -19,7 +22,9 @@ export class VotingService {
     private dialogService = inject(DialogService);
     private geolocationService = inject(GeolocationService);
     private authService = inject(AuthenticationService);
+    private pendingTopicsService = inject(PendingTopicsService);
     private voteService = inject(VoteService);
+    private votesService = inject(VotesService);
     private isVoting = new BehaviorSubject(false);
     private isAnonymousUserSignedIn = new BehaviorSubject(false);
 
@@ -39,7 +44,7 @@ export class VotingService {
         this.isAnonymousUserSignedIn.next(value);
     }
 
-    vote({ topicId }: { topicId: number }) {
+    vote({ topic }: { topic: ITopic }) {
         if (this.anonymousUserValue || (!this.anonymousUserValue && !this.userTokenValue)) {
             return throwError(
                 () =>
@@ -62,7 +67,7 @@ export class VotingService {
             }),
             switchMap((geolocation) => {
                 return this.voteService.sendVote({
-                    topicId,
+                    topicId: topic.id,
                     location: {
                         latitude: geolocation.geolocationPosition.coords.latitude,
                         longitude: geolocation.geolocationPosition.coords.longitude,
@@ -70,7 +75,11 @@ export class VotingService {
                     locationName: geolocation.details.fullname,
                 });
             }),
-            tap(() => this.isVoting.next(false)),
+            tap((vote) => {
+                this.votesService.addVote(vote);
+                this.pendingTopicsService.add(topic);
+                this.isVoting.next(false);
+            }),
             catchError((error: unknown) => {
                 this.isVoting.next(false);
                 if (error instanceof VotingError) {
@@ -86,7 +95,6 @@ export class VotingService {
     startVotingForAnonymousUser() {
         this.showAcceptRulesPopup();
     }
-
 
     signInWithGeolocation() {
         this.isGeolocationRetrieved = true;

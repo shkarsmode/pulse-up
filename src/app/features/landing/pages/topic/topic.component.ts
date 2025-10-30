@@ -9,12 +9,10 @@ import { SocialsButtonComponent } from "@/app/shared/components/ui-kit/buttons/s
 import { MenuComponent } from "@/app/shared/components/ui-kit/menu/menu.component";
 import { SpinnerComponent } from "@/app/shared/components/ui-kit/spinner/spinner.component";
 import { LoadImgPathDirective } from "@/app/shared/directives/load-img-path/load-img-path.directive";
-import { IVote } from "@/app/shared/interfaces/vote.interface";
 import { FormatNumberPipe } from "@/app/shared/pipes/format-number.pipe";
 import { AuthenticationService } from "@/app/shared/services/api/authentication.service";
 import { PulseService } from "@/app/shared/services/api/pulse.service";
 import { DialogService } from "@/app/shared/services/core/dialog.service";
-import { PendingTopicsService } from "@/app/shared/services/topic/pending-topics.service";
 import { CommonModule } from "@angular/common";
 import {
     Component,
@@ -32,7 +30,6 @@ import { combineLatest, distinctUntilChanged, filter, map, tap } from "rxjs";
 import { MapComponent } from "@/app/shared/components/map/map.component";
 import { UserVoteButtonComponent } from "../../ui/vote-button/user-vote-button/user-vote-button.component";
 import { PulseCampaignComponent } from "../../ui/pulse-campaign/pulse-campaign.component";
-import { VotesService } from "@/app/shared/services/votes/votes.service";
 import { MapHeatmapLayerComponent } from "@/app/shared/components/map/map-heatmap-layer/map-heatmap-layer.component";
 import { WaveAnimationDirective } from "@/app/shared/directives/wave-animation/wave-animation.directive";
 import { TopicService } from "./topic.service";
@@ -97,8 +94,6 @@ export class TopicComponent implements OnInit, OnDestroy {
     private readonly pulseService = inject(PulseService);
     private readonly authService = inject(AuthenticationService);
     private readonly dialogService = inject(DialogService);
-    private readonly pendingTopicsService = inject(PendingTopicsService);
-    private readonly votesService = inject(VotesService);
     private readonly topicService = inject(TopicService);
     private readonly settingsService = inject(SettingsService);
 
@@ -183,18 +178,7 @@ export class TopicComponent implements OnInit, OnDestroy {
         this.topicService.setVoteAsExpired();
     }
 
-    public onVoted(vote: IVote): void {
-        const topic = this.topic;
-        if (!topic) return;
-        this.pendingTopicsService.add({
-            ...topic,
-            stats: {
-                totalVotes: (topic.stats?.totalVotes || 0) + 1,
-                lastDayVotes: (topic.stats?.lastDayVotes || 0) + 1,
-                totalUniqueUsers: topic.stats?.totalUniqueUsers || 0,
-            },
-        });
-        this.votesService.addVote(vote);
+    public onVoted(): void {
         this.topicService.refreshData();
     }
 

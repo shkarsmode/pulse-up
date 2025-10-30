@@ -5,6 +5,12 @@
     (click)="onClick()"
     appRippleEffect
     rippleColor="#6d6d6d24"
-    [ngStyle]="color ? { 'border-color': color, color, } : {}">
-    <ng-content></ng-content>
+    [ngStyle]="color ? { 'border-color': color, color } : {}">
+    @if (loading) {
+        <mat-spinner
+            diameter="18"
+            class="secondary-button__spinner" />
+    } @else {
+        <ng-content></ng-content>
+    }
 </button>

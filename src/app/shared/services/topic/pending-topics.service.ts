@@ -33,11 +33,17 @@ export class PendingTopicsService {
         const day = DateUtils.getUTCStartOfCurrentDay().format("YYYY-MM-DDTHH:mm:ss[Z]");
         const newPendingTopic: IPendingTopic = {
             id: topic.id,
-            stats: topic.stats || {
-                totalVotes: 0,
-                totalUniqueUsers: 0,
-                lastDayVotes: 0,
-            },
+            stats: topic.stats
+                ? {
+                      totalVotes: (topic.stats?.totalVotes || 0) + 1,
+                      lastDayVotes: (topic.stats?.lastDayVotes || 0) + 1,
+                      totalUniqueUsers: topic.stats?.totalUniqueUsers || 0,
+                  }
+                : {
+                      totalVotes: 0,
+                      totalUniqueUsers: 0,
+                      lastDayVotes: 0,
+                  },
             votingHistory: {
                 hourly: {
                     [hour]: 1,

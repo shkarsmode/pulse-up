@@ -95,7 +95,7 @@
                                     <app-guest-vote-button />
                                 } @else {
                                     <app-user-vote-button
-                                        (voted)="onVoted($event)"
+                                        (voted)="onVoted()"
                                         (voteExpired)="onVoteExpired()" />
                                 }
                                 <app-menu [content]="menuContent">

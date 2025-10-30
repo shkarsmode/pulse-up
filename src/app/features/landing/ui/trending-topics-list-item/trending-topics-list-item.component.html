@@ -13,50 +13,24 @@
                 class="card-top-badge__icon" />
             Campaign attached
         </div>
-        <app-large-pulse-icon
-            [src]="topic.icon"
-            size="md"
-            [label]="topic.title"
-            ngProjectAs="card-icon" />
-        <div ngProjectAs="card-heading">
+        <div
+            ngProjectAs="card-heading"
+            class="card-heading">
             <app-large-pulse-title>
                 {{ topic.title }}
             </app-large-pulse-title>
-            <div class="card-heading-meta">
-                <app-large-pulse-meta
-                    [text]="topic.author.name"
-                    label="author" />
-            </div>
+            <app-large-pulse-meta
+                [text]="topic.author.name"
+                label="author" />
         </div>
-        <app-large-pulse-description ngProjectAs="card-body">
-            {{ topic.description }}
-        </app-large-pulse-description>
+        <app-large-pulse-picture
+            ngProjectAs="card-body"
+            [src]="topicPicture()"
+            [alt]="topic.title" />
         <div
             class="card-footer"
             ngProjectAs="card-footer">
-            <div class="card-footer__left">
-                <app-large-pulse-metric
-                    [text]="topic.stats?.lastDayVotes || 0 | formatNumber"
-                    [accent]="isVoteActive()">
-                    @if (isVoteActive()) {
-                        <div class="card-footer-icon-wrap card-footer-icon-wrap--active">
-                            <svg-icon
-                                appWavesAnimation
-                                src="assets/svg/logo/logo-v2.svg"
-                                ariaLabel="pulse icon"
-                                class="card-footer-icon" />
-                        </div>
-                    } @else {
-                        <svg-icon
-                            src="assets/svg/pulse.svg"
-                            ariaLabel="pulse icon" />
-                    }
-                </app-large-pulse-metric>
-                <app-large-pulse-metric
-                    [text]="topic.stats?.totalVotes || 0 | formatNumber"
-                    icon="assets/svg/chart-simple.svg" />
-            </div>
-            <div class="card-footer__right">
+            <div class="card-footer__group">
                 <app-menu [content]="menuContent">
                     <button
                         mat-icon-button
@@ -69,6 +43,23 @@
                 <app-copy-topic-button
                     *ngIf="topicUrl() as topicUrl"
                     [topicUrl]="topicUrl" />
+            </div>
+            <div class="card-footer__group">
+                @if (isVoteActive()) {
+                    <app-large-pulse-metric
+                        [text]="topic.stats?.lastDayVotes || 0 | formatNumber"
+                        [accent]="true">
+                        <div class="card-footer-icon-wrap card-footer-icon-wrap--active">
+                            <svg-icon
+                                appWavesAnimation
+                                src="assets/svg/logo/logo-v2.svg"
+                                ariaLabel="pulse icon"
+                                class="card-footer-icon" />
+                        </div>
+                    </app-large-pulse-metric>
+                } @else {
+                    <app-large-pulse-vote-button [topic]="topic" />
+                }
             </div>
         </div>
     </app-large-pulse>
