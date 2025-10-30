@@ -1,14 +1,15 @@
 import { computed, effect, inject, Injectable, signal } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
-import { injectInfiniteQuery } from "@tanstack/angular-query-experimental";
+import { InfiniteData, injectInfiniteQuery } from "@tanstack/angular-query-experimental";
 import { combineLatest, lastValueFrom, map, shareReplay } from "rxjs";
 import { toObservable, toSignal } from "@angular/core/rxjs-interop";
 import { AppConstants, QUERY_KEYS } from "@/app/shared/constants";
 import { PulseService } from "@/app/shared/services/api/pulse.service";
 import { PendingTopicsService } from "@/app/shared/services/topic/pending-topics.service";
 import { StringUtils } from "@/app/shared/helpers/string-utils";
-import { TrendingTopicsService } from "../../services/trending-topics/trending-topics.service";
 import { ITopic, TopicState } from "@/app/shared/interfaces";
+import { queryClient } from "@/app/app.config";
+import { TrendingTopicsService } from "../../services/trending-topics/trending-topics.service";
 
 @Injectable({ providedIn: "root" })
 export class TopicsService {
@@ -43,7 +44,7 @@ export class TopicsService {
             QUERY_KEYS.topics,
             this.searchText(),
             this.category(),
-            this.pendingTopicsService.pendingTopicsIds(),
+            // this.pendingTopicsService.pendingTopicsIds(),
         ],
         queryFn: async ({ pageParam }) => {
             const category = this.category();
@@ -113,6 +114,31 @@ export class TopicsService {
 
             if (!ids) return;
 
+            // optimistic update of global topics
+            queryClient.setQueryData(
+                [QUERY_KEYS.topics, this.searchText(), this.category()],
+                (oldData: InfiniteData<ITopic[]>) => {
+                    if (!oldData) return oldData;
+                    return {
+                        ...oldData,
+                        pages: oldData.pages.map((page) => page.map((topic) => {
+                            if (ids.includes(topic.id)) {
+                                const pendingTopic = this.pendingTopicsService.get(topic.id);
+                                if (pendingTopic) {
+                                    return {
+                                        ...topic,
+                                        stats: pendingTopic.stats,
+                                    };
+                                }
+                                return topic;
+                            }
+                            return topic;
+                        })),
+                    };
+                },
+            );
+
+            // refresh trending topics
             const topics = await this.reloadTrendingTopics();
             this.trendingTopicsSignal.set(topics);
         });

@@ -1,5 +1,9 @@
 @use "../../../../../styles/mixins" as mixins;
 
+:host {
+    display: flex;
+}
+
 .card-heading {
     display: flex;
     flex-direction: column;
