@@ -222,11 +222,22 @@ app-container::ng-deep .app-container {
 .cols {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    grid-row-gap: 20px;
-    grid-column-gap: 20px;
+    grid-gap: 20px;
+
+    .cols__item:first-child {
+        grid-area: a;
+    }
+    .cols__item:last-child {
+        grid-area: b;
+    }
+
+    grid-template-areas: "a b";
 
     @include media-sm {
         grid-template-columns: 100%;
+        grid-template-areas:
+            "b"
+            "a";
     }
 }
 
