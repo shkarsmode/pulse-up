@@ -71,3 +71,5 @@ export interface Campaign {
     sponsoredBy: string;
     startsAt: string; // ISO timestamp
 }
+
+export type TopicExpirationSeverity = "warning" | "danger";

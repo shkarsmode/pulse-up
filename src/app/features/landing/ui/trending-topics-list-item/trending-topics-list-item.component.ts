@@ -21,6 +21,7 @@ import { VoteUtils } from "@/app/shared/helpers/vote-utils";
 import { WaveAnimationDirective } from "@/app/shared/directives/wave-animation/wave-animation.directive";
 import { LargePulsePictureComponent } from "@/app/shared/components/pulses/large-pulse/large-pulse-picture/large-pulse-picture.component";
 import { LargePulseVoteButtonComponent } from "@/app/shared/components/pulses/large-pulse/large-pulse-vote-button/large-pulse-vote-button.component";
+import { TopicUtils } from "@/app/shared/helpers/topic-utils";
 
 @Component({
     selector: "app-trending-topics-list-item",
@@ -100,6 +101,13 @@ export class TrendingTopicsListItemComponent {
         const campaign = this.data()?.campaign;
         return !!campaign && this.isCampaignActive(campaign);
     });
+    public topicExpirationSeverity = computed(() => {
+        const topic = this.data();
+        if (!topic) {
+            return null;
+        }
+        return TopicUtils.getExpirationSeverity(topic);
+    })
 
     private isCampaignActive(campaign: Campaign): boolean {
         return (

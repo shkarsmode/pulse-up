@@ -23,6 +23,28 @@
     column-gap: 16px;
 }
 
+.card-footer__severity-icon {
+    --color-warning: #d6903a;
+    --color-danger: #d73c28;
+    
+    svg {
+        width: 16px;
+        height: 16px;
+
+        path {
+            fill: currentColor;
+        }
+    }
+
+    &.card-footer__severity-icon--warning {
+        color: var(--color-warning);
+    }
+
+    &.card-footer__severity-icon--danger {
+        color: var(--color-danger);
+    }
+}
+
 .card-footer-icon-wrap {
     position: relative;
     width: 32px;
