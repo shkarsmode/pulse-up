@@ -2,11 +2,11 @@ import { ChangeDetectionStrategy, Component, inject } from "@angular/core";
 import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
 import { PopupLayoutComponent } from "@/app/shared/components/ui-kit/popup/popup.component";
 import { PopupCloseButtonComponent } from "@/app/shared/components/ui-kit/popup/popup-close-button/popup-close-button.component";
-import { WarningMessageSeverity } from "../../interfaces/warning-message-severity.interface";
 import { PopupSubtitleComponent } from "@/app/shared/components/ui-kit/popup/popup-subtitle/popup-subtitle.component";
 import { PopupTextComponent } from "@/app/shared/components/ui-kit/popup/popup-text/popup-text.component";
 import { PopupFooterComponent } from "@/app/shared/components/ui-kit/popup/popup-footer/popup-footer.component";
 import { PrimaryButtonComponent } from "@/app/shared/components/ui-kit/buttons/primary-button/primary-button.component";
+import { TopicExpirationSeverity } from "@/app/shared/interfaces";
 
 @Component({
     selector: "app-topic-warning-message-popup",
@@ -24,12 +24,12 @@ import { PrimaryButtonComponent } from "@/app/shared/components/ui-kit/buttons/p
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TopicWarningMessagePopupComponent {
-    private data: { severity: WarningMessageSeverity } = inject(MAT_DIALOG_DATA);
+    private data: { severity: TopicExpirationSeverity } = inject(MAT_DIALOG_DATA);
     private dialogRef = inject(MatDialogRef<TopicWarningMessagePopupComponent>);
 
     public severity = this.data.severity;
     public readonly popupsContent: Record<
-        WarningMessageSeverity,
+        TopicExpirationSeverity,
         { title: string; text: string[] }
     > = {
         warning: {

@@ -9,12 +9,11 @@ import {
 } from "@angular/core";
 import { AngularSvgIconModule } from "angular-svg-icon";
 import dayjs from "dayjs";
-import { ITopic } from "@/app/shared/interfaces";
-import { DateUtils } from "@/app/shared/helpers/date-utils";
+import { ITopic, TopicExpirationSeverity } from "@/app/shared/interfaces";
 import { DialogService } from "@/app/shared/services/core/dialog.service";
 import { LinkButtonComponent } from "@/app/shared/components/ui-kit/buttons/link-button/link-button.component";
 import { TopicWarningMessagePopupComponent } from "../topic-warning-message-popup/topic-warning-message-popup.component";
-import { WarningMessageSeverity } from "../../interfaces/warning-message-severity.interface";
+import { TopicUtils } from "@/app/shared/helpers/topic-utils";
 
 @Component({
     selector: "app-topic-warning-message",
@@ -32,7 +31,7 @@ export class TopicWarningMessageComponent implements OnChanges {
     public isVisible = signal<boolean>(false);
     public timeToArchive = signal<number>(0);
     public message = signal<string>("");
-    public severity = signal<WarningMessageSeverity | null>(null);
+    public severity = signal<TopicExpirationSeverity | null>(null);
 
     public ngOnChanges(changes: SimpleChanges): void {
         if (changes["topic"]) {
@@ -52,34 +51,35 @@ export class TopicWarningMessageComponent implements OnChanges {
     }
 
     private updateMessage(topic: ITopic): void {
-        const endDate = topic.endsAt;
-        if (dayjs(endDate).isBefore(dayjs())) {
-            const archivingDate = dayjs(endDate).add(10, "day");
-            if (
-                DateUtils.isWithinDaysBefore(archivingDate.toISOString(), 10) &&
-                (!this.topic.stats?.lastDayVotes || this.topic.stats?.lastDayVotes < 3)
-            ) {
+        const severity = TopicUtils.getExpirationSeverity(topic);
+
+        switch (severity) {
+            case "danger": {
+                const endDate = topic.endsAt;
+                const archivingDate = dayjs(endDate).add(10, "day");
                 const timeToArchive = archivingDate.diff(dayjs());
                 this.severity.set("danger");
                 this.timeToArchive.set(timeToArchive);
-                this.message.set(`This topic will be archived in ${this.formatTimeLeft(this.timeToArchive())} if it doesn't get more then 3 pulses.`);
+                this.message.set(
+                    `This topic will be archived in ${this.formatTimeLeft(this.timeToArchive())} if it doesn't get more then 3 pulses.`,
+                );
                 this.isVisible.set(true);
-            } else {
-                this.isVisible.set(false);
+                break;
             }
-        } else if (
-            DateUtils.isWithinDaysBefore(endDate, 7) &&
-            (!this.topic.stats?.lastDayVotes || this.topic.stats?.lastDayVotes < 3)
-        ) {
-            this.severity.set("warning");
-            this.message.set("This topic will be deactivated if not enough pulses are received.");
-            this.isVisible.set(true);
+            case "warning": {
+                this.severity.set("warning");
+                this.message.set(
+                    "This topic will be deactivated if not enough pulses are received.",
+                );
+                this.isVisible.set(true);
+                break;
+            }
+            default:
+                this.isVisible.set(false);
         }
     }
 
     private formatTimeLeft(ms: number): string {
-        console.log({ ms });
-
         if (!ms) return "";
         const days = Math.floor(ms / (1000 * 60 * 60 * 24));
         const hours = Math.floor((ms % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));

@@ -1,4 +1,5 @@
 @let topic = data();
+@let severity = topicExpirationSeverity();
 
 @if (topic) {
     <app-large-pulse
@@ -45,6 +46,14 @@
                     [topicUrl]="topicUrl" />
             </div>
             <div class="card-footer__group">
+                @if (severity) {
+                    <svg-icon
+                        src="assets/svg/warn-triangle-filled.svg"
+                        ariaLabel="severity"
+                        class="card-footer__severity-icon"
+                        [class.card-footer__severity-icon--warning]="severity === 'warning'"
+                        [class.card-footer__severity-icon--danger]="severity === 'danger'" />
+                }
                 @if (isVoteActive()) {
                     <app-large-pulse-metric
                         [text]="topic.stats?.lastDayVotes || 0 | formatNumber"
