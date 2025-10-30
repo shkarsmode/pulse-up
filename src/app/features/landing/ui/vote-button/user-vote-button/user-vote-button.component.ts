@@ -135,9 +135,7 @@ export class UserVoteButtonComponent implements OnInit {
         this.isInProgress = true;
 
         this.votingService
-            .vote({
-                topicId: topic.id,
-            })
+            .vote({ topic })
             .pipe(
                 switchMap((vote) => this.waitForEndOfAnimation(vote)),
                 takeUntilDestroyed(this.destroyRef),

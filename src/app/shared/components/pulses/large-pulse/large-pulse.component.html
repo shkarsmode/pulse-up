@@ -8,19 +8,15 @@
 <div
     class="card-wrap"
     routerLink="/topic/{{ pulse.id }}">
-    <div class="card-top">
-        <div class="card-icon">
-            <ng-content select="card-icon"></ng-content>
+    
+    <div class="card-heading">
+        <div class="card-heading__content">
+            <ng-content select="card-heading"></ng-content>
         </div>
-        <div class="card-heading">
-            <div class="card-heading__content">
-                <ng-content select="card-heading"></ng-content>
-            </div>
-            <svg-icon
-                *ngIf="showArrow"
-                src="assets/svg/arrow-left.svg"
-                class="card-heading__arrow" />
-        </div>
+        <svg-icon
+            *ngIf="showArrow"
+            src="assets/svg/arrow-left.svg"
+            class="card-heading__arrow" />
     </div>
 
     <div class="card-body">

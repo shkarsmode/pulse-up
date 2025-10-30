@@ -1,7 +1,7 @@
-import { computed, inject, Injectable, signal } from "@angular/core";
+import { computed, effect, inject, Injectable, signal } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
 import { injectInfiniteQuery } from "@tanstack/angular-query-experimental";
-import { combineLatest, lastValueFrom, map, shareReplay, tap } from "rxjs";
+import { combineLatest, lastValueFrom, map, shareReplay } from "rxjs";
 import { toObservable, toSignal } from "@angular/core/rxjs-interop";
 import { AppConstants, QUERY_KEYS } from "@/app/shared/constants";
 import { PulseService } from "@/app/shared/services/api/pulse.service";
@@ -68,6 +68,7 @@ export class TopicsService {
             return lastPageParam + 1;
         },
         enabled: this.category() !== "trending",
+        placeholderData: (prevData) => prevData,
     }));
 
     public trendingTopics = toSignal(
@@ -104,6 +105,15 @@ export class TopicsService {
 
     constructor() {
         this.loadTrendingTopics().then((topics) => {
+            this.trendingTopicsSignal.set(topics);
+        });
+
+        effect(async () => {
+            const ids = this.pendingTopicsService.pendingTopicsIds();
+
+            if (!ids) return;
+
+            const topics = await this.reloadTrendingTopics();
             this.trendingTopicsSignal.set(topics);
         });
     }

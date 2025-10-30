@@ -1,0 +1,25 @@
+<div
+    class="animated-image"
+    [style.--fade-duration-ms]="fadeMs + 'ms'">
+    <div
+        class="placeholder"
+        *ngIf="isLoading()"
+        aria-hidden="true"></div>
+
+    <img
+        *ngIf="currentSrc()"
+        class="image"
+        [class.loaded]="!isLoading() && !hasError()"
+        [attr.src]="currentSrc()"
+        [attr.alt]="alt"
+        [attr.loading]="lazy ? 'lazy' : null"
+        [style.object-fit]="objectFit"
+        (load)="onLoad()"
+        (error)="onError()" />
+
+    <div
+        class="error"
+        *ngIf="hasError() && !currentSrc()">
+        <span class="error-icon">⚠️</span>
+    </div>
+</div>

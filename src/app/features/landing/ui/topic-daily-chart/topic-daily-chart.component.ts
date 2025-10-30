@@ -1,5 +1,6 @@
-import { ChangeDetectionStrategy, Component, inject, OnInit } from "@angular/core";
+import { ChangeDetectionStrategy, Component, DestroyRef, inject, OnInit } from "@angular/core";
 import { ActivatedRoute } from "@angular/router";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { ButtonToggleComponent } from "@/app/shared/components/ui-kit/buttons/button-toggle/button-toggle.component";
 import { TopicDailyChartService } from "./topic-daily-chart.service";
 import { TopicChartComponent } from "../topic-chart/topic-chart.component";
@@ -14,11 +15,12 @@ import { TopicChartComponent } from "../topic-chart/topic-chart.component";
 })
 export class TopicDailyChartComponent implements OnInit {
     private route = inject(ActivatedRoute);
+    private destroyRef = inject(DestroyRef);
 
     private topicDailyChartService = inject(TopicDailyChartService);
 
     ngOnInit() {
-        this.route.paramMap.subscribe((params) => {
+        this.route.paramMap.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((params) => {
             const topicId = Number(params.get("id"));
             this.topicDailyChartService.setTopicId(topicId);
         });

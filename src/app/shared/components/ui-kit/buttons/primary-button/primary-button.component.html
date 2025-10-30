@@ -20,7 +20,9 @@
         appRippleEffect
         [ngStyle]="color ? { 'background-color': color } : {}">
         @if (loading) {
-            <mat-spinner color="white" diameter="20" class="primary-button__spinner"/>
+            <mat-spinner
+                diameter="20"
+                class="primary-button__spinner" />
         } @else {
             <ng-container *ngTemplateOutlet="linkTemplate" />
         }

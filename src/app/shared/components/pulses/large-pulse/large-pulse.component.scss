@@ -14,11 +14,11 @@
     }
 
     &:not(:has(.card-top-badge)) {
-        padding-top: 20px;
+        padding-top: 16px;
     }
 
     &:has(.card-footer:empty) {
-        padding-bottom: 20px;
+        padding-bottom: 16px;
     }
 }
 
@@ -28,19 +28,8 @@
 }
 
 .card-wrap {
-    padding: 0 20px;
+    padding: 0 16px;
     cursor: pointer;
-}
-
-.card-top {
-    width: 100%;
-    display: grid;
-    grid-template-columns: auto 1fr;
-    grid-column-gap: 16px;
-
-    @include media-xs {
-        grid-column-gap: 12px;
-    }
 }
 
 .card-heading {
@@ -65,11 +54,11 @@
 }
 
 .card-body:not(:empty) {
-    margin-top: 10px;
+    margin-top: 16px;
 }
 
 .card-footer:not(:empty) {
-    padding: 0 20px 20px;
+    padding: 0 16px 16px;
 }
 
 .card-footer:not(:empty) {

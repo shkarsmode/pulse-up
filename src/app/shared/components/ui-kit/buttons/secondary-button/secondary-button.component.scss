@@ -57,4 +57,12 @@
             color: var(--accent-color);
         }
     }
+    &.secondary-button--loading {
+        display: flex;
+        justify-content: center;
+    }
+}
+
+.secondary-button__spinner {
+    --mdc-circular-progress-active-indicator-color: var(--accent-color);
 }
