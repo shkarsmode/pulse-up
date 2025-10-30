@@ -31,6 +31,7 @@ export class TopicWarningMessageComponent implements OnChanges {
 
     public isVisible = signal<boolean>(false);
     public timeToArchive = signal<number>(0);
+    public message = signal<string>("");
     public severity = signal<WarningMessageSeverity | null>(null);
 
     public ngOnChanges(changes: SimpleChanges): void {
@@ -38,14 +39,9 @@ export class TopicWarningMessageComponent implements OnChanges {
             this.isVisible.set(false);
             this.timeToArchive.set(0);
             this.severity.set(null);
-            this.defineMessageType(changes["topic"].currentValue);
+            this.updateMessage(changes["topic"].currentValue);
         }
     }
-
-    public readonly messages: Record<WarningMessageSeverity, string> = {
-        warning: "This topic will be deactivated if not enough pulses are received.",
-        danger: `This topic will be archived in ${this.formatTimeLeft(this.timeToArchive())} if it doesn't get more then 3 pulses.`,
-    };
 
     public openPopup(): void {
         const severity = this.severity();
@@ -55,40 +51,35 @@ export class TopicWarningMessageComponent implements OnChanges {
         });
     }
 
-    private defineMessageType(topic: ITopic): void {
+    private updateMessage(topic: ITopic): void {
         const endDate = topic.endsAt;
-        console.log({
-            endDate,
-            isBefore: dayjs(endDate).isBefore(dayjs()),
-            isWithin7Day: DateUtils.isWithinDaysBefore(endDate, 7),
-        });
-
         if (dayjs(endDate).isBefore(dayjs())) {
             const archivingDate = dayjs(endDate).add(10, "day");
-            if (DateUtils.isWithinDaysBefore(archivingDate.toISOString(), 10) && (!this.topic.stats?.lastDayVotes || this.topic.stats?.lastDayVotes < 3)) {
-                const timeToArchive = archivingDate.diff(dayjs(), "day");
+            if (
+                DateUtils.isWithinDaysBefore(archivingDate.toISOString(), 10) &&
+                (!this.topic.stats?.lastDayVotes || this.topic.stats?.lastDayVotes < 3)
+            ) {
+                const timeToArchive = archivingDate.diff(dayjs());
                 this.severity.set("danger");
                 this.timeToArchive.set(timeToArchive);
+                this.message.set(`This topic will be archived in ${this.formatTimeLeft(this.timeToArchive())} if it doesn't get more then 3 pulses.`);
                 this.isVisible.set(true);
             } else {
                 this.isVisible.set(false);
             }
-        } else if (DateUtils.isWithinDaysBefore(endDate, 7) && (!this.topic.stats?.lastDayVotes || this.topic.stats?.lastDayVotes < 3)) {
+        } else if (
+            DateUtils.isWithinDaysBefore(endDate, 7) &&
+            (!this.topic.stats?.lastDayVotes || this.topic.stats?.lastDayVotes < 3)
+        ) {
             this.severity.set("warning");
+            this.message.set("This topic will be deactivated if not enough pulses are received.");
             this.isVisible.set(true);
         }
-        // if (dayjs(endDate).isBefore(dayjs())) return;
-        // if (
-        //     DateUtils.isWithinDaysBefore(endDate, 1) &&
-        //     (!this.topic.stats?.lastDayVotes || this.topic.stats?.lastDayVotes < 3)
-        // ) {
-        //     this.severity.set("danger");
-        // } else if (DateUtils.isWithinDaysBefore(endDate, 7)) {
-        //     this.severity.set("warning");
-        // }
     }
 
     private formatTimeLeft(ms: number): string {
+        console.log({ ms });
+
         if (!ms) return "";
         const days = Math.floor(ms / (1000 * 60 * 60 * 24));
         const hours = Math.floor((ms % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
@@ -97,7 +88,7 @@ export class TopicWarningMessageComponent implements OnChanges {
             return `${days} days`;
         }
         if (hours > 1) {
-            return `${hours} hours ${minutes} minutes`;
+            return `${hours} hours`;
         }
         return `${minutes} minutes`;
     }

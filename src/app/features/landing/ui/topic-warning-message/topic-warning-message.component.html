@@ -8,7 +8,7 @@
         <svg-icon
             src="assets/svg/warn-triangle-filled.svg"
             class="message__icon" />
-        <span>{{ messages[messageType] }}</span>
+        <span>{{ message() }}</span>
         <app-link-button
             class="message__button"
             (click)="openPopup()">
