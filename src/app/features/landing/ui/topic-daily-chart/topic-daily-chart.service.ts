@@ -77,4 +77,9 @@ export class TopicDailyChartService {
             });
         return labels;
     });
+
+    public isEmpty = computed(() => {
+        const data = this.data();
+        return data.length === 0 || Math.max(...data) === 0;
+    });
 }

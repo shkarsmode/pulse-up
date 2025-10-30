@@ -1,9 +1,13 @@
-<app-topic-chart
-    [data]="data()"
-    [labels]="labels()" />
-<div class="toggler">
-    <app-button-toggle
-        name="Time frames"
-        [options]="toggleOptions"
-        (changed)="handleToggleChange($event)" />
-</div>
+@if (isEmpty()) {
+    <app-topic-chart-no-data />
+} @else {
+    <app-topic-chart
+        [data]="data()"
+        [labels]="labels()" />
+    <div class="toggler">
+        <app-button-toggle
+            name="Time frames"
+            [options]="toggleOptions"
+            (changed)="handleToggleChange($event)" />
+    </div>
+}

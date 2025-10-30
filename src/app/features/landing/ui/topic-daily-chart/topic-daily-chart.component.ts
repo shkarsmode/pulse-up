@@ -3,11 +3,12 @@ import { ActivatedRoute } from "@angular/router";
 import { ButtonToggleComponent } from "@/app/shared/components/ui-kit/buttons/button-toggle/button-toggle.component";
 import { TopicDailyChartService } from "./topic-daily-chart.service";
 import { TopicChartComponent } from "../topic-chart/topic-chart.component";
+import { TopicChartNoDataComponent } from "../topic-chart-no-data/topic-chart-no-data.component";
 
 @Component({
     selector: "app-topic-daily-chart",
     standalone: true,
-    imports: [TopicChartComponent, ButtonToggleComponent],
+    imports: [TopicChartComponent, ButtonToggleComponent, TopicChartNoDataComponent],
     templateUrl: "./topic-daily-chart.component.html",
     styleUrl: "./topic-daily-chart.component.scss",
     changeDetection: ChangeDetectionStrategy.OnPush,
@@ -27,6 +28,7 @@ export class TopicDailyChartComponent implements OnInit {
     public isLoading = this.topicDailyChartService.isLoading;
     public data = this.topicDailyChartService.data;
     public labels = this.topicDailyChartService.labels;
+    public isEmpty = this.topicDailyChartService.isEmpty;
     public toggleOptions = [
         { label: "Cumulative", value: "cumulative" },
         { label: "Daily", value: "daily" },

@@ -1,0 +1,12 @@
+@use "../../../../../styles/mixins" as *;
+
+:host {
+    height: 246px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    p {
+        @include text-16px;
+    }
+}
