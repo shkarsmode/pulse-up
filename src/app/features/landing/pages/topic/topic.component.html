@@ -83,10 +83,6 @@
                             </div>
                         </div>
 
-                        <div class="warnings">
-                            <app-topic-warning-message [topic]="topic" />
-                        </div>
-
                         <div class="actions">
                             <div class="actions__buttons">
                                 @if (isVotingDisabled) {
@@ -115,6 +111,10 @@
                                     </div>
                                 </div>
                             }
+                        </div>
+
+                        <div class="warnings">
+                            <app-topic-warning-message [topic]="topic" />
                         </div>
 
                         <app-pulse-description
