@@ -1,4 +1,10 @@
+@use "../../../../../../styles/mixins" as *;
+
 .vote-button {
-    width: 86px;
-    height: 32px;
+    width: 88px;
+    height: 36px;
+
+    &::ng-deep button.secondary-button {
+        font-weight: 600;
+    }
 }
