@@ -76,7 +76,9 @@ export class LargePulseVoteButtonComponent implements OnDestroy {
         }
     }
 
-    public handleClick() {
+    public handleClick(event: MouseEvent) {
+        event.stopPropagation();
+
         if (this.isAuthenticatedUser()) {
             if (this.isActiveVote() === false) {
                 this.sendVote();

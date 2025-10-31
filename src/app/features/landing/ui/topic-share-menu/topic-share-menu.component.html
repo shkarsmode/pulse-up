@@ -1,0 +1,14 @@
+<ng-container *ngIf="content">
+    <button
+        mat-icon-button
+        [matMenuTriggerFor]="menu"
+        #trigger="matMenuTrigger"
+        (click)="$event.stopPropagation()">
+        <ng-content></ng-content>
+    </button>
+    <mat-menu
+        #menu="matMenu"
+        class="menu">
+        <ng-container *ngTemplateOutlet="content"></ng-container>
+    </mat-menu>
+</ng-container>

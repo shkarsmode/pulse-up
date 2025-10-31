@@ -1,4 +1,4 @@
-import { Component, computed, effect, inject, input } from "@angular/core";
+import { Component, computed, inject, input } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { RouterModule } from "@angular/router";
 import { AngularSvgIconModule } from "angular-svg-icon";
@@ -22,6 +22,7 @@ import { WaveAnimationDirective } from "@/app/shared/directives/wave-animation/w
 import { LargePulsePictureComponent } from "@/app/shared/components/pulses/large-pulse/large-pulse-picture/large-pulse-picture.component";
 import { LargePulseVoteButtonComponent } from "@/app/shared/components/pulses/large-pulse/large-pulse-vote-button/large-pulse-vote-button.component";
 import { TopicUtils } from "@/app/shared/helpers/topic-utils";
+import { TopicShareMenuComponent } from "../topic-share-menu/topic-share-menu.component";
 
 @Component({
     selector: "app-trending-topics-list-item",
@@ -43,6 +44,7 @@ import { TopicUtils } from "@/app/shared/helpers/topic-utils";
         WaveAnimationDirective,
         LargePulsePictureComponent,
         LargePulseVoteButtonComponent,
+        TopicShareMenuComponent,
     ],
     templateUrl: "./trending-topics-list-item.component.html",
     styleUrl: "./trending-topics-list-item.component.scss",
@@ -96,7 +98,7 @@ export class TrendingTopicsListItemComponent {
             return null;
         }
         return TopicUtils.getExpirationSeverity(topic);
-    })
+    });
 
     private isCampaignActive(campaign: Campaign): boolean {
         return (

@@ -16,7 +16,9 @@ export class CopyTopicButtonComponent {
 
     public tooltipVisible = false;
 
-    public onClick() {
+    public onClick(event: MouseEvent) {
+        event.stopPropagation();
+        
         if (this.tooltipVisible) return;
 
         this.tooltipVisible = true;
