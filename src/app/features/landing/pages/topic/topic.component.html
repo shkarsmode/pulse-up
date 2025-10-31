@@ -1,7 +1,7 @@
 @let shareTopicUrl = topicUrl();
-@let isVotingDisabled = isArchived() || isClosed();
+@let isTopicArchived = isArchived();
 
-<app-lending-page-layout>
+<app-landing-page-layout>
     @if (isLoading()) {
         <app-spinner class="pulse__spinner" />
     } @else if (topic) {
@@ -85,7 +85,7 @@
 
                         <div class="actions">
                             <div class="actions__buttons">
-                                @if (isVotingDisabled) {
+                                @if (isTopicArchived) {
                                     <app-disbled-vote-button />
                                 } @else if (isAnonymousUser()) {
                                     <app-guest-vote-button />
@@ -143,7 +143,7 @@
 
                     <div class="cols">
                         <app-topic-section class="cols__item">
-                            @if (isVotingDisabled) {
+                            @if (isTopicArchived) {
                                 <div class="map map--disabled">
                                     <div class="map__clickbait">
                                         <h3 class="map__text map__text--heading">
@@ -232,4 +232,4 @@
     </ng-template>
 
     <div id="recaptcha-container"></div>
-</app-lending-page-layout>
+</app-landing-page-layout>

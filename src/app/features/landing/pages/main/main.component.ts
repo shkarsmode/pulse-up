@@ -4,7 +4,7 @@ import { TopPulsesComponent } from "./components/top-pulses/top-pulses.component
 import { AboutSectionComponent } from "./components/about-section/about-section.component";
 import { AdBannerComponent } from "@/app/shared/components/banners/ad-banner/ad-banner.component";
 import { CollectUserInfoService } from "../../services/collect-user-info.service";
-import { LendingPageLayoutComponent } from "../../ui/lending-page-layout/lending-page-layout.component";
+import { LandingPageLayoutComponent } from "../../ui/landing-page-layout/landing-page-layout.component";
 
 @Component({
     selector: "app-main",
@@ -16,7 +16,7 @@ import { LendingPageLayoutComponent } from "../../ui/lending-page-layout/lending
         MainHeroComponent,
         TopPulsesComponent,
         AboutSectionComponent,
-        LendingPageLayoutComponent,
+        LandingPageLayoutComponent,
     ],
 })
 export class MainComponent implements OnInit {

@@ -1,9 +1,11 @@
-<app-secondary-button
-    size="small"
-    class="vote-button"
-    [fullWidth]="true"
-    [fullHeight]="true"
-    [loading]="isInProgress()"
-    (handleClick)="handleClick()">
-    Pulse Up
-</app-secondary-button>
+@if (!isArchived()) {
+    <app-secondary-button
+        size="small"
+        class="vote-button"
+        [fullWidth]="true"
+        [fullHeight]="true"
+        [loading]="isInProgress()"
+        (handleClick)="handleClick()">
+        Pulse Up
+    </app-secondary-button>
+}

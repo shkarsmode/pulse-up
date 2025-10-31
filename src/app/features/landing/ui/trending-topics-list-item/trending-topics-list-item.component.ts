@@ -53,17 +53,6 @@ export class TrendingTopicsListItemComponent {
     public data = input<ITopic>();
     public vote = input<IVote | null>(null);
 
-    constructor() {
-        effect(() => {
-            if (this.data()?.id === 1047) {
-                console.log({
-                    topic: this.data(),
-                    vote: this.vote(),
-                });
-            }
-        });
-    }
-
     private shareTopicBaseUrl = toSignal(
         this.settingsService.settings$.pipe(map((settings) => settings.shareTopicBaseUrl)),
         { initialValue: "" },

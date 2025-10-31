@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, inject } from "@angular/core";
 import { PrimaryButtonComponent } from "@/app/shared/components/ui-kit/buttons/primary-button/primary-button.component";
 import { AngularSvgIconModule } from "angular-svg-icon";
 import { VotingService } from "@/app/shared/services/votes/voting.service";
+import { TopicService } from "../../../pages/topic/topic.service";
 
 @Component({
     selector: "app-guest-vote-button",
@@ -13,8 +14,10 @@ import { VotingService } from "@/app/shared/services/votes/voting.service";
 })
 export class GuestVoteButtonComponent {
     private votingService = inject(VotingService);
+    private topicService = inject(TopicService);
     
     public onClick() {
         this.votingService.startVotingForAnonymousUser();
+        this.topicService.setAnonymousUserVotingInProgress(true);
     }
 }

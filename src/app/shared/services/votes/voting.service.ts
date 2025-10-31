@@ -14,6 +14,7 @@ import { DialogService } from "../core/dialog.service";
 import { VotesService } from "./votes.service";
 import { ITopic } from "../../interfaces";
 import { PendingTopicsService } from "../topic/pending-topics.service";
+import { GeolocationCacheService } from "../core/geolocation-cache.service";
 
 @Injectable({
     providedIn: "root",
@@ -25,6 +26,7 @@ export class VotingService {
     private pendingTopicsService = inject(PendingTopicsService);
     private voteService = inject(VoteService);
     private votesService = inject(VotesService);
+    private geolocationCacheService = inject(GeolocationCacheService);
     private isVoting = new BehaviorSubject(false);
     private isAnonymousUserSignedIn = new BehaviorSubject(false);
 
@@ -93,7 +95,13 @@ export class VotingService {
     }
 
     startVotingForAnonymousUser() {
-        this.showAcceptRulesPopup();
+        const cachedGeolocation = this.geolocationCacheService.get();
+
+        if (cachedGeolocation) {
+            this.signInWithGeolocation();
+        } else {
+            this.showAcceptRulesPopup();
+        }
     }
 
     signInWithGeolocation() {

@@ -57,7 +57,8 @@ export class TopicService {
 
     private topicId = signal<number | null>(null);
     private topicShareKey = signal<string | null>(null);
-    private _isUpdatedAfterUserSignIn = signal(false);
+    private isAnonymousUserVotingInProgressSignal = signal(false);
+    private isUpdatedAfterUserSignInSignal = signal(false);
     private topicEndDate = signal<Date | null>(null);
     private topicQuery = injectQuery(() => ({
         queryFn: () => {
@@ -89,7 +90,8 @@ export class TopicService {
     public isVotesLoading = computed(() => {
         return this.votesQuery.isLoading();
     });
-    public isUpdatedAfterUserSignIn = this._isUpdatedAfterUserSignIn.asReadonly();
+    public isUpdatedAfterUserSignIn = this.isUpdatedAfterUserSignInSignal.asReadonly();
+    public isAnonymousUserVotingInProgress = this.isAnonymousUserVotingInProgressSignal.asReadonly();
     public isAnonymousUser = computed(() => {
         return !!this.anonymousUser();
     });
@@ -166,11 +168,6 @@ export class TopicService {
         return topic?.state === TopicState.Archived;
     });
 
-    public isClosed = computed(() => {
-        const topic = this.topicQuery.data();
-        return topic?.endsAt ? new Date(topic.endsAt) < new Date() : false;
-    });
-
     public lastPulseTime = computed(() => {
         return this.topicQuery.data()?.stats?.timestamp;
     });
@@ -227,12 +224,17 @@ export class TopicService {
     }
 
     public setAsUpdatedAfterUserSignIn() {
-        this._isUpdatedAfterUserSignIn.set(true);
+        this.isUpdatedAfterUserSignInSignal.set(true);
+    }
+
+    public setAnonymousUserVotingInProgress(isInProgress: boolean) {
+        this.isAnonymousUserVotingInProgressSignal.set(isInProgress);
     }
 
     public clearPageData() {
         this.topicId.set(null);
         this.topicShareKey.set(null);
+        this.isAnonymousUserVotingInProgressSignal.set(false);
     }
 
     public updateMetadata(topic: ITopic): void {
