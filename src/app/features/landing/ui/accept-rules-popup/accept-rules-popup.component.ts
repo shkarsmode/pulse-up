@@ -63,12 +63,13 @@ export class AcceptRulesPopupComponent {
                 .afterClosed()
                 .pipe(take(1), delay(250))
                 .subscribe(() => {
-                    this.votingService.signInWithGeolocation();
+                    this.votingService.setIsGeolocationRetrieved(true);
                 });
             this.dialogRef.close();
         } catch {
             this.isError.set(true);
             this.isLoading.set(false);
+            this.votingService.setIsGeolocationRetrieved(false);
         }
     }
 
@@ -84,7 +85,7 @@ export class AcceptRulesPopupComponent {
                     dematerialize(),
                     tap(() => {
                         this.dialogRef.close();
-                        this.votingService.signInWithGeolocation();
+                        this.votingService.setIsGeolocationRetrieved(true);
                         this.isLoading.set(false);
                     }),
                 ),
@@ -92,6 +93,7 @@ export class AcceptRulesPopupComponent {
         } catch {
             this.isError.set(true);
             this.isLoading.set(false);
+            this.votingService.setIsGeolocationRetrieved(false);
         }
     }
 }

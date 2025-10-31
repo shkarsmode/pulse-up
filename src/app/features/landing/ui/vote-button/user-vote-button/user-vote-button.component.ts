@@ -98,7 +98,6 @@ export class UserVoteButtonComponent implements OnInit {
                     if (
                         isUserSignedIn &&
                         isActiveVote === false &&
-                        this.votingService.isGeolocationRetrieved &&
                         !this.isSignedInUserVoted &&
                         isAnonymousUserVotingInProgress
                     ) {
@@ -157,12 +156,12 @@ export class UserVoteButtonComponent implements OnInit {
     private listenToUserSignedIn() {
         return combineLatest([
             this.authService.userToken,
-            this.votingService.isAnonymousUserSignedIn$,
+            this.votingService.isAllowedToVote$,
             this.isUpdated$,
         ]).pipe(
             filter(
-                ([token, anonymousUserSignedIn, pageUpdated]) =>
-                    !!token && anonymousUserSignedIn && pageUpdated,
+                ([token, isAllowedToVote, pageUpdated]) =>
+                    !!token && isAllowedToVote && pageUpdated,
             ),
             tap(() => {
                 this.votingService.setIsAnonymousUserSignedIn(false);

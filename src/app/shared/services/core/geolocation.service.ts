@@ -128,4 +128,17 @@ export class GeolocationService {
             ? lastError
             : new Error("Failed to retrieve location details.");
     }
+
+    checkGeolocationPermission(): boolean {
+        if (!this.isSupported) {
+            return false;
+        }
+
+        const cachedGeolocation = this.geolocationCacheService.get();
+        if (cachedGeolocation) {
+            return true;
+        }
+        
+        return false;
+    }
 }

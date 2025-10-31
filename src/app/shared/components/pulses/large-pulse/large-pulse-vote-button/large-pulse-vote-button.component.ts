@@ -86,13 +86,12 @@ export class LargePulseVoteButtonComponent implements OnDestroy {
         } else {
             this.votingService.startVotingForAnonymousUser();
             this.isAnonymousUserVotingInProgress = true;
-            combineLatest([this.votingService.isAnonymousUserSignedIn$, this.isActiveVote$])
+            combineLatest([this.votingService.isAllowedToVote$, this.isActiveVote$])
                 .pipe(
-                    tap(([isUserSignedIn, isActiveVote]) => {
+                    tap(([isAllowedToVote, isActiveVote]) => {
                         if (
-                            isUserSignedIn &&
+                            isAllowedToVote &&
                             isActiveVote === false &&
-                            this.votingService.isGeolocationRetrieved &&
                             !this.isSignedInUserVoted &&
                             this.isAnonymousUserVotingInProgress
                         ) {
