@@ -174,10 +174,7 @@ export class VotingService {
         dialogRef
             .afterClosed()
             .pipe(take(1))
-            .subscribe((result) => {
-                if (result?.stopSignInProcess) {
-                }
-            });
+            .subscribe();
     }
 
     private showConfirmPhoneNumberPopup() {
