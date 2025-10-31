@@ -61,7 +61,7 @@ app-container::ng-deep .app-container {
 .header__title {
     display: flex;
     flex-direction: column;
-    row-gap: 4px;
+    row-gap: 8px;
 
     h2 {
         @include title-24px;

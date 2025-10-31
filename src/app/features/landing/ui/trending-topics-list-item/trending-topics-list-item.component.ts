@@ -11,7 +11,6 @@ import { Campaign, ITopic } from "@/app/shared/interfaces";
 import { LargePulseTitleComponent } from "@/app/shared/components/pulses/large-pulse/large-pulse-title/large-pulse-title.component";
 import { LargePulseMetaComponent } from "@/app/shared/components/pulses/large-pulse/large-pulse-meta/large-pulse-meta.component";
 import { LargePulseMetricComponent } from "@/app/shared/components/pulses/large-pulse/large-pulse-metric/large-pulse-metric.component";
-import { MenuComponent } from "@/app/shared/components/ui-kit/menu/menu.component";
 import { SocialsButtonComponent } from "@/app/shared/components/ui-kit/buttons/socials-button/socials-button.component";
 import { QrcodeButtonComponent } from "@/app/shared/components/ui-kit/buttons/qrcode-button/qrcode-button.component";
 import { SettingsService } from "@/app/shared/services/api/settings.service";
@@ -23,6 +22,7 @@ import { LargePulsePictureComponent } from "@/app/shared/components/pulses/large
 import { LargePulseVoteButtonComponent } from "@/app/shared/components/pulses/large-pulse/large-pulse-vote-button/large-pulse-vote-button.component";
 import { TopicUtils } from "@/app/shared/helpers/topic-utils";
 import { TopicShareMenuComponent } from "../topic-share-menu/topic-share-menu.component";
+import { LargePulseExpirationIndicatorComponent } from "@/app/shared/components/pulses/large-pulse/large-pulse-expiration-indicator/large-pulse-expiration-indicator.component";
 
 @Component({
     selector: "app-trending-topics-list-item",
@@ -37,7 +37,6 @@ import { TopicShareMenuComponent } from "../topic-share-menu/topic-share-menu.co
         LargePulseMetricComponent,
         AngularSvgIconModule,
         MatButtonModule,
-        MenuComponent,
         SocialsButtonComponent,
         QrcodeButtonComponent,
         CopyTopicButtonComponent,
@@ -45,6 +44,7 @@ import { TopicShareMenuComponent } from "../topic-share-menu/topic-share-menu.co
         LargePulsePictureComponent,
         LargePulseVoteButtonComponent,
         TopicShareMenuComponent,
+        LargePulseExpirationIndicatorComponent,
     ],
     templateUrl: "./trending-topics-list-item.component.html",
     styleUrl: "./trending-topics-list-item.component.scss",
