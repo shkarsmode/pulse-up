@@ -1,4 +1,4 @@
-import { Component, computed, effect, inject, input } from "@angular/core";
+import { Component, computed, inject, input } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { RouterModule } from "@angular/router";
 import { AngularSvgIconModule } from "angular-svg-icon";
@@ -11,7 +11,6 @@ import { Campaign, ITopic } from "@/app/shared/interfaces";
 import { LargePulseTitleComponent } from "@/app/shared/components/pulses/large-pulse/large-pulse-title/large-pulse-title.component";
 import { LargePulseMetaComponent } from "@/app/shared/components/pulses/large-pulse/large-pulse-meta/large-pulse-meta.component";
 import { LargePulseMetricComponent } from "@/app/shared/components/pulses/large-pulse/large-pulse-metric/large-pulse-metric.component";
-import { MenuComponent } from "@/app/shared/components/ui-kit/menu/menu.component";
 import { SocialsButtonComponent } from "@/app/shared/components/ui-kit/buttons/socials-button/socials-button.component";
 import { QrcodeButtonComponent } from "@/app/shared/components/ui-kit/buttons/qrcode-button/qrcode-button.component";
 import { SettingsService } from "@/app/shared/services/api/settings.service";
@@ -22,6 +21,8 @@ import { WaveAnimationDirective } from "@/app/shared/directives/wave-animation/w
 import { LargePulsePictureComponent } from "@/app/shared/components/pulses/large-pulse/large-pulse-picture/large-pulse-picture.component";
 import { LargePulseVoteButtonComponent } from "@/app/shared/components/pulses/large-pulse/large-pulse-vote-button/large-pulse-vote-button.component";
 import { TopicUtils } from "@/app/shared/helpers/topic-utils";
+import { TopicShareMenuComponent } from "../topic-share-menu/topic-share-menu.component";
+import { LargePulseExpirationIndicatorComponent } from "@/app/shared/components/pulses/large-pulse/large-pulse-expiration-indicator/large-pulse-expiration-indicator.component";
 
 @Component({
     selector: "app-trending-topics-list-item",
@@ -36,13 +37,14 @@ import { TopicUtils } from "@/app/shared/helpers/topic-utils";
         LargePulseMetricComponent,
         AngularSvgIconModule,
         MatButtonModule,
-        MenuComponent,
         SocialsButtonComponent,
         QrcodeButtonComponent,
         CopyTopicButtonComponent,
         WaveAnimationDirective,
         LargePulsePictureComponent,
         LargePulseVoteButtonComponent,
+        TopicShareMenuComponent,
+        LargePulseExpirationIndicatorComponent,
     ],
     templateUrl: "./trending-topics-list-item.component.html",
     styleUrl: "./trending-topics-list-item.component.scss",
@@ -52,17 +54,6 @@ export class TrendingTopicsListItemComponent {
 
     public data = input<ITopic>();
     public vote = input<IVote | null>(null);
-
-    constructor() {
-        effect(() => {
-            if (this.data()?.id === 1047) {
-                console.log({
-                    topic: this.data(),
-                    vote: this.vote(),
-                });
-            }
-        });
-    }
 
     private shareTopicBaseUrl = toSignal(
         this.settingsService.settings$.pipe(map((settings) => settings.shareTopicBaseUrl)),
@@ -107,7 +98,7 @@ export class TrendingTopicsListItemComponent {
             return null;
         }
         return TopicUtils.getExpirationSeverity(topic);
-    })
+    });
 
     private isCampaignActive(campaign: Campaign): boolean {
         return (

@@ -18,7 +18,7 @@ import { TopicsEmptyListComponent } from "../../ui/topics-empty-list/topics-empt
 import { PrimaryButtonComponent } from "@/app/shared/components/ui-kit/buttons/primary-button/primary-button.component";
 import { AppRoutes } from "@/app/shared/enums/app-routes.enum";
 import { TopicsService } from "./topics.service";
-import { LendingPageLayoutComponent } from "../../ui/lending-page-layout/lending-page-layout.component";
+import { LandingPageLayoutComponent } from "../../ui/landing-page-layout/landing-page-layout.component";
 
 @Component({
     selector: "app-topics",
@@ -38,7 +38,7 @@ import { LendingPageLayoutComponent } from "../../ui/lending-page-layout/lending
         TopicsEmptyListComponent,
         PrimaryButtonComponent,
         AngularSvgIconModule,
-        LendingPageLayoutComponent,
+        LandingPageLayoutComponent,
     ],
     providers: [InfiniteLoaderService, PulsesPaginationService],
     changeDetection: ChangeDetectionStrategy.OnPush,

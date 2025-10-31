@@ -27,7 +27,7 @@ import { UserTopicsListItemComponent } from "../../ui/user-topics-list-item/user
 import { LinkifyPipe } from "@/app/shared/pipes/linkify.pipe";
 import { AppRoutes } from "@/app/shared/enums/app-routes.enum";
 import { isHttpErrorResponse } from "@/app/shared/helpers/errors/isHttpErrorResponse";
-import { LendingPageLayoutComponent } from "../../ui/lending-page-layout/lending-page-layout.component";
+import { LandingPageLayoutComponent } from "../../ui/landing-page-layout/landing-page-layout.component";
 
 @Component({
     selector: "app-author",
@@ -51,8 +51,8 @@ import { LendingPageLayoutComponent } from "../../ui/lending-page-layout/lending
         QrcodeButtonComponent,
         BackButtonComponent,
         UserTopicsListItemComponent,
+        LandingPageLayoutComponent,
         LinkifyPipe,
-        LendingPageLayoutComponent,
     ],
     providers: [InfiniteLoaderService],
 })

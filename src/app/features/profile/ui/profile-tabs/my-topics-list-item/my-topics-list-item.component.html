@@ -1,39 +1,49 @@
 @let topic = data();
 @let topicShareUrl = topicUrl();
+@let severity = topicExpirationSeverity();
 
 @if (topic) {
     <app-large-pulse
         [pulse]="topic"
         [showArrow]="false">
-        <app-large-pulse-icon
-            [src]="topic.icon"
-            size="md"
-            [label]="topic.title"
-            ngProjectAs="card-icon">
-            @if (isArchived()) {
-                <app-pulse-icon-label text="Archived" />
-            }
-        </app-large-pulse-icon>
-        <div ngProjectAs="card-heading">
+        <div
+            ngProjectAs="card-heading"
+            class="card-heading">
             <app-large-pulse-title>
                 {{ topic.title }}
             </app-large-pulse-title>
             <app-large-pulse-meta
-                [text]="'Created: ' + (topic.createdAt | date: 'MMM d, y') || ''"
-                class="card-heading-meta"
-                label="created at" />
+                [text]="topic.author.name"
+                label="author" />
         </div>
-        <app-large-pulse-description ngProjectAs="card-body">
-            {{ topic.description }}
-        </app-large-pulse-description>
+        <app-large-pulse-picture
+            ngProjectAs="card-body"
+            [src]="topicPicture()"
+            [alt]="topic.title" />
         <div
             class="card-footer"
             ngProjectAs="card-footer">
-            <div class="card-footer__left">
-                <app-large-pulse-metric
-                    [text]="topic.stats?.lastDayVotes || 0 | formatNumber"
-                    [accent]="isVoteActive()">
-                    @if (isVoteActive()) {
+            <div class="card-footer__group">
+                <app-topic-share-menu [content]="menuContent">
+                    <ng-container>
+                        <svg-icon
+                            src="assets/svg/icon_share.svg"
+                            ariaLabel="share icon" />
+                        <span class="visualy-hidden">Share topic</span>
+                    </ng-container>
+                </app-topic-share-menu>
+                <app-copy-topic-button
+                    *ngIf="topicUrl() as topicUrl"
+                    [topicUrl]="topicUrl" />
+            </div>
+            <div class="card-footer__group">
+                @if (severity) {
+                    <app-large-pulse-expiration-indicator [severity]="severity" />
+                }
+                @if (isVoteActive()) {
+                    <app-large-pulse-metric
+                        [text]="topic.stats?.lastDayVotes || 0 | formatNumber"
+                        [accent]="true">
                         <div class="card-footer-icon-wrap card-footer-icon-wrap--active">
                             <svg-icon
                                 appWavesAnimation
@@ -41,30 +51,11 @@
                                 ariaLabel="pulse icon"
                                 class="card-footer-icon" />
                         </div>
-                    } @else {
-                        <app-pulse-icon />
-                    }
-                </app-large-pulse-metric>
-                <app-large-pulse-metric
-                    [text]="topic.stats?.totalVotes || 0 | formatNumber"
-                    icon="assets/svg/chart-simple.svg" />
+                    </app-large-pulse-metric>
+                } @else {
+                    <app-large-pulse-vote-button [topic]="topic" />
+                }
             </div>
-            @if (!isArchived()) {
-                <div class="card-footer__right">
-                    <app-menu [content]="menuContent">
-                        <button
-                            mat-icon-button
-                            aria-label="Share topic">
-                            <svg-icon
-                                src="assets/svg/icon_share.svg"
-                                ariaLabel="share icon" />
-                        </button>
-                    </app-menu>
-                    <app-copy-topic-button
-                        *ngIf="topicShareUrl"
-                        [topicUrl]="topicShareUrl" />
-                </div>
-            }
         </div>
     </app-large-pulse>
 }

@@ -44,23 +44,23 @@ import { RippleEffectDirective } from "@/app/shared/directives/ripple-effect";
     ],
 })
 export class PickLocationComponent implements OnInit, OnDestroy {
-    private readonly router = inject(Router);
+    private router = inject(Router);
     private dialog = inject(MatDialog);
-    private readonly sendTopicService = inject(SendTopicService);
-    private readonly geolocationService = inject(GeolocationService);
-    private readonly sourceId = "search-polygons";
+    private sendTopicService = inject(SendTopicService);
+    private geolocationService = inject(GeolocationService);
+    private sourceId = "search-polygons";
     private destroy$ = new Subject<void>();
 
-    map: mapboxgl.Map | null = null;
-    selectedLocationSubject = new BehaviorSubject(this.sendTopicService.topicLocation);
-    selectedLocation$ = this.selectedLocationSubject.asObservable();
-    isGeolocationSupported = this.geolocationService.isSupported;
-    isGeolocationRequestInProgress = new BehaviorSubject<boolean>(false);
-    isGeolocationRequestInProgress$ = this.isGeolocationRequestInProgress.asObservable();
-    isMyPositionSelected$ = this.selectedLocationSubject
-        .asObservable()
-        .pipe(map((location) => !!(location && this.geolocationService.geolocation)));
-    selectedLocationName$ = this.selectedLocationSubject.asObservable().pipe(
+    private map: mapboxgl.Map | null = null;
+    private selectedLocationSubject = new BehaviorSubject(this.sendTopicService.topicLocation);
+    private isGeolocationRequestInProgress = new BehaviorSubject<boolean>(false);
+    private isMyPositionSelected = new BehaviorSubject(false);
+    private isGeolocationSupported = this.geolocationService.isSupported;
+
+    public selectedLocation$ = this.selectedLocationSubject.asObservable();
+    public isGeolocationRequestInProgress$ = this.isGeolocationRequestInProgress.asObservable();
+    public isMyPositionSelected$ = this.isMyPositionSelected.asObservable();
+    public selectedLocationName$ = this.selectedLocationSubject.asObservable().pipe(
         map((location) => {
             if (!location) return "";
             return location.fullname;
@@ -129,10 +129,12 @@ export class PickLocationComponent implements OnInit, OnDestroy {
             .subscribe({
                 next: (geolocation) => {
                     this.selectedLocationSubject.next(geolocation.details);
+                    this.isMyPositionSelected.next(true);
                     this.isGeolocationRequestInProgress.next(false);
                 },
                 error: () => {
                     this.openDialog();
+                    this.isMyPositionSelected.next(false);
                     this.isGeolocationRequestInProgress.next(false);
                     this.sendTopicService.startTopicLocatoinWarningShown = true;
                 },

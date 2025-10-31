@@ -21,7 +21,7 @@ export class SecondaryButtonComponent implements OnChanges {
     @Input() public color: Colors | null = null;
     @Input() public loading = false;
 
-    @Output() public handleClick: EventEmitter<void> = new EventEmitter<void>();
+    @Output() public handleClick = new EventEmitter<MouseEvent>();
 
     public classes = {};
 
@@ -38,9 +38,9 @@ export class SecondaryButtonComponent implements OnChanges {
         };
     }
 
-    public onClick(): void {
+    public onClick(event: MouseEvent): void {
         if (this.disabled) return;
 
-        this.handleClick.emit();
+        this.handleClick.emit(event);
     }
 }

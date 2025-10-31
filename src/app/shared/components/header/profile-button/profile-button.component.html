@@ -1,7 +1,8 @@
 <app-secondary-button
     [matMenuTriggerFor]="isAuthenticated ? menu : null"
     [routerLink]="isAuthenticated ? null : loginRoute"
-    class="profile-button">
+    class="profile-button"
+    size="medium">
     <svg-icon
         src="assets/svg/profile.svg"
         class="profile-button__icon" />

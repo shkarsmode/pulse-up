@@ -69,6 +69,7 @@ export class UserVoteButtonComponent implements OnInit {
     private topic = this.topicService.topic;
     private isUpdated$ = toObservable(this.topicService.isUpdatedAfterUserSignIn);
     private isActiveVote$ = toObservable(this.topicService.isActiveVote);
+    private isAnonymousUserVotingInProgress$ = toObservable(this.topicService.isAnonymousUserVotingInProgress);
 
     public votes = this.topicService.votes;
     public isVotesLoading = this.topicService.isVotesLoading;
@@ -91,15 +92,14 @@ export class UserVoteButtonComponent implements OnInit {
     }
 
     voteAfterAnonymousUserSignIn() {
-        combineLatest([this.listenToUserSignedIn(), this.votes$, this.isActiveVote$])
+        combineLatest([this.listenToUserSignedIn(), this.isActiveVote$, this.isAnonymousUserVotingInProgress$])
             .pipe(
-                tap(([isUserSignedIn, votes, isActiveVote]) => {
+                tap(([isUserSignedIn, isActiveVote, isAnonymousUserVotingInProgress]) => {
                     if (
                         isUserSignedIn &&
-                        votes &&
                         isActiveVote === false &&
-                        this.votingService.isGeolocationRetrieved &&
-                        !this.isSignedInUserVoted
+                        !this.isSignedInUserVoted &&
+                        isAnonymousUserVotingInProgress
                     ) {
                         this.isSignedInUserVoted = true;
                         this.sendVote({
@@ -156,12 +156,12 @@ export class UserVoteButtonComponent implements OnInit {
     private listenToUserSignedIn() {
         return combineLatest([
             this.authService.userToken,
-            this.votingService.isAnonymousUserSignedIn$,
+            this.votingService.isAllowedToVote$,
             this.isUpdated$,
         ]).pipe(
             filter(
-                ([token, anonymousUserSignedIn, pageUpdated]) =>
-                    !!token && anonymousUserSignedIn && pageUpdated,
+                ([token, isAllowedToVote, pageUpdated]) =>
+                    !!token && isAllowedToVote && pageUpdated,
             ),
             tap(() => {
                 this.votingService.setIsAnonymousUserSignedIn(false);

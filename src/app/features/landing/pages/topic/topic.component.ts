@@ -1,6 +1,5 @@
 import { TopicPublishedComponent } from "@/app/features/landing/ui/topic-published/topic-published.component";
 import { FadeInDirective } from "@/app/shared/animations/fade-in.directive";
-import { TopPulseCardComponent } from "@/app/shared/components/pulses/top-pulse/top-pulse-card.component";
 import { SliderComponent } from "@/app/shared/components/slider/slider.component";
 import { CopyButtonComponent } from "@/app/shared/components/ui-kit/buttons/copy-button/copy-button.component";
 import { FlatButtonDirective } from "@/app/shared/components/ui-kit/buttons/flat-button/flat-button.directive";
@@ -34,19 +33,17 @@ import { MapHeatmapLayerComponent } from "@/app/shared/components/map/map-heatma
 import { WaveAnimationDirective } from "@/app/shared/directives/wave-animation/wave-animation.directive";
 import { TopicService } from "./topic.service";
 import { SettingsService } from "@/app/shared/services/api/settings.service";
-import { TimeFromNowPipe } from "@/app/shared/pipes/time-from-now.pipe";
 import { GuestVoteButtonComponent } from "../../ui/vote-button/guest-vote-button/guest-vote-button.component";
 import { DisbledVoteButtonComponent } from "../../ui/vote-button/disbled-vote-button/disbled-vote-button.component";
 import { ITopic } from "@/app/shared/interfaces";
 import { KeywordButtonComponent } from "../../ui/keyword-button/keyword-button.component";
 import { PulseDescriptionComponent } from "../../ui/pulse-description/pulse-description.component";
 import { LinkifyPipe } from "@/app/shared/pipes/linkify.pipe";
-import { LendingPageLayoutComponent } from "../../ui/lending-page-layout/lending-page-layout.component";
+import { LandingPageLayoutComponent } from "../../ui/landing-page-layout/landing-page-layout.component";
 import { ContainerComponent } from "@/app/shared/components/ui-kit/container/container.component";
 import { TopicSectionComponent } from "../../ui/topic-section/topic-section.component";
 import { TopicChrtsComponent } from "../../ui/topic-charts/topic-charts.component";
 import { TopicWarningMessageComponent } from "../../ui/topic-warning-message/topic-warning-message.component";
-import { TopicEndDateFormComponent } from "../../ui/topic-end-date-form/topic-end-date-form.component";
 
 @Component({
     selector: "app-topic",
@@ -62,7 +59,6 @@ import { TopicEndDateFormComponent } from "../../ui/topic-end-date-form/topic-en
         SocialsButtonComponent,
         MapComponent,
         SliderComponent,
-        TopPulseCardComponent,
         SpinnerComponent,
         FadeInDirective,
         FormatNumberPipe,
@@ -72,19 +68,17 @@ import { TopicEndDateFormComponent } from "../../ui/topic-end-date-form/topic-en
         PulseCampaignComponent,
         MapHeatmapLayerComponent,
         WaveAnimationDirective,
-        TimeFromNowPipe,
         UserVoteButtonComponent,
         GuestVoteButtonComponent,
         DisbledVoteButtonComponent,
         KeywordButtonComponent,
         PulseDescriptionComponent,
         LinkifyPipe,
-        LendingPageLayoutComponent,
+        LandingPageLayoutComponent,
         ContainerComponent,
         TopicSectionComponent,
         TopicChrtsComponent,
         TopicWarningMessageComponent,
-        TopicEndDateFormComponent,
     ],
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -114,7 +108,6 @@ export class TopicComponent implements OnInit, OnDestroy {
     public suggestions = this.topicService.suggestions;
     public isLoading = this.topicService.isLoading;
     public isArchived = this.topicService.isArchived;
-    public isClosed = this.topicService.isClosed;
     public qrCodePopupText = this.topicService.qrCodePopupText;
     public qrCodeBannerTitle = this.topicService.qrCodeBannerTitle;
     public qrCodeBannerText = this.topicService.qrCodeBannerText;
@@ -150,11 +143,6 @@ export class TopicComponent implements OnInit, OnDestroy {
 
     ngOnInit(): void {
         this.updatePageData();
-        window.scrollTo({
-            top: 0,
-            left: 0,
-            behavior: "instant",
-        });
     }
 
     ngOnDestroy(): void {

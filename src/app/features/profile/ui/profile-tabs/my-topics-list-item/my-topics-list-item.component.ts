@@ -1,5 +1,5 @@
 import { Component, computed, inject, input } from "@angular/core";
-import { CommonModule, DatePipe } from "@angular/common";
+import { CommonModule } from "@angular/common";
 import { toSignal } from "@angular/core/rxjs-interop";
 import { map } from "rxjs";
 import { SettingsService } from "@/app/shared/services/api/settings.service";
@@ -7,20 +7,20 @@ import { ITopic, TopicState } from "@/app/shared/interfaces";
 import { IVote } from "@/app/shared/interfaces/vote.interface";
 import { VoteUtils } from "@/app/shared/helpers/vote-utils";
 import { LargePulseComponent } from "@/app/shared/components/pulses/large-pulse/large-pulse.component";
-import { LargePulseIconComponent } from "@/app/shared/components/pulses/large-pulse/large-pulse-icon/large-pulse-icon.component";
 import { LargePulseTitleComponent } from "@/app/shared/components/pulses/large-pulse/large-pulse-title/large-pulse-title.component";
 import { LargePulseMetaComponent } from "@/app/shared/components/pulses/large-pulse/large-pulse-meta/large-pulse-meta.component";
-import { LargePulseDescriptionComponent } from "@/app/shared/components/pulses/large-pulse/large-pulse-description/large-pulse-description.component";
 import { LargePulseMetricComponent } from "@/app/shared/components/pulses/large-pulse/large-pulse-metric/large-pulse-metric.component";
 import { FormatNumberPipe } from "@/app/shared/pipes/format-number.pipe";
 import { AngularSvgIconModule } from "angular-svg-icon";
-import { MenuComponent } from "@/app/shared/components/ui-kit/menu/menu.component";
 import { CopyTopicButtonComponent } from "@/app/features/landing/ui/copy-topic-button/copy-topic-button.component";
 import { SocialsButtonComponent } from "@/app/shared/components/ui-kit/buttons/socials-button/socials-button.component";
 import { QrcodeButtonComponent } from "@/app/shared/components/ui-kit/buttons/qrcode-button/qrcode-button.component";
 import { WaveAnimationDirective } from "@/app/shared/directives/wave-animation/wave-animation.directive";
-import { PulseIconComponent } from "../../pulse-icon/pulse-icon.component";
-import { PulseIconLabelComponent } from "@/app/shared/components/pulses/pulse-icon-label/pulse-icon-label.component";
+import { LargePulsePictureComponent } from "@/app/shared/components/pulses/large-pulse/large-pulse-picture/large-pulse-picture.component";
+import { TopicShareMenuComponent } from "@/app/features/landing/ui/topic-share-menu/topic-share-menu.component";
+import { LargePulseExpirationIndicatorComponent } from "@/app/shared/components/pulses/large-pulse/large-pulse-expiration-indicator/large-pulse-expiration-indicator.component";
+import { LargePulseVoteButtonComponent } from "@/app/shared/components/pulses/large-pulse/large-pulse-vote-button/large-pulse-vote-button.component";
+import { TopicUtils } from "@/app/shared/helpers/topic-utils";
 
 @Component({
     selector: "app-my-topics-list-item",
@@ -28,21 +28,19 @@ import { PulseIconLabelComponent } from "@/app/shared/components/pulses/pulse-ic
     imports: [
         CommonModule,
         LargePulseComponent,
-        LargePulseIconComponent,
         LargePulseTitleComponent,
         LargePulseMetaComponent,
-        LargePulseDescriptionComponent,
         LargePulseMetricComponent,
-        DatePipe,
         FormatNumberPipe,
         AngularSvgIconModule,
-        MenuComponent,
         CopyTopicButtonComponent,
         SocialsButtonComponent,
         QrcodeButtonComponent,
         WaveAnimationDirective,
-        PulseIconComponent,
-        PulseIconLabelComponent,
+        LargePulsePictureComponent,
+        TopicShareMenuComponent,
+        LargePulseExpirationIndicatorComponent,
+        LargePulseVoteButtonComponent,
     ],
     templateUrl: "./my-topics-list-item.component.html",
     styleUrl: "./my-topics-list-item.component.scss",
@@ -90,5 +88,17 @@ export class MyTopicsListItemComponent {
     public qrCodeBannerSubtitle = this.description;
     public qrCodeBannerIcon = computed(() => {
         return this.blobUrlPrefix() + this.icon();
+    });
+    public topicPicture = computed(() => {
+        const prefix = this.blobUrlPrefix();
+        const picturePath = this.data()?.picture ?? "";
+        return prefix + picturePath;
+    });
+    public topicExpirationSeverity = computed(() => {
+        const topic = this.data();
+        if (!topic) {
+            return null;
+        }
+        return TopicUtils.getExpirationSeverity(topic);
     });
 }

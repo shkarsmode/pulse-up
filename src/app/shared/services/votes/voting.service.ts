@@ -1,5 +1,15 @@
-import { inject, Injectable } from "@angular/core";
-import { BehaviorSubject, catchError, from, switchMap, take, tap, throwError } from "rxjs";
+import { DestroyRef, inject, Injectable } from "@angular/core";
+import {
+    BehaviorSubject,
+    catchError,
+    combineLatest,
+    distinctUntilChanged,
+    from,
+    switchMap,
+    take,
+    tap,
+    throwError,
+} from "rxjs";
 import { GeolocationService } from "../core/geolocation.service";
 import { AuthenticationService } from "../api/authentication.service";
 import { VotingError, VotingErrorCode } from "../../helpers/errors/voting-error";
@@ -14,11 +24,13 @@ import { DialogService } from "../core/dialog.service";
 import { VotesService } from "./votes.service";
 import { ITopic } from "../../interfaces";
 import { PendingTopicsService } from "../topic/pending-topics.service";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 
 @Injectable({
     providedIn: "root",
 })
 export class VotingService {
+    private destroyRef = inject(DestroyRef);
     private dialogService = inject(DialogService);
     private geolocationService = inject(GeolocationService);
     private authService = inject(AuthenticationService);
@@ -27,11 +39,12 @@ export class VotingService {
     private votesService = inject(VotesService);
     private isVoting = new BehaviorSubject(false);
     private isAnonymousUserSignedIn = new BehaviorSubject(false);
+    private isGeolocationRetrieved = new BehaviorSubject(false);
+    private isAllowedToVote = new BehaviorSubject(false);
 
-    isVoting$ = this.isVoting.asObservable();
-    isAnonymousUserSignedIn$ = this.isAnonymousUserSignedIn.asObservable();
-    isGeolocationRetrieved = false;
-    shouldVoteAutomatically = false;
+    public isVoting$ = this.isVoting.asObservable();
+    public isAllowedToVote$ = this.isAllowedToVote.asObservable();
+    public shouldVoteAutomatically = false;
 
     get anonymousUserValue() {
         return this.authService.anonymousUserValue;
@@ -39,9 +52,43 @@ export class VotingService {
     get userTokenValue() {
         return this.authService.userTokenValue;
     }
+
+    constructor() {
+        this.isAnonymousUserSignedIn
+            .pipe(
+                distinctUntilChanged(),
+                tap((isSignedIn) => {
+                    if (isSignedIn) {
+                        const hasPermission = this.geolocationService.checkGeolocationPermission();
+                        if (hasPermission) {
+                            this.isGeolocationRetrieved.next(true);
+                        } else {
+                            this.showAcceptRulesPopup();
+                        }
+                    } else {
+                        this.isGeolocationRetrieved.next(false);
+                    }
+                }),
+                takeUntilDestroyed(this.destroyRef),
+            )
+            .subscribe();
+
+        combineLatest([this.isAnonymousUserSignedIn, this.isGeolocationRetrieved])
+            .pipe(
+                tap(([isSignedIn, isGeolocationRetrieved]) => {
+                    this.isAllowedToVote.next(isSignedIn && isGeolocationRetrieved);
+                }),
+                takeUntilDestroyed(this.destroyRef),
+            )
+            .subscribe();
+    }
+
     setIsAnonymousUserSignedIn(value: boolean) {
-        if (value === this.isAnonymousUserSignedIn.value) return;
         this.isAnonymousUserSignedIn.next(value);
+    }
+
+    setIsGeolocationRetrieved(value: boolean) {
+        this.isGeolocationRetrieved.next(value);
     }
 
     vote({ topic }: { topic: ITopic }) {
@@ -93,16 +140,6 @@ export class VotingService {
     }
 
     startVotingForAnonymousUser() {
-        this.showAcceptRulesPopup();
-    }
-
-    signInWithGeolocation() {
-        this.isGeolocationRetrieved = true;
-        this.showWelcomePopup();
-    }
-
-    signInWithoutGeolocation() {
-        this.isGeolocationRetrieved = false;
         this.showWelcomePopup();
     }
 
@@ -127,7 +164,9 @@ export class VotingService {
     }
 
     private showAcceptRulesPopup() {
-        this.dialogService.open(AcceptRulesPopupComponent);
+        setTimeout(() => {
+            this.dialogService.open(AcceptRulesPopupComponent);
+        }, 400);
     }
 
     private showWelcomePopup() {
@@ -135,11 +174,7 @@ export class VotingService {
         dialogRef
             .afterClosed()
             .pipe(take(1))
-            .subscribe((result) => {
-                if (result?.stopSignInProcess) {
-                    this.isGeolocationRetrieved = false;
-                }
-            });
+            .subscribe();
     }
 
     private showConfirmPhoneNumberPopup() {
@@ -150,7 +185,6 @@ export class VotingService {
             .subscribe((result) => {
                 if (result?.stopSignInprocess) {
                     this.authService.stopSignInProcess();
-                    this.isGeolocationRetrieved = false;
                 }
             });
     }

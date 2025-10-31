@@ -2,7 +2,7 @@
     [ngClass]="classes"
     [disabled]="disabled"
     [type]="type"
-    (click)="onClick()"
+    (click)="onClick($event)"
     appRippleEffect
     rippleColor="#6d6d6d24"
     [ngStyle]="color ? { 'border-color': color, color } : {}">

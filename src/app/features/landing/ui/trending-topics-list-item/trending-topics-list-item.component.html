@@ -32,27 +32,21 @@
             class="card-footer"
             ngProjectAs="card-footer">
             <div class="card-footer__group">
-                <app-menu [content]="menuContent">
-                    <button
-                        mat-icon-button
-                        aria-label="Share topic">
+                <app-topic-share-menu [content]="menuContent">
+                    <ng-container>
                         <svg-icon
                             src="assets/svg/icon_share.svg"
                             ariaLabel="share icon" />
-                    </button>
-                </app-menu>
+                        <span class="visualy-hidden">Share topic</span>
+                    </ng-container>
+                </app-topic-share-menu>
                 <app-copy-topic-button
                     *ngIf="topicUrl() as topicUrl"
                     [topicUrl]="topicUrl" />
             </div>
             <div class="card-footer__group">
                 @if (severity) {
-                    <svg-icon
-                        src="assets/svg/warn-triangle-filled.svg"
-                        ariaLabel="severity"
-                        class="card-footer__severity-icon"
-                        [class.card-footer__severity-icon--warning]="severity === 'warning'"
-                        [class.card-footer__severity-icon--danger]="severity === 'danger'" />
+                    <app-large-pulse-expiration-indicator [severity]="severity" />
                 }
                 @if (isVoteActive()) {
                     <app-large-pulse-metric
