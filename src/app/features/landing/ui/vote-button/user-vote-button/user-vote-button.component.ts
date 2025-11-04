@@ -1,7 +1,15 @@
-import { Component, inject, DestroyRef, Output, EventEmitter, OnInit } from "@angular/core";
+import { PrimaryButtonComponent } from "@/app/shared/components/ui-kit/buttons/primary-button/primary-button.component";
+import { WaveAnimationDirective } from "@/app/shared/directives/wave-animation/wave-animation.directive";
+import { isErrorWithMessage } from "@/app/shared/helpers/errors/is-error-with-message";
+import { VotingError, VotingErrorCode } from "@/app/shared/helpers/errors/voting-error";
+import { IVote } from "@/app/shared/interfaces/vote.interface";
+import { AuthenticationService } from "@/app/shared/services/api/authentication.service";
+import { NotificationService } from "@/app/shared/services/core/notification.service";
+import { VotingService } from "@/app/shared/services/votes/voting.service";
 import { CommonModule } from "@angular/common";
-import { SvgIconComponent } from "angular-svg-icon";
+import { Component, DestroyRef, EventEmitter, inject, OnInit, Output } from "@angular/core";
 import { takeUntilDestroyed, toObservable } from "@angular/core/rxjs-interop";
+import { SvgIconComponent } from "angular-svg-icon";
 import {
     BehaviorSubject,
     combineLatest,
@@ -15,16 +23,8 @@ import {
     switchMap,
     tap,
 } from "rxjs";
-import { IVote } from "@/app/shared/interfaces/vote.interface";
-import { PrimaryButtonComponent } from "@/app/shared/components/ui-kit/buttons/primary-button/primary-button.component";
-import { NotificationService } from "@/app/shared/services/core/notification.service";
-import { VoteTimeLeftComponent } from "../../vote-time-left/vote-time-left.component";
-import { AuthenticationService } from "@/app/shared/services/api/authentication.service";
-import { VotingError, VotingErrorCode } from "@/app/shared/helpers/errors/voting-error";
-import { isErrorWithMessage } from "@/app/shared/helpers/errors/is-error-with-message";
-import { WaveAnimationDirective } from "@/app/shared/directives/wave-animation/wave-animation.directive";
 import { TopicService } from "../../../pages/topic/topic.service";
-import { VotingService } from "@/app/shared/services/votes/voting.service";
+import { VoteTimeLeftComponent } from "../../vote-time-left/vote-time-left.component";
 
 function delayBetween<T>(delayMs: number, first = false) {
     let past = Date.now();
@@ -204,7 +204,7 @@ export class UserVoteButtonComponent implements OnInit {
                 return;
             }
             if (error.code === VotingErrorCode.GEOLOCATION_UNAVAILABLE) {
-                this.votingService.showDownloadAppPopup();
+                this.votingService.showFallbackDetermineLocationPopup();
                 return;
             }
         }

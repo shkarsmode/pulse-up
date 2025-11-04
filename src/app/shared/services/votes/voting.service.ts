@@ -195,7 +195,7 @@ export class VotingService {
         }, 400);
     }
 
-    private showFallbackDetermineLocationPopup(): void {
+    public showFallbackDetermineLocationPopup(): void {
         setTimeout(() => {
             this.dialogService.open(FallbackDetermineLocationComponent)
                 .afterClosed()
