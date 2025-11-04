@@ -1,5 +1,6 @@
 import { HttpHeaders } from "@angular/common/http";
 import { DestroyRef, inject, Injectable } from "@angular/core";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { Router } from "@angular/router";
 import { FirebaseApp, FirebaseError, initializeApp } from "firebase/app";
 import {
@@ -10,21 +11,22 @@ import {
     linkWithCredential,
     PhoneAuthProvider,
     RecaptchaVerifier,
+    sendEmailVerification,
     sendSignInLinkToEmail,
     signInAnonymously,
     signInWithPhoneNumber,
     signOut,
+    updateEmail,
     updatePhoneNumber,
     User,
     UserCredential,
-    updateEmail,
-    sendEmailVerification,
 } from "firebase/auth";
 import { jwtDecode, JwtPayload } from "jwt-decode";
 import { BehaviorSubject, forkJoin, from, Observable, of, throwError } from "rxjs";
 import { catchError, map, switchMap, take, tap } from "rxjs/operators";
-import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
+import { RouterLoadingIndicatorService } from "../../components/router-loading-indicator/router-loading-indicator.service";
 import { AppConstants } from "../../constants";
+import { AppRoutes } from "../../enums/app-routes.enum";
 import {
     AuthenticationError,
     AuthenticationErrorCode,
@@ -37,8 +39,6 @@ import { LOCAL_STORAGE_KEYS, LocalStorageService } from "../core/local-storage.s
 import { WindowService } from "../core/window.service";
 import { IdentityService } from "./identity.service";
 import { UserService } from "./user.service";
-import { RouterLoadingIndicatorService } from "../../components/router-loading-indicator/router-loading-indicator.service";
-import { AppRoutes } from "../../enums/app-routes.enum";
 
 @Injectable({
     providedIn: "root",

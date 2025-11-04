@@ -1,9 +1,9 @@
+import { environment } from "@/environments/environment";
 import { inject, Injectable } from "@angular/core";
 import { BehaviorSubject, firstValueFrom } from "rxjs";
-import { GeocodeService } from "../api/geocode.service";
 import { IGeolocation, IGeolocationPosition } from "../../interfaces";
+import { GeocodeService } from "../api/geocode.service";
 import { DevSettingsService } from "./dev-settings.service";
-import { environment } from "@/environments/environment";
 import { GeolocationCacheService } from "./geolocation-cache.service";
 
 type GeolocationStatus = "initial" | "pending" | "success" | "error";
@@ -65,7 +65,7 @@ export class GeolocationService {
                         (pos) => {
                             const { latitude, longitude, accuracy } = pos.coords;
 
-                            if (enableHighAccuracy && accuracy > 250) {
+                            if (enableHighAccuracy && accuracy > 7000) {
                                 return reject(new Error("Geolocation accuracy is too low"));
                             }
 

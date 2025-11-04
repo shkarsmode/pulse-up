@@ -1,31 +1,31 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, inject, input, OnInit, signal } from "@angular/core";
-import { CommonModule } from "@angular/common";
-import { Router, RouterModule } from "@angular/router";
-import { MatDialog } from "@angular/material/dialog";
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
-import { map, take   } from "rxjs";
-import { InputComponent } from "@/app/shared/components/ui-kit/input/input.component";
-import { atLeastOneLetterValidator } from "@/app/shared/helpers/validators/at-least-one-letter.validator";
-import { usernameUniqueValidator } from "@/app/shared/helpers/validators/username-unique.validator";
-import { UserService } from "@/app/shared/services/api/user.service";
-import { PrimaryButtonComponent } from "@/app/shared/components/ui-kit/buttons/primary-button/primary-button.component";
-import { TextareaComponent } from "@/app/shared/components/ui-kit/textarea/textarea.component";
-import { PicturePickerComponent } from "@/app/shared/components/ui-kit/picture-picker/picture-picker.component";
-import { pictureValidator } from "@/app/shared/helpers/validators/picture.validator";
-import { optionalLengthValidator } from "@/app/shared/helpers/validators/optional-length.validator";
-import { SettingsService } from "@/app/shared/services/api/settings.service";
-import { AuthenticationService } from "@/app/shared/services/api/authentication.service";
-import { AppRoutes } from "@/app/shared/enums/app-routes.enum";
+import { CropResult } from "@/app/features/user/interfaces/crop-result.interface";
 import {
     CropImagePopupComponent,
     CropImagePopupData,
 } from "@/app/features/user/ui/crop-image-popup/crop-image-popup.component";
-import { CropResult } from "@/app/features/user/interfaces/crop-result.interface";
-import { NotificationService } from "@/app/shared/services/core/notification.service";
-import { ErrorMessageBuilder } from "../../helpers/error-message-builder";
-import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
+import { PrimaryButtonComponent } from "@/app/shared/components/ui-kit/buttons/primary-button/primary-button.component";
 import { SecondaryButtonComponent } from "@/app/shared/components/ui-kit/buttons/secondary-button/secondary-button.component";
+import { InputComponent } from "@/app/shared/components/ui-kit/input/input.component";
+import { PicturePickerComponent } from "@/app/shared/components/ui-kit/picture-picker/picture-picker.component";
+import { TextareaComponent } from "@/app/shared/components/ui-kit/textarea/textarea.component";
+import { AppRoutes } from "@/app/shared/enums/app-routes.enum";
+import { atLeastOneLetterValidator } from "@/app/shared/helpers/validators/at-least-one-letter.validator";
+import { optionalLengthValidator } from "@/app/shared/helpers/validators/optional-length.validator";
+import { pictureValidator } from "@/app/shared/helpers/validators/picture.validator";
+import { usernameUniqueValidator } from "@/app/shared/helpers/validators/username-unique.validator";
+import { AuthenticationService } from "@/app/shared/services/api/authentication.service";
+import { SettingsService } from "@/app/shared/services/api/settings.service";
+import { UserService } from "@/app/shared/services/api/user.service";
+import { NotificationService } from "@/app/shared/services/core/notification.service";
 import { ProfileService } from "@/app/shared/services/profile/profile.service";
+import { CommonModule } from "@angular/common";
+import { ChangeDetectionStrategy, Component, DestroyRef, inject, input, OnInit, signal } from "@angular/core";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
+import { MatDialog } from "@angular/material/dialog";
+import { Router, RouterModule } from "@angular/router";
+import { map, take } from "rxjs";
+import { ErrorMessageBuilder } from "../../helpers/error-message-builder";
 
 @Component({
     selector: "app-profile-form",
@@ -79,6 +79,7 @@ export class ProfileFormComponent implements OnInit {
         this.authenticationService.firebaseUser$
             .pipe(takeUntilDestroyed(this.destroyed))
             .subscribe((user) => {
+                console.log(user);
                 if (user && user.email) {
                     this.email.set(user.email);
                 }
