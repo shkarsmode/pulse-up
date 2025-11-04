@@ -60,3 +60,14 @@
     justify-content: center;
     transform: rotate(180deg);
 }
+
+.card-body:empty,
+.card-footer:empty {
+    display: none;
+}
+
+.card-wrap:has(.card-icon:not(:empty)) {
+    flex-direction: row;
+    align-items: center;
+    gap: 10px;
+}
