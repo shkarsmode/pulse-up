@@ -1,0 +1,21 @@
+<app-popup-title>Enter your location</app-popup-title>
+
+<app-places-autocomplete
+    [initialValue]="''"
+    (selectLocation)="onLocationSelected($event)" />
+
+@if (selectedLocation()) {
+    <app-popup-text>
+        Chosen location: 
+        {{ selectedLocation()?.country }}, 
+        {{ selectedLocation()?.state }}, 
+        {{ selectedLocation()?.city }}
+    </app-popup-text>
+}
+
+
+<app-primary-button
+    [disabled]="!selectedLocation()"
+    (click)="onApproveLocation()">
+    Approve
+</app-primary-button>

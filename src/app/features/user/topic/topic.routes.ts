@@ -1,13 +1,13 @@
-import { Routes } from "@angular/router";
-import { TopicComponent } from "./topic.component";
 import { PrivatePageGuard } from "@/app/shared/helpers/guards/private-page.guard";
-import { SuggestGuard } from "../guards/suggest.guard";
-import { HowItWorksGuard } from "../guards/how-it-works.guard";
+import { Routes } from "@angular/router";
+import { ActiveTopicsLimitGuard } from "../guards/active-topics-limit.guard";
 import { CreateTopicGuard } from "../guards/create-topic.guard";
+import { HowItWorksGuard } from "../guards/how-it-works.guard";
 import { PreviewTopicCanActiveGuard } from "../guards/preview-topic-can-active.guard";
 import { PreviewTopicCanDeactiveGuard } from "../guards/preview-topic-can-deactive.guard";
 import { RequiredPersonalInformationGuard } from "../guards/required-personal-information.guard";
-import { ActiveTopicsLimitGuard } from "../guards/active-topics-limit.guard";
+import { SuggestGuard } from "../guards/suggest.guard";
+import { TopicComponent } from "./topic.component";
 
 export const TOPIC_ROUTES: Routes = [
     {

@@ -1,30 +1,35 @@
+import { AcceptRulesPopupComponent } from "@/app/features/landing/ui/accept-rules-popup/accept-rules-popup.component";
+import { ConfirmPhoneNumberPopupComponent } from "@/app/features/landing/ui/confirm-phone-number-popup/confirm-phone-number-popup.component";
+import { DownloadAppPopupComponent } from "@/app/features/landing/ui/download-app-popup/download-app-popup.component";
+import { FallbackDetermineLocationComponent } from '@/app/features/landing/ui/fallback-determine-location/fallback-determine-location.component';
+import { SuccessfulVotePopupComponent } from "@/app/features/landing/ui/successful-vote-popup/successful-vote-popup.component";
+import { WelcomePopupComponent } from "@/app/features/landing/ui/welcome-popup/welcome-popup.component";
+import { TopicLocation } from '@/app/features/user/interfaces/topic-location.interface';
 import { DestroyRef, inject, Injectable } from "@angular/core";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import {
     BehaviorSubject,
     catchError,
     combineLatest,
     distinctUntilChanged,
+    first,
     from,
+    Observable,
+    of,
     switchMap,
     take,
     tap,
     throwError,
 } from "rxjs";
-import { GeolocationService } from "../core/geolocation.service";
-import { AuthenticationService } from "../api/authentication.service";
-import { VotingError, VotingErrorCode } from "../../helpers/errors/voting-error";
-import { VoteService } from "../api/vote.service";
-import { WelcomePopupComponent } from "@/app/features/landing/ui/welcome-popup/welcome-popup.component";
-import { DownloadAppPopupComponent } from "@/app/features/landing/ui/download-app-popup/download-app-popup.component";
-import { SuccessfulVotePopupComponent } from "@/app/features/landing/ui/successful-vote-popup/successful-vote-popup.component";
-import { AcceptRulesPopupComponent } from "@/app/features/landing/ui/accept-rules-popup/accept-rules-popup.component";
-import { ConfirmPhoneNumberPopupComponent } from "@/app/features/landing/ui/confirm-phone-number-popup/confirm-phone-number-popup.component";
 import { SigninRequiredPopupComponent } from "../../components/popups/signin-required-popup/signin-required-popup.component";
+import { VotingError, VotingErrorCode } from "../../helpers/errors/voting-error";
+import { IGeolocation, ITopic } from "../../interfaces";
+import { AuthenticationService } from "../api/authentication.service";
+import { VoteService } from "../api/vote.service";
 import { DialogService } from "../core/dialog.service";
-import { VotesService } from "./votes.service";
-import { ITopic } from "../../interfaces";
+import { GeolocationService } from "../core/geolocation.service";
 import { PendingTopicsService } from "../topic/pending-topics.service";
-import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
+import { VotesService } from "./votes.service";
 
 @Injectable({
     providedIn: "root",
@@ -46,6 +51,8 @@ export class VotingService {
     public isAllowedToVote$ = this.isAllowedToVote.asObservable();
     public shouldVoteAutomatically = false;
 
+    public fallbackDeterminedUserLocation: TopicLocation | null = null;
+
     get anonymousUserValue() {
         return this.authService.anonymousUserValue;
     }
@@ -61,9 +68,11 @@ export class VotingService {
                     if (isSignedIn) {
                         const hasPermission = this.geolocationService.checkGeolocationPermission();
                         if (hasPermission) {
+                            this.fallbackDeterminedUserLocation = null;
                             this.isGeolocationRetrieved.next(true);
                         } else {
-                            this.showAcceptRulesPopup();
+                            // this.showAcceptRulesPopup();
+                            this.showFallbackDetermineLocationPopup();
                         }
                     } else {
                         this.isGeolocationRetrieved.next(false);
@@ -102,17 +111,33 @@ export class VotingService {
         this.isVoting.next(true);
 
         return from(this.geolocationService.getCurrentGeolocationAsync()).pipe(
-            catchError(() => {
-                this.isVoting.next(false);
-                return throwError(
-                    () =>
-                        new VotingError(
-                            "Failed to retrieve geolocation. Location access may be disabled or unavailable.",
-                            VotingErrorCode.GEOLOCATION_UNAVAILABLE,
-                        ),
-                );
+            catchError((): Observable<IGeolocation> => {
+                if (!this.fallbackDeterminedUserLocation) {
+                    this.isVoting.next(false);
+                    return throwError(
+                        () =>
+                            new VotingError(
+                                "Failed to retrieve geolocation. Location access may be disabled or unavailable.",
+                                VotingErrorCode.GEOLOCATION_UNAVAILABLE,
+                            ),
+                    );
+                }
+                return of({ 
+                    geolocationPosition: { 
+                        coords: { 
+                            latitude: this.fallbackDeterminedUserLocation.lat,
+                            longitude: this.fallbackDeterminedUserLocation.lng
+                        } 
+                    },
+                    details: { ...this.fallbackDeterminedUserLocation },
+                    fallback: true
+                }) as Observable<IGeolocation>
             }),
             switchMap((geolocation) => {
+                console.log(
+                    '[VotingService] Geolocation type: ', 
+                    geolocation?.fallback ? 'unverified location' : 'verified location'
+                );
                 return this.voteService.sendVote({
                     topicId: topic.id,
                     location: {
@@ -120,6 +145,7 @@ export class VotingService {
                         longitude: geolocation.geolocationPosition.coords.longitude,
                     },
                     locationName: geolocation.details.fullname,
+                    // type: geolocation?.fallback ? 'unverified location' : 'verified location',
                 });
             }),
             tap((vote) => {
@@ -166,6 +192,17 @@ export class VotingService {
     private showAcceptRulesPopup() {
         setTimeout(() => {
             this.dialogService.open(AcceptRulesPopupComponent);
+        }, 400);
+    }
+
+    private showFallbackDetermineLocationPopup(): void {
+        setTimeout(() => {
+            this.dialogService.open(FallbackDetermineLocationComponent)
+                .afterClosed()
+                .pipe(first())
+                .subscribe(result => {
+                    this.fallbackDeterminedUserLocation = result;
+                })
         }, 400);
     }
 

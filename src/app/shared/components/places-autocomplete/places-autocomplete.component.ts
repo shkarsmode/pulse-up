@@ -1,3 +1,5 @@
+import { TopicLocation } from "@/app/features/user/interfaces/topic-location.interface";
+import { CommonModule } from "@angular/common";
 import {
     Component,
     ElementRef,
@@ -10,15 +12,13 @@ import {
     SimpleChanges,
     ViewChild,
 } from "@angular/core";
-import { CommonModule } from "@angular/common";
 import { FormControl, FormsModule, ReactiveFormsModule, Validators } from "@angular/forms";
 import { SvgIconComponent } from "angular-svg-icon";
 import { debounceTime, distinctUntilChanged, tap } from "rxjs";
-import { GeocodeService } from "../../services/api/geocode.service";
-import { MapboxFeature } from "../../interfaces";
-import { SpinnerComponent } from "../ui-kit/spinner/spinner.component";
-import { TopicLocation } from "@/app/features/user/interfaces/topic-location.interface";
 import { GeolocationUtils } from "../../helpers/geolocation-utils";
+import { MapboxFeature } from "../../interfaces";
+import { GeocodeService } from "../../services/api/geocode.service";
+import { SpinnerComponent } from "../ui-kit/spinner/spinner.component";
 
 interface Suggestion {
     id: string;
@@ -162,7 +162,11 @@ export class PlacesAutocompleteComponent implements OnInit, OnChanges {
             )
             .subscribe((value) => {
                 if (value && this.search.valid) {
-                    this.geocodeService.getPlacesByQuery(value).subscribe({
+                    this.geocodeService.getPlacesByQuery({ 
+                        query: value, 
+                        limit: 5, 
+                        types: ["region", "district"] 
+                    }).subscribe({
                         next: (places) => {
                             this.features = places.features;
                             this.loading = false;

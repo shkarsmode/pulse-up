@@ -13,4 +13,5 @@ export interface IGeolocationPositionCoords {
 export interface IGeolocation {
     geolocationPosition: IGeolocationPosition;
     details: TopicLocation;
+    fallback?: boolean;
 }
