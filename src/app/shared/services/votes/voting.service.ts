@@ -202,6 +202,8 @@ export class VotingService {
                 .pipe(first())
                 .subscribe(result => {
                     this.fallbackDeterminedUserLocation = result;
+                    (document.querySelector('.pulse-button > button') as HTMLButtonElement)
+                        ?.click();
                 })
         }, 400);
     }

@@ -1,6 +1,7 @@
 import { TopicLocation } from "@/app/features/user/interfaces/topic-location.interface";
 import { CommonModule } from "@angular/common";
 import {
+    ChangeDetectorRef,
     Component,
     ElementRef,
     EventEmitter,
@@ -42,6 +43,7 @@ export class PlacesAutocompleteComponent implements OnInit, OnChanges {
     @ViewChild("searchInput") searchInput!: ElementRef<HTMLInputElement>;
 
     private readonly geocodeService = inject(GeocodeService);
+    private readonly cdr = inject(ChangeDetectorRef);
 
     search = new FormControl("", {
         validators: [Validators.required, Validators.minLength(2)],
@@ -153,14 +155,17 @@ export class PlacesAutocompleteComponent implements OnInit, OnChanges {
         this.search.valueChanges
             .pipe(
                 tap(() => {
-                    if (this.search.valid) {
-                        this.loading = true;
-                    }
+                    // if (this.search.valid) {
+                    //     this.loading = true;
+                    // }
                 }),
                 debounceTime(300),
                 distinctUntilChanged(),
             )
             .subscribe((value) => {
+                if (this.search.valid) {
+                    this.loading = true;
+                }
                 if (value && this.search.valid) {
                     this.geocodeService.getPlacesByQuery({ 
                         query: value, 
@@ -170,6 +175,7 @@ export class PlacesAutocompleteComponent implements OnInit, OnChanges {
                         next: (places) => {
                             this.features = places.features;
                             this.loading = false;
+                            this.cdr.detectChanges();
                         },
                         error: () => {
                             this.loading = false;
