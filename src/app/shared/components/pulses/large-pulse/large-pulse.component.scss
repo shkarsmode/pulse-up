@@ -62,7 +62,8 @@
 }
 
 .card-body:empty,
-.card-footer:empty {
+.card-footer:empty,
+.card-icon:empty {
     display: none;
 }
 
