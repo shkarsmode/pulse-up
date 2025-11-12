@@ -1,10 +1,12 @@
 <div class="places-autocomplete">
     <div class="places-autocomplete__wrap">
         <label
+            id="search-location-label"
             for="search-location"
             class="visualy-hidden">
             Relevant Region (Optional)
         </label>
+
         <input
             #searchInput
             id="search-location"
@@ -12,19 +14,25 @@
             type="text"
             autocomplete="off"
             [formControl]="search"
-            placeholder="Search city or address"
+            placeholder="Search city, address, or ZIP"
             class="places-autocomplete__input"
+            role="combobox"
+            aria-autocomplete="list"
+            aria-controls="places-suggestions"
             (focus)="onFocus()"
             (blur)="onBlur()"
-            (keydown)="onKeyDown($event)" />
+            (keydown)="onInputKeyDown($event)" />
+
         <svg-icon
             src="assets/svg/search.svg"
             class="places-autocomplete__icon" />
+
         <div class="places-autocomplete__right">
             @if (loading) {
                 <app-spinner />
             } @else if (clearButtonVisible) {
                 <button
+                    type="button"
                     class="places-autocomplete__clear"
                     (click)="clear()">
                     <svg-icon src="assets/svg/close.svg" />
@@ -32,20 +40,29 @@
             }
         </div>
     </div>
+
     @if (suggestionsVisible) {
-        <ul class="places-autocomplete__suggestions">
-            @for (suggestion of suggestions; track suggestion.id) {
+        <ul
+            id="places-suggestions"
+            class="places-autocomplete__suggestions"
+            role="listbox"
+            (mousedown)="$event.preventDefault()">
+            @for (suggestion of suggestions; track suggestion.id; let i = $index) {
                 <li
+                    id="suggestion-{{ i }}"
                     class="places-autocomplete__suggestion"
+                    [class.is-active]="i === highlightedIndex"
+                    role="option"
                     (mousedown)="selectSuggestion(suggestion)">
                     {{ suggestion.name }}
                 </li>
             }
         </ul>
     }
+
     <div
         class="places-autocomplete__error"
-        *ngIf="validationError">
-        <small>{{ validationError }}</small>
+        *ngIf="noResults && !loading">
+        <small>No results, try a broader query</small>
     </div>
 </div>

@@ -30,6 +30,8 @@ export interface FeatureProperties {
     place_formatted: string;
     bbox: [number, number, number, number]; // [minX, minY, maxX, maxY]
     context: FeatureContext;
+    category?: string;
+
 }
 
 export interface Coordinates {

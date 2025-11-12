@@ -1,12 +1,12 @@
-import { inject, Injectable } from "@angular/core";
-import { HttpClient } from "@angular/common/http";
-import { from, Observable } from "rxjs";
 import { TopicLocation } from "@/app/features/user/interfaces/topic-location.interface";
-import { MAPBOX_ACCESS_TOKEN } from "../../tokens/tokens";
-import { MapboxFeature, MapboxFeatureCollection } from "../../interfaces";
+import { HttpClient } from "@angular/common/http";
+import { inject, Injectable } from "@angular/core";
+import { from, Observable } from "rxjs";
 import { GeolocationUtils } from "../../helpers/geolocation-utils";
+import { MapboxFeature, MapboxFeatureCollection } from "../../interfaces";
+import { MAPBOX_ACCESS_TOKEN } from "../../tokens/tokens";
 
-type PlaceType = "country" | "region" | "district" | "place";
+type PlaceType = string;
 
 @Injectable({
     providedIn: "root",
@@ -23,7 +23,7 @@ export class GeocodeService {
     }: {
         query: string;
         limit?: number;
-        types: PlaceType[];
+        types: string[];
     }) => {
         const params = new URLSearchParams({
             q: query,

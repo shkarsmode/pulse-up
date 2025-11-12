@@ -3,7 +3,7 @@ import { PlacesAutocompleteComponent } from '@/app/shared/components/places-auto
 import { PrimaryButtonComponent } from '@/app/shared/components/ui-kit/buttons/primary-button/primary-button.component';
 import { PopupTextComponent } from '@/app/shared/components/ui-kit/popup/popup-text/popup-text.component';
 import { PopupTitleComponent } from '@/app/shared/components/ui-kit/popup/popup-title/popup-title.component';
-import { ChangeDetectionStrategy, Component, inject, signal, WritableSignal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, signal, WritableSignal } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
 
 @Component({
@@ -18,6 +18,13 @@ export class FallbackDetermineLocationComponent {
     private readonly dialogRef = inject(MatDialogRef<FallbackDetermineLocationComponent>);
 
     public selectedLocation: WritableSignal<TopicLocation | null> = signal(null);
+    public step = signal(0);
+
+    public formattedLocation = computed(() => {
+        const { country, state, city } = this.selectedLocation() ?? {};
+
+        return [city, state, country].filter(Boolean).join(', ');
+    })
 
     public onLocationSelected(results: TopicLocation | null): void {
         if (!results) return;

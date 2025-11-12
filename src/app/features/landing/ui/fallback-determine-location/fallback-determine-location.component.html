@@ -1,21 +1,31 @@
-<app-popup-title>Enter your location</app-popup-title>
+@if (step() !== 0) {
+    <app-popup-title>Enter your location</app-popup-title>
 
-<app-places-autocomplete
-    [initialValue]="''"
-    (selectLocation)="onLocationSelected($event)" />
+    <app-places-autocomplete
+        [initialValue]="''"
+        (selectLocation)="onLocationSelected($event)"
+        style="margin-top: -20px;" />
 
-@if (selectedLocation()) {
-    <app-popup-text>
-        Chosen location: 
-        {{ selectedLocation()?.country }}, 
-        {{ selectedLocation()?.state }}, 
-        {{ selectedLocation()?.city }}
+    @if (selectedLocation()) {
+        <app-popup-text>
+            Chosen location: 
+            {{ formattedLocation() }}
+        </app-popup-text>
+    }
+
+    <app-primary-button
+        [disabled]="!selectedLocation()"
+        (click)="onApproveLocation()">
+        Approve
+    </app-primary-button>
+} @else {
+    <app-popup-title>Location not Accessible</app-popup-title>
+    <app-popup-text textAlign="center" style="margin-top: -20px;">
+        We couldn't detect your location automatically. <br /> 
+        Please enter your city, address, or ZIP code to send the pulse.
     </app-popup-text>
+
+    <app-primary-button (click)="step.set(1)">
+        Ok
+    </app-primary-button>
 }
-
-
-<app-primary-button
-    [disabled]="!selectedLocation()"
-    (click)="onApproveLocation()">
-    Approve
-</app-primary-button>
