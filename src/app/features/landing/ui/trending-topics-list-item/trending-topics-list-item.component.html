@@ -48,6 +48,10 @@
                 @if (severity) {
                     <app-large-pulse-expiration-indicator [severity]="severity" />
                 }
+                <div class="card-footer__group-metric">
+                    <svg-icon src="assets/svg/chart-simple.svg"></svg-icon>
+                    {{ (topic.stats?.totalVotes ?? 0) | formatNumber }}
+                </div>
                 @if (isVoteActive()) {
                     <app-large-pulse-metric
                         [text]="topic.stats?.lastDayVotes || 0 | formatNumber"
