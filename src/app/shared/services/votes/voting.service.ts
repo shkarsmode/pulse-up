@@ -50,6 +50,7 @@ export class VotingService {
     public isVoting$ = this.isVoting.asObservable();
     public isAllowedToVote$ = this.isAllowedToVote.asObservable();
     public shouldVoteAutomatically = false;
+    public lastClickedVoteButtonRef: HTMLButtonElement | null = null;
 
     public fallbackDeterminedUserLocation: TopicLocation | null = null;
 
@@ -202,8 +203,13 @@ export class VotingService {
                 .pipe(first())
                 .subscribe(result => {
                     this.fallbackDeterminedUserLocation = result;
-                    (document.querySelector('.pulse-button > button') as HTMLButtonElement)
-                        ?.click();
+                    if (this.lastClickedVoteButtonRef) {
+                        this.lastClickedVoteButtonRef.click();
+                    } else {
+                        (document.querySelector('.pulse-button > button') as HTMLButtonElement)
+                            ?.click();
+                    }
+                    this.lastClickedVoteButtonRef = null;
                 })
         }, 400);
     }

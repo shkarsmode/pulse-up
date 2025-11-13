@@ -78,10 +78,11 @@ export class LargePulseVoteButtonComponent implements OnDestroy {
 
     public handleClick(event: MouseEvent) {
         event.stopPropagation();
-        debugger;
+
         if (this.isAuthenticatedUser()) {
             if (this.isActiveVote() === false) {
                 this.sendVote();
+                this.votingService.lastClickedVoteButtonRef = event.target as HTMLButtonElement;
             }
         } else {
             this.votingService.startVotingForAnonymousUser();
@@ -96,6 +97,7 @@ export class LargePulseVoteButtonComponent implements OnDestroy {
                             this.isAnonymousUserVotingInProgress
                         ) {
                             this.isSignedInUserVoted = true;
+                            this.votingService.lastClickedVoteButtonRef = event.target as HTMLButtonElement;
                             this.sendVote();
                         }
                     }),
