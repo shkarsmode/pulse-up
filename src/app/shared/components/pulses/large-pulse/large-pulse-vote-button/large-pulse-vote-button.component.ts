@@ -1,24 +1,24 @@
+import { isErrorWithMessage } from "@/app/shared/helpers/errors/is-error-with-message";
+import { VoteUtils } from "@/app/shared/helpers/vote-utils";
+import { ITopic, TopicState } from "@/app/shared/interfaces";
+import { AuthenticationService } from "@/app/shared/services/api/authentication.service";
+import { SettingsService } from "@/app/shared/services/api/settings.service";
+import { NotificationService } from "@/app/shared/services/core/notification.service";
+import { VotesService } from "@/app/shared/services/votes/votes.service";
+import { VotingService } from "@/app/shared/services/votes/voting.service";
 import {
     ChangeDetectionStrategy,
     Component,
-    inject,
-    signal,
-    OnDestroy,
-    DestroyRef,
-    input,
     computed,
+    DestroyRef,
+    inject,
+    input,
+    OnDestroy,
+    signal,
 } from "@angular/core";
 import { takeUntilDestroyed, toObservable, toSignal } from "@angular/core/rxjs-interop";
-import { ITopic, TopicState } from "@/app/shared/interfaces";
-import { VotingService } from "@/app/shared/services/votes/voting.service";
-import { NotificationService } from "@/app/shared/services/core/notification.service";
-import { SecondaryButtonComponent } from "../../../ui-kit/buttons/secondary-button/secondary-button.component";
-import { isErrorWithMessage } from "@/app/shared/helpers/errors/is-error-with-message";
-import { AuthenticationService } from "@/app/shared/services/api/authentication.service";
 import { combineLatest, map, Subscription, take, tap } from "rxjs";
-import { SettingsService } from "@/app/shared/services/api/settings.service";
-import { VoteUtils } from "@/app/shared/helpers/vote-utils";
-import { VotesService } from "@/app/shared/services/votes/votes.service";
+import { SecondaryButtonComponent } from "../../../ui-kit/buttons/secondary-button/secondary-button.component";
 
 @Component({
     selector: "app-large-pulse-vote-button",
@@ -78,7 +78,7 @@ export class LargePulseVoteButtonComponent implements OnDestroy {
 
     public handleClick(event: MouseEvent) {
         event.stopPropagation();
-
+        debugger;
         if (this.isAuthenticatedUser()) {
             if (this.isActiveVote() === false) {
                 this.sendVote();
