@@ -4,7 +4,7 @@
         Report Topic
     </app-popup-title>
     <div class="report-topic">
-        <form [formGroup]="form">
+        <form [formGroup]="form" (submit)="onSubmit()">
             <div class="form-field">
                 <mat-label>Reason for reporting</mat-label>
                 <app-input formControlName="reason" [required]="true"></app-input>
