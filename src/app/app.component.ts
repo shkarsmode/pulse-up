@@ -1,9 +1,10 @@
+import { environment } from "@/environments/environment";
 import { Component, inject } from "@angular/core";
 import { ActivatedRoute, Router, RouterOutlet } from "@angular/router";
-import { MetadataService } from "./shared/services/core/metadata.service";
-import { environment } from "@/environments/environment";
-import { RouterLoadingIndicatorComponent } from "./shared/components/router-loading-indicator/router-loading-indicator.component";
 import { DevMenuComponent } from "./shared/components/dev-menu/dev-menu.component";
+import { RouterLoadingIndicatorComponent } from "./shared/components/router-loading-indicator/router-loading-indicator.component";
+import { MetadataService } from "./shared/services/core/metadata.service";
+import { ProfileService } from './shared/services/profile/profile.service';
 
 @Component({
     selector: "app-root",
@@ -15,6 +16,7 @@ export class AppComponent {
     private router: Router = inject(Router);
     private activatedRoute: ActivatedRoute = inject(ActivatedRoute);
     private readonly metadataService: MetadataService = inject(MetadataService);
+    public profileService = inject(ProfileService);
 
     constructor() {
         this.metadataService.listenToRouteChanges(this.router, this.activatedRoute);

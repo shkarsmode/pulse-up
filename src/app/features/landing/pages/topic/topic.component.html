@@ -27,6 +27,16 @@
                                     {{ topic.author.name }}
                                 </a>
                             </div>
+
+                            <div class="header__settings" style="margin-left: auto">
+                                <app-fab-button
+                                    [circle]="true"
+                                    class="more-profile-button"
+                                    icon="assets/svg/more-dots.svg"
+                                    label="More options"
+                                    [matMenuTriggerFor]="menu">
+                                </app-fab-button>
+                            </div>
                         </div>
 
                         @if (topic.picture) {
@@ -229,3 +239,21 @@
 
     <div id="recaptcha-container"></div>
 </app-landing-page-layout>
+
+<mat-menu
+    #menu="matMenu"
+    class="floating-menu">
+    <ng-template matMenuContent>
+        <button
+            mat-menu-item
+            [matTooltip]="
+                topic?.authorId === profileService.profile()?.id ? 
+                    'You cannot report your own topic' : ''
+            "
+            (click)="topicService.showReportPopup(topic?.id!)"
+            [disabled]="topic?.authorId === profileService.profile()?.id">
+            <svg-icon src="assets/svg/report.svg" />
+            <span>Report</span>
+        </button>
+    </ng-template>
+</mat-menu>

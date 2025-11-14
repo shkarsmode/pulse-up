@@ -1,32 +1,37 @@
+import { AppConstants, QUERY_KEYS } from "@/app/shared/constants";
+import { AppRoutes } from "@/app/shared/enums/app-routes.enum";
+import { isHttpErrorResponse } from "@/app/shared/helpers/errors/isHttpErrorResponse";
+import { VoteUtils } from "@/app/shared/helpers/vote-utils";
+import { ITopic, TopicState } from "@/app/shared/interfaces";
+import { IVote } from "@/app/shared/interfaces/vote.interface";
+import { AuthenticationService } from "@/app/shared/services/api/authentication.service";
+import { PulseService } from "@/app/shared/services/api/pulse.service";
+import { SettingsService } from "@/app/shared/services/api/settings.service";
+import { VoteService } from "@/app/shared/services/api/vote.service";
+import { DialogService } from '@/app/shared/services/core/dialog.service';
+import { IpLocationService } from "@/app/shared/services/core/ip-location.service";
+import { MetadataService } from "@/app/shared/services/core/metadata.service";
+import { NotificationService } from "@/app/shared/services/core/notification.service";
+import { SuggestedTopicsService } from "@/app/shared/services/topic/suggested-topics.service";
+import { API_URL } from '@/app/shared/tokens/tokens';
+import { HttpClient } from '@angular/common/http';
 import { computed, effect, inject, Injectable, signal } from "@angular/core";
+import { toObservable, toSignal } from "@angular/core/rxjs-interop";
 import { Router } from "@angular/router";
+import { injectQuery } from "@tanstack/angular-query-experimental";
 import {
     catchError,
     combineLatest,
     EMPTY,
+    first,
     lastValueFrom,
     map,
     Observable,
     of,
-    switchMap,
+    switchMap
 } from "rxjs";
-import { ITopic, TopicState } from "@/app/shared/interfaces";
-import { PulseService } from "@/app/shared/services/api/pulse.service";
-import { isHttpErrorResponse } from "@/app/shared/helpers/errors/isHttpErrorResponse";
-import { AppRoutes } from "@/app/shared/enums/app-routes.enum";
-import { AuthenticationService } from "@/app/shared/services/api/authentication.service";
-import { VoteService } from "@/app/shared/services/api/vote.service";
-import { NotificationService } from "@/app/shared/services/core/notification.service";
-import { SettingsService } from "@/app/shared/services/api/settings.service";
-import { toObservable, toSignal } from "@angular/core/rxjs-interop";
-import { MetadataService } from "@/app/shared/services/core/metadata.service";
-import { VoteUtils } from "@/app/shared/helpers/vote-utils";
-import { SuggestedTopicsService } from "@/app/shared/services/topic/suggested-topics.service";
-import { AppConstants, QUERY_KEYS } from "@/app/shared/constants";
-import { injectQuery } from "@tanstack/angular-query-experimental";
-import { IVote } from "@/app/shared/interfaces/vote.interface";
-import { IpLocationService } from "@/app/shared/services/core/ip-location.service";
 import { ITopicKeyword } from "../../interfaces/topic-keyword.interface";
+import { ReportTopicComponent } from '../../ui/report-topic/report-topic.component';
 
 @Injectable({
     providedIn: "root",
@@ -41,6 +46,10 @@ export class TopicService {
     private metadataService = inject(MetadataService);
     private suggestedTopicsService = inject(SuggestedTopicsService);
     private ipLocationService = inject(IpLocationService);
+    private dialogService = inject(DialogService);
+
+    private readonly apiUrl: string = inject(API_URL);
+    private readonly http: HttpClient = inject(HttpClient);
 
     constructor() {
         effect(() => {
@@ -238,6 +247,49 @@ export class TopicService {
             "description",
             `Support '${topic.title}' anonymously and see how it’s trending in real time across the map. Track public sentiment and join the pulse.`,
         );
+    }
+
+    public showReportPopup(topicId: number) {
+        this.dialogService.open(ReportTopicComponent)
+            .afterClosed().pipe(first())
+            .subscribe((reason: string) => {
+                if (reason) {
+                    this.report({ topicId, reason })
+                        .pipe(first())
+                        .subscribe({
+                            next: () => {
+                                this.notificationService.success(
+                                    "Thank you for reporting this topic!"
+                                );
+                            },
+                            error: ({ error }) => {
+                                const message = error?.title;
+                                this.notificationService.error(
+                                    '[Report Topic] ' + 
+                                        (
+                                            message || 
+                                            "Failed to report the topic. Please try again later"
+                                        ),
+                                );
+                                
+                            }
+                        });
+                } else {
+                    this.notificationService.info("Report cancelled.");
+                }
+            });
+    }
+
+    public report(params: {
+        topicId: number;
+        reason: string;
+        description?: string;
+    }): Observable<void> {
+        return this.http.post<void>(`${this.apiUrl}/topics/report`, {
+            topicId: params.topicId,
+            reason: params.reason,
+            description: params.description,
+        });
     }
 
     private async getTopic(id: string | number) {

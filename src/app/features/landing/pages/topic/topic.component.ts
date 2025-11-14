@@ -1,49 +1,53 @@
 import { TopicPublishedComponent } from "@/app/features/landing/ui/topic-published/topic-published.component";
 import { FadeInDirective } from "@/app/shared/animations/fade-in.directive";
+import { MapHeatmapLayerComponent } from "@/app/shared/components/map/map-heatmap-layer/map-heatmap-layer.component";
+import { MapComponent } from "@/app/shared/components/map/map.component";
 import { SliderComponent } from "@/app/shared/components/slider/slider.component";
 import { CopyButtonComponent } from "@/app/shared/components/ui-kit/buttons/copy-button/copy-button.component";
+import { FabButtonComponent } from '@/app/shared/components/ui-kit/buttons/fab-button/fab-button.component';
 import { FlatButtonDirective } from "@/app/shared/components/ui-kit/buttons/flat-button/flat-button.directive";
 import { QrcodeButtonComponent } from "@/app/shared/components/ui-kit/buttons/qrcode-button/qrcode-button.component";
 import { SocialsButtonComponent } from "@/app/shared/components/ui-kit/buttons/socials-button/socials-button.component";
+import { ContainerComponent } from "@/app/shared/components/ui-kit/container/container.component";
 import { MenuComponent } from "@/app/shared/components/ui-kit/menu/menu.component";
 import { SpinnerComponent } from "@/app/shared/components/ui-kit/spinner/spinner.component";
 import { LoadImgPathDirective } from "@/app/shared/directives/load-img-path/load-img-path.directive";
+import { WaveAnimationDirective } from "@/app/shared/directives/wave-animation/wave-animation.directive";
+import { ITopic } from "@/app/shared/interfaces";
 import { FormatNumberPipe } from "@/app/shared/pipes/format-number.pipe";
+import { LinkifyPipe } from "@/app/shared/pipes/linkify.pipe";
 import { AuthenticationService } from "@/app/shared/services/api/authentication.service";
 import { PulseService } from "@/app/shared/services/api/pulse.service";
+import { SettingsService } from "@/app/shared/services/api/settings.service";
 import { DialogService } from "@/app/shared/services/core/dialog.service";
+import { ProfileService } from '@/app/shared/services/profile/profile.service';
 import { CommonModule } from "@angular/common";
 import {
+    ChangeDetectionStrategy,
     Component,
     DestroyRef,
-    inject,
-    OnInit,
-    OnDestroy,
-    ChangeDetectionStrategy,
     effect,
+    inject,
+    OnDestroy,
+    OnInit,
 } from "@angular/core";
 import { takeUntilDestroyed, toObservable } from "@angular/core/rxjs-interop";
+import { MatMenuModule } from '@angular/material/menu';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { ActivatedRoute, ParamMap, RouterModule } from "@angular/router";
 import { SvgIconComponent } from "angular-svg-icon";
 import { combineLatest, distinctUntilChanged, filter, map, tap } from "rxjs";
-import { MapComponent } from "@/app/shared/components/map/map.component";
-import { UserVoteButtonComponent } from "../../ui/vote-button/user-vote-button/user-vote-button.component";
-import { PulseCampaignComponent } from "../../ui/pulse-campaign/pulse-campaign.component";
-import { MapHeatmapLayerComponent } from "@/app/shared/components/map/map-heatmap-layer/map-heatmap-layer.component";
-import { WaveAnimationDirective } from "@/app/shared/directives/wave-animation/wave-animation.directive";
-import { TopicService } from "./topic.service";
-import { SettingsService } from "@/app/shared/services/api/settings.service";
-import { GuestVoteButtonComponent } from "../../ui/vote-button/guest-vote-button/guest-vote-button.component";
-import { DisbledVoteButtonComponent } from "../../ui/vote-button/disbled-vote-button/disbled-vote-button.component";
-import { ITopic } from "@/app/shared/interfaces";
 import { KeywordButtonComponent } from "../../ui/keyword-button/keyword-button.component";
-import { PulseDescriptionComponent } from "../../ui/pulse-description/pulse-description.component";
-import { LinkifyPipe } from "@/app/shared/pipes/linkify.pipe";
 import { LandingPageLayoutComponent } from "../../ui/landing-page-layout/landing-page-layout.component";
-import { ContainerComponent } from "@/app/shared/components/ui-kit/container/container.component";
-import { TopicSectionComponent } from "../../ui/topic-section/topic-section.component";
+import { PulseCampaignComponent } from "../../ui/pulse-campaign/pulse-campaign.component";
+import { PulseDescriptionComponent } from "../../ui/pulse-description/pulse-description.component";
 import { TopicChrtsComponent } from "../../ui/topic-charts/topic-charts.component";
+import { TopicSectionComponent } from "../../ui/topic-section/topic-section.component";
 import { TopicWarningMessageComponent } from "../../ui/topic-warning-message/topic-warning-message.component";
+import { DisbledVoteButtonComponent } from "../../ui/vote-button/disbled-vote-button/disbled-vote-button.component";
+import { GuestVoteButtonComponent } from "../../ui/vote-button/guest-vote-button/guest-vote-button.component";
+import { UserVoteButtonComponent } from "../../ui/vote-button/user-vote-button/user-vote-button.component";
+import { TopicService } from "./topic.service";
 
 @Component({
     selector: "app-topic",
@@ -79,6 +83,9 @@ import { TopicWarningMessageComponent } from "../../ui/topic-warning-message/top
         TopicSectionComponent,
         TopicChrtsComponent,
         TopicWarningMessageComponent,
+        MatMenuModule,
+        FabButtonComponent,
+        MatTooltipModule
     ],
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -86,10 +93,11 @@ export class TopicComponent implements OnInit, OnDestroy {
     private readonly destroyRef = inject(DestroyRef);
     private readonly route = inject(ActivatedRoute);
     private readonly pulseService = inject(PulseService);
-    private readonly authService = inject(AuthenticationService);
     private readonly dialogService = inject(DialogService);
-    private readonly topicService = inject(TopicService);
     private readonly settingsService = inject(SettingsService);
+    private authService = inject(AuthenticationService);
+    public topicService = inject(TopicService);
+    public profileService: ProfileService = inject(ProfileService);
 
     private mutationObserver: MutationObserver | null = null;
 

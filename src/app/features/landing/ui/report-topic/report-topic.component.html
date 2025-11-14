@@ -1,0 +1,21 @@
+<app-popup>
+    <app-popup-close-button (close)="dialogRef.close()" />
+    <app-popup-title>
+        Report Topic
+    </app-popup-title>
+    <div class="report-topic">
+        <form [formGroup]="form">
+            <div class="form-field">
+                <mat-label>Reason for reporting</mat-label>
+                <app-input formControlName="reason" [required]="true"></app-input>
+            </div>
+            <app-primary-button
+                (handleClick)="onSubmit()"
+                color="primary"
+                mat-raised-button
+                [disabled]="!!form.get('reason')?.invalid">
+                Submit
+            </app-primary-button>
+        </form>
+    </div>
+</app-popup>

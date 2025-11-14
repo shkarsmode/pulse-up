@@ -1,9 +1,9 @@
 import { DestroyRef, Injectable, inject, signal } from "@angular/core";
-import { distinctUntilChanged, firstValueFrom, tap } from "rxjs";
-import { UserService } from "../api/user.service";
-import { IProfile } from "../../interfaces";
 import { takeUntilDestroyed, toObservable } from "@angular/core/rxjs-interop";
+import { distinctUntilChanged, firstValueFrom, tap } from "rxjs";
+import { IProfile } from "../../interfaces";
 import { AuthenticationService } from "../api/authentication.service";
+import { UserService } from "../api/user.service";
 
 @Injectable({ providedIn: "root" })
 export class ProfileService {

@@ -1,0 +1,39 @@
+.report-topic {
+    width: 100%;
+    max-width: 70%;
+}
+
+mat-label {
+    font-family: "SFProText", sans-serif;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 16.71px;
+    color: var(--dark-grey-color);
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    row-gap: 15px;
+}
+
+.form-field {
+    width: 100%;
+}
+
+app-input {
+    ::ng-deep {
+        input {
+            width: 100%;
+        }
+    }
+}
+
+app-primary-button {
+    width: 100%; 
+
+    ::ng-deep button {
+        width: 100% !important;
+    }
+}
