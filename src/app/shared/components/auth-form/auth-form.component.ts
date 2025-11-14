@@ -1,27 +1,29 @@
+import { PrimaryButtonComponent } from "@/app/shared/components/ui-kit/buttons/primary-button/primary-button.component";
+import { NotificationService } from "@/app/shared/services/core/notification.service";
+import { SignInFormService } from "@/app/shared/services/core/sign-in-form.service";
+import { JsonPipe } from '@angular/common';
 import {
     AfterViewInit,
     Component,
     DestroyRef,
+    ElementRef,
     EventEmitter,
     inject,
     OnDestroy,
     Output,
     ViewChild,
 } from "@angular/core";
-import { FormGroup, ReactiveFormsModule } from "@angular/forms";
-import { MatInputModule } from "@angular/material/input";
-import { MatFormFieldModule } from "@angular/material/form-field";
-import { ErrorStateMatcher } from "@angular/material/core";
 import { toSignal } from "@angular/core/rxjs-interop";
-import { PrimaryButtonComponent } from "@/app/shared/components/ui-kit/buttons/primary-button/primary-button.component";
-import { NotificationService } from "@/app/shared/services/core/notification.service";
-import { SignInFormService } from "@/app/shared/services/core/sign-in-form.service";
+import { FormGroup, ReactiveFormsModule } from "@angular/forms";
+import { ErrorStateMatcher } from "@angular/material/core";
+import { MatFormFieldModule } from "@angular/material/form-field";
+import { MatInputModule } from "@angular/material/input";
 import { isErrorWithMessage } from "../../helpers/errors/is-error-with-message";
 
 @Component({
     selector: "app-auth-form",
     standalone: true,
-    imports: [MatInputModule, MatFormFieldModule, ReactiveFormsModule, PrimaryButtonComponent],
+    imports: [MatInputModule, MatFormFieldModule, ReactiveFormsModule, PrimaryButtonComponent, JsonPipe],
     templateUrl: "./auth-form.component.html",
     styleUrl: "./auth-form.component.scss",
 })
@@ -32,7 +34,7 @@ export class AuthFormComponent implements AfterViewInit, OnDestroy {
     public readonly isLoading = toSignal(this.signInFormService.isSigninInProgress);
 
     @Output() submitForm = new EventEmitter<void>();
-    @ViewChild("telInput") telInput: { nativeElement: HTMLInputElement };
+    @ViewChild("telInput") telInput: ElementRef
 
     constructor() {
         this.signInFormService.initialize();
@@ -40,6 +42,15 @@ export class AuthFormComponent implements AfterViewInit, OnDestroy {
 
     ngAfterViewInit(): void {
         this.signInFormService.onViewInit(this.telInput.nativeElement);
+    }
+
+    public get isPhoneFieldInvalid(): boolean {
+        if (!this.telInput) {
+            return true;
+        }
+        return this.errorStateMatcher.isErrorState(
+            this.telInput.nativeElement, this.signInForm as any
+        );
     }
 
     ngOnDestroy(): void {
@@ -54,6 +65,10 @@ export class AuthFormComponent implements AfterViewInit, OnDestroy {
     }
 
     public async onSubmit() {
+        if (this.signInForm.invalid) {
+            this.signInForm.markAllAsTouched();
+            return;
+        }
         try {
             await this.signInFormService.submit();
             this.submitForm.emit();

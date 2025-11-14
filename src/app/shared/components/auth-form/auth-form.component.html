@@ -29,7 +29,9 @@
         size="large"
         type="submit"
         [loading]="isLoading() || false"
-        [disabled]="isLoading() || false">
+        [disabled]="
+            isLoading() || false || (signInForm.invalid && signInForm.touched) || isPhoneFieldInvalid
+        ">
         Continue
     </app-primary-button>
 </form>
