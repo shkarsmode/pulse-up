@@ -22,6 +22,18 @@ export const TOPIC_ROUTES: Routes = [
                 canDeactivate: [HowItWorksGuard],
             },
             {
+                path: "suggest/:id",
+                loadComponent: () =>
+                    import("./suggest/suggest.component").then((m) => m.SuggestComponent),
+                canActivate: [
+                    PrivatePageGuard,
+                    SuggestGuard,
+                    RequiredPersonalInformationGuard,
+                    ActiveTopicsLimitGuard,
+                    CreateTopicGuard,
+                ],
+            },
+            {
                 path: "suggest",
                 loadComponent: () =>
                     import("./suggest/suggest.component").then((m) => m.SuggestComponent),

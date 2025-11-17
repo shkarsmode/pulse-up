@@ -1,24 +1,24 @@
+import { NotificationService } from "@/app/shared/services/core/notification.service";
 import {
     ChangeDetectionStrategy,
     Component,
-    forwardRef,
-    signal,
-    OnDestroy,
-    ViewChild,
     ElementRef,
-    input,
+    forwardRef,
     inject,
+    input,
+    OnDestroy,
+    signal,
+    ViewChild,
 } from "@angular/core";
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from "@angular/forms";
 import { MatDialog } from "@angular/material/dialog";
+import { AngularSvgIconModule } from "angular-svg-icon";
 import { Subscription, take } from "rxjs";
+import { CropResult } from "../../../interfaces/crop-result.interface";
 import {
     CropImagePopupComponent,
     CropImagePopupData,
 } from "../../crop-image-popup/crop-image-popup.component";
-import { CropResult } from "../../../interfaces/crop-result.interface";
-import { NotificationService } from "@/app/shared/services/core/notification.service";
-import { AngularSvgIconModule } from "angular-svg-icon";
 
 @Component({
     selector: "app-description-image-picker",
@@ -38,26 +38,51 @@ import { AngularSvgIconModule } from "angular-svg-icon";
 export class DescriptionImagePickerComponent implements OnDestroy, ControlValueAccessor {
     private dialog = inject(MatDialog);
     public notificationService = inject(NotificationService);
-    private subscription: Subscription;
+
+    private subscription: Subscription | undefined;
+
     protected imgSrc = signal<string | null>(null);
-    protected onChange: (value: File) => void = () => false;
+    protected onChange: (value: File | string | null) => void = () => false;
     protected onTouched: () => void = () => false;
+
     public invalid = input(false);
 
     @ViewChild("fileInput", { static: true })
     protected fileInput!: ElementRef<HTMLInputElement>;
 
-    ngOnDestroy() {
+    ngOnDestroy(): void {
         this.revokeImageURL();
         this.subscription?.unsubscribe();
     }
 
-    writeValue(file: File | null): void {
-        this.imgSrc.set(file ? this.generateImageURL(file) : "");
-        this.fileInput.nativeElement.value = "";
+    writeValue(value: File | string | null): void {
+        this.revokeImageURL();
+
+        if (!value) {
+            this.imgSrc.set(null);
+            if (this.fileInput?.nativeElement) {
+                this.fileInput.nativeElement.value = "";
+            }
+            return;
+        }
+
+        // Backend already stored image path or URL
+        if (typeof value === "string") {
+            this.imgSrc.set(value);
+            if (this.fileInput?.nativeElement) {
+                this.fileInput.nativeElement.value = "";
+            }
+            return;
+        }
+
+        // New file selected by user
+        this.imgSrc.set(this.generateImageURL(value));
+        if (this.fileInput?.nativeElement) {
+            this.fileInput.nativeElement.value = "";
+        }
     }
 
-    registerOnChange(fn: (value: File) => void): void {
+    registerOnChange(fn: (value: File | string | null) => void): void {
         this.onChange = fn;
     }
 
@@ -71,31 +96,34 @@ export class DescriptionImagePickerComponent implements OnDestroy, ControlValueA
         }
     }
 
-    protected onImageSelected(event: Event) {
+    protected onImageSelected(event: Event): void {
         const file = (event.target as HTMLInputElement).files?.[0];
-        if (file) {
-            const dialogRef = this.dialog.open<CropImagePopupComponent, CropImagePopupData>(
-                CropImagePopupComponent,
-                {
-                    width: "100%",
-                    maxWidth: "630px",
-                    panelClass: "custom-dialog-container",
-                    backdropClass: "custom-dialog-backdrop",
-                    data: {
-                        event: event,
-                        aspectRatio: 3 / 4,
-                        maintainAspectRatio: false,
-                    },
-                },
-            );
-            this.subscription = dialogRef
-                .afterClosed()
-                .pipe(take(1))
-                .subscribe((result) => this.onCroppedImage(result));
+        if (!file) {
+            return;
         }
+
+        const dialogRef = this.dialog.open<CropImagePopupComponent, CropImagePopupData>(
+            CropImagePopupComponent,
+            {
+                width: "100%",
+                maxWidth: "630px",
+                panelClass: "custom-dialog-container",
+                backdropClass: "custom-dialog-backdrop",
+                data: {
+                    event: event,
+                    aspectRatio: 3 / 4,
+                    maintainAspectRatio: false,
+                },
+            },
+        );
+
+        this.subscription = dialogRef
+            .afterClosed()
+            .pipe(take(1))
+            .subscribe((result) => this.onCroppedImage(result));
     }
 
-    private onCroppedImage = (result: CropResult) => {
+    private onCroppedImage = (result: CropResult): void => {
         if (result.success) {
             if (result.imageFile) {
                 this.revokeImageURL();
@@ -108,10 +136,10 @@ export class DescriptionImagePickerComponent implements OnDestroy, ControlValueA
         }
     };
 
-    private revokeImageURL() {
-        const imgSrc = this.imgSrc();
-        if (imgSrc && imgSrc.startsWith("blob:")) {
-            URL.revokeObjectURL(imgSrc);
+    private revokeImageURL(): void {
+        const currentImgSrc = this.imgSrc();
+        if (currentImgSrc && currentImgSrc.startsWith("blob:")) {
+            URL.revokeObjectURL(currentImgSrc);
             this.imgSrc.set(null);
         }
     }

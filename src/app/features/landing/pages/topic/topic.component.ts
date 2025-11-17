@@ -21,6 +21,7 @@ import { PulseService } from "@/app/shared/services/api/pulse.service";
 import { SettingsService } from "@/app/shared/services/api/settings.service";
 import { DialogService } from "@/app/shared/services/core/dialog.service";
 import { ProfileService } from '@/app/shared/services/profile/profile.service';
+import { A11yModule } from "@angular/cdk/a11y";
 import { CommonModule } from "@angular/common";
 import {
     ChangeDetectionStrategy,
@@ -55,38 +56,39 @@ import { TopicService } from "./topic.service";
     styleUrl: "./topic.component.scss",
     standalone: true,
     imports: [
-        CommonModule,
-        RouterModule,
-        SvgIconComponent,
-        MenuComponent,
-        CopyButtonComponent,
-        SocialsButtonComponent,
-        MapComponent,
-        SliderComponent,
-        SpinnerComponent,
-        FadeInDirective,
-        FormatNumberPipe,
-        LoadImgPathDirective,
-        FlatButtonDirective,
-        QrcodeButtonComponent,
-        PulseCampaignComponent,
-        MapHeatmapLayerComponent,
-        WaveAnimationDirective,
-        UserVoteButtonComponent,
-        GuestVoteButtonComponent,
-        DisbledVoteButtonComponent,
-        KeywordButtonComponent,
-        PulseDescriptionComponent,
-        LinkifyPipe,
-        LandingPageLayoutComponent,
-        ContainerComponent,
-        TopicSectionComponent,
-        TopicChrtsComponent,
-        TopicWarningMessageComponent,
-        MatMenuModule,
-        FabButtonComponent,
-        MatTooltipModule
-    ],
+    CommonModule,
+    RouterModule,
+    SvgIconComponent,
+    MenuComponent,
+    CopyButtonComponent,
+    SocialsButtonComponent,
+    MapComponent,
+    SliderComponent,
+    SpinnerComponent,
+    FadeInDirective,
+    FormatNumberPipe,
+    LoadImgPathDirective,
+    FlatButtonDirective,
+    QrcodeButtonComponent,
+    PulseCampaignComponent,
+    MapHeatmapLayerComponent,
+    WaveAnimationDirective,
+    UserVoteButtonComponent,
+    GuestVoteButtonComponent,
+    DisbledVoteButtonComponent,
+    KeywordButtonComponent,
+    PulseDescriptionComponent,
+    LinkifyPipe,
+    LandingPageLayoutComponent,
+    ContainerComponent,
+    TopicSectionComponent,
+    TopicChrtsComponent,
+    TopicWarningMessageComponent,
+    MatMenuModule,
+    FabButtonComponent,
+    MatTooltipModule,
+    A11yModule
+],
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TopicComponent implements OnInit, OnDestroy {
@@ -128,6 +130,17 @@ export class TopicComponent implements OnInit, OnDestroy {
         map(([topic, settings]) => {
             if (topic?.icon) {
                 return `${settings.blobUrlPrefix}${topic.icon}`;
+            }
+            return "";
+        }),
+    );
+    public coverImage$ = combineLatest([
+        toObservable(this.topicService.topic),
+        this.settingsService.settings$,
+    ]).pipe(
+        map(([topic, settings]) => {
+            if (topic?.picture) {
+                return `${settings.blobUrlPrefix}${topic.picture}`;
             }
             return "";
         }),

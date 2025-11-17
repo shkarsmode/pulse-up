@@ -96,28 +96,30 @@
             </div>
         </div>
 
-        <div class="group">
-            <app-location-picker>
-                <app-input
-                    autocomplete="off"
-                    type="text"
-                    id="location"
-                    name="location"
-                    iconEnd="starting-location"
-                    formControlName="location"
-                    [hasErrorClass]="
-                        !!control('location')?.invalid && !!control('location')?.touched
-                    " />
-            </app-location-picker>
-            <div *ngIf="getErrorMessage('location') as error">
-                <span class="group__error">{{ error }}</span>
+        @if (!isEditMode) {
+            <div class="group">
+                <app-location-picker>
+                    <app-input
+                        autocomplete="off"
+                        type="text"
+                        id="location"
+                        name="location"
+                        iconEnd="starting-location"
+                        formControlName="location"
+                        [hasErrorClass]="
+                            !!control('location')?.invalid && !!control('location')?.touched
+                        " />
+                </app-location-picker>
+                <div *ngIf="getErrorMessage('location') as error">
+                    <span class="group__error">{{ error }}</span>
+                </div>
             </div>
-        </div>
+        }
     </div>
 
     <app-primary-button
         [fullWidth]="true"
         (handleClick)="onNextButtonClick()">
-        Preview
+        {{ isEditMode ? "Save & preview" : "Preview" }}
     </app-primary-button>
 </form>
