@@ -59,8 +59,8 @@ export class LargePulseVoteButtonComponent implements OnDestroy {
     private isActiveVote = computed(() => {
         const lastVote = this.lastVote();
         const settings = this.settings();
-        if (!lastVote || !settings) return null;
-        return VoteUtils.isActiveVote(lastVote, settings.minVoteInterval);
+        // if (!lastVote || !settings) return null;
+        return VoteUtils.isActiveVote(lastVote, settings!.minVoteInterval);
     });
     private isActiveVote$ = toObservable(this.isActiveVote);
 

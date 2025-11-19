@@ -102,7 +102,8 @@ export class VotingService {
     }
 
     vote({ topic }: { topic: ITopic }) {
-        if (!this.anonymousUserValue || (!this.anonymousUserValue && !this.userTokenValue)) {
+        console.log(this.anonymousUserValue, this.userTokenValue);
+        if (!this.anonymousUserValue && !this.userTokenValue) {
             return throwError(
                 () =>
                     new VotingError("You need to sign in to pulse", VotingErrorCode.NOT_AUTHORIZED),
