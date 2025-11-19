@@ -1,6 +1,6 @@
 import { Component, inject, OnInit } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 import { AppRoutes } from '../../../../shared/enums/app-routes.enum';
-import { Router } from '@angular/router';
 import { TopicFormComponent } from '../../ui/topic-form/topic-form.component';
 
 @Component({
@@ -12,10 +12,15 @@ import { TopicFormComponent } from '../../ui/topic-form/topic-form.component';
 })
 export class SuggestComponent implements OnInit {
     private readonly router = inject(Router)
+    private readonly activatedRoute = inject(ActivatedRoute);
+    
     public routes = AppRoutes.User.Topic;
+    public isEditMode = false;
+
 
     public ngOnInit(): void {
         setTimeout(() => window.scrollTo(0, 0))
+        this.isEditMode = !!this.activatedRoute.snapshot.paramMap.get("id");
     }
 
     public onSubmit(): void {

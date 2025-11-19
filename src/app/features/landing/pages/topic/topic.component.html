@@ -42,7 +42,7 @@
                         @if (topic.picture) {
                             <img
                                 class="cover-image"
-                                [src]="topic.picture"
+                                [src]="coverImage$ | async"
                                 width="538"
                                 height="400"
                                 [alt]="topic.title"
@@ -247,9 +247,34 @@
         <button
             mat-menu-item
             [matTooltip]="
+                topic?.authorId !== profileService.profile()?.id ? 
+                    'You cannot edit someones topic' : ''
+            "
+            [matTooltipPosition]="'left'"
+            [routerLink]="'/user/topic/suggest/' + topic?.id"
+            [disabled]="topic?.authorId !== profileService.profile()?.id">
+            <svg-icon src="assets/svg/edit.svg" />
+            <span>Edit</span>
+        </button>
+        <button
+            mat-menu-item
+            [matTooltip]="
+                topic?.authorId !== profileService.profile()?.id ? 
+                    'You cannot archive someones topic' : ''
+            "
+            [matTooltipPosition]="'left'"
+            (click)="topicService.showReportPopup(topic?.id!)"
+            [disabled]="topic?.authorId !== profileService.profile()?.id">
+            <svg-icon src="assets/svg/report.svg" />
+            <span>Archive</span>
+        </button>
+        <button
+            mat-menu-item
+            [matTooltip]="
                 topic?.authorId === profileService.profile()?.id ? 
                     'You cannot report your own topic' : ''
             "
+            
             (click)="topicService.showReportPopup(topic?.id!)"
             [disabled]="topic?.authorId === profileService.profile()?.id">
             <svg-icon src="assets/svg/report.svg" />

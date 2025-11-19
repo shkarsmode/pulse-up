@@ -1,14 +1,14 @@
 import { CommonModule } from "@angular/common";
 import {
+    ChangeDetectionStrategy,
     Component,
+    effect,
     ElementRef,
     EventEmitter,
-    Output,
-    ViewChild,
-    ChangeDetectionStrategy,
     input,
+    Output,
     signal,
-    effect,
+    ViewChild,
 } from "@angular/core";
 
 @Component({
@@ -23,8 +23,13 @@ export class PicturePickerComponent {
     public id = input("");
     public name = input("");
     public label = input("");
-    public picture = input<File | null>(null);
-    public previewUrl = input("");
+
+    // Теперь допускаем и File, и string, и null
+    public picture = input<File | string | null>(null);
+
+    // Можешь дальше использовать previewUrl, если где-то отдельно пробрасываешь
+    public previewUrl = input<string | null>(null);
+
     public invalid = input(false);
 
     @Output() public pictureSelected = new EventEmitter<Event>();
@@ -36,22 +41,53 @@ export class PicturePickerComponent {
     public selectedTypeOfPicture = signal<"img" | "gif" | "smile" | "">("");
 
     constructor() {
-        effect(() => {
-            this.selectedPicture.set(this.previewUrl());
-        }, { allowSignalWrites: true });
+        // Если извне дали отдельный previewUrl — используем его
+        effect(
+            () => {
+                const preview = this.previewUrl();
+                if (preview) {
+                    this.selectedPicture.set(preview);
+                    this.selectedTypeOfPicture.set(this.getSelectedTypeOfPicture());
+                }
+            },
+            { allowSignalWrites: true },
+        );
 
-        effect(() => {
-            const file = this.picture();
-            if (file) {
-                this.updateSelectedFile(file);
-            }
-        });
+        // Реагируем на изменение picture (File | string | null)
+        effect(
+            () => {
+                const value = this.picture();
+
+                if (!value) {
+                    // Nothing selected
+                    this.selectedPicture.set("");
+                    this.selectedTypeOfPicture.set("");
+                    return;
+                }
+
+                if (value instanceof File) {
+                    // Новый файл от пользователя
+                    this.updateSelectedFile(value);
+                    return;
+                }
+
+                if (typeof value === "string") {
+                    // Уже сохранённый путь/URL с бэка
+                    this.selectedPicture.set(value);
+                    this.selectedTypeOfPicture.set(this.getSelectedTypeOfPicture());
+                }
+            },
+            { allowSignalWrites: true },
+        );
     }
 
     public deleteChosenPicture(): void {
         this.selectedTypeOfPicture.set("");
         this.selectedPicture.set("");
-        this.pictureSelected.emit();
+        this.pictureDeleted.emit();
+        if (this.customIcon) {
+            this.customIcon.nativeElement.value = "";
+        }
     }
 
     public onFileSelected(event: Event): void {

@@ -1,3 +1,5 @@
+import { IH3Pulses } from "@/app/features/landing/interfaces/h3-pulses.interface";
+import { IH3Votes } from "@/app/shared/interfaces/map/h3-votes.interface";
 import { HttpClient } from "@angular/common/http";
 import { inject, Injectable } from "@angular/core";
 import { catchError, map, Observable, of, shareReplay, tap } from "rxjs";
@@ -8,16 +10,14 @@ import {
     TopicStatsUnit,
     TopicVotingHistory,
 } from "../../interfaces";
-import { API_URL } from "../../tokens/tokens";
-import { IValidateTopicTitleResponse } from "../../interfaces/validate-topic-title.response";
 import { ICategory } from "../../interfaces/category.interface";
-import { PendingTopicsService } from "../topic/pending-topics.service";
-import { IH3Pulses } from "@/app/features/landing/interfaces/h3-pulses.interface";
-import { IH3Votes } from "@/app/shared/interfaces/map/h3-votes.interface";
-import { IGetLeaderboardTopicsRequest } from "../../interfaces/topic/get-leaderboard-topics-request.interface";
-import { IGetLeaderboardTopicsResponse } from "../../interfaces/topic/get-leaderboard-topics-response.interface";
 import { IGetLeaderboardLocationsRequest } from "../../interfaces/topic/get-leaderboard-locations-request.interface";
 import { IGetLeaderboardLocationsResponse } from "../../interfaces/topic/get-leaderboard-locations-response.interface";
+import { IGetLeaderboardTopicsRequest } from "../../interfaces/topic/get-leaderboard-topics-request.interface";
+import { IGetLeaderboardTopicsResponse } from "../../interfaces/topic/get-leaderboard-topics-response.interface";
+import { IValidateTopicTitleResponse } from "../../interfaces/validate-topic-title.response";
+import { API_URL } from "../../tokens/tokens";
+import { PendingTopicsService } from "../topic/pending-topics.service";
 
 type RequestParams = Record<
     string,
@@ -112,6 +112,31 @@ export class PulseService {
         });
 
         return this.http.post<ITopic>(`${this.apiUrl}/topics/create`, formData);
+    }
+
+    public update(params: {
+        id: number;
+        icon: any;
+        title: string;
+        description: string;
+        keywords: string[];
+        picture: any;
+        category: string;
+    }): Observable<ITopic> {
+        const formData = new FormData();
+
+        if (params.picture) {
+            formData.append("Picture", params.picture);
+        }
+        formData.append("Title", params.title);
+        formData.append("Description", params.description);
+        formData.append("Category", params.category);
+        formData.append("Icon", params.icon);
+        params.keywords.forEach((keyword, index) => {
+            formData.append(`Keywords[${index}]`, keyword);
+        });
+
+        return this.http.put<ITopic>(`${this.apiUrl}/topics/${params.id}`, formData);
     }
 
     public getMapVotes(

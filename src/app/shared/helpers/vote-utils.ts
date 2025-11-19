@@ -1,8 +1,8 @@
 import { IVote } from "../interfaces/vote.interface";
 
 export class VoteUtils {
-    public static isActiveVote(vote: IVote, activeVoteInterval: number) {
-        if (!vote.updatedAt) return false;
+    public static isActiveVote(vote: IVote | null, activeVoteInterval: number) {
+        if (!vote || !vote.updatedAt) return false;
 
         const updatedAt = new Date(vote.updatedAt).getTime();
         const now = Date.now();

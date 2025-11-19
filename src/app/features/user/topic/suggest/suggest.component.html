@@ -1,7 +1,16 @@
-<h1>Add a Topic</h1>
-<div class="description">
-    Create a new topic to inspire action! <br /> 
-    Fill in the details below
-</div>
+@if (isEditMode) {
+    <h1>Edit a Topic</h1>
+
+    <div class="description">
+        Fill in the details below
+    </div>
+} @else {
+    <h1>Add a Topic</h1>
+
+    <div class="description">
+        Create a new topic to inspire action! <br /> 
+        Fill in the details below
+    </div>
+}
 
 <app-topic-form (handleSubmit)="onSubmit()"/>

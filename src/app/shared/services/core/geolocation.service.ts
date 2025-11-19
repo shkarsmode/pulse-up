@@ -65,7 +65,7 @@ export class GeolocationService {
                         (pos) => {
                             const { latitude, longitude, accuracy } = pos.coords;
 
-                            if (enableHighAccuracy && accuracy > 7000) {
+                            if (enableHighAccuracy && accuracy > 10000) {
                                 return reject(new Error("Geolocation accuracy is too low"));
                             }
 

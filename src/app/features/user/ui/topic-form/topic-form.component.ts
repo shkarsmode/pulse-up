@@ -1,29 +1,37 @@
-import { Component, EventEmitter, inject, Output, OnInit } from "@angular/core";
-import { FormGroup, ReactiveFormsModule } from "@angular/forms";
 import { CommonModule } from "@angular/common";
+import { Component, EventEmitter, inject, OnInit, Output } from "@angular/core";
+import { FormGroup, ReactiveFormsModule } from "@angular/forms";
 import { MatDialog } from "@angular/material/dialog";
-import { map, Observable, take } from "rxjs";
+import { ActivatedRoute, Router } from "@angular/router";
+import { map, Observable, take } from 'rxjs';
+
 import { AppRoutes } from "@/app/shared/enums/app-routes.enum";
-import { SendTopicService } from "@/app/shared/services/topic/send-topic.service";
 import { PulseService } from "@/app/shared/services/api/pulse.service";
-import { ErrorMessageBuilder } from "../../helpers/error-message-builder";
+import { NotificationService } from "@/app/shared/services/core/notification.service";
+import { SendTopicService } from "@/app/shared/services/topic/send-topic.service";
+
 import { tooltipText } from "../../constants/tooltip-text";
+import { ErrorMessageBuilder } from "../../helpers/error-message-builder";
+
+import { CropResult } from "../../interfaces/crop-result.interface";
 import {
     CropImagePopupComponent,
     CropImagePopupData,
 } from "../crop-image-popup/crop-image-popup.component";
-import { CropResult } from "../../interfaces/crop-result.interface";
-import { NotificationService } from "@/app/shared/services/core/notification.service";
 import { TopicLocationInfoPopupComponent } from "../topic-location-info-popup/topic-location-info-popup.component";
-import { PicturePickerComponent } from "@/app/shared/components/ui-kit/picture-picker/picture-picker.component";
-import { TopicInfoComponent } from "./topic-info/topic-info.component";
-import { InputComponent } from "@/app/shared/components/ui-kit/input/input.component";
-import { SelectComponent } from "@/app/shared/components/ui-kit/select/select.component";
-import { TopicDescriptionComponent } from "./topic-description/topic-description.component";
-import { ChipsInputComponent } from "@/app/shared/components/ui-kit/chips-input/chips-input.component";
-import { LocationPickerComponent } from "./location-picker/location-picker.component";
+
 import { PrimaryButtonComponent } from "@/app/shared/components/ui-kit/buttons/primary-button/primary-button.component";
+import { ChipsInputComponent } from "@/app/shared/components/ui-kit/chips-input/chips-input.component";
+import { InputComponent } from "@/app/shared/components/ui-kit/input/input.component";
+import { PicturePickerComponent } from "@/app/shared/components/ui-kit/picture-picker/picture-picker.component";
+import { SelectComponent } from "@/app/shared/components/ui-kit/select/select.component";
+import { SettingsService } from '@/app/shared/services/api/settings.service';
+import { ProfileService } from '@/app/shared/services/profile/profile.service';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { DescriptionImagePickerComponent } from "./description-image-picker/description-image-picker.component";
+import { LocationPickerComponent } from "./location-picker/location-picker.component";
+import { TopicDescriptionComponent } from "./topic-description/topic-description.component";
+import { TopicInfoComponent } from "./topic-info/topic-info.component";
 
 interface Topic {
     name: string;
@@ -53,12 +61,22 @@ interface Topic {
 export class TopicFormComponent implements OnInit {
     @Output() public handleSubmit = new EventEmitter<void>();
 
-    private readonly dialog = inject(MatDialog);
     public readonly pulseService: PulseService = inject(PulseService);
     public readonly sendTopicService: SendTopicService = inject(SendTopicService);
     public readonly notificationService: NotificationService = inject(NotificationService);
+    public readonly settingsService = inject(SettingsService);
+    
+    private readonly router = inject(Router);
+    private readonly dialog = inject(MatDialog);
+    private readonly activatedRoute = inject(ActivatedRoute);
+    private blobUrlPrefix = toSignal(
+        this.settingsService.settings$.pipe(map((settings) => settings.blobUrlPrefix)),
+        { initialValue: "" },
+    );
+    public profileService: ProfileService = inject(ProfileService);
 
-    private popupShown = this.sendTopicService.startTopicLocatoinWarningShown;
+    private popupShown = this.sendTopicService.startTopicLocationWarningShown;
+
     public routes = AppRoutes.User.Topic;
     public topicForm: FormGroup = this.sendTopicService.currentTopic;
     public selectedIcon = this.sendTopicService.currentTopic.get("icon")?.value || null;
@@ -66,10 +84,15 @@ export class TopicFormComponent implements OnInit {
     public categories: Topic[] = categories;
     public tooltipText = tooltipText;
 
+    public isEditMode = false;
+    private currentTopicId: number | null = null;
+
     public ngOnInit(): void {
         this.categoriesForForm = this.pulseService.categories$.pipe(
             map((categories) => categories.map((category) => category.name)),
         );
+
+        this.initEditModeIfNeeded();
     }
 
     public control(name: string) {
@@ -78,7 +101,9 @@ export class TopicFormComponent implements OnInit {
 
     public getErrorMessage(name: string) {
         const control = this.topicForm.get(name);
-        if (!control) return null;
+        if (!control) {
+            return null;
+        }
         return ErrorMessageBuilder.getErrorMessage(control, name);
     }
 
@@ -91,44 +116,49 @@ export class TopicFormComponent implements OnInit {
 
     public onSelectIcon(event: Event): void {
         const file = (event.target as HTMLInputElement).files?.[0];
-        if (file) {
-            const dialogRef = this.dialog.open<CropImagePopupComponent, CropImagePopupData>(
-                CropImagePopupComponent,
-                {
-                    width: "100%",
-                    maxWidth: "630px",
-                    panelClass: "custom-dialog-container",
-                    backdropClass: "custom-dialog-backdrop",
-                    data: {
-                        event: event,
-                        minWidth: 128,
-                        minHeight: 128,
-                        aspectRatio: 1,
-                        maintainAspectRatio: true,
-                    },
-                },
-            );
-            dialogRef
-                .afterClosed()
-                .pipe(take(1))
-                .subscribe((result) => this.onCroppedImage(result));
+        if (!file) {
+            return;
         }
+
+        const dialogRef = this.dialog.open<CropImagePopupComponent, CropImagePopupData>(
+            CropImagePopupComponent,
+            {
+                width: "100%",
+                maxWidth: "630px",
+                panelClass: "custom-dialog-container",
+                backdropClass: "custom-dialog-backdrop",
+                data: {
+                    event: event,
+                    minWidth: 128,
+                    minHeight: 128,
+                    aspectRatio: 1,
+                    maintainAspectRatio: true,
+                },
+            },
+        );
+
+        dialogRef
+            .afterClosed()
+            .pipe(take(1))
+            .subscribe((result) => this.onCroppedImage(result));
     }
 
     public onDeleteIcon(): void {
+        this.selectedIcon = null;
         this.topicForm.get("icon")?.setValue(null);
     }
 
     public getCurrentTopicInfo(): { title: string; description: string } {
-        const category = this.topicForm.get("category")?.value;
-        return this.categories.filter((categoryObj) => categoryObj.name === category)[0];
+        const selectedCategory = this.topicForm.get("category")?.value;
+        return this.categories.filter((categoryObj) => categoryObj.name === selectedCategory)[0];
     }
 
     public onNextButtonClick(): void {
+        this.sendTopicService.currentTopic = this.topicForm;
         if (!this.topicForm.get("location")?.value && !this.popupShown) {
             this.popupShown = true;
-            this.sendTopicService.startTopicLocatoinWarningShown = true;
-            return this.showLocatoinWarning({
+            this.sendTopicService.startTopicLocationWarningShown = true;
+            return this.showLocationWarning({
                 onClose: () => {
                     this.submitForm();
                 },
@@ -137,9 +167,10 @@ export class TopicFormComponent implements OnInit {
         this.submitForm();
     }
 
-    public submitForm() {
+    public submitForm(): void {
         this.topicForm.markAllAsTouched();
         this.topicForm.updateValueAndValidity();
+
         if (this.topicForm.valid) {
             this.handleSubmit.emit();
             this.sendTopicService.markAsReadyForPreview();
@@ -155,12 +186,13 @@ export class TopicFormComponent implements OnInit {
         }
     };
 
-    private showLocatoinWarning({ onClose }: { onClose: () => void }): void {
+    private showLocationWarning({ onClose }: { onClose: () => void }): void {
         const dialogRef = this.dialog.open(TopicLocationInfoPopupComponent, {
             maxWidth: "630px",
             panelClass: "custom-dialog-container",
             backdropClass: "custom-dialog-backdrop",
         });
+
         dialogRef
             .afterClosed()
             .pipe(take(1))
@@ -169,6 +201,95 @@ export class TopicFormComponent implements OnInit {
                     onClose();
                 }
             });
+    }
+
+    private initEditModeIfNeeded(): void {
+        const topicIdParam = this.activatedRoute.snapshot.paramMap.get("id");
+
+        if (!topicIdParam) {
+            this.topicForm.reset();
+            this.sendTopicService.currentTopic.reset();
+            this.selectedIcon = null;
+            return;
+        }
+
+        this.isEditMode = true;
+        this.currentTopicId = Number(topicIdParam);
+        this.popupShown = true;
+
+        const lastTopicEditId = this.sendTopicService.currentTopic.get("id")?.value;
+        if (
+            lastTopicEditId && 
+            this.currentTopicId === lastTopicEditId
+        ) {
+            return;
+        }
+
+        this.pulseService
+            .getById(topicIdParam)
+            .pipe(take(1))
+            .subscribe({
+                next: (topic: any) => {
+                    this.patchFormWithTopic(topic);
+                },
+                error: () => {
+                    this.notificationService.error("Failed to load topic for editing.");
+                },
+            });
+    }
+
+    private buildMediaUrl(path: string | null | undefined): string | null {
+        if (!path) {
+            return null;
+        }
+    
+        if (path.startsWith("http") || path.startsWith("blob:")) {
+            return path;
+        }
+    
+        let apiBaseOrigin: string;
+    
+        try {
+            const apiUrl = this.blobUrlPrefix();
+            apiBaseOrigin = new URL(apiUrl, window.location.origin).origin;
+        } catch {
+            return path;
+        }
+    
+        return `${apiBaseOrigin}${path}`;
+    }
+
+    private patchFormWithTopic(topic: any): void {
+        if (topic.authorId !== this.profileService.profile()?.id) {
+            this.notificationService.info('You can\'t edit someones topic');
+            this.router.navigateByUrl('/topics');
+            return;
+        }
+        const iconUrl = this.buildMediaUrl(topic.icon);
+        const pictureUrl = this.buildMediaUrl(topic.picture);
+
+        this.sendTopicService.currentTopic.get("id")?.setValue(topic.id);
+
+        this.topicForm.patchValue({
+            id: topic.id,
+            icon: iconUrl,
+            headline: topic.title ?? "",
+            description: topic.description ?? "",
+            picture: pictureUrl,
+            category: topic.category ?? null,
+            keywords: topic.keywords.filter((keyword: string) => keyword.toLocaleLowerCase() !== topic?.category.toLocaleLowerCase()) ?? [],
+            location: topic.location ?? null,
+        });
+
+        this.sendTopicService.currentTopic.setValue(this.topicForm.value);        
+
+        const headlineControl = this.topicForm.get("headline");
+        if (headlineControl) {
+            headlineControl.clearAsyncValidators();
+            headlineControl.updateValueAndValidity({ emitEvent: false });
+        }
+
+        this.selectedIcon = iconUrl;
     }
 }
 

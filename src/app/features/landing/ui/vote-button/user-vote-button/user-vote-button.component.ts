@@ -95,6 +95,9 @@ export class UserVoteButtonComponent implements OnInit {
         combineLatest([this.listenToUserSignedIn(), this.isActiveVote$, this.isAnonymousUserVotingInProgress$])
             .pipe(
                 tap(([isUserSignedIn, isActiveVote, isAnonymousUserVotingInProgress]) => {
+                    console.log("isUserSignedIn", isUserSignedIn);
+                        console.log("isActiveVote", isActiveVote);
+                        console.log("isAnonymousUserVotingInProgress", isAnonymousUserVotingInProgress);
                     if (
                         isUserSignedIn &&
                         isActiveVote === false &&

@@ -1,18 +1,18 @@
-import { Component, ElementRef, inject, ViewChild, OnInit, DestroyRef } from "@angular/core";
-import { CommonModule, Location } from "@angular/common";
-import { Router } from "@angular/router";
-import { filter, map } from "rxjs";
-import { SendTopicService } from "@/app/shared/services/topic/send-topic.service";
-import { ProfileService } from "@/app/shared/services/profile/profile.service";
-import { NotificationService } from "@/app/shared/services/core/notification.service";
-import { isErrorWithMessage } from "@/app/shared/helpers/errors/is-error-with-message";
-import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { FadeInDirective } from "@/app/shared/animations/fade-in.directive";
-import { AngularSvgIconModule } from "angular-svg-icon";
 import { MapComponent } from "@/app/shared/components/map/map.component";
-import { SecondaryButtonComponent } from "@/app/shared/components/ui-kit/buttons/secondary-button/secondary-button.component";
 import { PrimaryButtonComponent } from "@/app/shared/components/ui-kit/buttons/primary-button/primary-button.component";
+import { SecondaryButtonComponent } from "@/app/shared/components/ui-kit/buttons/secondary-button/secondary-button.component";
+import { isErrorWithMessage } from "@/app/shared/helpers/errors/is-error-with-message";
+import { NotificationService } from "@/app/shared/services/core/notification.service";
+import { ProfileService } from "@/app/shared/services/profile/profile.service";
+import { SendTopicService } from "@/app/shared/services/topic/send-topic.service";
 import { VotingService } from "@/app/shared/services/votes/voting.service";
+import { CommonModule, Location } from "@angular/common";
+import { Component, DestroyRef, ElementRef, inject, OnInit, ViewChild } from "@angular/core";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
+import { Router } from "@angular/router";
+import { AngularSvgIconModule } from "angular-svg-icon";
+import { filter, map } from "rxjs";
 
 @Component({
     selector: "app-topic-preview",
@@ -101,20 +101,31 @@ export class TopicPreviewComponent implements OnInit {
     }
 
     private readFiles(): void {
+        // Icon
         if (this.topicData.icon) {
-            const iconReader = new FileReader();
-            iconReader.onload = () => {
-                this.icon = iconReader.result;
-            };
-            iconReader.readAsDataURL(this.topicData.icon);
+            if (this.topicData.icon instanceof File) {
+                const iconReader = new FileReader();
+                iconReader.onload = () => {
+                    this.icon = iconReader.result;
+                };
+                iconReader.readAsDataURL(this.topicData.icon);
+            } else if (typeof this.topicData.icon === "string") {
+                // already URL/path from backend
+                this.icon = this.topicData.icon;
+            }
         }
-
+    
+        // Picture
         if (this.topicData.picture) {
-            const pictureReader = new FileReader();
-            pictureReader.onload = () => {
-                this.picture = pictureReader.result;
-            };
-            pictureReader.readAsDataURL(this.topicData.picture);
+            if (this.topicData.picture instanceof File) {
+                const pictureReader = new FileReader();
+                pictureReader.onload = () => {
+                    this.picture = pictureReader.result;
+                };
+                pictureReader.readAsDataURL(this.topicData.picture);
+            } else if (typeof this.topicData.picture === "string") {
+                this.picture = this.topicData.picture;
+            }
         }
     }
 

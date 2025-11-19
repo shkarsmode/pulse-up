@@ -99,6 +99,9 @@ export class AuthenticationService {
     }
 
     private initFirebaseAppWithConfig() {
+        if (window.location.origin === 'http://127.0.0.1:3000') {
+            this.firebaseConfig.authDomain = '127.0.0.1:3000';
+        }
         return initializeApp(this.firebaseConfig);
     }
 

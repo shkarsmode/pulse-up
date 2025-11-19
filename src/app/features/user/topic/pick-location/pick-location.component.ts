@@ -1,6 +1,19 @@
-import { Component, inject, OnDestroy, OnInit } from "@angular/core";
+import { MapComponent } from "@/app/shared/components/map/map.component";
+import { FlatButtonDirective } from "@/app/shared/components/ui-kit/buttons/flat-button/flat-button.directive";
+import { PrimaryButtonComponent } from "@/app/shared/components/ui-kit/buttons/primary-button/primary-button.component";
+import { SpinnerComponent } from "@/app/shared/components/ui-kit/spinner/spinner.component";
+import { RippleEffectDirective } from "@/app/shared/directives/ripple-effect";
+import { AppRoutes } from "@/app/shared/enums/app-routes.enum";
+import { GeolocationService } from "@/app/shared/services/core/geolocation.service";
+import { MapUtils } from "@/app/shared/services/map/map-utils.service";
+import { SendTopicService } from "@/app/shared/services/topic/send-topic.service";
 import { CommonModule } from "@angular/common";
+import { Component, inject, OnDestroy, OnInit } from "@angular/core";
+import { MatDialog } from "@angular/material/dialog";
 import { Router } from "@angular/router";
+import { AngularSvgIconModule } from "angular-svg-icon";
+import * as h3 from "h3-js";
+import mapboxgl from "mapbox-gl";
 import {
     BehaviorSubject,
     catchError,
@@ -12,21 +25,8 @@ import {
     tap,
     throwError,
 } from "rxjs";
-import mapboxgl from "mapbox-gl";
-import * as h3 from "h3-js";
-import { MatDialog } from "@angular/material/dialog";
-import { SendTopicService } from "@/app/shared/services/topic/send-topic.service";
-import { AppRoutes } from "@/app/shared/enums/app-routes.enum";
-import { MapUtils } from "@/app/shared/services/map/map-utils.service";
-import { GeolocationService } from "@/app/shared/services/core/geolocation.service";
 import { TopicLocation } from "../../interfaces/topic-location.interface";
 import { UnavailableGeolocationPopupComponent } from "../../ui/unavailable-geolocation-popup/unavailable-geolocation-popup.component";
-import { MapComponent } from "@/app/shared/components/map/map.component";
-import { PrimaryButtonComponent } from "@/app/shared/components/ui-kit/buttons/primary-button/primary-button.component";
-import { AngularSvgIconModule } from "angular-svg-icon";
-import { SpinnerComponent } from "@/app/shared/components/ui-kit/spinner/spinner.component";
-import { FlatButtonDirective } from "@/app/shared/components/ui-kit/buttons/flat-button/flat-button.directive";
-import { RippleEffectDirective } from "@/app/shared/directives/ripple-effect";
 
 @Component({
     selector: "app-pick-location",
@@ -136,7 +136,7 @@ export class PickLocationComponent implements OnInit, OnDestroy {
                     this.openDialog();
                     this.isMyPositionSelected.next(false);
                     this.isGeolocationRequestInProgress.next(false);
-                    this.sendTopicService.startTopicLocatoinWarningShown = true;
+                    this.sendTopicService.startTopicLocationWarningShown = true;
                 },
             });
     };
