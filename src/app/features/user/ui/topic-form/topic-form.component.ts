@@ -269,15 +269,19 @@ export class TopicFormComponent implements OnInit {
         const pictureUrl = this.buildMediaUrl(topic.picture);
 
         this.sendTopicService.currentTopic.get("id")?.setValue(topic.id);
+
         this.topicForm.patchValue({
+            id: topic.id,
             icon: iconUrl,
             headline: topic.title ?? "",
             description: topic.description ?? "",
             picture: pictureUrl,
             category: topic.category ?? null,
-            keywords: topic.keywords.filter((keyword: string) => keyword !== topic.category) ?? [],
+            keywords: topic.keywords.filter((keyword: string) => keyword.toLocaleLowerCase() !== topic?.category.toLocaleLowerCase()) ?? [],
             location: topic.location ?? null,
         });
+
+        this.sendTopicService.currentTopic.setValue(this.topicForm.value);        
 
         const headlineControl = this.topicForm.get("headline");
         if (headlineControl) {

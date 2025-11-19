@@ -133,6 +133,7 @@ export class SendTopicService {
 
     public createTopic(): Observable<ITopic | null> {
         if (this.currentTopic.invalid) return of(null);
+
         const values = this.getFormValues();
         const isEditTopic = !!values.id;
         const params: any = {
@@ -149,6 +150,7 @@ export class SendTopicService {
             },
             shareKey: "",
         };
+        
         if (isEditTopic) {
             params["id"] = values.id;
             delete params["location"];

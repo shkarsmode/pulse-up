@@ -102,7 +102,6 @@ export class VotingService {
     }
 
     vote({ topic }: { topic: ITopic }) {
-        console.log(this.anonymousUserValue, this.userTokenValue);
         if (!this.anonymousUserValue && !this.userTokenValue) {
             return throwError(
                 () =>

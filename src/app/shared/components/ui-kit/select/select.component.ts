@@ -6,9 +6,10 @@ import {
     forwardRef,
     HostBinding,
     Input,
+    OnDestroy,
     OnInit,
     Output,
-    ViewChild, OnDestroy,
+    ViewChild,
 } from '@angular/core';
 import {
     ControlValueAccessor,
@@ -49,6 +50,8 @@ export class SelectComponent
     @Input() public inputType = 'text';
     @Input() public autocomplete: string | boolean;
     @Input() public preventBrowserAutofill: boolean;
+    @Input() disabled: boolean = false;
+    
 
     @Output() public emitBlur = new EventEmitter<any>();
     @Output() public emitFocus = new EventEmitter<any>();
@@ -74,7 +77,6 @@ export class SelectComponent
     private _value = '';
     private boundedFunction: (event: any) => void;
 
-    disabled: boolean;
     onTouched: () => void;
 
     @HostBinding('attr.class')
@@ -173,7 +175,7 @@ export class SelectComponent
     }
 
     public setDisabledState(isDisabled: boolean): void {
-        this.disabled = isDisabled;
+        // this.disabled = isDisabled;
     }
 
     public onAutoFill(event: any): void {
