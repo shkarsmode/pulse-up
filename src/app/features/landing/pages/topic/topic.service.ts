@@ -252,9 +252,9 @@ export class TopicService {
     public showReportPopup(topicId: number) {
         this.dialogService.open(ReportTopicComponent)
             .afterClosed().pipe(first())
-            .subscribe((reason: string) => {
+            .subscribe(({ reason, description}) => {
                 if (reason) {
-                    this.report({ topicId, reason })
+                    this.report({ topicId, reason, description })
                         .pipe(first())
                         .subscribe({
                             next: () => {

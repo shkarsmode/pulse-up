@@ -1,21 +1,91 @@
 <app-popup>
-    <app-popup-close-button (close)="dialogRef.close()" />
+    <app-popup-close-button (close)="onCancel()" />
+
     <app-popup-title>
-        Report Topic
+        {{ currentTitle() }}
     </app-popup-title>
+
+    @if (navigationStack().length > 0 && !isReviewStep()) {
+        <button
+            class="back-button"
+            type="button"
+            (click)="onBack()">
+            ← Back
+        </button>
+    }
+
     <div class="report-topic">
-        <form [formGroup]="form" (submit)="onSubmit()">
-            <div class="form-field">
-                <mat-label>Reason for reporting</mat-label>
-                <app-input formControlName="reason" [required]="true"></app-input>
+        @if (!isReviewStep()) {
+            <div class="options-list">
+                @for (node of currentNodes(); track node.id) {
+                    <button
+                        class="option-card"
+                        type="button"
+                        (click)="onNodeClick(node)">
+                        <div class="option-text">
+                            <div class="option-title">
+                                {{ node.title }}
+                            </div>
+
+                            @if (node.subtitle) {
+                                <div class="option-subtitle">
+                                    {{ node.subtitle }}
+                                </div>
+                            }
+                        </div>
+
+                        <span class="chevron">›</span>
+                    </button>
+                }
             </div>
-            <app-primary-button
-                (handleClick)="onSubmit()"
-                color="primary"
-                mat-raised-button
-                [disabled]="!!form.get('reason')?.invalid">
-                Submit
-            </app-primary-button>
-        </form>
+        } @else {
+            <div class="review">
+                <div class="review-warning">
+                    <!-- <span class="warning-icon">⚠️</span> -->
+                    <app-popup-text textAlign="center">
+                        ⚠️ Disagreeing with a topic or author's opinion is not a valid reason to report them. If you'd like to promote a different perspective, consider supporting or creating a topic you believe in instead.
+                    </app-popup-text>
+                </div>
+
+                <div class="review-summary">
+                    <div class="summary-row">
+                        <div class="summary-label">Reason</div>
+                        <div class="summary-value">{{ rootReasonTitle() }}</div>
+                    </div>
+
+                    <div class="summary-row">
+                        <div class="summary-label">Selected option</div>
+                        <div class="summary-value">{{ selectedLeaf()?.title }}</div>
+                    </div>
+                </div>
+
+                @if (selectedLeaf()?.requiresText) {
+                    <mat-form-field appearance="outline" class="custom-field">
+                        <mat-label>{{ selectedLeaf()?.placeholder || "Describe the issue" }}</mat-label>
+                        <textarea
+                            matInput
+                            rows="4"
+                            [value]="customDescription()"
+                            (input)="customDescription.set($any($event.target).value)">
+                        </textarea>
+                    </mat-form-field>
+                }
+
+                <app-primary-button
+                    class="submit-button"
+                    color="primary"
+                    [disabled]="isSubmitDisabled()"
+                    (handleClick)="onSubmit()">
+                    Submit Report
+                </app-primary-button>
+
+                <button
+                    class="cancel-link"
+                    type="button"
+                    (click)="onCancel()">
+                    Cancel
+                </button>
+            </div>
+        }
     </div>
 </app-popup>
