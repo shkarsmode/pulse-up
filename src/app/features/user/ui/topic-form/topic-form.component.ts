@@ -88,6 +88,8 @@ export class TopicFormComponent implements OnInit {
     private currentTopicId: number | null = null;
 
     public ngOnInit(): void {
+        console.log(this.topicForm.value);
+        console.log(this.sendTopicService.currentTopic.value);
         this.categoriesForForm = this.pulseService.categories$.pipe(
             map((categories) => categories.map((category) => category.name)),
         );
@@ -207,9 +209,11 @@ export class TopicFormComponent implements OnInit {
         const topicIdParam = this.activatedRoute.snapshot.paramMap.get("id");
 
         if (!topicIdParam) {
-            this.topicForm.reset();
-            this.sendTopicService.currentTopic.reset();
-            this.selectedIcon = null;
+            if (this.sendTopicService.currentTopic.get("id")?.value) {
+                this.topicForm.reset();
+                this.sendTopicService.currentTopic.reset();
+                this.selectedIcon = null;
+            }
             return;
         }
 

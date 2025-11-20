@@ -292,6 +292,10 @@ export class TopicService {
         });
     }
 
+    public archive(topicId: number): Observable<void> {
+        return this.http.post<void>(`${this.apiUrl}/topics/${topicId}/archive`, {});
+    }
+
     private async getTopic(id: string | number) {
         const topic$ = this.pulseService.getById(id).pipe(
             catchError((error: unknown) => {

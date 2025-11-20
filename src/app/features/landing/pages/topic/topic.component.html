@@ -260,11 +260,11 @@
             mat-menu-item
             [matTooltip]="
                 topic?.authorId !== profileService.profile()?.id ? 
-                    'You cannot archive someones topic' : 'Still in development'
+                    'You cannot archive someones topic' : ''
             "
             [matTooltipPosition]="'left'"
-            (click)="null"
-            [disabled]="topic?.authorId !== profileService.profile()?.id">
+            (click)="archive(topic?.id!)"
+            [disabled]="topic?.authorId !== profileService.profile()?.id || isTopicArchived">
             <svg-icon src="assets/svg/report.svg" />
             <span>Archive</span>
         </button>

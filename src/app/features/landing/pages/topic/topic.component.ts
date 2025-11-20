@@ -20,6 +20,7 @@ import { AuthenticationService } from "@/app/shared/services/api/authentication.
 import { PulseService } from "@/app/shared/services/api/pulse.service";
 import { SettingsService } from "@/app/shared/services/api/settings.service";
 import { DialogService } from "@/app/shared/services/core/dialog.service";
+import { NotificationService } from '@/app/shared/services/core/notification.service';
 import { ProfileService } from '@/app/shared/services/profile/profile.service';
 import { A11yModule } from "@angular/cdk/a11y";
 import { CommonModule } from "@angular/common";
@@ -35,9 +36,9 @@ import {
 import { takeUntilDestroyed, toObservable } from "@angular/core/rxjs-interop";
 import { MatMenuModule } from '@angular/material/menu';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { ActivatedRoute, ParamMap, RouterModule } from "@angular/router";
+import { ActivatedRoute, ParamMap, Router, RouterModule } from "@angular/router";
 import { SvgIconComponent } from "angular-svg-icon";
-import { combineLatest, distinctUntilChanged, filter, map, tap } from "rxjs";
+import { combineLatest, distinctUntilChanged, filter, first, map, tap } from "rxjs";
 import { KeywordButtonComponent } from "../../ui/keyword-button/keyword-button.component";
 import { LandingPageLayoutComponent } from "../../ui/landing-page-layout/landing-page-layout.component";
 import { PulseCampaignComponent } from "../../ui/pulse-campaign/pulse-campaign.component";
@@ -92,12 +93,14 @@ import { TopicService } from "./topic.service";
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TopicComponent implements OnInit, OnDestroy {
-    private readonly destroyRef = inject(DestroyRef);
-    private readonly route = inject(ActivatedRoute);
-    private readonly pulseService = inject(PulseService);
-    private readonly dialogService = inject(DialogService);
-    private readonly settingsService = inject(SettingsService);
+    private destroyRef = inject(DestroyRef);
+    private route = inject(ActivatedRoute);
+    private router = inject(Router);
+    private pulseService = inject(PulseService);
+    private dialogService = inject(DialogService);
+    private settingsService = inject(SettingsService);
     private authService = inject(AuthenticationService);
+    private notificationService = inject(NotificationService);
     public topicService = inject(TopicService);
     public profileService: ProfileService = inject(ProfileService);
 
@@ -189,6 +192,17 @@ export class TopicComponent implements OnInit, OnDestroy {
 
     public onVoted(): void {
         this.topicService.refreshData();
+    }
+
+    public archive(id: number): void {
+        this.topicService.archive(id)
+            .pipe(first())
+            .subscribe({
+                next: () => this.updatePageData(),
+                error: () => this.notificationService.error(
+                    'Failed to archive the topic. Please try again later'
+                )
+            })
     }
 
     private updatePageData(): void {
