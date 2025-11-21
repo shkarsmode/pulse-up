@@ -1,9 +1,21 @@
+import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from "@angular/core";
 import { Observable, shareReplay } from "rxjs";
-import { IP_INFO_API_TOKEN, MAPBOX_ACCESS_TOKEN } from "../../tokens/tokens";
+import { MapboxFeature, MapboxFeatureCollection } from "../../interfaces";
 import { IIpInfo } from "../../interfaces/ip-info/ip-info.interface";
 import { ILocationCoordinates } from "../../interfaces/location/location-coordinates.interface";
-import { MapboxFeature, MapboxFeatureCollection } from "../../interfaces";
+import { API_URL, IP_INFO_API_TOKEN, MAPBOX_ACCESS_TOKEN } from "../../tokens/tokens";
+
+export interface ILocation {
+    "location": {
+        "latitude": number,
+        "longitude": number
+    },
+    "country": "string",
+    "city": "string",
+    "region": "string",
+    "timezone": "string"
+}
 
 
 @Injectable({
@@ -12,6 +24,13 @@ import { MapboxFeature, MapboxFeatureCollection } from "../../interfaces";
 export class IpLocationService {
     private ipInfoApiToken = inject(IP_INFO_API_TOKEN);
     private mapboxToken = inject(MAPBOX_ACCESS_TOKEN);
+
+    constructor() {
+        this.detectLocation().subscribe();
+    }
+
+    private readonly apiUrl: string = inject(API_URL);
+    private readonly http: HttpClient = inject(HttpClient);
 
     private readonly ipInfoUrl = "https://api.ipinfo.io/lite/";
 
@@ -57,5 +76,9 @@ export class IpLocationService {
                 })
                 .catch((error) => reject(error));
         });
+    }
+
+    public detectLocation(): Observable<ILocation> {
+        return this.http.get<ILocation>(`${this.apiUrl}/location/detect-city`);
     }
 }

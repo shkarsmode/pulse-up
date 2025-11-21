@@ -19,7 +19,7 @@ import {
     switchMap,
     take,
     tap,
-    throwError,
+    throwError
 } from "rxjs";
 import { SigninRequiredPopupComponent } from "../../components/popups/signin-required-popup/signin-required-popup.component";
 import { VotingError, VotingErrorCode } from "../../helpers/errors/voting-error";
@@ -111,7 +111,9 @@ export class VotingService {
 
         this.isVoting.next(true);
 
-        return from(this.geolocationService.getCurrentGeolocationAsync()).pipe(
+        return from(
+                this.geolocationService.getCurrentGeolocationAsync()
+        ).pipe(
             catchError((): Observable<IGeolocation> => {
                 if (!this.fallbackDeterminedUserLocation) {
                     this.isVoting.next(false);
@@ -134,7 +136,8 @@ export class VotingService {
                     fallback: true
                 }) as Observable<IGeolocation>
             }),
-            switchMap((geolocation) => {
+            switchMap((geolocation: any) => {
+                console.log('[VotingService] Geolocation: ', geolocation);
                 console.log(
                     '[VotingService] Geolocation type: ', 
                     geolocation?.fallback ? 'unverified location' : 'verified location'
@@ -163,7 +166,8 @@ export class VotingService {
                     () => new VotingError("Failed to vote", VotingErrorCode.UNKNOWN_ERROR),
                 );
             }),
-        );
+        )
+        
     }
 
     startVotingForAnonymousUser() {

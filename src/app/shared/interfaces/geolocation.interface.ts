@@ -5,7 +5,7 @@ export interface IGeolocationPosition {
 }
 
 export interface IGeolocationPositionCoords {
-    accuracy: number;
+    accuracy?: number;
     latitude: number;
     longitude: number;
 }

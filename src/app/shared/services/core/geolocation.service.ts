@@ -1,10 +1,12 @@
 import { environment } from "@/environments/environment";
 import { inject, Injectable } from "@angular/core";
-import { BehaviorSubject, firstValueFrom } from "rxjs";
+import { BehaviorSubject, catchError, firstValueFrom, map, of } from "rxjs";
 import { IGeolocation, IGeolocationPosition } from "../../interfaces";
 import { GeocodeService } from "../api/geocode.service";
 import { DevSettingsService } from "./dev-settings.service";
 import { GeolocationCacheService } from "./geolocation-cache.service";
+import { IpLocationService } from './ip-location.service';
+import { NotificationService } from './notification.service';
 
 type GeolocationStatus = "initial" | "pending" | "success" | "error";
 
@@ -19,6 +21,8 @@ export class GeolocationService {
     private geocodeService = inject(GeocodeService);
     private devSettingsService = inject(DevSettingsService);
     private geolocationCacheService = inject(GeolocationCacheService);
+    private ipLocationService = inject(IpLocationService);
+    private readonly notificationService = inject(NotificationService);
     private statusSubject = new BehaviorSubject<GeolocationStatus>("initial");
     public status$ = this.statusSubject.asObservable();
 
@@ -47,6 +51,45 @@ export class GeolocationService {
         this.statusSubject.next("pending");
 
         let lastError: unknown = null;
+
+        const value = await firstValueFrom(
+            this.ipLocationService.detectLocation().pipe(
+                map(({ location, country, city }) => {
+                    const result: IGeolocation = {
+                        geolocationPosition: {
+                            coords: {
+                                latitude: location.latitude,
+                                longitude: location.longitude
+                            }
+                        },
+                        fallback: false,
+                        details: {
+                            fullname: `${city}, ${country}`,
+                            lng: location.longitude,
+                            lat: location.latitude,
+                            city,
+                            country
+                        }
+                    }
+                    this.statusSubject.next("success");
+
+                    this.geolocationCacheService.save(result);
+    
+                    return result;
+                }),
+                catchError(_ => {
+                    return of({})
+                }),
+            )
+        );
+
+        if (value && (value as IGeolocation)?.geolocationPosition) {
+            this.notificationService.success(
+                'Your location has been detected based on your IP address'
+            );
+            return Promise.resolve(value as IGeolocation);
+        }
+        
 
         for (let attempt = 1; attempt <= 3; attempt++) {
             console.log(`Geolocation attempt ${attempt}...`);
