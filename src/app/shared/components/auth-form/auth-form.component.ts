@@ -69,7 +69,8 @@ export class AuthFormComponent implements AfterViewInit, OnDestroy {
             return;
         }
         try {
-            await this.signInFormService.submit();
+            const isValid = await this.signInFormService.submit();
+            if (isValid === false) return;
             this.submitForm.emit();
         } catch (error) {
             console.log("Error sending verification code:", error);

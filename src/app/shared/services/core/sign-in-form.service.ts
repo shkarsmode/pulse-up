@@ -7,6 +7,7 @@ import { Router } from "@angular/router";
 import intlTelInput, { Iti } from "intl-tel-input";
 import { CountryCode, isValidPhoneNumber, validatePhoneNumberLength } from "libphonenumber-js";
 import { delay, firstValueFrom, fromEvent, map, Subscription } from "rxjs";
+import { NotificationService } from './notification.service';
 
 type ServiceWorkMode = "signIn" | "changePhoneNumber";
 
@@ -14,6 +15,8 @@ export class SignInFormService {
     private readonly router: Router = inject(Router);
     private readonly formBuilder: FormBuilder = inject(FormBuilder);
     private readonly authenticationService: AuthenticationService = inject(AuthenticationService);
+    private readonly notificationService = inject(NotificationService);
+
     private iti: Iti;
     private mode: ServiceWorkMode = "signIn";
     private subscriptions: Subscription[] = [];
@@ -127,8 +130,8 @@ export class SignInFormService {
 
     public onInputKeyDown = (event: KeyboardEvent) => {
         if (event.key === "Enter") {
-            event.preventDefault();
-            this.submit();
+            // event.preventDefault();
+            // this.submit();
         } else if (!this.validateChar(event)) {
             event.preventDefault();
         } else if (!this.validateMaxValueLength(event)) {
@@ -200,8 +203,10 @@ export class SignInFormService {
     public submit = async () => {
         const dialCode = this.iti.getSelectedCountryData().dialCode;
         this.validateNumber();
+
         if (!this.isValid || !dialCode) {
-            return;
+            this.notificationService.error("Please enter a valid phone number.");
+            return false;
         }
 
         const phoneNumber = `+${dialCode}${this.form.value.phone}`;

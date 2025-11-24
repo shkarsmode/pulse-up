@@ -36,6 +36,7 @@ import { IFirebaseConfig, IProfile } from "../../interfaces";
 import { FIREBASE_CONFIG } from "../../tokens/tokens";
 import { Nullable } from "../../types";
 import { LOCAL_STORAGE_KEYS, LocalStorageService } from "../core/local-storage.service";
+import { NotificationService } from '../core/notification.service';
 import { WindowService } from "../core/window.service";
 import { IdentityService } from "./identity.service";
 import { UserService } from "./user.service";
@@ -50,6 +51,7 @@ export class AuthenticationService {
     private readonly userService: UserService = inject(UserService);
     private readonly identityService: IdentityService = inject(IdentityService);
     private readonly routerLoadingIndicatorService = inject(RouterLoadingIndicatorService);
+    private readonly notificationService = inject(NotificationService);
     private readonly firebaseConfig: IFirebaseConfig = inject(FIREBASE_CONFIG);
 
     private anonymousUser$: BehaviorSubject<string | null>;
@@ -133,6 +135,9 @@ export class AuthenticationService {
             tap(() => this.isSigninInProgress$.next(false)),
             catchError((error: unknown) => {
                 this.isSigninInProgress$.next(false);
+                this.notificationService.error(
+                    `Something went wrong, please try again, ${JSON.stringify(error)}`
+                );
                 return this.handleLoginWithPhoneNumberError(error);
             }),
         );
