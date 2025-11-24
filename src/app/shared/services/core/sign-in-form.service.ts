@@ -1,3 +1,5 @@
+import { AppRoutes } from "@/app/shared/enums/app-routes.enum";
+import { AuthenticationService } from "@/app/shared/services/api/authentication.service";
 import { inject } from "@angular/core";
 import { FormBuilder, FormControl, FormGroup } from "@angular/forms";
 import { ErrorStateMatcher } from "@angular/material/core";
@@ -5,8 +7,6 @@ import { Router } from "@angular/router";
 import intlTelInput, { Iti } from "intl-tel-input";
 import { CountryCode, isValidPhoneNumber, validatePhoneNumberLength } from "libphonenumber-js";
 import { delay, firstValueFrom, fromEvent, map, Subscription } from "rxjs";
-import { AppRoutes } from "@/app/shared/enums/app-routes.enum";
-import { AuthenticationService } from "@/app/shared/services/api/authentication.service";
 
 type ServiceWorkMode = "signIn" | "changePhoneNumber";
 
@@ -137,6 +137,10 @@ export class SignInFormService {
     };
 
     public onCountryCodeChange = () => {
+        const selectedCountryCode = this.iti['selectedCountryData'].iso2?.toUpperCase();
+        if (selectedCountryCode) {
+            localStorage.setItem("countryCode", selectedCountryCode);
+        }
         this.resetInput();
     };
 
@@ -144,11 +148,12 @@ export class SignInFormService {
         this.iti = intlTelInput(inputElement, {
             nationalMode: false,
             formatOnDisplay: true,
-            initialCountry: "US",
+            initialCountry: localStorage.getItem('countryCode') ?? "US",
             showFlags: true,
             separateDialCode: true,
             dropdownContainer: document.body,
         });
+
         this.subscriptions.push(
             fromEvent(inputElement, "blur")
                 .pipe(
@@ -160,7 +165,7 @@ export class SignInFormService {
                 .pipe(map(() => this.onFocus()))
                 .subscribe(),
             fromEvent(inputElement, "countrychange")
-                .pipe(map(() => this.onCountryCodeChange()))
+                .pipe(map((e) => this.onCountryCodeChange()))
                 .subscribe(),
             fromEvent(inputElement, "keydown")
                 .pipe(map((event) => this.onInputKeyDown(event as KeyboardEvent)))

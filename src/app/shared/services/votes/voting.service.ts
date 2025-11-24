@@ -67,14 +67,16 @@ export class VotingService {
                 distinctUntilChanged(),
                 tap((isSignedIn) => {
                     if (isSignedIn) {
-                        const hasPermission = this.geolocationService.checkGeolocationPermission();
-                        if (hasPermission) {
-                            this.fallbackDeterminedUserLocation = null;
-                            this.isGeolocationRetrieved.next(true);
-                        } else {
-                            // this.showAcceptRulesPopup();
-                            this.showFallbackDetermineLocationPopup();
-                        }
+                        this.fallbackDeterminedUserLocation = null;
+                        this.isGeolocationRetrieved.next(true);
+                        // const hasPermission = this.geolocationService.checkGeolocationPermission();
+                        // if (hasPermission) {
+                        //     this.fallbackDeterminedUserLocation = null;
+                        //     this.isGeolocationRetrieved.next(true);
+                        // } else {
+                        //     // this.showAcceptRulesPopup();
+                        //     this.showFallbackDetermineLocationPopup();
+                        // }
                     } else {
                         this.isGeolocationRetrieved.next(false);
                     }
