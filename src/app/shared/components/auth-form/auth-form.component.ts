@@ -1,7 +1,6 @@
 import { PrimaryButtonComponent } from "@/app/shared/components/ui-kit/buttons/primary-button/primary-button.component";
 import { NotificationService } from "@/app/shared/services/core/notification.service";
 import { SignInFormService } from "@/app/shared/services/core/sign-in-form.service";
-import { JsonPipe } from '@angular/common';
 import {
     AfterViewInit,
     Component,
@@ -23,7 +22,7 @@ import { isErrorWithMessage } from "../../helpers/errors/is-error-with-message";
 @Component({
     selector: "app-auth-form",
     standalone: true,
-    imports: [MatInputModule, MatFormFieldModule, ReactiveFormsModule, PrimaryButtonComponent, JsonPipe],
+    imports: [MatInputModule, MatFormFieldModule, ReactiveFormsModule, PrimaryButtonComponent],
     templateUrl: "./auth-form.component.html",
     styleUrl: "./auth-form.component.scss",
 })
@@ -40,7 +39,7 @@ export class AuthFormComponent implements AfterViewInit, OnDestroy {
         this.signInFormService.initialize();
     }
 
-    ngAfterViewInit(): void {
+    public ngAfterViewInit(): void {
         this.signInFormService.onViewInit(this.telInput.nativeElement);
     }
 

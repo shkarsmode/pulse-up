@@ -114,7 +114,7 @@ export class VotingService {
         this.isVoting.next(true);
 
         return from(
-                this.geolocationService.getCurrentGeolocationAsync()
+            this.geolocationService.getCurrentGeolocationAsync()
         ).pipe(
             catchError((): Observable<IGeolocation> => {
                 if (!this.fallbackDeterminedUserLocation) {
@@ -127,12 +127,12 @@ export class VotingService {
                             ),
                     );
                 }
-                return of({ 
-                    geolocationPosition: { 
-                        coords: { 
+                return of({
+                    geolocationPosition: {
+                        coords: {
                             latitude: this.fallbackDeterminedUserLocation.lat,
                             longitude: this.fallbackDeterminedUserLocation.lng
-                        } 
+                        }
                     },
                     details: { ...this.fallbackDeterminedUserLocation },
                     fallback: true
@@ -141,7 +141,7 @@ export class VotingService {
             switchMap((geolocation: any) => {
                 console.log('[VotingService] Geolocation: ', geolocation);
                 console.log(
-                    '[VotingService] Geolocation type: ', 
+                    '[VotingService] Geolocation type: ',
                     geolocation?.fallback ? 'unverified location' : 'verified location'
                 );
                 return this.voteService.sendVote({
@@ -169,7 +169,7 @@ export class VotingService {
                 );
             }),
         )
-        
+
     }
 
     startVotingForAnonymousUser() {
