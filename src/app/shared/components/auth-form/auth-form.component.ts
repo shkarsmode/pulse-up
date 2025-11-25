@@ -17,12 +17,13 @@ import { FormGroup, ReactiveFormsModule } from "@angular/forms";
 import { ErrorStateMatcher } from "@angular/material/core";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
+import { MatTooltip } from "@angular/material/tooltip";
 import { isErrorWithMessage } from "../../helpers/errors/is-error-with-message";
 
 @Component({
     selector: "app-auth-form",
     standalone: true,
-    imports: [MatInputModule, MatFormFieldModule, ReactiveFormsModule, PrimaryButtonComponent],
+    imports: [MatInputModule, MatFormFieldModule, ReactiveFormsModule, PrimaryButtonComponent, MatTooltip],
     templateUrl: "./auth-form.component.html",
     styleUrl: "./auth-form.component.scss",
 })
@@ -31,6 +32,10 @@ export class AuthFormComponent implements AfterViewInit, OnDestroy {
     private signInFormService = inject(SignInFormService);
     private readonly notificationService = inject(NotificationService);
     public readonly isLoading = toSignal(this.signInFormService.isSigninInProgress);
+    public readonly phoneTooltip: string =
+    "🛡 Real & Fair: Verification ensures one person, one vote. This keeps the map honest and bot-free.\n" +
+    "👻 Publicly Anonymous: Your support counts, but your identity is hidden. Only you can see your own history.\n" +
+    "🔒 Strictly Secure: We use your number for login authentication only. No marketing, no spam, ever.";
 
     @Output() submitForm = new EventEmitter<void>();
     @ViewChild("telInput") telInput: ElementRef
