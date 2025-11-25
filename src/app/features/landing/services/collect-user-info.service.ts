@@ -1,11 +1,8 @@
+import { ProfileService } from "@/app/shared/services/profile/profile.service";
 import { inject, Injectable } from "@angular/core";
 import { MatDialog } from "@angular/material/dialog";
+import { Router } from '@angular/router';
 import { first, take } from "rxjs";
-import { ProfileService } from "@/app/shared/services/profile/profile.service";
-import {
-    LOCAL_STORAGE_KEYS,
-    LocalStorageService,
-} from "@/app/shared/services/core/local-storage.service";
 
 @Injectable({
     providedIn: "root",
@@ -13,30 +10,30 @@ import {
 export class CollectUserInfoService {
     private readonly dialog = inject(MatDialog);
     private readonly profileService = inject(ProfileService);
+    private readonly router = inject(Router);
 
     private isOpened = false;
 
     public collectPersonalInfo(): void {
-        const accountsIds =
-            LocalStorageService.get<string[]>(
-                LOCAL_STORAGE_KEYS.personalInfoPopupShownForProfiles,
-            ) || [];
+        // const accountsIds =
+        //     LocalStorageService.get<string[]>(
+        //         LOCAL_STORAGE_KEYS.personalInfoPopupShownForProfiles,
+        //     ) || [];
 
         this.profileService.profile$.pipe(first((profile) => !!profile)).subscribe((profile) => {
             if (!profile?.id) return;
-            const alreadyShown = accountsIds && accountsIds.includes(profile.id);
-            
+            // const alreadyShown = accountsIds && accountsIds.includes(profile.id);
+
             if (
                 !this.isOpened &&
-                !alreadyShown &&
                 profile &&
                 (!profile.name || !profile.username)
             ) {
                 this.openDialog();
-                LocalStorageService.set(LOCAL_STORAGE_KEYS.personalInfoPopupShownForProfiles, [
-                    ...accountsIds,
-                    profile.id,
-                ]);
+                // LocalStorageService.set(LOCAL_STORAGE_KEYS.personalInfoPopupShownForProfiles, [
+                //     ...accountsIds,
+                //     profile.id,
+                // ]);
             }
         });
     }
@@ -54,7 +51,11 @@ export class CollectUserInfoService {
         dialogRef
             .afterClosed()
             .pipe(take(1))
-            .subscribe(() => {
+            .subscribe((profile) => {
+                if (!profile) {
+                    this.router.navigateByUrl('/topics');
+                    return;
+                }
                 this.isOpened = false;
             });
     }

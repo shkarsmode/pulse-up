@@ -1,3 +1,4 @@
+import { CollectUserInfoService } from '@/app/features/landing/services/collect-user-info.service';
 import { Component, inject, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AppRoutes } from '../../../../shared/enums/app-routes.enum';
@@ -13,12 +14,14 @@ import { TopicFormComponent } from '../../ui/topic-form/topic-form.component';
 export class SuggestComponent implements OnInit {
     private readonly router = inject(Router)
     private readonly activatedRoute = inject(ActivatedRoute);
+    private collectUserInfoService = inject(CollectUserInfoService);
     
     public routes = AppRoutes.User.Topic;
     public isEditMode = false;
 
 
     public ngOnInit(): void {
+        this.collectUserInfoService.collectPersonalInfo();
         setTimeout(() => window.scrollTo(0, 0))
         this.isEditMode = !!this.activatedRoute.snapshot.paramMap.get("id");
     }
