@@ -1,7 +1,7 @@
 import { AppRoutes } from "@/app/shared/enums/app-routes.enum";
 import { AuthenticationService } from "@/app/shared/services/api/authentication.service";
 import { inject } from "@angular/core";
-import { FormBuilder, FormControl, FormGroup } from "@angular/forms";
+import { FormBuilder, FormControl, FormGroup, Validators } from "@angular/forms";
 import { ErrorStateMatcher } from "@angular/material/core";
 import { Router } from "@angular/router";
 import intlTelInput, { Iti } from "intl-tel-input";
@@ -41,7 +41,7 @@ export class SignInFormService {
 
     private createForm(initialValue = ""): FormGroup {
         return this.formBuilder.group({
-            phone: initialValue,
+            phone: [initialValue, [Validators.minLength(7), Validators.required]],
         });
     }
 
@@ -65,19 +65,6 @@ export class SignInFormService {
             countryCode as CountryCode,
         );
         if (validationResult === "TOO_SHORT" || validationResult === undefined) {
-            isValid = true;
-        }
-        return isValid;
-    }
-
-    private validateMinValueLength(event: KeyboardEvent) {
-        if (event.key !== "Backspace") return true;
-        let isValid = false;
-        const value = this.form.get("phone")?.value;
-        const countryCode = this.iti.getSelectedCountryData().dialCode;
-        if (!countryCode) return;
-        const minValueLength = `+${countryCode}`.length;
-        if (value.length > minValueLength) {
             isValid = true;
         }
         return isValid;

@@ -24,13 +24,14 @@
             (focus)="onFocus()" />
         <mat-error>Invalid phone number</mat-error>
     </mat-form-field>
+
     <app-primary-button
         [fullWidth]="true"
         size="large"
         type="submit"
         [loading]="isLoading() || false"
         [disabled]="
-            isLoading() || false || (signInForm.invalid && signInForm.touched) || isPhoneFieldInvalid
+            isLoading() || isPhoneFieldInvalid || signInForm.invalid
         ">
         Continue
     </app-primary-button>
