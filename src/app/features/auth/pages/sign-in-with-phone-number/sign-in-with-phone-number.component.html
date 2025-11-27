@@ -4,7 +4,16 @@
             src="assets/svg/logo.svg"
             aria-label="pulseup" />
         <div class="signin__content">
-            <h1 class="signin__title">Welcome</h1>
+            <h1 class="signin__title">Join the Movement</h1>
+            <app-popup-text textAlign="center">
+                We use phone number to verify that every support is from a real human. 
+                <a
+                    class="auth-tooltip"
+                    [matTooltip]="phoneTooltip"
+                    matTooltipClass="auth-form__tooltip">
+                    Learn more
+                </a>
+            </app-popup-text>
             <app-auth-form (submitForm)="navigateToConfirmPage()" />
             <app-auth-disclaimer />
         </div>

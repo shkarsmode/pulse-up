@@ -37,10 +37,10 @@
     line-height: 1.3;
 }
 
-.auth-tooltip {
-    font-size: 14px;
+::ng-deep .auth-tooltip {
     text-decoration: underline;
+    // font-size: 14px;
     margin-left: auto;
     width: fit-content;
-    color: var(--dark-grey-color);
+    // color: var(--dark-grey-color);
 }

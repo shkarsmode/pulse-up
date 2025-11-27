@@ -32,10 +32,6 @@ export class AuthFormComponent implements AfterViewInit, OnDestroy {
     private signInFormService = inject(SignInFormService);
     private readonly notificationService = inject(NotificationService);
     public readonly isLoading = toSignal(this.signInFormService.isSigninInProgress);
-    public readonly phoneTooltip: string =
-    "🛡 Real & Fair: Verification ensures one person, one vote. This keeps the map honest and bot-free.\n" +
-    "👻 Publicly Anonymous: Your support counts, but your identity is hidden. Only you can see your own history.\n" +
-    "🔒 Strictly Secure: We use your number for login authentication only. No marketing, no spam, ever.";
 
     @Output() submitForm = new EventEmitter<void>();
     @ViewChild("telInput") telInput: ElementRef

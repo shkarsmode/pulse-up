@@ -8,9 +8,11 @@ import { NotificationService } from "@/app/shared/services/core/notification.ser
 import { SignInFormService } from "@/app/shared/services/core/sign-in-form.service";
 import { Component, DestroyRef, inject } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { Router } from "@angular/router";
 import { SvgIconComponent } from "angular-svg-icon";
 import { catchError, of, tap } from "rxjs";
+import { PopupTextComponent } from '../../../../shared/components/ui-kit/popup/popup-text/popup-text.component';
 import { AuthLayoutComponent } from "../../ui/auth-layout/auth-layout.component";
 
 @Component({
@@ -22,6 +24,8 @@ import { AuthLayoutComponent } from "../../ui/auth-layout/auth-layout.component"
         LinkButtonComponent,
         AuthFormComponent,
         AuthDisclaimerComponent,
+        PopupTextComponent,
+        MatTooltipModule
     ],
     providers: [SignInFormService],
     templateUrl: "./sign-in-with-phone-number.component.html",
@@ -33,6 +37,11 @@ export class SignInWithPhoneNumberComponent {
     private authenticationService = inject(AuthenticationService);
     private notificationService = inject(NotificationService);
     private loadingService = inject(RouterLoadingIndicatorService);
+
+    public readonly phoneTooltip: string =
+        "🛡 Real & Fair: Verification ensures one person, one vote. This keeps the map honest and bot-free.\n" +
+        "👻 Publicly Anonymous: Your support counts, but your identity is hidden. Only you can see your own history.\n" +
+        "🔒 Strictly Secure: We use your number for login authentication only. No marketing, no spam, ever.";
 
     public onClickGuest() {
         this.loadingService.setLoading(true);

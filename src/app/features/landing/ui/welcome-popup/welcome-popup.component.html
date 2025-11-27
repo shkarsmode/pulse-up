@@ -2,7 +2,13 @@
     <app-popup-close-button (close)="onClose()" />
     <app-popup-subtitle>Join the Movement</app-popup-subtitle>
     <app-popup-text textAlign="center">
-        We use phone number to verify that every support is from a real human
+        We use phone number to verify that every support is from a real human.
+        <a
+            class="auth-tooltip"
+            [matTooltip]="phoneTooltip"
+            matTooltipClass="auth-form__tooltip">
+            Learn more
+        </a>
     </app-popup-text>
     <div class="welcome-auth-form">
         <app-auth-form (submitForm)="onSubmit()"/>
