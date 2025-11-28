@@ -34,18 +34,14 @@ import { AuthLayoutComponent } from "../../ui/auth-layout/auth-layout.component"
 export class SignInWithPhoneNumberComponent {
     private router = inject(Router);
     private destroyRef = inject(DestroyRef);
-    private authenticationService = inject(AuthenticationService);
+    public authService = inject(AuthenticationService);
     private notificationService = inject(NotificationService);
     private loadingService = inject(RouterLoadingIndicatorService);
 
-    public readonly phoneTooltip: string =
-        "🛡 Real & Fair: Verification ensures one person, one vote. This keeps the map honest and bot-free.\n" +
-        "👻 Publicly Anonymous: Your support counts, but your identity is hidden. Only you can see your own history.\n" +
-        "🔒 Strictly Secure: We use your number for login authentication only. No marketing, no spam, ever.";
 
     public onClickGuest() {
         this.loadingService.setLoading(true);
-        this.authenticationService
+        this.authService
             .loginAsAnonymousThroughTheFirebase()
             .pipe(
                 catchError(() => {

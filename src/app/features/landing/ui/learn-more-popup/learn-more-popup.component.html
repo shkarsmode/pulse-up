@@ -1,0 +1,70 @@
+<app-popup class="popup popup--phone-login">
+    <app-popup-close-button (close)="onClose()" />
+
+    <app-popup-title>Why We Use Phone Login</app-popup-title>
+
+    <div class="phone-login">
+        <ul class="phone-login__list">
+            <li class="phone-login__item">
+                <span
+                    class="phone-login__icon"
+                    aria-hidden="true">
+                    🛡
+                </span>
+
+                <div class="phone-login__content">
+                    <h3 class="phone-login__item-title">
+                        Real &amp; Fair
+                    </h3>
+                    <p class="phone-login__item-text">
+                        Verification ensures one person, one vote. This keeps the map honest and bot-free.
+                    </p>
+                </div>
+            </li>
+
+            <li class="phone-login__item">
+                <span
+                    class="phone-login__icon"
+                    aria-hidden="true">
+                    👻
+                </span>
+
+                <div class="phone-login__content">
+                    <h3 class="phone-login__item-title">
+                        Publicly Anonymous
+                    </h3>
+                    <p class="phone-login__item-text">
+                        Your support counts, but your identity is hidden. Only you can see your own history.
+                    </p>
+                </div>
+            </li>
+
+            <li class="phone-login__item">
+                <span
+                    class="phone-login__icon"
+                    aria-hidden="true">
+                    🔒
+                </span>
+
+                <div class="phone-login__content">
+                    <h3 class="phone-login__item-title">
+                        Strictly Secure
+                    </h3>
+                    <p class="phone-login__item-text">
+                        We use your number for login authentication only. No marketing, no spam, ever.
+                    </p>
+                </div>
+            </li>
+        </ul>
+
+        <app-popup-footer>
+            <app-primary-button
+                class="phone-login__button"
+                [fullWidth]="true"
+                size="large"
+                (handleClick)="onClose()">
+                Got it
+            </app-primary-button>
+        </app-popup-footer>
+    </div>
+</app-popup>

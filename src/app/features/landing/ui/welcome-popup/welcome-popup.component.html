@@ -5,8 +5,8 @@
         We use phone number to verify that every support is from a real human.
         <a
             class="auth-tooltip"
-            [matTooltip]="phoneTooltip"
-            matTooltipClass="auth-form__tooltip">
+            matTooltipClass="auth-form__tooltip"
+            (click)="authService.showLearnMorePopUp()">
             Learn more
         </a>
     </app-popup-text>

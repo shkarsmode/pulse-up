@@ -4,6 +4,7 @@ import { PopupCloseButtonComponent } from "@/app/shared/components/ui-kit/popup/
 import { PopupSubtitleComponent } from "@/app/shared/components/ui-kit/popup/popup-subtitle/popup-subtitle.component";
 import { PopupTextComponent } from "@/app/shared/components/ui-kit/popup/popup-text/popup-text.component";
 import { PopupLayoutComponent } from "@/app/shared/components/ui-kit/popup/popup.component";
+import { AuthenticationService } from '@/app/shared/services/api/authentication.service';
 import { SignInFormService } from "@/app/shared/services/core/sign-in-form.service";
 import { VotingService } from "@/app/shared/services/votes/voting.service";
 import { Component, inject } from "@angular/core";
@@ -30,11 +31,7 @@ import { delay, take } from "rxjs";
 export class WelcomePopupComponent {
     private readonly dialogRef = inject(MatDialogRef<WelcomePopupComponent>);
     private readonly votingService = inject(VotingService);
-
-    public readonly phoneTooltip: string =
-        "🛡 Real & Fair: Verification ensures one person, one vote. This keeps the map honest and bot-free.\n" +
-        "👻 Publicly Anonymous: Your support counts, but your identity is hidden. Only you can see your own history.\n" +
-        "🔒 Strictly Secure: We use your number for login authentication only. No marketing, no spam, ever.";
+    public readonly authService = inject(AuthenticationService);
 
     onClose() {
         this.dialogRef.close({

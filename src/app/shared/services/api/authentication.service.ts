@@ -1,6 +1,8 @@
+import { LearnMorePopupComponent } from '@/app/features/landing/ui/learn-more-popup/learn-more-popup.component';
 import { HttpHeaders } from "@angular/common/http";
 import { DestroyRef, inject, Injectable } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
+import { MatDialog } from '@angular/material/dialog';
 import { Router } from "@angular/router";
 import { FirebaseApp, FirebaseError, initializeApp } from "firebase/app";
 import {
@@ -53,6 +55,7 @@ export class AuthenticationService {
     private readonly routerLoadingIndicatorService = inject(RouterLoadingIndicatorService);
     private readonly notificationService = inject(NotificationService);
     private readonly firebaseConfig: IFirebaseConfig = inject(FIREBASE_CONFIG);
+    private readonly dialog = inject(MatDialog);
 
     private anonymousUser$: BehaviorSubject<string | null>;
     private userToken$: BehaviorSubject<string | null>;
@@ -167,6 +170,10 @@ export class AuthenticationService {
                 return this.handleConfirmCodeVerificationError(error);
             }),
         );
+    }
+
+    public showLearnMorePopUp(): void {
+        this.dialog.open(LearnMorePopupComponent);
     }
 
     public resendVerificationCode() {

@@ -1,0 +1,56 @@
+.popup--phone-login {
+    max-width: 520px;
+}
+
+.phone-login__list {
+    margin: 16px 0 24px;
+    padding: 0;
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.phone-login__item {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+}
+
+.phone-login__icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    line-height: 1;
+    flex-shrink: 0;
+    margin-top: 2px;
+    width: 30px;
+}
+
+.phone-login__content {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.phone-login__item-title {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.phone-login__item-text {
+    margin: 0;
+    font-size: 14px;
+    line-height: 1.5;
+    opacity: 0.9;
+}
+
+.phone-login__button {
+    margin-top: 8px;
+}
+
+app-primary-button {
+    width: 100%;
+}
