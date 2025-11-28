@@ -220,7 +220,7 @@ export class VotingService {
         }, 400);
     }
 
-    private showWelcomePopup() {
+    public showWelcomePopup() {
         const dialogRef = this.dialogService.open(WelcomePopupComponent);
         dialogRef
             .afterClosed()

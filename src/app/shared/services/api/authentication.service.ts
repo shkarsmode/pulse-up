@@ -488,7 +488,7 @@ export class AuthenticationService {
         const recaptchaContainer = document.getElementById("recaptcha-container");
         if (recaptchaContainer) {
             recaptchaContainer.innerHTML = "";
-        }
+        } 
         LocalStorageService.remove(LOCAL_STORAGE_KEYS.verificationId);
         LocalStorageService.remove(LOCAL_STORAGE_KEYS.phoneNumberForSigning);
         this.isSigninInProgress$.next(false);
@@ -558,9 +558,15 @@ export class AuthenticationService {
     private prepareRecaptcha = () => {
         this.windowRef.recaptchaVerifier?.clear();
         const recaptchaId = `recaptcha-container-${Math.random().toString(36).substring(2, 15)}`;
-        const recaptchaContainer = document.getElementById("recaptcha-container");
+        let recaptchaContainer: HTMLElement | null = document.getElementById("recaptcha-container");
+        
         if (recaptchaContainer) {
             recaptchaContainer.innerHTML = `<div id="${recaptchaId}"></div>`;
+        } else {
+            recaptchaContainer = document.createElement("div");
+            recaptchaContainer.id = "recaptcha-container";
+            recaptchaContainer.innerHTML = `<div id="${recaptchaId}"></div>`;
+            document.body.appendChild(recaptchaContainer);
         }
         this.firebaseAuth.useDeviceLanguage();
         const recaptchaVerifier = new RecaptchaVerifier(this.firebaseAuth, recaptchaId, {
