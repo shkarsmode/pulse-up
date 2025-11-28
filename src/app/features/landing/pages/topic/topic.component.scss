@@ -358,9 +358,10 @@ app-container::ng-deep .app-container {
         }
 
         p {
-            color: #64748b;
+            // color: #64748b;
             font-size: 0.875rem;
-            text-align: justify;
+            line-height: 1.25;
+            
         }
 
     }
