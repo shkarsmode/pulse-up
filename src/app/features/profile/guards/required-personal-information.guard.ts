@@ -1,8 +1,8 @@
+import { AppRoutes } from "@/app/shared/enums/app-routes.enum";
+import { ProfileService } from "@/app/shared/services/profile/profile.service";
 import { inject, Injectable } from "@angular/core";
 import { CanActivate, GuardResult, MaybeAsync, Router } from "@angular/router";
 import { first, map } from "rxjs";
-import { AppRoutes } from "@/app/shared/enums/app-routes.enum";
-import { ProfileService } from "@/app/shared/services/profile/profile.service";
 
 @Injectable({
     providedIn: "root",
@@ -14,7 +14,8 @@ export class RequiredPersonalInformationGuard implements CanActivate {
     canActivate(): MaybeAsync<GuardResult> {
         const hasPublicInformation$ = this.profileService.profile$.pipe(
             first((profile) => profile !== null),
-            map((profile) => !!(profile?.name && profile?.username)),
+            map(profile => !!profile.id)
+            // map((profile) => !!(profile?.name && profile?.username)),
         );
         return hasPublicInformation$.pipe(
             map((hasPublicInformation) => {

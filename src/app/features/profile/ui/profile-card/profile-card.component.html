@@ -15,8 +15,14 @@
         </div>
     </app-user-avatar>
     <div class="profile-main-info__text">
-        <h1 class="profile-main-info__name">{{ name$ | async }}</h1>
-        <div class="profile-main-info__username">&#64;{{ username$ | async }}</div>
+        @let name = name$ | async;
+        @let username = username$ | async;
+        @if (name && username) {
+            <h1 class="profile-main-info__name">{{ name$ | async }}</h1>
+            <div class="profile-main-info__username">&#64;{{ username }}</div>
+        } @else {
+            <app-fab-button [routerLink]="editProfileRoute">Add your name</app-fab-button>
+        }
     </div>
     <app-fab-button
         [circle]="true"
