@@ -105,18 +105,18 @@ export class AuthenticationService {
     }
 
     private initFirebaseAppWithConfig() {
-        if (window.location.origin === 'http://127.0.0.1:3000') {
+        if (this.isWin && window.location.origin === 'http://127.0.0.1:3000') {
             this.firebaseConfig.authDomain = '127.0.0.1:3000';
         }
         return initializeApp(this.firebaseConfig);
     }
 
     public get anonymousUserValue(): string | null {
-        return this.anonymousUser$.value;
+        return this.anonymousUser$?.value;
     }
 
     public get userTokenValue(): string | null {
-        return this.userToken$.value;
+        return this.userToken$?.value;
     }
 
     public loginWithPhoneNumber(phoneNumber: string) {

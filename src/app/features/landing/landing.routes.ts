@@ -1,10 +1,10 @@
+import { HeaderCleanupGuard } from "@/app/shared/components/header/header-cleanup.guard";
+import { HeaderGuard } from "@/app/shared/components/header/header.guard";
+import { AppRoutes } from "@/app/shared/enums/app-routes.enum";
+import { PublicPageGuard } from "@/app/shared/helpers/guards/public-page.guard";
+import { metaTagsData } from "@/assets/data/meta-tags";
 import { Routes } from "@angular/router";
 import { LandingComponent } from "./landing.component";
-import { AppRoutes } from "@/app/shared/enums/app-routes.enum";
-import { HeaderGuard } from "@/app/shared/components/header/header.guard";
-import { PublicPageGuard } from "@/app/shared/helpers/guards/public-page.guard";
-import { HeaderCleanupGuard } from "@/app/shared/components/header/header-cleanup.guard";
-import { metaTagsData } from "@/assets/data/meta-tags";
 
 const Landing = AppRoutes.Landing;
 
@@ -69,6 +69,7 @@ export const LANDING_ROUTES: Routes = [
                         (m) => m.LeaderboardPageComponent,
                     ),
                 canActivate: [PublicPageGuard],
+                data: metaTagsData.leaderboard,
             },
         ],
     },

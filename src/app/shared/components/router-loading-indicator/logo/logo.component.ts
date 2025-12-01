@@ -1,4 +1,5 @@
-import { Component, } from '@angular/core';
+import { WINDOW } from '@/app/shared/tokens/window.token';
+import { Component, inject, } from '@angular/core';
 import { SvgIconComponent } from 'angular-svg-icon';
 
 @Component({
@@ -12,6 +13,7 @@ import { SvgIconComponent } from 'angular-svg-icon';
 })
 export class LogoComponent {
 
-  public window = window ?? { innerWidth: 0 };
+  private isWin = inject(WINDOW);
+  public window = this.isWin ? window : { innerWidth: 0 };
 
 }
