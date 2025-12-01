@@ -12,7 +12,7 @@ export const metaTagsData = {
     leaderboard: {
         title: 'Leaderboard | Support What Matters on Pulse Up',
         description:
-            'Discover what people are supporting right now on PulseUp. Track trending topics, global causes, local issues, and real-time public sentiment across the map.',
+            'Discover the top topics based on the number of pulses received in the past 24 hours. Track global causes, local issues, and real-time public sentiment across the map.',
         ogImage: 'https://pulsedevdata.blob.core.windows.net/icons/1020.jpg'
     },
 };

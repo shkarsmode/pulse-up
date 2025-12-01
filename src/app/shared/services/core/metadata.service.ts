@@ -39,10 +39,12 @@ export class MetadataService {
     
         if (config.image) {
             this.meta.updateTag({ property: "og:image", content: config.image });
+            this.meta.updateTag({ property: "twitter:image", content: config.image });
+            this.meta.updateTag({ name: "twitter:card", content: "summary_large_image" });
         }
     
-        this.meta.updateTag({ name: "twitter:title", content: title });
-        this.meta.updateTag({ name: "twitter:description", content: description });
+        this.meta.updateTag({ property: "twitter:title", content: title });
+        this.meta.updateTag({ property: "twitter:description", content: description });
     }
 
     public listenToRouteChanges(router: Router, activatedRoute: ActivatedRoute): void {
