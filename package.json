@@ -9,7 +9,6 @@
     "build": "ng build --configuration=production && node dist/go-pulse-webclient/server/server.mjs",
     "build:dev": "ng build --configuration=development",
     "watch": "ng build --watch --configuration development",
-    "test": "ng test",
     "version": "node src/scripts/version",
     "lint": "ng lint"
   },

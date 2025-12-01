@@ -134,7 +134,7 @@
                             "serverTarget": "go-pulse-webclient:server:production"
                         }
                     },
-                    "defaultConfiguration": "development"
+                    "defaultConfiguration": "production"
                 },
                 "prerender": {
                     "builder": "@angular-devkit/build-angular:prerender",
