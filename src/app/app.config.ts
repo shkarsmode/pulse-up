@@ -1,29 +1,31 @@
+import { provideHttpClient, withFetch, withInterceptors } from "@angular/common/http";
 import { ApplicationConfig, provideZoneChangeDetection } from "@angular/core";
-import { provideRouter, withInMemoryScrolling } from "@angular/router";
-import { provideHttpClient, withInterceptors } from "@angular/common/http";
+import { provideClientHydration } from "@angular/platform-browser";
 import { provideAnimationsAsync } from "@angular/platform-browser/animations/async";
-import { provideAngularSvgIcon } from "angular-svg-icon";
+import { provideRouter, withInMemoryScrolling } from "@angular/router";
 import {
-    provideTippyLoader,
-    provideTippyConfig,
-    tooltipVariation,
     popperVariation,
+    provideTippyConfig,
+    provideTippyLoader,
+    tooltipVariation
 } from "@ngneat/helipopper/config";
 import { provideTanStackQuery, QueryClient } from "@tanstack/angular-query-experimental";
+import { provideAngularSvgIcon } from "angular-svg-icon";
 import { provideCharts, withDefaultRegisterables } from "ng2-charts";
+
+import { environment } from "../environments/environment";
+import { APP_ROUTES } from "./app.routes";
+import { errorInterceptor } from "./shared/helpers/interceptors/error.interceptor";
+import { jwtInterceptor } from "./shared/helpers/interceptors/jwt.interceptor";
+import { WindowService } from "./shared/services/core/window.service";
 import {
     API_URL,
     FIREBASE_CONFIG,
     GEOCODING_API_URL,
     IP_INFO_API_TOKEN,
     MAPBOX_ACCESS_TOKEN,
-    MAPBOX_STYLE,
+    MAPBOX_STYLE
 } from "./shared/tokens/tokens";
-import { environment } from "../environments/environment";
-import { jwtInterceptor } from "./shared/helpers/interceptors/jwt.interceptor";
-import { errorInterceptor } from "./shared/helpers/interceptors/error.interceptor";
-import { APP_ROUTES } from "./app.routes";
-import { WindowService } from "./shared/services/core/window.service";
 
 export const queryClient = new QueryClient({
     defaultOptions: {
@@ -31,13 +33,14 @@ export const queryClient = new QueryClient({
             retry: (failureCount, error) => {
                 console.log({ failureCount, error });
 
-                if (error instanceof Object && "status" in error && error.status === 404) {
+                if (error instanceof Object && "status" in error && (error as any).status === 404) {
                     return false;
                 }
+
                 return failureCount < 3;
-            },
-        },
-    },
+            }
+        }
+    }
 });
 
 export const appConfig: ApplicationConfig = {
@@ -46,10 +49,13 @@ export const appConfig: ApplicationConfig = {
         provideRouter(
             APP_ROUTES,
             withInMemoryScrolling({
-                scrollPositionRestoration: "enabled",
-            }),
+                scrollPositionRestoration: "enabled"
+            })
         ),
-        provideHttpClient(withInterceptors([jwtInterceptor, errorInterceptor])),
+        provideHttpClient(
+            withFetch(),
+            withInterceptors([jwtInterceptor, errorInterceptor])
+        ),
         provideTanStackQuery(queryClient),
         provideAngularSvgIcon(),
         provideAnimationsAsync(),
@@ -58,34 +64,35 @@ export const appConfig: ApplicationConfig = {
             defaultVariation: "tooltip",
             variations: {
                 tooltip: tooltipVariation,
-                popper: popperVariation,
-            },
+                popper: popperVariation
+            }
         }),
         provideCharts(withDefaultRegisterables()),
         {
             provide: API_URL,
-            useValue: environment.apiUrl,
+            useValue: environment.apiUrl
         },
         {
             provide: GEOCODING_API_URL,
-            useValue: environment.geocodingApiUrl,
+            useValue: environment.geocodingApiUrl
         },
         {
             provide: MAPBOX_ACCESS_TOKEN,
-            useValue: environment.mapboxToken,
+            useValue: environment.mapboxToken
         },
         {
             provide: MAPBOX_STYLE,
-            useValue: environment.mapStyleUrl,
+            useValue: environment.mapStyleUrl
         },
         {
             provide: FIREBASE_CONFIG,
-            useValue: environment.firebaseConfig,
+            useValue: environment.firebaseConfig
         },
         {
             provide: IP_INFO_API_TOKEN,
-            useValue: environment.ipInfoApiToken,
+            useValue: environment.ipInfoApiToken
         },
         WindowService,
-    ],
+        provideClientHydration()
+    ]
 };

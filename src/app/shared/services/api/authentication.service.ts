@@ -36,6 +36,7 @@ import {
 import { formatFirebaseError } from "../../helpers/formatFirebaseError";
 import { IFirebaseConfig, IProfile } from "../../interfaces";
 import { FIREBASE_CONFIG } from "../../tokens/tokens";
+import { WINDOW } from '../../tokens/window.token';
 import { Nullable } from "../../types";
 import { LOCAL_STORAGE_KEYS, LocalStorageService } from "../core/local-storage.service";
 import { NotificationService } from '../core/notification.service';
@@ -58,7 +59,9 @@ export class AuthenticationService {
     private readonly dialog = inject(MatDialog);
 
     private anonymousUser$: BehaviorSubject<string | null>;
-    private userToken$: BehaviorSubject<string | null>;
+    private userToken$: BehaviorSubject<string | null> = new BehaviorSubject(
+        LocalStorageService.get<string>(LOCAL_STORAGE_KEYS.userToken),
+    );
     private windowRef: Window;
     private firebaseApp: FirebaseApp;
     private userSubject: BehaviorSubject<Nullable<User>> = new BehaviorSubject<Nullable<User>>(
@@ -67,9 +70,10 @@ export class AuthenticationService {
     private firebaseUserSubject: BehaviorSubject<Nullable<User>> = new BehaviorSubject<
         Nullable<User>
     >(null);
+    private readonly isWin = inject(WINDOW);
 
     public anonymousUser: Observable<string | null>;
-    public userToken: Observable<string | null>;
+    public userToken: Observable<string | null> = this.userToken$.asObservable();
     public defaultHeaders = new HttpHeaders();
     public isSigninInProgress$: BehaviorSubject<boolean>;
     public isConfirmInProgress$: BehaviorSubject<boolean>;
@@ -79,15 +83,12 @@ export class AuthenticationService {
     public firebaseUser$ = this.firebaseUserSubject.asObservable();
 
     constructor() {
+        if (!this.isWin) return;
         this.firebaseApp = this.initFirebaseAppWithConfig();
         this.anonymousUser$ = new BehaviorSubject(
             LocalStorageService.get<string>(LOCAL_STORAGE_KEYS.anonymousToken),
         );
         this.anonymousUser = this.anonymousUser$.asObservable();
-        this.userToken$ = new BehaviorSubject(
-            LocalStorageService.get<string>(LOCAL_STORAGE_KEYS.userToken),
-        );
-        this.userToken = this.userToken$.asObservable();
         this.isSigninInProgress$ = new BehaviorSubject<boolean>(false);
         this.isConfirmInProgress$ = new BehaviorSubject<boolean>(false);
         this.isResendInProgress$ = new BehaviorSubject<boolean>(false);
