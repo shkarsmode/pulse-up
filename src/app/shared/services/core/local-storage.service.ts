@@ -17,6 +17,7 @@ export const LOCAL_STORAGE_KEYS = {
 
 type LocalStorageKey = typeof LOCAL_STORAGE_KEYS[keyof typeof LOCAL_STORAGE_KEYS];
 
+
 export class LocalStorageService {
     /**
      * Save a value to localStorage
@@ -24,6 +25,8 @@ export class LocalStorageService {
      * @param value The value to store (will be JSON-stringified)
      */
     static set<T>(key: LocalStorageKey, value: T): void {
+        if (typeof window === "undefined") return;
+
         try {
             localStorage.setItem(key, JSON.stringify(value));
         } catch (error) {
@@ -37,6 +40,8 @@ export class LocalStorageService {
      * @returns Parsed value or null if not found or invalid
      */
     static get<T>(key: LocalStorageKey): T | null {
+        if (typeof window === "undefined") return null;
+
         try {
             const item = localStorage.getItem(key);
             return item ? (JSON.parse(item) as T) : null;
@@ -51,6 +56,8 @@ export class LocalStorageService {
      * @param key The storage key
      */
     static remove(key: LocalStorageKey): void {
+        if (typeof window === "undefined") return;
+
         try {
             localStorage.removeItem(key);
         } catch (error) {
@@ -62,6 +69,8 @@ export class LocalStorageService {
      * Clear all localStorage data
      */
     static clear(): void {
+        if (typeof window === "undefined") return;
+
         try {
             localStorage.clear();
         } catch (error) {
@@ -74,6 +83,7 @@ export class LocalStorageService {
      * @param key The storage key
      */
     static has(key: LocalStorageKey): boolean {
+        if (typeof window === "undefined") return false;
         return localStorage.getItem(key) !== null;
     }
 }
