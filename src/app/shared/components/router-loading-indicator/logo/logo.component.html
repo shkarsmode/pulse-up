@@ -1,24 +1,17 @@
-
-@if (window && window.innerWidth >= 650 ) {
+@if (window && window.innerWidth >= 650) {
     <div class="logo desktop">
-    
         <svg-icon [src]="'assets/svg/logo/logo-hexagon.svg'" id="hexagon"></svg-icon>
 
         <div class="icons-wrap">
-
             <div id="icons">
                 <svg-icon [src]="'assets/svg/logo/logo3.svg'" id="block1" class="icon"></svg-icon>
                 <!-- <svg-icon [src]="'assets/svg/logo/logo2.svg'" id="block2" class="icon"></svg-icon> -->
             </div>
-
         </div>
-   
     </div>
 } 
 @else {
-
     <div class="logo mobile">
-    
         <svg-icon [src]="'assets/svg/logo/hexagon-mobile.svg'" id="hexagon"></svg-icon>
 
         <div class="icons-wrap">
@@ -27,13 +20,9 @@
                 <svg-icon [src]="'assets/svg/logo/logo3-mobile.svg'" id="block1" class="icon"></svg-icon>
                 <!-- <svg-icon [src]="'assets/svg/logo/logo2-mobile.svg'" id="block2" class="icon"></svg-icon> -->
             </div>
-
         </div>
-   
     </div>
-    
 }
-
 <!-- 
     <div class="mobile-wrap">
 
@@ -61,6 +50,3 @@
     <p>
         Pulse is the heartbeat of what matters
     </p> -->
-
-
-

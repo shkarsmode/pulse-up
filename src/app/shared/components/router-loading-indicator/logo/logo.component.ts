@@ -12,6 +12,6 @@ import { SvgIconComponent } from 'angular-svg-icon';
 })
 export class LogoComponent {
 
-  public window = window;
+  public window = window ?? { innerWidth: 0 };
 
 }
