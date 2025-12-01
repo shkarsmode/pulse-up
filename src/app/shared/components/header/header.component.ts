@@ -8,12 +8,13 @@ import { AppRoutes } from "../../enums/app-routes.enum";
 import { BurgerButtonComponent } from "../ui-kit/buttons/burger-button/burger-button.component";
 
 import { version } from "../../../../assets/data/version";
-import { OpenGetAppPopupDirective } from "../popups/get-app-popup/open-get-app-popup.directive";
 import { AuthenticationService } from "../../services/api/authentication.service";
-import { PlatformService } from "../../services/core/platform.service";
 import { SettingsService } from "../../services/api/settings.service";
-import { DownloadAppButtonComponent } from "./download-app-button/download-app-button.component";
+import { PlatformService } from "../../services/core/platform.service";
+import { WINDOW } from '../../tokens/window.token';
+import { OpenGetAppPopupDirective } from "../popups/get-app-popup/open-get-app-popup.directive";
 import { SecondaryButtonComponent } from "../ui-kit/buttons/secondary-button/secondary-button.component";
+import { DownloadAppButtonComponent } from "./download-app-button/download-app-button.component";
 import { DropdownLinkComponent } from "./dropdown-link/dropdown-link.component";
 import { ProfileButtonComponent } from "./profile-button/profile-button.component";
 
@@ -39,11 +40,12 @@ export class HeaderComponent implements OnInit {
     private platformService = inject(PlatformService);
     private settingsService = inject(SettingsService);
     private authService = inject(AuthenticationService);
+    private readonly isWin = inject(WINDOW);
 
     public isMobileDropdown = false;
     public AppRoutes = AppRoutes;
     public version: { major: number; minor: number; patch: number };
-    public isToShowVersionOfApp = !!localStorage.getItem("version");
+    public isToShowVersionOfApp = false;
     public onlineStoreLink$ = this.settingsService.settings$.pipe(
         map((settings) => {
             if (this.platformService.value == "iOS") {
@@ -53,6 +55,11 @@ export class HeaderComponent implements OnInit {
             }
         }),
     );
+
+    constructor () {
+        if (!this.isWin) return;
+        this.isToShowVersionOfApp = !!localStorage.getItem("version");
+    }
 
     ngOnInit(): void {
         //Called after the constructor, initializing input properties, and the first call to ngOnChanges.

@@ -1,8 +1,10 @@
-import { Injectable } from "@angular/core";
+import { WINDOW } from '@/app/shared/tokens/window.token';
+import { inject, Injectable } from "@angular/core";
 
 @Injectable()
 export class WindowService {
-    get windowRef() {
-        return window;
+    private isWin = inject(WINDOW);
+    get windowRef(): any {
+        return this.isWin ? window : {};
     }
 }

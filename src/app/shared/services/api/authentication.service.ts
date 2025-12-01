@@ -83,7 +83,7 @@ export class AuthenticationService {
     public firebaseUser$ = this.firebaseUserSubject.asObservable();
 
     constructor() {
-        if (!this.isWin) return;
+        // if (!this.isWin) return;
         this.firebaseApp = this.initFirebaseAppWithConfig();
         this.anonymousUser$ = new BehaviorSubject(
             LocalStorageService.get<string>(LOCAL_STORAGE_KEYS.anonymousToken),
