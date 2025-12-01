@@ -243,10 +243,10 @@ export class TopicService {
 
     public updateMetadata(topic: ITopic): void {
         this.metadataService.setTitle(`${topic.title} | Support What Matters – Pulse Up`);
-        this.metadataService.setMetaTag(
-            "description",
-            `Support '${topic.title}' anonymously and see how it’s trending in real time across the map. Track public sentiment and join the pulse.`,
-        );
+        this.metadataService.setMetaTags({
+            title: `${topic.title} | Support What Matters – Pulse Up`,
+            description: topic.description,
+        });
     }
 
     public showReportPopup(topicId: number) {

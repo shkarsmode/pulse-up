@@ -13,5 +13,6 @@ export const metaTagsData = {
         title: 'Leaderboard | Support What Matters on Pulse Up',
         description:
             'Discover what people are supporting right now on PulseUp. Track trending topics, global causes, local issues, and real-time public sentiment across the map.',
+        ogImage: 'https://pulsedevdata.blob.core.windows.net/icons/1020.jpg'
     },
 };
