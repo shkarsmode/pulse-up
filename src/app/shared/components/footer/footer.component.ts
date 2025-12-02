@@ -20,7 +20,7 @@ export class FooterComponent implements OnInit {
     public CommunityRoutes = AppRoutes.Community;
     public isToShowVersionOfApp = false;
 
-    constructor () {
+    constructor() {
         if (!this.isWin) return;
         this.isToShowVersionOfApp = !!localStorage.getItem("version");
     }

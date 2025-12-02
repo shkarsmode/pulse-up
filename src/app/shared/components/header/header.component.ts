@@ -56,7 +56,7 @@ export class HeaderComponent implements OnInit {
         }),
     );
 
-    constructor () {
+    constructor() {
         if (!this.isWin) return;
         this.isToShowVersionOfApp = !!localStorage.getItem("version");
     }

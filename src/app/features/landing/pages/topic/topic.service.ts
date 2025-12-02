@@ -252,7 +252,7 @@ export class TopicService {
     public showReportPopup(topicId: number) {
         this.dialogService.open(ReportTopicComponent)
             .afterClosed().pipe(first())
-            .subscribe(({ reason, description}) => {
+            .subscribe(({ reason, description }) => {
                 if (reason) {
                     this.report({ topicId, reason, description })
                         .pipe(first())
@@ -265,13 +265,13 @@ export class TopicService {
                             error: ({ error }) => {
                                 const message = error?.title;
                                 this.notificationService.error(
-                                    '[Report Topic] ' + 
-                                        (
-                                            message || 
-                                            "Failed to report the topic. Please try again later"
-                                        ),
+                                    '[Report Topic] ' +
+                                    (
+                                        message ||
+                                        "Failed to report the topic. Please try again later"
+                                    ),
                                 );
-                                
+
                             }
                         });
                 } else {

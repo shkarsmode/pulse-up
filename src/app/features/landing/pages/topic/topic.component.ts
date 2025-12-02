@@ -20,6 +20,7 @@ import { AuthenticationService } from "@/app/shared/services/api/authentication.
 import { PulseService } from "@/app/shared/services/api/pulse.service";
 import { SettingsService } from "@/app/shared/services/api/settings.service";
 import { DialogService } from "@/app/shared/services/core/dialog.service";
+import { MetadataService } from '@/app/shared/services/core/metadata.service';
 import { NotificationService } from '@/app/shared/services/core/notification.service';
 import { ProfileService } from '@/app/shared/services/profile/profile.service';
 import { A11yModule } from "@angular/cdk/a11y";
@@ -99,6 +100,7 @@ export class TopicComponent implements OnInit, OnDestroy {
     private pulseService = inject(PulseService);
     private dialogService = inject(DialogService);
     private settingsService = inject(SettingsService);
+    private metadataService = inject(MetadataService);
     private authService = inject(AuthenticationService);
     private notificationService = inject(NotificationService);
     public topicService = inject(TopicService);

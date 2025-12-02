@@ -1,9 +1,9 @@
 import { ITopic } from "@/app/shared/interfaces";
-import { inject } from "@angular/core";
-import { firstValueFrom, map } from "rxjs";
-import * as H3 from "h3-js";
 import { PulseService } from "@/app/shared/services/api/pulse.service";
 import { IpLocationService } from "@/app/shared/services/core/ip-location.service";
+import { inject } from "@angular/core";
+import * as H3 from "h3-js";
+import { firstValueFrom, map } from "rxjs";
 import { TopicsProvider } from "../../../interfaces/topics-provider.interface";
 
 export abstract class BaseTopicsProvider implements TopicsProvider {

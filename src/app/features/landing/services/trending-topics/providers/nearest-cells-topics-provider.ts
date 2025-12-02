@@ -1,7 +1,7 @@
 import { ITopic } from "@/app/shared/interfaces";
 import { Injectable } from "@angular/core";
-import { BaseTopicsProvider } from "./base-provider";
 import { firstValueFrom, forkJoin, map, switchMap } from "rxjs";
+import { BaseTopicsProvider } from "./base-provider";
 
 @Injectable({ providedIn: "root" })
 export class NearestCellsTopicsProvider extends BaseTopicsProvider {

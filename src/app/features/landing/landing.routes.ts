@@ -26,6 +26,7 @@ export const LANDING_ROUTES: Routes = [
                 loadComponent: () =>
                     import("./pages/map-page/map-page.component").then((m) => m.MapPageComponent),
                 canActivate: [PublicPageGuard],
+                data: metaTagsData.map,
             },
             {
                 path: Landing.TOPICS,
@@ -55,6 +56,7 @@ export const LANDING_ROUTES: Routes = [
                 loadComponent: () =>
                     import("./pages/about/about.component").then((m) => m.AboutComponent),
                 canActivate: [PublicPageGuard],
+                data: metaTagsData.about,
             },
             {
                 path: Landing.USER,

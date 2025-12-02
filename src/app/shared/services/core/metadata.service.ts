@@ -22,34 +22,34 @@ export class MetadataService {
     public setTitle(content: string): void {
         this.title.setTitle(content);
     }
-    public setMetaTags(config: { 
-        title?: string; 
-        description?: string; 
+    public setMetaTags(config: {
+        title?: string;
+        description?: string;
         image?: string;
     }): void {
         const title = config.title || this.defaultTitle;
         const description = config.description || this.defaultDescription;
-    
+
         this.title.setTitle(title);
-    
+
         this.meta.updateTag({ name: "description", content: description });
-    
+
         this.meta.updateTag({ property: "og:title", content: title });
         this.meta.updateTag({ property: "og:description", content: description });
-    
+
         if (config.image) {
             this.meta.updateTag({ property: "og:image", content: config.image });
             this.meta.updateTag({ property: "twitter:image", content: config.image });
             this.meta.updateTag({ name: "twitter:card", content: "summary_large_image" });
         }
-    
+
         this.meta.updateTag({ property: "twitter:title", content: title });
         this.meta.updateTag({ property: "twitter:description", content: description });
     }
 
     public listenToRouteChanges(router: Router, activatedRoute: ActivatedRoute): void {
-        if (!this.defaultTitle) this.defaultTitle = this.getTitle(); 
-        if (!this.defaultDescription) this.defaultDescription = 
+        if (!this.defaultTitle) this.defaultTitle = this.getTitle();
+        if (!this.defaultDescription) this.defaultDescription =
             this.getMetaTag("description") || "";
 
         router.events
