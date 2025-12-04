@@ -33,6 +33,7 @@ export class MetadataService {
     public setMetaTags(config: IMetadataConfig): void {
         const { title, description, image, url } = config;
 
+        console.log(config);
         if (title) {
             this.title.setTitle(title);
             this.updateOgTag("og:title", title);

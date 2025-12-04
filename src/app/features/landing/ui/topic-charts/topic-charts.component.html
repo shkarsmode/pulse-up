@@ -7,12 +7,16 @@
     (selectedIndexChange)="onTabChange($event)">
     <mat-tab label="Last 30 days">
         <div class="tab-content">
-            <app-topic-daily-chart />
+            @if (isWin) {
+                <app-topic-daily-chart />
+            }
         </div>
     </mat-tab>
     <mat-tab label="Last 24 hours">
         <div class="tab-content">
-            <app-topic-hourly-chart />
+            @if (isWin) {
+                <app-topic-hourly-chart />
+            }
         </div>
     </mat-tab>
 </mat-tab-group>

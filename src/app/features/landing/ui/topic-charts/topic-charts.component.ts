@@ -1,4 +1,5 @@
-import { ChangeDetectionStrategy, Component, signal } from "@angular/core";
+import { WINDOW } from '@/app/shared/tokens/window.token';
+import { ChangeDetectionStrategy, Component, inject, signal } from "@angular/core";
 import { MatTabsModule } from "@angular/material/tabs";
 import { TopicDailyChartComponent } from "../topic-daily-chart/topic-daily-chart.component";
 import { TopicHourlyChartComponent } from "../topic-hourly-chart/topic-hourly-chart.component";
@@ -13,6 +14,7 @@ import { TopicHourlyChartComponent } from "../topic-hourly-chart/topic-hourly-ch
 })
 export class TopicChrtsComponent {
     public selectedTabIndex = signal(0);
+    public isWin = inject(WINDOW);
 
     public onTabChange(index: number): void {
         this.selectedTabIndex.set(index);
