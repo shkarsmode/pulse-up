@@ -1,6 +1,5 @@
 import { provideHttpClient, withFetch, withInterceptors } from "@angular/common/http";
 import { ApplicationConfig, provideZoneChangeDetection } from "@angular/core";
-import { provideClientHydration } from "@angular/platform-browser";
 import { provideAnimationsAsync } from "@angular/platform-browser/animations/async";
 import { provideRouter, withInMemoryScrolling } from "@angular/router";
 import {
@@ -93,6 +92,6 @@ export const appConfig: ApplicationConfig = {
             useValue: environment.ipInfoApiToken
         },
         WindowService,
-        provideClientHydration()
+        // provideClientHydration()
     ]
 };
