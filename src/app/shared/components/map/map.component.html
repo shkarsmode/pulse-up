@@ -1,37 +1,39 @@
-<mgl-map
-    class="map-container"
-    [class.map-container_rounded]="isRounded"
-    [class.map-container_preview]="isPreview"
-    [accessToken]="mapboxAccessToken"
-    [style]="mapStylesUrl"
-    [center]="center"
-    [interactive]="!isPreview"
-    [maxBounds]="maxBounds"
-    [zoom]="zoom"
-    [minZoom]="minZoom"
-    [maxZoom]="maxZoom"
-    [scrollZoom]="isScrollZoomEnabled"
-    [doubleClickZoom]="isDoubleClickZoomEnabled"
-    [touchPitch]="touchPitch"
-    [touchZoomRotate]="touchZoomRotate"
-    [projection]="projection"
-    (mapLoad)="onMapLoad($event)"
-    (zoomEnd)="handleZoomEnd()"
-    (moveEnd)="handleMove()"
-    (move)="handleMove()"
-    (mapClick)="handleMapClick($event)"
-    (mapTouchStart)="handleTouchStart($event)"
-    (styleData)="onStyleData($event)">
-    <ng-content></ng-content>
-
-    @if (markers.enabled && map) {
-        <app-map-markers-layer
-            [map]="map"
-            [isAnimated]="markers.isAnimated || false"
-            [showTooltip]="markers.showTooltip || false"
-            (markerClick)="onMarkerClick($event)" />
-    }
-    @if (weights.enabled && map) {
-        <app-map-weights-layer [map]="map" />
-    }
-</mgl-map>
+@if (isWin) {
+    <mgl-map
+        class="map-container"
+        [class.map-container_rounded]="isRounded"
+        [class.map-container_preview]="isPreview"
+        [accessToken]="mapboxAccessToken"
+        [style]="mapStylesUrl"
+        [center]="center"
+        [interactive]="!isPreview"
+        [maxBounds]="maxBounds"
+        [zoom]="zoom"
+        [minZoom]="minZoom"
+        [maxZoom]="maxZoom"
+        [scrollZoom]="isScrollZoomEnabled"
+        [doubleClickZoom]="isDoubleClickZoomEnabled"
+        [touchPitch]="touchPitch"
+        [touchZoomRotate]="touchZoomRotate"
+        [projection]="projection"
+        (mapLoad)="onMapLoad($event)"
+        (zoomEnd)="handleZoomEnd()"
+        (moveEnd)="handleMove()"
+        (move)="handleMove()"
+        (mapClick)="handleMapClick($event)"
+        (mapTouchStart)="handleTouchStart($event)"
+        (styleData)="onStyleData($event)">
+        <ng-content></ng-content>
+    
+        @if (markers.enabled && map) {
+            <app-map-markers-layer
+                [map]="map"
+                [isAnimated]="markers.isAnimated || false"
+                [showTooltip]="markers.showTooltip || false"
+                (markerClick)="onMarkerClick($event)" />
+        }
+        @if (weights.enabled && map) {
+            <app-map-weights-layer [map]="map" />
+        }
+    </mgl-map>
+}

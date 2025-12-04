@@ -1,21 +1,40 @@
-<mgl-marker [lngLat]="[marker.lng, marker.lat]">
-    <app-map-popover>
-        <button
-            buttonContent
-            class="marker-button"
-            [ngStyle]="{ opacity }"
-            (mouseenter)="onMarkerHover()"
-            (click)="onMarkerClick()"
-            aria-label="Show topic details">
-            <app-map-marker-icon
-                [icon]="marker.icon"
-                [isAnimated]="isAnimated"
-                [animationDelay]="marker.delay"
-                (imageLoaded)="onImageLoaded()" />
-        </button>
-        <a
-            tooltipContent
-            routerLink="/topic/{{ marker.topicId }}">
+@if (isWin) {
+    <mgl-marker [lngLat]="[marker.lng, marker.lat]">
+        <app-map-popover>
+            <button
+                buttonContent
+                class="marker-button"
+                [ngStyle]="{ opacity }"
+                (mouseenter)="onMarkerHover()"
+                (click)="onMarkerClick()"
+                aria-label="Show topic details">
+                <app-map-marker-icon
+                    [icon]="marker.icon"
+                    [isAnimated]="isAnimated"
+                    [animationDelay]="marker.delay"
+                    (imageLoaded)="onImageLoaded()" />
+            </button>
+            <a
+                tooltipContent
+                routerLink="/topic/{{ marker.topicId }}">
+                <div
+                    class="map-tooltip"
+                    [class.map-tooltip--loading]="!tooltipData">
+                    @if (tooltipData) {
+                    <app-top-pulse-card
+                        [pulse]="tooltipData"
+                        [interactive]="false" />
+                    } @else {
+                    <app-spinner />
+                    }
+                </div>
+            </a>
+        </app-map-popover>
+    </mgl-marker>
+    
+    <!-- TOOLTIP -->
+    <ng-template #tooltip>
+        <a routerLink="/topic/{{ marker.topicId }}">
             <div
                 class="map-tooltip"
                 [class.map-tooltip--loading]="!tooltipData">
@@ -28,22 +47,5 @@
                 }
             </div>
         </a>
-    </app-map-popover>
-</mgl-marker>
-
-<!-- TOOLTIP -->
-<ng-template #tooltip>
-    <a routerLink="/topic/{{ marker.topicId }}">
-        <div
-            class="map-tooltip"
-            [class.map-tooltip--loading]="!tooltipData">
-            @if (tooltipData) {
-            <app-top-pulse-card
-                [pulse]="tooltipData"
-                [interactive]="false" />
-            } @else {
-            <app-spinner />
-            }
-        </div>
-    </a>
-</ng-template>
+    </ng-template>
+}

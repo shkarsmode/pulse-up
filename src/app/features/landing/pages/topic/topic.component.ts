@@ -37,6 +37,7 @@ import {
 import { takeUntilDestroyed, toObservable } from "@angular/core/rxjs-interop";
 import { MatMenuModule } from '@angular/material/menu';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { Meta, Title } from '@angular/platform-browser';
 import { ActivatedRoute, ParamMap, Router, RouterModule } from "@angular/router";
 import { SvgIconComponent } from "angular-svg-icon";
 import { combineLatest, distinctUntilChanged, filter, first, map, tap } from "rxjs";
@@ -58,39 +59,39 @@ import { TopicService } from "./topic.service";
     styleUrl: "./topic.component.scss",
     standalone: true,
     imports: [
-    CommonModule,
-    RouterModule,
-    SvgIconComponent,
-    MenuComponent,
-    CopyButtonComponent,
-    SocialsButtonComponent,
-    MapComponent,
-    SliderComponent,
-    SpinnerComponent,
-    FadeInDirective,
-    FormatNumberPipe,
-    LoadImgPathDirective,
-    FlatButtonDirective,
-    QrcodeButtonComponent,
-    PulseCampaignComponent,
-    MapHeatmapLayerComponent,
-    WaveAnimationDirective,
-    UserVoteButtonComponent,
-    GuestVoteButtonComponent,
-    DisbledVoteButtonComponent,
-    KeywordButtonComponent,
-    PulseDescriptionComponent,
-    LinkifyPipe,
-    LandingPageLayoutComponent,
-    ContainerComponent,
-    TopicSectionComponent,
-    TopicChrtsComponent,
-    TopicWarningMessageComponent,
-    MatMenuModule,
-    FabButtonComponent,
-    MatTooltipModule,
-    A11yModule
-],
+        CommonModule,
+        RouterModule,
+        SvgIconComponent,
+        MenuComponent,
+        CopyButtonComponent,
+        SocialsButtonComponent,
+        MapComponent,
+        SliderComponent,
+        SpinnerComponent,
+        FadeInDirective,
+        FormatNumberPipe,
+        LoadImgPathDirective,
+        FlatButtonDirective,
+        QrcodeButtonComponent,
+        PulseCampaignComponent,
+        MapHeatmapLayerComponent,
+        WaveAnimationDirective,
+        UserVoteButtonComponent,
+        GuestVoteButtonComponent,
+        DisbledVoteButtonComponent,
+        KeywordButtonComponent,
+        PulseDescriptionComponent,
+        LinkifyPipe,
+        LandingPageLayoutComponent,
+        ContainerComponent,
+        TopicSectionComponent,
+        TopicChrtsComponent,
+        TopicWarningMessageComponent,
+        MatMenuModule,
+        FabButtonComponent,
+        MatTooltipModule,
+        A11yModule
+    ],
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TopicComponent implements OnInit, OnDestroy {
@@ -105,6 +106,9 @@ export class TopicComponent implements OnInit, OnDestroy {
     private notificationService = inject(NotificationService);
     public topicService = inject(TopicService);
     public profileService: ProfileService = inject(ProfileService);
+
+    private meta = inject(Meta);
+    private title = inject(Title);
 
     private mutationObserver: MutationObserver | null = null;
 
@@ -254,140 +258,4 @@ export class TopicComponent implements OnInit, OnDestroy {
             );
         }, 1000);
     }
-
-    // TOPICS_TO_TEST = {
-    //     state: -1,
-    //     topics: [
-    //         topicActivePartialProgress,
-    //         topicActiveAllCompleted,
-    //         topicActiveEmpty,
-    //         topicArchived,
-    //         topicActiveOneGoalUnmet,
-    //         topicActiveLastGoalInProgress,
-    //         topicBlockedWithProgress,
-    //     ],
-    // };
-    // public setAnotherData(): void {
-    //     if (this.TOPICS_TO_TEST.state < 0) {
-    //         this.TOPICS_TO_TEST.topics.push(this.topic);
-    //         this.TOPICS_TO_TEST.state = 0;
-    //     }
-    //     if (this.TOPICS_TO_TEST.state >= this.TOPICS_TO_TEST.topics.length) {
-    //         this.TOPICS_TO_TEST.state = 0;
-    //     }
-    //     this.updateTopicData({
-    //         ...this.TOPICS_TO_TEST.topics[this.TOPICS_TO_TEST.topics.length - 1],
-    //         ...this.TOPICS_TO_TEST.topics[this.TOPICS_TO_TEST.state],
-    //     });
-
-    //     this.TOPICS_TO_TEST.state++;
-    // }
 }
-
-// export const topicActivePartialProgress: ITopic | any = {
-//     id: 1,
-//     title: "Test 1",
-//     endsAt: "2025-07-30T23:59:59.999Z",
-//     location: { country: "Ukraine" },
-//     stats: {
-//         totalVotes: 30,
-//         lastDayVotes: 23,
-//         totalUniqueUsers: 102,
-//     },
-//     state: TopicState.Active,
-//     campaign: {
-//         id: "1",
-//         endsAt: "2025-10-30T23:59:59.999Z",
-//         sponsorLink: "https://pulseup.com",
-//         sponsorLogo: "",
-//         sponsoredBy: "pulseup.com",
-//         startsAt: "2025-09-10T00:00:00.000Z",
-//         accomplishedGoals: ["2025-04-11T00:00:00.000Z"],
-//         goals: [
-//             { reward: "$100 donation to U24", supporters: 100 },
-//             { reward: "$200 donation to U24", dailyVotes: 50 },
-//             { reward: "$500 donation", lifetimeVotes: 120 },
-//         ],
-//     },
-// };
-
-// export const topicActiveAllCompleted: ITopic = {
-//     ...topicActivePartialProgress,
-//     title: "Test 2",
-//     stats: {
-//         totalVotes: 130,
-//         lastDayVotes: 60,
-//         totalUniqueUsers: 130,
-//     },
-//     campaign: {
-//         ...topicActivePartialProgress.campaign!,
-//         accomplishedGoals: [
-//             // "2025-04-11T00:00:00.000Z",
-//             // "2025-04-12T00:00:00.000Z",
-//             // "2025-04-13T00:00:00.000Z",
-//         ],
-//     },
-// };
-
-// export const topicActiveEmpty: ITopic = {
-//     ...topicActivePartialProgress,
-//     title: "Test 3",
-//     stats: {
-//         totalVotes: 0,
-//         lastDayVotes: 0,
-//         totalUniqueUsers: 0,
-//     },
-//     campaign: {
-//         ...topicActivePartialProgress.campaign!,
-//         accomplishedGoals: [],
-//     },
-// };
-
-// export const topicArchived: ITopic = {
-//     ...topicActivePartialProgress,
-//     title: "Test 4",
-//     state: TopicState.Archived,
-//     campaign: {
-//         ...topicActivePartialProgress.campaign!,
-//         endsAt: "2025-04-10T23:59:59.999Z",
-//     },
-// };
-
-// export const topicActiveOneGoalUnmet: ITopic = {
-//     ...topicActivePartialProgress,
-//     title: "Test 5",
-//     stats: {
-//         totalVotes: 0,
-//         lastDayVotes: 0,
-//         totalUniqueUsers: 23,
-//     },
-//     campaign: {
-//         ...topicActivePartialProgress.campaign!,
-//         goals: [{ reward: "$50 donation to U24", supporters: 100 }],
-//         accomplishedGoals: [],
-//     },
-// };
-
-// export const topicActiveLastGoalInProgress: ITopic = {
-//     ...topicActivePartialProgress,
-//     title: "Test 6",
-//     stats: {
-//         totalVotes: 90, // progress on lifetimeVotes (120 goal)
-//         lastDayVotes: 50,
-//         totalUniqueUsers: 130,
-//     },
-//     campaign: {
-//         ...topicActivePartialProgress.campaign!,
-//         accomplishedGoals: ["2025-04-11T00:00:00.000Z", "2025-04-12T00:00:00.000Z"],
-//     },
-// };
-
-// export const topicBlockedWithProgress: ITopic = {
-//     ...topicActiveAllCompleted,
-//     title: "Test 7",
-//     state: TopicState.Blocked,
-//     campaign: {
-//         ...topicActiveAllCompleted.campaign!,
-//         endsAt: "2025-08-01T00:00:00.000Z",
-//     },
-// };

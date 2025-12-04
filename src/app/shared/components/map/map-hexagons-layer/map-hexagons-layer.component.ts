@@ -1,4 +1,12 @@
+import { IH3Pulses } from "@/app/features/landing/interfaces/h3-pulses.interface";
+import { H3Service } from '@/app/features/landing/services/h3.service';
+import { AppConstants } from "@/app/shared/constants";
+import { MapPainter } from "@/app/shared/helpers/map-painter";
+import { ICategory } from "@/app/shared/interfaces/category.interface";
+import { PulseService } from "@/app/shared/services/api/pulse.service";
+import { MapUtils } from "@/app/shared/services/map/map-utils.service";
 import { Component, DestroyRef, inject, Input, OnInit } from "@angular/core";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import {
     combineLatest,
     delay,
@@ -13,14 +21,6 @@ import {
     tap,
     throttle,
 } from "rxjs";
-import * as h3 from "h3-js";
-import { MapPainter } from "@/app/shared/helpers/map-painter";
-import { MapUtils } from "@/app/shared/services/map/map-utils.service";
-import { AppConstants } from "@/app/shared/constants";
-import { PulseService } from "@/app/shared/services/api/pulse.service";
-import { IH3Pulses } from "@/app/features/landing/interfaces/h3-pulses.interface";
-import { ICategory } from "@/app/shared/interfaces/category.interface";
-import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 
 @Component({
     selector: "app-map-hexagons-layer",
@@ -32,6 +32,7 @@ import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 export class MapHexagonsLayerComponent implements OnInit {
     private readonly destroyRef = inject(DestroyRef);
     private readonly pulseService = inject(PulseService);
+    private readonly h3Service = inject(H3Service);
 
     @Input({ required: true }) public map: mapboxgl.Map;
     @Input() public category$: Observable<ICategory | null>;
@@ -132,30 +133,41 @@ export class MapHexagonsLayerComponent implements OnInit {
     }
 
     private updateHexagons(data: IH3Pulses): void {
-        const geojson = this.convertH3ToGeoJSON(data);
-        this.painter.setSourceData(geojson);
+        this.convertH3ToGeoJSON(data)
+            .then((geojson) => {
+                this.painter.setSourceData(geojson);
+            });
     }
 
-    private convertH3ToGeoJSON(data: IH3Pulses) {
-        const features = Object.keys(data).map((h3Index) => {
-            const polygon = h3.h3ToGeoBoundary(h3Index, true);
-            return {
+    private async convertH3ToGeoJSON(
+        data: IH3Pulses
+    ): Promise<GeoJSON.FeatureCollection> {
+        const features: GeoJSON.Feature<GeoJSON.Polygon>[] = [];
+    
+        for (const h3Index of Object.keys(data)) {
+            const boundary = await this.h3Service.h3ToGeoBoundary(h3Index);
+    
+            if (!boundary.length) {
+                continue;
+            }
+    
+            features.push({
                 type: "Feature",
                 geometry: {
                     type: "Polygon",
-                    coordinates: [polygon],
+                    coordinates: [boundary]
                 },
                 properties: {
                     votes: data[h3Index].votes,
                     icon: data[h3Index].icon,
-                    h3Index,
-                },
-            };
-        });
-
+                    h3Index
+                }
+            });
+        }
+    
         return {
             type: "FeatureCollection",
-            features,
+            features
         };
     }
 

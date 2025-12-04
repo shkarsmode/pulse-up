@@ -1,3 +1,4 @@
+import { H3Service } from '@/app/features/landing/services/h3.service';
 import { MapComponent } from "@/app/shared/components/map/map.component";
 import { FlatButtonDirective } from "@/app/shared/components/ui-kit/buttons/flat-button/flat-button.directive";
 import { PrimaryButtonComponent } from "@/app/shared/components/ui-kit/buttons/primary-button/primary-button.component";
@@ -12,7 +13,6 @@ import { Component, inject, OnDestroy, OnInit } from "@angular/core";
 import { MatDialog } from "@angular/material/dialog";
 import { Router } from "@angular/router";
 import { AngularSvgIconModule } from "angular-svg-icon";
-import * as h3 from "h3-js";
 import mapboxgl from "mapbox-gl";
 import {
     BehaviorSubject,
@@ -50,6 +50,7 @@ export class PickLocationComponent implements OnInit, OnDestroy {
     private geolocationService = inject(GeolocationService);
     private sourceId = "search-polygons";
     private destroy$ = new Subject<void>();
+    private h3Service = inject(H3Service);
 
     private map: mapboxgl.Map | null = null;
     private selectedLocationSubject = new BehaviorSubject(this.sendTopicService.topicLocation);
@@ -173,11 +174,15 @@ export class PickLocationComponent implements OnInit, OnDestroy {
     }
 
     private onFlyEnd = () => {
-        if (this.map) {
-            const center = this.map.getCenter();
-            const h3Index = h3.geoToH3(center.lat, center.lng, 6);
-            this.addPolygonsToMap([h3Index]);
-        }
+        if (!this.map) return;
+    
+        const center = this.map.getCenter();
+    
+        this.h3Service.geoToH3Index(center.lat, center.lng, 6)
+            .then((h3Index) => {
+                if (!h3Index) return;
+                this.addPolygonsToMap([h3Index]);
+            });
     };
 
     private jumpToSelectedLocation() {
@@ -212,35 +217,49 @@ export class PickLocationComponent implements OnInit, OnDestroy {
     private addH3PolygonsToMap({
         map,
         h3Indexes,
-        sourceId,
+        sourceId
     }: {
         map: mapboxgl.Map;
         h3Indexes: string[];
         sourceId?: string;
     }): void {
-        const hexagons = h3Indexes.filter(
-            (h3Index) => !MapUtils.isHexagonCrossesAntimeridian(h3Index),
-        );
-        const hexagonFeatures = hexagons.map((hex) => this.h3ToPolygonFeature(hex));
-        MapUtils.setSourceData({
-            map,
-            sourceId: sourceId || this.sourceId,
-            data: {
-                type: "FeatureCollection",
-                features: hexagonFeatures,
-            },
-        });
+        (async () => {
+            const hexagonFeatures: GeoJSON.Feature<GeoJSON.Polygon>[] = [];
+    
+            for (const h3Index of h3Indexes) {
+                const feature = await this.h3ToPolygonFeature(h3Index);
+                if (feature) {
+                    hexagonFeatures.push(feature);
+                }
+            }
+    
+            MapUtils.setSourceData({
+                map,
+                sourceId: sourceId || this.sourceId,
+                data: {
+                    type: "FeatureCollection",
+                    features: hexagonFeatures
+                }
+            });
+        })();
     }
 
-    private h3ToPolygonFeature(hex: string): GeoJSON.Feature<GeoJSON.Polygon> {
-        const boundary = h3.h3ToGeoBoundary(hex, true);
+    private async h3ToPolygonFeature(
+        hex: string
+    ): Promise<GeoJSON.Feature<GeoJSON.Polygon> | null> {
+        const boundary = await this.h3Service.h3ToGeoBoundary(hex);
+    
+        if (!boundary.length) {
+            return null;
+        }
+    
         return {
             type: "Feature",
             geometry: {
                 type: "Polygon",
-                coordinates: [boundary],
+                coordinates: [boundary]
             },
-            properties: {},
+            properties: {}
         };
     }
 

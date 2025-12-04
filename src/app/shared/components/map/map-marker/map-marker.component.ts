@@ -1,16 +1,17 @@
-import { Component, EventEmitter, Input, Output, OnInit } from "@angular/core";
-import { CommonModule } from "@angular/common";
-import { NgxMapboxGLModule } from "ngx-mapbox-gl";
 import { ITopic } from "@/app/shared/interfaces";
 import {
     IMapMarkerAnimated,
     IMapMarkerVisibilityEventData,
 } from "@/app/shared/interfaces/map/map-marker.interface";
-import { MapPopoverComponent } from "../map-popover/map-popover.component";
-import { MapMarkerIconComponent } from "../map-marker-icon/map-marker-icon.component";
+import { WINDOW } from '@/app/shared/tokens/window.token';
+import { CommonModule } from "@angular/common";
+import { Component, EventEmitter, Input, OnInit, Output, inject } from "@angular/core";
 import { RouterModule } from "@angular/router";
+import { NgxMapboxGLModule } from "ngx-mapbox-gl";
 import { TopPulseCardComponent } from "../../pulses/top-pulse/top-pulse-card.component";
 import { SpinnerComponent } from "../../ui-kit/spinner/spinner.component";
+import { MapMarkerIconComponent } from "../map-marker-icon/map-marker-icon.component";
+import { MapPopoverComponent } from "../map-popover/map-popover.component";
 
 @Component({
     selector: "app-map-marker",
@@ -20,6 +21,8 @@ import { SpinnerComponent } from "../../ui-kit/spinner/spinner.component";
     styleUrl: "./map-marker.component.scss",
 })
 export class MapMarkerComponent implements OnInit {
+    public isWin = inject(WINDOW);
+
     @Input() map: mapboxgl.Map | null = null;
     @Input() marker: IMapMarkerAnimated;
     @Input() tooltipData: ITopic | null;

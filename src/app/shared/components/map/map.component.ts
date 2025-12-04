@@ -1,15 +1,16 @@
+import { IMapClickEvent } from "@/app/features/landing/interfaces/map-click-event.interface";
+import { throttle } from "@/app/shared/helpers/throttle";
+import { environment } from "@/environments/environment";
 import { CommonModule } from "@angular/common";
 import { Component, EventEmitter, HostBinding, inject, Input, Output } from "@angular/core";
-import { NgxMapboxGLModule } from "ngx-mapbox-gl";
 import { EventData, MapStyleDataEvent } from "mapbox-gl";
-import { throttle } from "@/app/shared/helpers/throttle";
-import { MAPBOX_STYLE } from "../../tokens/tokens";
+import { NgxMapboxGLModule } from "ngx-mapbox-gl";
 import { AppConstants } from "../../constants";
-import { MapMarkersLayerComponent } from "./map-markers-layer/map-markers-layer.component";
 import { IMapMarker } from "../../interfaces/map/map-marker.interface";
-import { IMapClickEvent } from "@/app/features/landing/interfaces/map-click-event.interface";
+import { MAPBOX_STYLE } from "../../tokens/tokens";
+import { WINDOW } from '../../tokens/window.token';
+import { MapMarkersLayerComponent } from "./map-markers-layer/map-markers-layer.component";
 import { MapWeightsLayerComponent } from "./map-weights-layer/map-weights-layer.component";
-import { environment } from "@/environments/environment";
 
 interface MarkersSettings {
     enabled?: boolean;
@@ -56,6 +57,8 @@ export class MapComponent {
     @Output() markerClick = new EventEmitter<IMapMarker>();
     @Output() touchStart = new EventEmitter<mapboxgl.MapTouchEvent & mapboxgl.EventData>();
     @Output() mapStyleData = new EventEmitter<MapStyleDataEvent & EventData>();
+
+    public isWin = inject(WINDOW);
 
     @HostBinding("class.preview")
     get isPreviewMap() {

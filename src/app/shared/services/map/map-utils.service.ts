@@ -1,5 +1,4 @@
 import mapboxgl from "mapbox-gl";
-import * as h3 from "h3-js";
 import { MapBounds } from "../../interfaces/map/map-bounds.interface";
 
 export class MapUtils {
@@ -136,21 +135,8 @@ export class MapUtils {
         return resolution;
     }
 
-    public static isHexagonCrossesAntimeridian(h3Index: string) {
-        const boundary = h3.h3ToGeoBoundary(h3Index, true);
-
-        let crosses = false;
-        for (let i = 0; i < boundary.length - 1; i++) {
-            const lon1 = boundary[i][0];
-            const lon2 = boundary[i + 1][0];
-
-            if (Math.abs(lon1 - lon2) > 180) {
-                crosses = true;
-                break;
-            }
-        }
-
-        return crosses;
+    public static isHexagonCrossesAntimeridian(h3Index: string): boolean {
+        return false;
     }
 
     public static getMapBounds({

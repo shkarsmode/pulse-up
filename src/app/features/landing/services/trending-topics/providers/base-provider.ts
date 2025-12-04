@@ -2,19 +2,27 @@ import { ITopic } from "@/app/shared/interfaces";
 import { PulseService } from "@/app/shared/services/api/pulse.service";
 import { IpLocationService } from "@/app/shared/services/core/ip-location.service";
 import { inject } from "@angular/core";
-import * as H3 from "h3-js";
-import { firstValueFrom, map } from "rxjs";
+import { filter, firstValueFrom, from, map, switchMap } from "rxjs";
 import { TopicsProvider } from "../../../interfaces/topics-provider.interface";
+import { H3Service } from '../../h3.service';
 
 export abstract class BaseTopicsProvider implements TopicsProvider {
-    private pulseService = inject(PulseService);
-    private ipLocationService = inject(IpLocationService);
+    private readonly pulseService = inject(PulseService);
+    private readonly ipLocationService = inject(IpLocationService);
+    private readonly h3Service = inject(H3Service);
 
     protected nextProvider: TopicsProvider | null = null;
+
     protected cellIndex$ = this.ipLocationService.countryCoordinates$.pipe(
-        map(({ latitude, longitude }) => H3.geoToH3(latitude, longitude, 0)),
+        switchMap(({ latitude, longitude }) =>
+            from(this.h3Service.geoToH3Index(latitude, longitude, 0))
+        ),
+        filter((h3Index): h3Index is string => !!h3Index)
     );
-    protected cellNeighbors$ = this.cellIndex$.pipe(map((h3Index) => H3.kRing(h3Index, 1)));
+
+    protected cellNeighbors$ = this.cellIndex$.pipe(
+        map((h3Index) => [h3Index])
+    );
 
     protected getCellTopics(h3Index: string) {
         return this.pulseService.getTopicsByCellIndex(h3Index);
@@ -23,8 +31,8 @@ export abstract class BaseTopicsProvider implements TopicsProvider {
     protected getFullTopics(topicsIds: number[]) {
         return firstValueFrom(
             this.pulseService.get({
-                id: [...new Set(topicsIds)],
-            }),
+                id: [...new Set(topicsIds)]
+            })
         );
     }
 

@@ -242,10 +242,27 @@ export class TopicService {
     }
 
     public updateMetadata(topic: ITopic): void {
-        this.metadataService.setTitle(`${topic.title} | Support What Matters – Pulse Up`);
+        const settings = this.settings();
+    
+        const title = `${topic.title} | Support What Matters – Pulse Up`;
+        const description = topic.description;
+    
+        const blobUrlPrefix = settings?.blobUrlPrefix || "";
+        const baseShareUrl = settings?.shareTopicBaseUrl || "";
+    
+        const imageUrl = topic.picture
+            ? `${blobUrlPrefix}${topic.picture}`
+            : topic.icon
+                ? `${blobUrlPrefix}${topic.icon}`
+                : "";
+    
+        const url = topic.shareKey ? `${baseShareUrl}${topic.shareKey}` : "";
+    
         this.metadataService.setMetaTags({
-            title: `${topic.title} | Support What Matters – Pulse Up`,
-            description: topic.description,
+            title,
+            description,
+            image: imageUrl || undefined,
+            url: url || undefined
         });
     }
 

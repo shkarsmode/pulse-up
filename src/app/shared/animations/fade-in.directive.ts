@@ -1,4 +1,5 @@
-import { Directive, ElementRef, Input, AfterViewInit } from '@angular/core';
+import { AfterViewInit, Directive, ElementRef, inject, Input } from '@angular/core';
+import { WINDOW } from '../tokens/window.token';
 
 @Directive({
     selector: '[fadeIn]',
@@ -6,12 +7,14 @@ import { Directive, ElementRef, Input, AfterViewInit } from '@angular/core';
 })
 export class FadeInDirective implements AfterViewInit { 
     @Input() childrenFadeIn = false;
+    private isWin = inject(WINDOW);
 
     constructor(
         private el: ElementRef,
     ) {}
 
     ngAfterViewInit(): void {
+        if (!this.isWin) return;
         if(this.childrenFadeIn) this.fadeInChildren()
         else this.fadeIn()
     }
