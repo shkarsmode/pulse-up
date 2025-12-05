@@ -334,6 +334,9 @@ export class TopicService {
     }
 
     public getVotes(topicId: number): Observable<IVote[] | null> {
+        if (typeof window === 'undefined') {
+            return of(null);
+        }
         if (!this.authService.userTokenValue) {
             console.log("Anonymous user, skipping vote fetch");
             return of(null);
