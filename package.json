@@ -7,7 +7,7 @@
     "start:ssr": "npm run version && ng run serve-ssr",
     "serve:ssr": "node dist/go-pulse-webclient/server/server.mjs",
     "build": "ng build --configuration=production && node dist/go-pulse-webclient/server/server.mjs",
-    "build:dev": "ng build --configuration=development && node dist/go-pulse-webclient/server/server.mjs",
+    "build:dev": "ng build --configuration=development",
     "watch": "ng build --watch --configuration development",
     "version": "node src/scripts/version",
     "lint": "ng lint"
