@@ -31,7 +31,7 @@ export class GeolocationService {
     public status$ = this.statusSubject.asObservable();
     private dialogService = inject(DialogService);
 
-    public isSupported = "geolocation" in navigator;
+    public isSupported = typeof window === 'undefined' ? false : "geolocation" in navigator;
 
     get isDev() {
         return environment.production === false;
