@@ -6,7 +6,7 @@ import { PlatformEnum } from '../../enums/user-agent.enum';
 })
 export class PlatformService {
     
-    private userAgent: string = navigator.userAgent;
+    private userAgent: string = typeof window === 'undefined' ? '' : navigator.userAgent;
     
     public getPlatform(): PlatformEnum {
         if (/Android/i.test(this.userAgent)) return PlatformEnum.Android;
