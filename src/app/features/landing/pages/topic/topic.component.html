@@ -100,6 +100,7 @@
                                         (voted)="onVoted()"
                                         (voteExpired)="onVoteExpired()" />
                                 }
+
                                 <app-menu [content]="menuContent">
                                     <button
                                         flatButton
@@ -116,6 +117,30 @@
                                         {{ lastVoteInfo() }}
                                     </div>
                                 </div>
+                            } @else {
+                                @if (!isTopicArchived && currentLocation()?.locationSource) {
+                                    @let isGpsPulseFrom = 
+                                        currentLocation()?.locationSource == LocationSource.Gps;
+                                    <div
+                                        class="pulse-from"
+                                        [class.pulse-from--no-gps]="!isGpsPulseFrom"
+                                        [matTooltip]="
+                                            !isGpsPulseFrom ? 'Edit your location' : ''
+                                        "
+                                        (click)="onChangeLocation()">
+                                        @if (
+                                            isGpsPulseFrom
+                                        ) {
+                                            <svg-icon
+                                                src="assets/svg/pulsed-from-gps.svg"
+                                                alt="Gps" />
+                                        } @else {
+                                            <svg-icon src="assets/svg/edit2.svg" alt="Edit" />
+                                        }
+                                        Pulse from:
+                                        <span>{{ currentLocation()?.details?.fullname }}</span>
+                                    </div>
+                                }
                             }
                         </div>
 

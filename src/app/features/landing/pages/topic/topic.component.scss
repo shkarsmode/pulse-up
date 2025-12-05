@@ -379,3 +379,28 @@ app-container::ng-deep .app-container {
     }
 
 }
+
+.pulse-from {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    font-size: 12px;
+    margin-top: 10px;
+    color: var(--dark-grey-color);
+
+    span {
+        color: black;
+    }
+
+    &--no-gps {
+        cursor: pointer;
+    }
+
+    svg-icon ::ng-deep {
+        svg {
+            height: 14px;
+            margin-right: -7px;
+        }
+    }
+}

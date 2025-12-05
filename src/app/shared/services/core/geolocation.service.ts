@@ -1,9 +1,12 @@
 import { environment } from "@/environments/environment";
 import { inject, Injectable } from "@angular/core";
-import { BehaviorSubject, catchError, firstValueFrom, map, of } from "rxjs";
+import { BehaviorSubject, catchError, firstValueFrom, map, Observable, of } from "rxjs";
+import { ChangeLocationToGpsPopupComponent } from '../../components/popups/change-location-to-gps-popup/change-location-to-gps-popup.component';
+import { LocationSource } from '../../enums/location-source.enum';
 import { IGeolocation, IGeolocationPosition } from "../../interfaces";
 import { GeocodeService } from "../api/geocode.service";
 import { DevSettingsService } from "./dev-settings.service";
+import { DialogService } from './dialog.service';
 import { GeolocationCacheService } from "./geolocation-cache.service";
 import { IpLocationService } from './ip-location.service';
 import { NotificationService } from './notification.service';
@@ -12,6 +15,7 @@ type GeolocationStatus = "initial" | "pending" | "success" | "error";
 
 interface GetCurrentGeolocationOptions {
     enableHighAccuracy?: boolean;
+    forceGps?: boolean;
 }
 
 @Injectable({
@@ -25,6 +29,7 @@ export class GeolocationService {
     private readonly notificationService = inject(NotificationService);
     private statusSubject = new BehaviorSubject<GeolocationStatus>("initial");
     public status$ = this.statusSubject.asObservable();
+    private dialogService = inject(DialogService);
 
     public isSupported = "geolocation" in navigator;
 
@@ -35,62 +40,64 @@ export class GeolocationService {
     async getCurrentGeolocationAsync(
         options?: GetCurrentGeolocationOptions,
     ): Promise<IGeolocation> {
-        const { enableHighAccuracy = true } = options || {};
+        const { enableHighAccuracy = true, forceGps } = options || {};
 
         if (!this.isSupported) {
             this.statusSubject.next("error");
             throw new Error("Your browser doesn’t support geolocation");
         }
 
-        const cachedGeolocation = this.geolocationCacheService.get();
-        if (cachedGeolocation) {
-            this.statusSubject.next("success");
-            return cachedGeolocation;
+        let value;
+        let lastError: unknown = null;
+        if (!forceGps) {
+            const cachedGeolocation = this.geolocationCacheService.get();
+            if (cachedGeolocation && cachedGeolocation?.locationSource) {
+                this.statusSubject.next("success");
+                return cachedGeolocation;
+            }
+
+            this.statusSubject.next("pending");
+            value = await firstValueFrom(
+                this.ipLocationService.detectLocation().pipe(
+                    map(({ location, country, city }) => {
+                        const result: IGeolocation = {
+                            geolocationPosition: {
+                                coords: {
+                                    latitude: location.latitude,
+                                    longitude: location.longitude
+                                }
+                            },
+                            fallback: false,
+                            details: {
+                                fullname: `${city}, ${country}`,
+                                lng: location.longitude,
+                                lat: location.latitude,
+                                city,
+                                country,
+                            },
+                            locationSource: LocationSource.Ip
+                        }
+                        this.statusSubject.next("success");
+    
+                        this.geolocationCacheService.save(result);
+        
+                        return result;
+                    }),
+                    catchError(_ => {
+                        return of({})
+                    }),
+                )
+            );
+        }
+
+        if (value && (value as IGeolocation)?.geolocationPosition) {
+            // this.notificationService.success(
+            //     'Your location has been detected based on your IP address'
+            // );
+            return Promise.resolve(value as IGeolocation);
         }
 
         this.statusSubject.next("pending");
-
-        let lastError: unknown = null;
-
-        const value = await firstValueFrom(
-            this.ipLocationService.detectLocation().pipe(
-                map(({ location, country, city }) => {
-                    const result: IGeolocation = {
-                        geolocationPosition: {
-                            coords: {
-                                latitude: location.latitude,
-                                longitude: location.longitude
-                            }
-                        },
-                        fallback: false,
-                        details: {
-                            fullname: `${city}, ${country}`,
-                            lng: location.longitude,
-                            lat: location.latitude,
-                            city,
-                            country
-                        }
-                    }
-                    this.statusSubject.next("success");
-
-                    this.geolocationCacheService.save(result);
-    
-                    return result;
-                }),
-                catchError(_ => {
-                    return of({})
-                }),
-            )
-        );
-
-        if (value && (value as IGeolocation)?.geolocationPosition) {
-            this.notificationService.success(
-                'Your location has been detected based on your IP address'
-            );
-            return Promise.resolve(value as IGeolocation);
-        }
-        
-
         for (let attempt = 1; attempt <= 3; attempt++) {
             console.log(`Geolocation attempt ${attempt}...`);
             
@@ -149,6 +156,7 @@ export class GeolocationService {
                 const result: IGeolocation = {
                     geolocationPosition: position,
                     details: place,
+                    locationSource: LocationSource.Gps
                 };
                 this.statusSubject.next("success");
 
@@ -183,5 +191,9 @@ export class GeolocationService {
         }
         
         return false;
+    }
+
+    public openChangeLocationDialog(): Observable<void> {
+        return this.dialogService.open(ChangeLocationToGpsPopupComponent).afterClosed();
     }
 }

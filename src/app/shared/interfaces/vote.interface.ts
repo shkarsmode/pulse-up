@@ -1,3 +1,4 @@
+import { LocationSource } from '../enums/location-source.enum';
 export interface IVote {
     id: string;
     topicId: number;
@@ -19,4 +20,5 @@ export interface ISendVoteRequest {
         longitude: number;
     };
     locationName: string;
+    locationSource: LocationSource | undefined;
 }

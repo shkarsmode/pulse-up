@@ -138,7 +138,7 @@ export class VotingService {
                     fallback: true
                 }) as Observable<IGeolocation>
             }),
-            switchMap((geolocation: any) => {
+            switchMap((geolocation: IGeolocation) => {
                 console.log('[VotingService] Geolocation: ', geolocation);
                 console.log(
                     '[VotingService] Geolocation type: ',
@@ -151,6 +151,7 @@ export class VotingService {
                         longitude: geolocation.geolocationPosition.coords.longitude,
                     },
                     locationName: geolocation.details.fullname,
+                    locationSource: geolocation.locationSource,
                     // type: geolocation?.fallback ? 'unverified location' : 'verified location',
                 });
             }),

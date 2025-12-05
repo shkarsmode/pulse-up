@@ -9,11 +9,6 @@
 .pulse-button-wrap {
     position: relative;
     flex-grow: 1;
-    min-height: 60px;
-
-    @include media-2xs {
-        min-height: 60px;
-    }
 }
 
 .pulse-button {

@@ -13,16 +13,19 @@ import { MenuComponent } from "@/app/shared/components/ui-kit/menu/menu.componen
 import { SpinnerComponent } from "@/app/shared/components/ui-kit/spinner/spinner.component";
 import { LoadImgPathDirective } from "@/app/shared/directives/load-img-path/load-img-path.directive";
 import { WaveAnimationDirective } from "@/app/shared/directives/wave-animation/wave-animation.directive";
-import { ITopic } from "@/app/shared/interfaces";
+import { LocationSource } from '@/app/shared/enums/location-source.enum';
+import { IGeolocation, ITopic } from "@/app/shared/interfaces";
 import { FormatNumberPipe } from "@/app/shared/pipes/format-number.pipe";
 import { LinkifyPipe } from "@/app/shared/pipes/linkify.pipe";
 import { AuthenticationService } from "@/app/shared/services/api/authentication.service";
 import { PulseService } from "@/app/shared/services/api/pulse.service";
 import { SettingsService } from "@/app/shared/services/api/settings.service";
 import { DialogService } from "@/app/shared/services/core/dialog.service";
+import { GeolocationService } from '@/app/shared/services/core/geolocation.service';
 import { MetadataService } from '@/app/shared/services/core/metadata.service';
 import { NotificationService } from '@/app/shared/services/core/notification.service';
 import { ProfileService } from '@/app/shared/services/profile/profile.service';
+import { WINDOW } from '@/app/shared/tokens/window.token';
 import { A11yModule } from "@angular/cdk/a11y";
 import { CommonModule } from "@angular/common";
 import {
@@ -33,6 +36,8 @@ import {
     inject,
     OnDestroy,
     OnInit,
+    signal,
+    WritableSignal,
 } from "@angular/core";
 import { takeUntilDestroyed, toObservable } from "@angular/core/rxjs-interop";
 import { MatMenuModule } from '@angular/material/menu';
@@ -106,9 +111,11 @@ export class TopicComponent implements OnInit, OnDestroy {
     private notificationService = inject(NotificationService);
     public topicService = inject(TopicService);
     public profileService: ProfileService = inject(ProfileService);
+    public geoLocationService: GeolocationService = inject(GeolocationService);
 
     private meta = inject(Meta);
     private title = inject(Title);
+    private isWin = inject(WINDOW);
 
     private mutationObserver: MutationObserver | null = null;
 
@@ -154,6 +161,9 @@ export class TopicComponent implements OnInit, OnDestroy {
             return "";
         }),
     );
+    public currentLocation: WritableSignal<IGeolocation | null> = signal(null);
+    public LocationSource: typeof LocationSource = LocationSource;
+
     public get lastPulseTime() {
         return this.topicService.lastPulseTime();
     }
@@ -171,13 +181,31 @@ export class TopicComponent implements OnInit, OnDestroy {
         });
     }
 
-    ngOnInit(): void {
+    public ngOnInit(): void {
         this.updatePageData();
+
+        if (!this.isWin) return;
+
+        this.geoLocationService.getCurrentGeolocationAsync().then((location) => {
+            this.currentLocation.set(location);
+        });
     }
 
     ngOnDestroy(): void {
         this.mutationObserver?.disconnect();
         this.topicService.clearPageData();
+    }
+
+    public onChangeLocation(): void {
+        if (this.currentLocation()?.locationSource === LocationSource.Gps) return;
+
+        this.geoLocationService.openChangeLocationDialog()
+            .pipe(first())
+            .subscribe(_ => {
+                this.geoLocationService.getCurrentGeolocationAsync().then((location) => {
+                    this.currentLocation.set(location);
+                });
+            });
     }
 
     public onMapLoaded(map: mapboxgl.Map): void {
