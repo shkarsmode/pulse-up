@@ -136,6 +136,14 @@ export class TopicService {
         return "";
     });
 
+    public lastVote = computed(() => {
+        const votes = this.votes();
+        if (votes && votes[0]) {
+            return votes[0]
+        }
+        return null;
+    });
+
     public suggestions = toSignal(
         toObservable(this.topicQuery.data).pipe(
             switchMap((topic) => {

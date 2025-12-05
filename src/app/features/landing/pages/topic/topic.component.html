@@ -112,7 +112,10 @@
                             </div>
                             @if (isActiveVote()) {
                                 <div class="active-pulse-location">
-                                    <svg-icon src="assets/svg/pin.svg" />
+                                    <svg-icon
+                                        [class.accent]="isTopicPulsedByGps()"
+                                        [matTooltip]="isTopicPulsedByGps() ? 'Pulsed with GPS' : ''"
+                                        src="assets/svg/pin.svg" />
                                     <div class="active-pulse-location__text">
                                         {{ lastVoteInfo() }}
                                     </div>

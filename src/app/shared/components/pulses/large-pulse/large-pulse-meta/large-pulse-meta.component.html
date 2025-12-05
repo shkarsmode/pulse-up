@@ -4,6 +4,8 @@
     <svg-icon
         [src]="icon"
         [ariaLabel]="label"
-        class="card-meta-icon" />
+        class="card-meta-icon"
+        [class.accent]="accent"
+        [matTooltip]="accent ? 'Pulsed with GPS' : ''" />
 }
 <h4 class="card-meta-text">{{ text }}</h4>

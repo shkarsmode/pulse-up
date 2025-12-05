@@ -31,6 +31,7 @@ import { CommonModule } from "@angular/common";
 import {
     ChangeDetectionStrategy,
     Component,
+    computed,
     DestroyRef,
     effect,
     inject,
@@ -139,6 +140,9 @@ export class TopicComponent implements OnInit, OnDestroy {
     public qrCodeBannerText = this.topicService.qrCodeBannerText;
     public keywords = this.topicService.keywords;
     public mapCenterCoordinates = this.topicService.mapCenterCoordinates;
+    public isTopicPulsedByGps = computed(() => {
+        return this.topicService.lastVote()?.locationSource === LocationSource.Gps;
+    });
     public topicIcon$ = combineLatest([
         toObservable(this.topicService.topic),
         this.settingsService.settings$,

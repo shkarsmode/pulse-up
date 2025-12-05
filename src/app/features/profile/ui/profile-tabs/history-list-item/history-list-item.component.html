@@ -25,7 +25,8 @@
                     <app-large-pulse-meta
                         [text]="vote.location"
                         icon="assets/svg/pin.svg"
-                        label="location" />
+                        label="location"
+                        [accent]="vote.locationSource === LocationSource.Gps" />
                 </div>
             </div>
         </div>

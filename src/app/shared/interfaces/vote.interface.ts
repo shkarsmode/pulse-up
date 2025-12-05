@@ -4,6 +4,7 @@ export interface IVote {
     topicId: number;
     location: string;
     updatedAt: string;
+    locationSource: LocationSource;
 }
 
 export interface IGetMyVotesRequest {

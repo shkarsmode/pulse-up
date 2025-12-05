@@ -1,26 +1,30 @@
-@use "../../../../../../styles/mixins" as *;
+@use "../../../../../../styles/mixins"as *;
 
 :host {
-  display: flex;
-  align-items: center;
-  column-gap: 8px;
+    display: flex;
+    align-items: center;
+    column-gap: 8px;
 }
 
 .card-meta-icon {
-  width: 16px;
-  height: 16px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
+    width: 16px;
+    height: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
 
-  svg {
-    width: 100%;
-    height: 100%;
-  }
+    svg {
+        width: 100%;
+        height: 100%;
+    }
+}
+
+svg-icon.accent ::ng-deep path {
+    fill: rgb(34 197 94);
 }
 
 .card-meta-text {
-  @include text-14px;
-  color: var(--dark-grey-color);
+    @include text-14px;
+    color: var(--dark-grey-color);
 }

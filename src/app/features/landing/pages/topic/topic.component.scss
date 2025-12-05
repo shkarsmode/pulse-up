@@ -142,6 +142,11 @@ app-container::ng-deep .app-container {
     }
 }
 
+svg-icon.accent ::ng-deep path {
+    fill: rgb(34 197 94);
+}
+
+
 .actions {
     width: 100%;
     max-width: 400px;
