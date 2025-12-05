@@ -3,20 +3,12 @@
     "apps": [],
     "details": [
       {
-        "appIDs": [
-          "F3NVCH942C.com.pulseup"
-        ],
-        "components": [
-          {
-            "/": "/topic/*"
-          }
+        "appID": "F3NVCH942C.com.pulseup",
+        "paths": [
+          "*",
+          "/*"
         ]
       }
-    ]
-  },
-  "appclips": {
-    "apps": [
-      "F3NVCH942C.com.pulseup.Clip"
     ]
   },
   "activitycontinuation": {
