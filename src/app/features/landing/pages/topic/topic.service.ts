@@ -266,6 +266,7 @@ export class TopicService {
     
         const url = topic.shareKey ? `${baseShareUrl}${topic.shareKey}` : "";
     
+        console.log("Updating metadata for topic:", { title, description, imageUrl, url }); 
         this.metadataService.setMetaTags({
             title,
             description,

@@ -32,6 +32,7 @@ export class MetadataService {
     }
     public setMetaTags(config: IMetadataConfig): void {
         const { title, description, image, url } = config;
+        console.log("Setting meta tags with config:", config);
 
         if (title) {
             this.title.setTitle(title);
