@@ -68,6 +68,8 @@ export class MetadataService {
     }
 
     public listenToRouteChanges(router: Router, activatedRoute: ActivatedRoute): void {
+        if (typeof window === 'undefined') return;
+        
         if (!this.defaultTitle) this.defaultTitle = this.getTitle();
         if (!this.defaultDescription) this.defaultDescription =
             this.getMetaTag("description") || "";
