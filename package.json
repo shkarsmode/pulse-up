@@ -6,11 +6,12 @@
     "start": "npm run version && ng serve --host 127.0.0.1 --port 3000",
     "start:ssr": "npm run version && ng run serve-ssr",
     "serve:ssr": "node dist/go-pulse-webclient/server/server.mjs",
-    "build": "ng build --configuration=production && node dist/go-pulse-webclient/server/server.mjs",
+    "build": "npm run build:ssr",
     "build:dev": "ng build --configuration=development",
     "watch": "ng build --watch --configuration development",
     "version": "node src/scripts/version",
-    "lint": "ng lint"
+    "lint": "ng lint",
+    "build:ssr": "ng build --configuration=production && ng run go-pulse-webclient:server"
   },
   "private": true,
   "dependencies": {
