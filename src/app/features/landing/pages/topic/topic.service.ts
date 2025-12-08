@@ -266,6 +266,7 @@ export class TopicService {
     
         const url = topic.shareKey ? `${baseShareUrl}${topic.shareKey}` : "";
     
+        console.log("Updating metadata for topic:", { title, description, imageUrl, url }); 
         this.metadataService.setMetaTags({
             title,
             description,
@@ -334,6 +335,9 @@ export class TopicService {
     }
 
     public getVotes(topicId: number): Observable<IVote[] | null> {
+        if (typeof window === 'undefined') {
+            return of(null);
+        }
         if (!this.authService.userTokenValue) {
             console.log("Anonymous user, skipping vote fetch");
             return of(null);

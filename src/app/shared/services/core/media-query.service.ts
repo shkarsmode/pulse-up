@@ -1,5 +1,5 @@
 import { Injectable } from "@angular/core";
-import { Observable, fromEvent, map, shareReplay, startWith } from "rxjs";
+import { Observable, fromEvent, map, of, shareReplay, startWith } from "rxjs";
 import { Breakpoints } from "../../enums/breakpoints.enum";
 
 interface MediaQueryOptions {
@@ -31,6 +31,9 @@ export class MediaQueryService {
         parameter?: "width" | "height",
     ): Observable<boolean> {
         // Normalize arguments to config object
+        if (typeof window === 'undefined') {
+            return of(false);
+        }
         const config: MediaQueryOptions =
             typeof arg1 === "string"
                 ? {

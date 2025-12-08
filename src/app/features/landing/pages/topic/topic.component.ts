@@ -141,6 +141,7 @@ export class TopicComponent implements OnInit, OnDestroy {
     public keywords = this.topicService.keywords;
     public mapCenterCoordinates = this.topicService.mapCenterCoordinates;
     public isTopicPulsedByGps = computed(() => {
+        if (!this.isWin) return false;
         return this.topicService.lastVote()?.locationSource === LocationSource.Gps;
     });
     public topicIcon$ = combineLatest([

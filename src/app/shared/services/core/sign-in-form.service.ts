@@ -135,6 +135,8 @@ export class SignInFormService {
     };
 
     public onViewInit = (inputElement: HTMLInputElement) => {
+        if (typeof window === 'undefined') return;
+        
         this.iti = intlTelInput(inputElement, {
             nationalMode: false,
             formatOnDisplay: true,
