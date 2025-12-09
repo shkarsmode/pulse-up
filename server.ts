@@ -8,7 +8,13 @@ import bootstrap from './src/main.server';
 // The Express app is exported so that it can be used by serverless Functions.
 export function app(): express.Express {
     const server = express();
-    const distFolder = join(process.cwd(), 'dist/go-pulse-webclient/browser');
+    const browserFolderFromDist = join(process.cwd(), 'dist/go-pulse-webclient/browser');
+    const browserFolderDeployed = join(process.cwd(), 'go-pulse-webclient/browser');
+
+    const distFolder = existsSync(browserFolderFromDist)
+        ? browserFolderFromDist     // local
+        : browserFolderDeployed;    // Azure
+
     const indexHtml = existsSync(join(distFolder, 'index.original.html'))
         ? join(distFolder, 'index.original.html')
         : join(distFolder, 'index.html');
