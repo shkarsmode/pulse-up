@@ -1,39 +1,39 @@
 # Node.js
 # Build a general Node.js project with npm.
-# Add steps that analyze code, save build artifacts, deploy, and more:
-# https://docs.microsoft.com/azure/devops/pipelines/languages/javascript
 
 trigger:
-# NB! dev env: master, prod env: release
-- master
+    # NB! dev env: master, prod env: release
+    - master
 
 pool:
-  vmImage: ubuntu-latest
+    vmImage: ubuntu-latest
 
 steps:
-- task: NodeTool@0
-  inputs:
-    versionSpec: '24.x'
-  displayName: 'Install Node.js'
+    - task: NodeTool@0
+      displayName: 'Install Node.js'
+      inputs:
+          versionSpec: '20.x'
 
-- script: |
-    npm install
-    npm run build:dev
-  displayName: 'npm install and build (dev)'
+    - script: |
+          npm install
+          npm run build:dev
 
-- task: CopyFiles@2
-  inputs:
-    sourceFolder: '$(Build.SourcesDirectory)'
-    contents: |
-        dist/go-pulse-webclient/browser/**
-        dist/go-pulse-webclient/server/**
-        public/**
-    targetFolder: '$(Build.ArtifactStagingDirectory)'
-  displayName: 'Copy dist files'
+          if [ -f public/web.config ]; then
+              cp public/web.config dist/web.config
+          fi
+      displayName: 'npm install, build (dev) and copy web.config'
 
-- task: PublishPipelineArtifact@1
-  inputs:
-    artifactName: pulsewebapp
-    targetPath: '$(Build.ArtifactStagingDirectory)'
-    publishLocation: 'pipeline'
-  displayName: 'Publish build artifacts'
+    - task: CopyFiles@2
+      displayName: 'Copy dist folder to artifact staging'
+      inputs:
+          sourceFolder: '$(Build.SourcesDirectory)'
+          contents: |
+              dist/**
+          targetFolder: '$(Build.ArtifactStagingDirectory)'
+
+    - task: PublishPipelineArtifact@1
+      displayName: 'Publish build artifacts'
+      inputs:
+          artifactName: 'pulsewebapp'
+          targetPath: '$(Build.ArtifactStagingDirectory)'
+          publishLocation: 'pipeline'
