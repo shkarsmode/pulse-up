@@ -18,8 +18,8 @@ steps:
           npm install
           npm run build:dev
 
-          if [ -f public/web.config ]; then
-              cp public/web.config dist/go-pulse-webclient/web.config
+          if [ -f public/nodejs.web.config ]; then
+              cp public/nodejs.web.config dist/go-pulse-webclient/web.config
           fi
       displayName: 'npm install, build (dev) and copy web.config'
 
