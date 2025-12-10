@@ -15,7 +15,7 @@ export const LOCAL_STORAGE_KEYS = {
     geolocationCache: "geolocation_cache",
 } as const;
 
-type LocalStorageKey = typeof LOCAL_STORAGE_KEYS[keyof typeof LOCAL_STORAGE_KEYS];
+export type LocalStorageKey = typeof LOCAL_STORAGE_KEYS[keyof typeof LOCAL_STORAGE_KEYS];
 
 
 export class LocalStorageService {

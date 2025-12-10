@@ -78,9 +78,9 @@ export class GeolocationService {
                             locationSource: LocationSource.Ip
                         }
                         this.statusSubject.next("success");
-    
+
                         this.geolocationCacheService.save(result);
-        
+
                         return result;
                     }),
                     catchError(_ => {
@@ -100,7 +100,7 @@ export class GeolocationService {
         this.statusSubject.next("pending");
         for (let attempt = 1; attempt <= 3; attempt++) {
             console.log(`Geolocation attempt ${attempt}...`);
-            
+
             try {
                 // 1. Get position
                 const position: IGeolocationPosition = await new Promise((resolve, reject) => {
@@ -189,7 +189,7 @@ export class GeolocationService {
         if (cachedGeolocation) {
             return true;
         }
-        
+
         return false;
     }
 

@@ -1,15 +1,21 @@
 import { Injectable } from "@angular/core";
 import { IGeolocation } from "../../interfaces";
-import { LOCAL_STORAGE_KEYS, LocalStorageService } from "./local-storage.service";
+import { LOCAL_STORAGE_KEYS, LocalStorageKey, LocalStorageService } from "./local-storage.service";
+
+interface IGeolocationCacheStoragePayload {
+    geolocation: IGeolocation;
+    timestamp: number;
+}
 
 @Injectable({
-    providedIn: "root",
+    providedIn: "root"
 })
 export class GeolocationCacheService {
-    private geolocationCache: IGeolocation | null = null;
-    private timestamp: number | null = null;
-    private readonly expiryTime = 1000 * 60 * 60; // 1 hour
-    private readonly storageKey = LOCAL_STORAGE_KEYS.geolocationCache;
+    private cachedGeolocation: IGeolocation | null = null;
+    private cachedAtTimestamp: number | null = null;
+
+    private readonly cacheLifetimeMs: number = 60 * 60 * 1000;
+    private readonly storageKey: LocalStorageKey = LOCAL_STORAGE_KEYS.geolocationCache;
 
     constructor() {
         this.syncWithStorage();
@@ -18,47 +24,60 @@ export class GeolocationCacheService {
     public get(): IGeolocation | null {
         if (this.isExpired()) {
             this.clear();
+            return null;
         }
-        return this.geolocationCache;
+
+        return this.cachedGeolocation;
     }
 
-    public save(geolocation: IGeolocation) {
-        this.geolocationCache = geolocation;
-        this.timestamp = Date.now();
+    public save(geolocation: IGeolocation): void {
+        this.cachedGeolocation = geolocation;
+        this.cachedAtTimestamp = Date.now();
         this.saveToStorage();
     }
 
-    public clear() {
-        this.geolocationCache = null;
-        this.timestamp = null;
+    public clear(): void {
+        this.cachedGeolocation = null;
+        this.cachedAtTimestamp = null;
         this.removeFromStorage();
     }
 
     private isExpired(): boolean {
-        return !!this.timestamp && Date.now() - this.timestamp > this.expiryTime;
-    }
-
-    private syncWithStorage() {
-        const storedData = LocalStorageService.get<{
-            geolocation: IGeolocation;
-            timestamp: number;
-        }>(this.storageKey);
-        if (storedData) {
-            this.geolocationCache = storedData.geolocation;
-            this.timestamp = storedData.timestamp;
+        if (!this.cachedAtTimestamp) {
+            return false;
         }
+
+        const elapsedSinceCacheMs = Date.now() - this.cachedAtTimestamp;
+        return elapsedSinceCacheMs > this.cacheLifetimeMs;
     }
 
-    private saveToStorage() {
-        if (this.geolocationCache && this.timestamp) {
-            LocalStorageService.set(this.storageKey, {
-                geolocation: this.geolocationCache,
-                timestamp: this.timestamp,
-            });
+    private syncWithStorage(): void {
+        const storedData = LocalStorageService.get<IGeolocationCacheStoragePayload>(
+            this.storageKey
+        );
+
+        if (!storedData) {
+            return;
         }
+
+        this.cachedGeolocation = storedData.geolocation;
+        this.cachedAtTimestamp = storedData.timestamp;
     }
 
-    private removeFromStorage() {
+    private saveToStorage(): void {
+        if (!this.cachedGeolocation || !this.cachedAtTimestamp) {
+            return;
+        }
+
+        const payload: IGeolocationCacheStoragePayload = {
+            geolocation: this.cachedGeolocation,
+            timestamp: this.cachedAtTimestamp
+        };
+
+        LocalStorageService.set(this.storageKey, payload);
+    }
+
+    private removeFromStorage(): void {
         LocalStorageService.remove(this.storageKey);
     }
 }

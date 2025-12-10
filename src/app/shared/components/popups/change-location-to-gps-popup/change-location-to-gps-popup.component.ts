@@ -13,7 +13,12 @@ import { PrimaryButtonComponent } from '../../ui-kit/buttons/primary-button/prim
 @Component({
     selector: 'app-change-location-to-gps-popup',
     standalone: true,
-    imports: [CloseButtonComponent, PrimaryButtonComponent, AsyncPipe, SvgIconComponent],
+    imports: [
+        CloseButtonComponent, 
+        PrimaryButtonComponent, 
+        AsyncPipe, 
+        SvgIconComponent
+    ],
     templateUrl: './change-location-to-gps-popup.component.html',
     styleUrl: './change-location-to-gps-popup.component.scss',
     changeDetection: ChangeDetectionStrategy.OnPush
@@ -31,7 +36,7 @@ export class ChangeLocationToGpsPopupComponent implements OnInit {
         this.initGeolocationStatusListener();
         this.geolocationService.getCurrentGeolocationAsync().then((location) => {
             this.currentLocation.set(location);
-        })
+        });
     }
 
     private initGeolocationStatusListener(): void {

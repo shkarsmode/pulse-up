@@ -1,31 +1,47 @@
-<div id="popup">
-    <app-close-button 
+<div
+    id="popup"
+    class="change-location-to-gps-popup">
+
+    <app-close-button
         id="close"
         (handleClick)="onCloseDialog()" />
 
     @if (currentLocation()?.locationSource !== LocationSource.Gps) {
-        <h1>Verify Your Location</h1>
-        <h3>
+        <h1 class="change-location-to-gps-popup__title">
+            Verify Your Location
+        </h1>
+
+        <h3 class="change-location-to-gps-popup__subtitle">
             <strong>Your pulse matters!</strong>
             Crediting it to the right city makes it more accurate for decision-makers.
         </h3>
-    
-        <div class="location-wrap">
-            <div>
+
+        <div class="change-location-to-gps-popup__location">
+            <div class="change-location-to-gps-popup__location-icon">
                 <svg-icon src="assets/svg/pulsed-from-gps.svg" />
             </div>
-            <div>
-                <span>Detected location:</span>
-                <span>{{ currentLocation()?.details?.fullname }}</span>
-                <span>IP detection can sometimes show the wrong city</span>
+
+            <div class="change-location-to-gps-popup__location-content">
+                <span class="change-location-to-gps-popup__location-label">
+                    Detected location:
+                </span>
+
+                <span class="change-location-to-gps-popup__location-name">
+                    {{ currentLocation()?.details?.fullname }}
+                </span>
+
+                <span class="change-location-to-gps-popup__location-note">
+                    IP detection can sometimes show the wrong city
+                </span>
             </div>
         </div>
 
-        <div class="button-title">
+        <div class="change-location-to-gps-popup__button-title">
             For exact location:
         </div>
 
         <app-primary-button
+            class="change-location-to-gps-popup__primary-button"
             type="submit"
             [fullWidth]="true"
             [loading]="(geolocationService.status$ | async) === 'pending'"
@@ -34,30 +50,40 @@
             Enable Location Access
         </app-primary-button>
 
-        <div class="button-subtitle">
+        <div class="change-location-to-gps-popup__button-subtitle">
             Or use our mobile app for automatic GPS verification
         </div>
     } @else {
-        <h1>Location Verified!</h1>
-        <h3>
+        <h1 class="change-location-to-gps-popup__title">
+            Location Verified!
+        </h1>
+
+        <h3 class="change-location-to-gps-popup__subtitle">
             <strong>Your pulse is credited to the exact right place.</strong>
         </h3>
-    
-        <h4>Decision-makers can see exactly where support is strongest.</h4>
 
-        <div class="location-wrap location-wrap--success">
-            <div>
+        <h4 class="change-location-to-gps-popup__description">
+            Decision-makers can see exactly where support is strongest.
+        </h4>
+
+        <div class="change-location-to-gps-popup__location change-location-to-gps-popup__location--success">
+            <div class="change-location-to-gps-popup__location-icon">
                 <svg-icon src="assets/svg/pulsed-from-gps.svg" />
             </div>
-            <div>
-                <span>Pulse location:</span>
-                <span>{{ currentLocation()?.details?.fullname }}</span>
+
+            <div class="change-location-to-gps-popup__location-content">
+                <span class="change-location-to-gps-popup__location-label">
+                    Pulse location:
+                </span>
+
+                <span class="change-location-to-gps-popup__location-name">
+                    {{ currentLocation()?.details?.fullname }}
+                </span>
             </div>
         </div>
 
-        <div class="you-all-set">
+        <div class="change-location-to-gps-popup__status-message">
             You're all set! Your pulse has maximum impact. 🎉
         </div>
     }
-
 </div>

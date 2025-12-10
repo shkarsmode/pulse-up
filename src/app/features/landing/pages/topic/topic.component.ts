@@ -207,9 +207,10 @@ export class TopicComponent implements OnInit, OnDestroy {
         this.geoLocationService.openChangeLocationDialog()
             .pipe(first())
             .subscribe(_ => {
-                this.geoLocationService.getCurrentGeolocationAsync().then((location) => {
-                    this.currentLocation.set(location);
-                });
+                this.geoLocationService.getCurrentGeolocationAsync()
+                    .then((location) => 
+                        this.currentLocation.set(location)
+                    );
             });
     }
 
