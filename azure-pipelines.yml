@@ -17,11 +17,7 @@ steps:
     - script: |
           npm install
           npm run build:dev
-
-          if [ -f public/nodejs.web.config ]; then
-              cp public/nodejs.web.config dist/go-pulse-webclient/web.config
-          fi
-      displayName: 'npm install, build (dev) and copy web.config'
+      displayName: 'npm install and build (dev)'
 
     - task: CopyFiles@2
       displayName: 'Copy dist folder to artifact staging'
