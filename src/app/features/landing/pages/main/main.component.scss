@@ -16,7 +16,7 @@ section.section {
     }
 
     &:first-child {
-        padding-top: 150px;
+        // padding-top: 150px;
 
         @include media-lg {
             padding-top: 80px;

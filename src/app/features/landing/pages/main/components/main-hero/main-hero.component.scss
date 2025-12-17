@@ -26,6 +26,10 @@
     }
 }
 
+.text-dot {
+    color: hsl(0,90%,65%);
+}
+
 .hero__content {
     position: absolute;
     top: 50%;
@@ -83,7 +87,10 @@
     }
 }
 .hero__title {
-    @include title-32px;
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+    font-size: 3rem;
     margin-bottom: 16px;
 
     @include media-sm {
@@ -99,9 +106,11 @@
 .hero__description {
     @include text-16px;
     margin-bottom: 40px;
+    text-align: left;
+    color: hsl(215 20% 85% / var(--tw-text-opacity, 1));
 
     @include media-lg {
-        text-align: center;
+        text-align: left;
     }
     @include media-sm {
         max-width: 300px;
@@ -124,7 +133,7 @@
 }
 .hero__actions {
     display: flex;
-    justify-content: center;
+    justify-content: flex-start;
     column-gap: 16px;
     @include media-lg {
         margin: 0 auto;

@@ -11,6 +11,55 @@ h2 {
     }
 }
 
+.stats-strip {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 160px;
+
+    padding: 40px 24px 44px;
+
+    background: #ffffff;
+    // border-top: 1px solid #e2e8f0;
+    border-bottom: 1px solid #e2e8f0;
+    margin-bottom: 50px;
+}
+
+.stats-strip__item {
+    min-width: 180px;
+    text-align: center;
+}
+
+.stats-strip__value {
+    font-size: 56px;
+    line-height: 1;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    color: #0f172a;
+}
+
+.stats-strip__label {
+    margin-top: 8px;
+    font-size: 13px;
+    line-height: 1.2;
+    font-weight: 500;
+    color: #64748b;
+}
+
+@media (max-width: 900px) {
+    .stats-strip {
+        gap: 56px;
+    }
+
+    .stats-strip__item {
+        min-width: 140px;
+    }
+
+    .stats-strip__value {
+        font-size: 44px;
+    }
+}
+
 .pulses {
     display: flex;
     justify-content: center;
