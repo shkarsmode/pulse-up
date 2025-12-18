@@ -12,7 +12,8 @@
     "version": "node src/scripts/version",
     "lint": "ng lint",
     "vercel-build": "npm run build:ssr",
-    "build:ssr": "ng build --configuration=production && ng run go-pulse-webclient:server"
+    "build:ssr": "ng build --configuration=development && ng run go-pulse-webclient:server",
+    "build:ssr:prod": "ng build --configuration=production && ng run go-pulse-webclient:server"
   },
   "private": true,
   "dependencies": {
