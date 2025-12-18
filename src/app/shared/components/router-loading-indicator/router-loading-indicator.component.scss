@@ -10,4 +10,13 @@
     background-color: white;
 
     z-index: 110;
+
+    opacity: 1;
+
+    transition: all .4s;
+
+    &:has(app-logo.finished-loading) {
+        opacity: 0;
+        pointer-events: none;
+    }
 }

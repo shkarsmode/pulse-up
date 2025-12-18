@@ -1,15 +1,11 @@
-import { Component, DestroyRef, HostBinding, inject, OnInit } from "@angular/core";
-import { CommonModule } from "@angular/common";
-import {
-    Router,
-    NavigationCancel,
-    NavigationEnd,
-    NavigationError,
-    NavigationStart,
-} from "@angular/router";
 import { animate, state, style, transition, trigger } from "@angular/animations";
+import { CommonModule } from "@angular/common";
+import { Component, DestroyRef, inject, OnInit } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
-import { BehaviorSubject, combineLatest, distinctUntilChanged, map, tap } from "rxjs";
+import {
+    Router
+} from "@angular/router";
+import { BehaviorSubject, combineLatest, distinctUntilChanged, map } from "rxjs";
 import { LogoComponent } from "./logo/logo.component";
 import { RouterLoadingIndicatorService } from "./router-loading-indicator.service";
 
@@ -32,12 +28,12 @@ export class RouterLoadingIndicatorComponent implements OnInit {
     private destroyRef = inject(DestroyRef);
     private loadingIndicatorService = inject(RouterLoadingIndicatorService);
 
-    @HostBinding("@fade") get fadeAnimation() {
-        return this.isLoading ? "visible" : "hidden";
-    }
-    @HostBinding("style.pointerEvents") pointerEvents = "auto";
-    @HostBinding("style.visibility") visibility = "visible";
-    @HostBinding("style.zIndex") zIndex = "110";
+    // @HostBinding("@fade") get fadeAnimation() {
+    //     return this.isLoading ? "visible" : "hidden";
+    // }
+    // @HostBinding("style.pointerEvents") pointerEvents = "auto";
+    // @HostBinding("style.visibility") visibility = "visible";
+    // @HostBinding("style.zIndex") zIndex = "110";
 
     private isNavigating = new BehaviorSubject<boolean>(true);
     private isLoading = false;
@@ -51,22 +47,25 @@ export class RouterLoadingIndicatorComponent implements OnInit {
     );
 
     ngOnInit() {
-        this.router.events
-            .pipe(
-                tap((event) => {
-                    if (event instanceof NavigationStart) {
-                        this.isNavigating.next(true);
-                    } else if (
-                        event instanceof NavigationEnd ||
-                        event instanceof NavigationCancel ||
-                        event instanceof NavigationError
-                    ) {
-                        this.isNavigating.next(false);
-                    }
-                }),
-                takeUntilDestroyed(this.destroyRef),
-            )
-            .subscribe();
+        setTimeout(() => {
+            this.isNavigating.next(false);
+        }, 1000);
+        // this.router.events
+        //     .pipe(
+        //         tap((event) => {
+        //             if (event instanceof NavigationStart) {
+        //                 this.isNavigating.next(true);
+        //             } else if (
+        //                 event instanceof NavigationEnd ||
+        //                 event instanceof NavigationCancel ||
+        //                 event instanceof NavigationError
+        //             ) {
+        //                 this.isNavigating.next(false);
+        //             }
+        //         }),
+        //         takeUntilDestroyed(this.destroyRef),
+        //     )
+        //     .subscribe();
 
         this.isLoading$
             .pipe(takeUntilDestroyed(this.destroyRef))
@@ -75,16 +74,16 @@ export class RouterLoadingIndicatorComponent implements OnInit {
 
     private setIsLoading(isLoading: boolean) {
         this.isLoading = isLoading;
-        if (isLoading) {
-            this.pointerEvents = "auto";
-            this.visibility = "visible";
-            this.zIndex = "110";
-        } else {
-            setTimeout(() => {
-                this.pointerEvents = "none";
-                this.visibility = "hidden";
-                this.zIndex = "-1";
-            }, 150); // matches fade animation duration
-        }
+        // if (isLoading) {
+        //     this.pointerEvents = "auto";
+        //     this.visibility = "visible";
+        //     this.zIndex = "110";
+        // } else {
+        //     // setTimeout(() => {
+        //     //     this.pointerEvents = "none";
+        //     //     this.visibility = "hidden";
+        //     //     this.zIndex = "-1";
+        //     // }, 150); // matches fade animation duration
+        // }
     }
 }
