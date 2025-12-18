@@ -8,13 +8,7 @@ import bootstrap from './src/main.server';
 // The Express app is exported so that it can be used by serverless Functions.
 export function app(): express.Express {
     const server = express();
-    const browserFolderFromDist = join(process.cwd(), 'dist/go-pulse-webclient/browser');
-    const browserFolderDeployed = join(process.cwd(), 'go-pulse-webclient/browser');
-
-    const distFolder = existsSync(browserFolderFromDist)
-        ? browserFolderFromDist     // local
-        : browserFolderDeployed;    // Azure
-
+    const distFolder = join(process.cwd(), 'dist/go-pulse-webclient/browser');
     const indexHtml = existsSync(join(distFolder, 'index.original.html'))
         ? join(distFolder, 'index.original.html')
         : join(distFolder, 'index.html');
@@ -50,14 +44,14 @@ export function app(): express.Express {
     return server;
 }
 
-function run(): void {
-    const port = process.env['PORT'] || 4000;
+// function run(): void {
+//     const port = process.env['PORT'] || 4000;
 
-    // Start up the Node server
-    const server = app();
-    server.listen(port, () => {
-        console.log(`Node Express server listening on http://localhost:${port}`);
-    });
-}
+//     // Start up the Node server
+//     const server = app();
+//     server.listen(port, () => {
+//         console.log(`Node Express server listening on http://localhost:${port}`);
+//     });
+// }
 
-run();
+// run();

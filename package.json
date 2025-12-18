@@ -11,7 +11,8 @@
     "watch": "ng build --watch --configuration development",
     "version": "node src/scripts/version",
     "lint": "ng lint",
-    "build:ssr": "ng build --configuration=production"
+    "vercel-build": "npm run build:ssr",
+    "build:ssr": "ng build --configuration=production && ng run go-pulse-webclient:server"
   },
   "private": true,
   "dependencies": {
