@@ -1,0 +1,16 @@
+{
+    "version": 2,
+    "public": true,
+    "name": "go-pulse-webclient",
+    "rewrites": [
+        {
+            "source": "/(.*)",
+            "destination": "/api"
+        }
+    ],
+    "functions": {
+        "api/index.js": {
+            "includeFiles": "dist/go-pulse-webclient/**"
+        }
+    }
+}
