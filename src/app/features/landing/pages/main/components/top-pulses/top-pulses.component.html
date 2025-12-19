@@ -1,17 +1,17 @@
 <div class="stats-strip">
     <div class="stats-strip__item">
-        <div class="stats-strip__value">97</div>
+        <div class="stats-strip__value">{{ stats().activeTopics }}</div>
         <div class="stats-strip__label">Active Topics</div>
     </div>
 
     <div class="stats-strip__item">
-        <div class="stats-strip__value">34,359</div>
+        <div class="stats-strip__value">{{ stats().totalUsers }}</div>
         <div class="stats-strip__label">Total Pulses</div>
     </div>
 
     <div class="stats-strip__item">
-        <div class="stats-strip__value">13,823</div>
-        <div class="stats-strip__label">Verified Supporters</div>
+        <div class="stats-strip__value">{{ stats().totalVotes | formatNumber }}</div>
+        <div class="stats-strip__label">Total Votes</div>
     </div>
 </div>
 
