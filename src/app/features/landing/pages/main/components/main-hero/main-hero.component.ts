@@ -1,16 +1,16 @@
+import { MapHeatmapLayerComponent } from "@/app/shared/components/map/map-heatmap-layer/map-heatmap-layer.component";
+import { MapHexagonsLayerComponent } from "@/app/shared/components/map/map-hexagons-layer/map-hexagons-layer.component";
 import { MapComponent } from "@/app/shared/components/map/map.component";
 import { PrimaryButtonComponent } from "@/app/shared/components/ui-kit/buttons/primary-button/primary-button.component";
 import { SecondaryButtonComponent } from "@/app/shared/components/ui-kit/buttons/secondary-button/secondary-button.component";
 import { AppRoutes } from "@/app/shared/enums/app-routes.enum";
 import { MediaQueryService } from "@/app/shared/services/core/media-query.service";
+import { GlobeSpinnerService } from "@/app/shared/services/map/globe-spinner.service";
 import { CommonModule } from "@angular/common";
-import { Component, effect, ElementRef, inject, ViewChild, AfterViewInit } from "@angular/core";
+import { AfterViewInit, Component, effect, ElementRef, inject, ViewChild } from "@angular/core";
 import { toSignal } from "@angular/core/rxjs-interop";
 import { Router, RouterModule } from "@angular/router";
 import mapboxgl, { EventData, MapStyleDataEvent } from "mapbox-gl";
-import { MapHexagonsLayerComponent } from "@/app/shared/components/map/map-hexagons-layer/map-hexagons-layer.component";
-import { MapHeatmapLayerComponent } from "@/app/shared/components/map/map-heatmap-layer/map-heatmap-layer.component";
-import { GlobeSpinnerService } from "@/app/shared/services/map/globe-spinner.service";
 
 @Component({
     selector: "app-main-hero",
@@ -73,16 +73,16 @@ export class MainHeroComponent implements AfterViewInit {
             this.zoom = this.isXXXSMobile()
                 ? 0.45
                 : this.isXXSMobile()
-                  ? 0.55
-                  : this.isXSMobile()
-                    ? 0.8
-                    : this.isTablet()
-                      ? 1
-                      : this.is1200Desctop()
+                    ? 0.55
+                    : this.isXSMobile()
                         ? 0.8
-                        : this.is1400Desctop()
-                          ? 1.5
-                          : 1.85;
+                        : this.isTablet()
+                            ? 1
+                            : this.is1200Desctop()
+                                ? 0.8
+                                : this.is1400Desctop()
+                                    ? 1.5
+                                    : 1.85;
 
             if (this.isTablet()) {
                 this.zoomResolutionMap = { ...this.zoomResolutionMap, 1: 0 };

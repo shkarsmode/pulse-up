@@ -48,7 +48,10 @@ h2 {
 
 @media (max-width: 900px) {
     .stats-strip {
-        gap: 56px;
+        gap: 20px;
+
+        flex-wrap: wrap;
+        row-gap: 40px;
     }
 
     .stats-strip__item {
