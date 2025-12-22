@@ -1,0 +1,45 @@
+[
+    {
+        "id": "for-influencers-verified-impact",
+        "title": "For Influencers: Turn Your Followers Into Verified Impact",
+        "excerpt": "You've built the audience. You've raised awareness. Now prove your movement's reach with verified, geographic support that decision-makers can't ignore.",
+        "category": "Impact",
+        "dateISO": "2025-11-26",
+        "readMinutes": 7,
+        "coverImageUrl": "/assets/blog-25-cover-Chf-gceN.jpg",
+        "coverImageAlt": "For Influencers: Turn Your Followers Into Verified Impact",
+        "tags": [
+            "Impact",
+            "Authenticity",
+            "Transparency"
+        ]
+    },
+    {
+        "id": "for-influencers-verified-impact-authenticity",
+        "title": "Turn Your Followers Into Verified Impact",
+        "excerpt": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+        "category": "Authenticity",
+        "dateISO": "2025-10-15",
+        "readMinutes": 3,
+        "coverImageUrl": "/assets/blog-25-cover-Chf-gceN.jpg",
+        "coverImageAlt": "For Influencers: Turn Your Followers Into Verified Impact",
+        "tags": [
+            "Authenticity",
+            "Transparency"
+        ]
+    },
+    {
+        "id": "for-influencers-verified-impact-authenticity",
+        "title": "Turn Your Followers Into Verified Impact",
+        "excerpt": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+        "category": "Authenticity",
+        "dateISO": "2025-12-22",
+        "readMinutes": 3,
+        "coverImageUrl": "/assets/blog-25-cover-Chf-gceN.jpg",
+        "coverImageAlt": "For Influencers: Turn Your Followers Into Verified Impact",
+        "tags": [
+            "Authenticity",
+            "Transparency"
+        ]
+    }
+]

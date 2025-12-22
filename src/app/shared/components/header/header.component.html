@@ -36,6 +36,13 @@
                     About
                 </a>
             </li>
+            <li>
+                <a
+                    [routerLink]="'/' + AppRoutes.Landing.BLOG"
+                    routerLinkActive="active">
+                    Blog
+                </a>
+            </li>
         </ul>
 
         <div class="buttons">
@@ -118,6 +125,14 @@
                             [accent]="true"
                             (handleclick)="closeDropdown()">
                             About
+                        </app-dropdown-link>
+                    </li>
+                    <li>
+                        <app-dropdown-link
+                            [link]="'/' + AppRoutes.Landing.BLOG"
+                            [accent]="true"
+                            (handleclick)="closeDropdown()">
+                            Blog
                         </app-dropdown-link>
                     </li>
                     @if (isAuthenticated) {

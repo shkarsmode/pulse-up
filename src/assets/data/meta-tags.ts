@@ -24,5 +24,10 @@ export const metaTagsData = {
         title: 'Pulse Up Map | Support What Matters on Pulse Up',
         description:
             'Discover what people are supporting right now on PulseUp. Track trending topics, global causes, local issues, and real-time public sentiment across the map.',
+    },
+    blog: {
+        title: 'Pulse Up Blog | Support What Matters on Pulse Up',
+        description:
+            'Read the latest articles on digital ethics, privacy, security, and community engagement. Stay informed with insights from Pulse Up.',
     }
 };
