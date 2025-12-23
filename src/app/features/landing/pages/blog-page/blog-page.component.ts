@@ -1,5 +1,6 @@
 import { DatePipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import { RouterLink } from "@angular/router";
 import { BlogService } from '../../services/blog.service';
 import { LandingPageLayoutComponent } from '../../ui/landing-page-layout/landing-page-layout.component';
 import { BlogCategory, BlogPost } from './interfaces/blog-post.interface';
@@ -7,7 +8,7 @@ import { BlogCategory, BlogPost } from './interfaces/blog-post.interface';
 @Component({
     selector: 'app-blog-page',
     standalone: true,
-    imports: [LandingPageLayoutComponent, DatePipe],
+    imports: [LandingPageLayoutComponent, DatePipe, RouterLink],
     templateUrl: './blog-page.component.html',
     styleUrl: './blog-page.component.scss',
     changeDetection: ChangeDetectionStrategy.OnPush
