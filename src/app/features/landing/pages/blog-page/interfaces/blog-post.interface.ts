@@ -17,10 +17,12 @@ export interface BlogPost {
     id: string;
     title: string;
     excerpt: string;
-    category: Exclude<BlogCategory, 'All Posts'>;
-    dateISO: string; // YYYY-MM-DD
+    subtitle: string;
+    category: string;
+    dateISO: string;
     readMinutes: number;
     coverImageUrl: string;
     coverImageAlt: string;
+    contentHtml: string;
     tags: string[];
 }

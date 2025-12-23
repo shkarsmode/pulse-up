@@ -82,6 +82,14 @@ export const LANDING_ROUTES: Routes = [
                 canActivate: [PublicPageGuard],
                 data: metaTagsData.blog,
             },
+            {
+                path: Landing.POST,
+                loadComponent: () =>
+                    import("./pages/blog-page/components/post/post.component").then(
+                        (m) => m.PostComponent,
+                    ),
+                canActivate: [PublicPageGuard],
+            },
         ],
     },
 ];

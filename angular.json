@@ -57,6 +57,7 @@
                         "assets": [
                             "src/assets",
                             "src/assets/img",
+                            "src/assets/data",
                             {
                                 "glob": "**/*",
                                 "input": "public"
