@@ -8,6 +8,10 @@ export const MAPBOX_STYLE = new InjectionToken<string>(
     'mapboxStyle'
 );
 
+export const MAPBOX_STYLE_WITH_BACKGROUND = new InjectionToken<string>(
+    'mapboxStyleWithBackground'
+)
+
 export const API_URL = new InjectionToken<string>(
     'apiUrl'
 );

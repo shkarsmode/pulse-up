@@ -6,6 +6,7 @@ import { SecondaryButtonComponent } from "@/app/shared/components/ui-kit/buttons
 import { AppRoutes } from "@/app/shared/enums/app-routes.enum";
 import { MediaQueryService } from "@/app/shared/services/core/media-query.service";
 import { GlobeSpinnerService } from "@/app/shared/services/map/globe-spinner.service";
+import { MAPBOX_STYLE_WITH_BACKGROUND } from '@/app/shared/tokens/tokens';
 import { CommonModule } from "@angular/common";
 import { AfterViewInit, Component, effect, ElementRef, inject, ViewChild } from "@angular/core";
 import { toSignal } from "@angular/core/rxjs-interop";
@@ -31,6 +32,7 @@ export class MainHeroComponent implements AfterViewInit {
     private router = inject(Router);
     private mediaService = inject(MediaQueryService);
     private globeSpinnerService = new GlobeSpinnerService();
+    public mapStylesUrl = inject(MAPBOX_STYLE_WITH_BACKGROUND);
 
     @ViewChild("mapWrapper", { static: true }) mapWrapperRef!: ElementRef<HTMLDivElement>;
 
@@ -123,7 +125,7 @@ export class MainHeroComponent implements AfterViewInit {
 
     public onMapLoaded(map: mapboxgl.Map) {
         this.map = map;
-        this.map.setFog(this.fog);
+        // this.map.setFog(this.fog);
         this.globeSpinnerService.init(this.map);
         this.globeSpinnerService.start();
     }
