@@ -1,3 +1,118 @@
 <app-landing-page-layout>
-    <pre>{{ post() | json }}</pre>
+    <article class="post" [class.post--ready]="isReady()">
+        @if (post(); as postData) {
+            <div class="post__container">
+                <button class="post__back" type="button" (click)="goBack()">
+                    <svg class="post__back-icon" viewBox="0 0 24 24" aria-hidden="true">
+                        <path
+                            d="M12 19l-7-7 7-7"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2"
+                            stroke-linecap="round"
+                            stroke-linejoin="round" />
+                        <path
+                            d="M19 12H5"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2"
+                            stroke-linecap="round"
+                            stroke-linejoin="round" />
+                    </svg>
+                    <span>Back to Blogs</span>
+                </button>
+
+                <img
+                    class="post__cover"
+                    [src]="postData.coverImageUrl"
+                    [alt]="postData.coverImageAlt"
+                    loading="eager" />
+
+                <div class="post__meta">
+                    <span class="post__badge">{{ postData.category }}</span>
+
+                    <div class="post__meta-item">
+                        <svg class="post__meta-icon" viewBox="0 0 24 24" aria-hidden="true">
+                            <path d="M8 2v4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                            <path d="M16 2v4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                            <path
+                                d="M6 4h12a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2Z"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="2"
+                                stroke-linejoin="round" />
+                            <path d="M3 10h18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                        </svg>
+                        <span>{{ postData.dateISO | date: 'MMM d, y' }}</span>
+                    </div>
+
+                    <div class="post__meta-item">
+                        <svg class="post__meta-icon" viewBox="0 0 24 24" aria-hidden="true">
+                            <path
+                                d="M12 6v6l4 2"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="2"
+                                stroke-linecap="round"
+                                stroke-linejoin="round" />
+                            <path
+                                d="M22 12a10 10 0 1 1-20 0a10 10 0 0 1 20 0Z"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="2"
+                                stroke-linejoin="round" />
+                        </svg>
+                        <span>{{ postData.readMinutes }} min</span>
+                    </div>
+
+                    <button class="post__share" type="button" (click)="share()">
+                        <svg class="post__share-icon" viewBox="0 0 24 24" aria-hidden="true">
+                            <path
+                                d="M15 17l5-5-5-5"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="2"
+                                stroke-linecap="round"
+                                stroke-linejoin="round" />
+                            <path
+                                d="M4 18v-2a4 4 0 0 1 4-4h12"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="2"
+                                stroke-linecap="round"
+                                stroke-linejoin="round" />
+                        </svg>
+                        <span>Share</span>
+                    </button>
+                </div>
+
+                <h1 class="post__title">{{ postData.title }}</h1>
+                <p class="post__subtitle">{{ postData.subtitle }}</p>
+
+                <div class="post__content" [innerHTML]="safeContentHtml()"></div>
+
+                <div class="post__footer">
+                    <button class="post__share-wide" type="button" (click)="share()">
+                        <svg class="post__share-wide-icon" viewBox="0 0 24 24" aria-hidden="true">
+                            <path
+                                d="M15 17l5-5-5-5"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="2"
+                                stroke-linecap="round"
+                                stroke-linejoin="round" />
+                            <path
+                                d="M4 18v-2a4 4 0 0 1 4-4h12"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="2"
+                                stroke-linecap="round"
+                                stroke-linejoin="round" />
+                        </svg>
+                        <span>Share this article</span>
+                    </button>
+                </div>
+            </div>
+        }
+    </article>
 </app-landing-page-layout>
