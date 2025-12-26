@@ -59,6 +59,12 @@ import { GuestVoteButtonComponent } from "../../ui/vote-button/guest-vote-button
 import { UserVoteButtonComponent } from "../../ui/vote-button/user-vote-button/user-vote-button.component";
 import { TopicService } from "./topic.service";
 
+
+type TopicViewMode = 'classic' | 'landing';
+
+const TOPIC_VIEW_MODE_STORAGE_KEY = 'topic_view_mode';
+
+
 @Component({
     selector: "app-topic",
     templateUrl: "./topic.component.html",
@@ -114,6 +120,9 @@ export class TopicComponent implements OnInit, OnDestroy {
     public profileService: ProfileService = inject(ProfileService);
     public geoLocationService: GeolocationService = inject(GeolocationService);
 
+    public readonly topicViewMode = signal<TopicViewMode>('classic');
+    public readonly isLandingView = computed(() => this.topicViewMode() === 'landing');
+
     private meta = inject(Meta);
     private title = inject(Title);
     private isWin = inject(WINDOW);
@@ -150,7 +159,8 @@ export class TopicComponent implements OnInit, OnDestroy {
     ]).pipe(
         map(([topic, settings]) => {
             if (topic?.icon) {
-                return `${settings.blobUrlPrefix}${topic.icon}`;
+                const url = `${settings.blobUrlPrefix}${topic.icon}`
+                return url;
             }
             return "";
         }),
@@ -186,14 +196,24 @@ export class TopicComponent implements OnInit, OnDestroy {
         });
     }
 
+    public setTopicViewMode(viewMode: TopicViewMode): void {
+        this.topicViewMode.set(viewMode);
+        localStorage.setItem(TOPIC_VIEW_MODE_STORAGE_KEY, viewMode);
+    }
+
     public ngOnInit(): void {
         this.updatePageData();
 
-        if (!this.isWin) return;
+        if (this.isWin) {
+            const storedViewMode = localStorage.getItem(TOPIC_VIEW_MODE_STORAGE_KEY) as TopicViewMode | null;
+            if (storedViewMode === 'classic' || storedViewMode === 'landing') {
+                this.topicViewMode.set(storedViewMode);
+            }
 
-        this.geoLocationService.getCurrentGeolocationAsync().then((location) => {
-            this.currentLocation.set(location);
-        });
+            this.geoLocationService.getCurrentGeolocationAsync().then((location) => {
+                this.currentLocation.set(location);
+            });
+        }
     }
 
     ngOnDestroy(): void {
