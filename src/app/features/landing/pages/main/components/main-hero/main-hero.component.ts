@@ -128,6 +128,21 @@ export class MainHeroComponent implements AfterViewInit {
         // this.map.setFog(this.fog);
         this.globeSpinnerService.init(this.map);
         this.globeSpinnerService.start();
+
+        const fogWithoutGlow: mapboxgl.Fog = {
+            color: "rgb(2, 11, 27)",
+            "high-color": "rgb(2, 11, 27)",
+            "space-color": "rgb(2, 11, 27)",
+            "horizon-blend": 0,
+            "star-intensity": 0,
+        };
+
+        const applyFog = () => {
+            this.map?.setFog(fogWithoutGlow);
+        };
+
+        applyFog();
+        this.map.on("style.load", applyFog);
     }
 
     public onStyleData(style: MapStyleDataEvent & EventData): void {
