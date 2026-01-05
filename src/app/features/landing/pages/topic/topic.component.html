@@ -170,6 +170,10 @@
                                         </div>
                                     }
                                 }
+                                <a class="whats-pulse" href="#why-support-topic">
+                                    <svg-icon src="assets/svg/i.svg"></svg-icon>
+                                    <span>What's a pulse?</span>
+                                </a>
                             </div>
     
                             <div class="warnings">
@@ -330,9 +334,19 @@
                                             <svg-icon src="assets/svg/more-dots.svg"></svg-icon>
                                         </button>
                                     </div>
+
+                                </div>
+                                
+                                <div
+                                    class="whats-pulse"
+                                    (click)="scrollDown('#why-support-topic')">
+                                    <svg-icon src="assets/svg/i.svg"></svg-icon>
+                                    <span>What's a pulse?</span>
                                 </div>
 
-                                <div class="landing-hero__hint">
+                                <div
+                                    class="landing-hero__hint"
+                                    (click)="scrollDown('app-topic-section')">
                                     <svg-icon
                                         class="landing-hero__hint-icon"
                                         src="assets/svg/arrow-down.svg">
@@ -424,7 +438,9 @@
                     }
 
                     
-                    <app-topic-section class="topic__footer">
+                    <app-topic-section
+                        id="why-support-topic"
+                        class="topic__footer">
                         <h2>
                             Why Support This Topic on PulseUp?
                         </h2>

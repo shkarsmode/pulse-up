@@ -196,6 +196,13 @@ export class TopicComponent implements OnInit, OnDestroy {
         });
     }
 
+    public scrollDown(selector: string): void {
+        if (this.isLandingView()) {
+            const introSection = document.querySelector(selector);
+            introSection?.scrollIntoView({ behavior: 'smooth' });
+        }
+    }
+
     public setTopicViewMode(viewMode: TopicViewMode): void {
         this.topicViewMode.set(viewMode);
         localStorage.setItem(TOPIC_VIEW_MODE_STORAGE_KEY, viewMode);
