@@ -181,6 +181,7 @@ import { TopicCoverEditorComponent } from "./topic-cover-editor.component";
             border: 1px solid #ddd; border-radius: 8px; padding: 10px 12px;
             display: flex; align-items: center; gap: 8px;
             color: #333; font-weight: 500;
+            width: 100%; box-sizing: border-box;
         }
         .fake-select .arrow { margin-left: auto; color: #999; }
     `]

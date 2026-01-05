@@ -1,7 +1,7 @@
 :host {
     display: flex;
     flex-direction: column;
-    max-width: 400px;
+    // max-width: 400px;
     height: 100%;
     position: relative;
 }
@@ -14,12 +14,12 @@ label {
 textarea {
     height: 100%;
     padding: 12px 20px;
-    
+
     outline: none;
     border: none;
-    
+
     font-size: 16px;
-    
+
     border: 1px solid var(--light-grey-color);
     border-radius: 10px;
     resize: none;
@@ -32,6 +32,7 @@ textarea {
     &.app-ui-textarea--focus {
         border-color: var(--accent-color) !important;
     }
+
     &.app-ui-textarea--error {
         border-color: var(--error-color) !important;
     }
