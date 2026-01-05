@@ -1,4 +1,26 @@
 {
-  // For more information, visit: https://go.microsoft.com/fwlink/?linkid=827846
-  "recommendations": ["angular.ng-template"]
+  "recommendations": [
+    "aaron-bond.better-comments",
+    "angular.ng-template",
+    "cedricverlinden.cursor-dark",
+    "dannyconnell.split-html-attributes",
+    "eamodio.gitlens",
+    "esbenp.prettier-vscode",
+    "formulahendry.auto-close-tag",
+    "formulahendry.auto-complete-tag",
+    "formulahendry.auto-rename-tag",
+    "github.copilot",
+    "github.copilot-chat",
+    "github.github-vscode-theme",
+    "humao.rest-client",
+    "mhutchie.git-graph",
+    "oderwat.indent-rainbow",
+    "pkief.material-icon-theme",
+    "pmneo.tsimporter",
+    "ritwickdey.liveserver",
+    "simonsiefke.svg-preview",
+    "streetsidesoftware.code-spell-checker",
+    "tal7aouy.theme",
+    "yadixai.yadixai"
+  ]
 }
