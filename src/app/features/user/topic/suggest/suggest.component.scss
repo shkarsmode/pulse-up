@@ -1,21 +1,41 @@
-@use '../../../../../styles/mixins'as *;
 
 :host {
+    display: block;
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 24px;
+}
+
+.loading-state {
     display: flex;
     flex-direction: column;
-    max-width: 400px;
-    width: 100%;
-    padding: 48px 0px;
-    gap: 24px;
+    align-items: center;
+    justify-content: center;
+    height: 400px;
+    text-align: center;
+
+    .spinner {
+        animation: spin 2s linear infinite;
+        margin-bottom: 24px;
+        color: var(--primary-color, #007bff);
+        svg {
+            width: 48px;
+            height: 48px;
+        }
+    }
+
+    h2 {
+        font-size: 20px;
+        font-weight: 600;
+        margin-bottom: 8px;
+    }
+
+    p {
+        color: var(--text-secondary);
+    }
 }
 
-h1 {
-    @include title-32px;
-}
-
-.description {
-    font-size: 14px;
-    color: var(--dark-grey-color);
-    margin-top: -10px;
-    line-height: 1.2;
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
 }

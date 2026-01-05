@@ -1,16 +1,28 @@
-@if (isEditMode) {
-    <h1>Edit a Topic</h1>
-
-    <div class="description">
-        Fill in the details below
-    </div>
-} @else {
-    <h1>Add a Topic</h1>
-
-    <div class="description">
-        Create a new topic to inspire action! <br /> 
-        Fill in the details below
-    </div>
+@switch (currentStep()) {
+@case ('input') {
+<app-topic-input [initialData]="originalInput" (next)="onInputSubmit($event)"></app-topic-input>
 }
-
-<app-topic-form (handleSubmit)="onSubmit()"/>
+@case ('processing') {
+<div class="loading-state">
+    <!-- You can replace this with a proper spinner component if available -->
+    <div class="spinner">
+        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 2V6" stroke="CurrentColor" stroke-width="2" stroke-linecap="round" />
+            <path d="M12 18V22" stroke="CurrentColor" stroke-width="2" stroke-linecap="round" />
+            <path d="M4.92999 4.93L7.75999 7.76" stroke="CurrentColor" stroke-width="2" stroke-linecap="round" />
+            <path d="M16.24 16.24L19.07 19.07" stroke="CurrentColor" stroke-width="2" stroke-linecap="round" />
+            <path d="M2 12H6" stroke="CurrentColor" stroke-width="2" stroke-linecap="round" />
+            <path d="M18 12H22" stroke="CurrentColor" stroke-width="2" stroke-linecap="round" />
+            <path d="M4.92999 19.07L7.75999 16.24" stroke="CurrentColor" stroke-width="2" stroke-linecap="round" />
+            <path d="M16.24 7.76L19.07 4.93" stroke="CurrentColor" stroke-width="2" stroke-linecap="round" />
+        </svg>
+    </div>
+    <h2>Polishing your topic</h2>
+    <p>Making it shine...</p>
+</div>
+}
+@case ('review') {
+<app-topic-polish-review [data]="polishData()" (publish)="onPublish($event)" (back)="onBackToEdit()"
+    (regenerateCover)="onRegenerate()"></app-topic-polish-review>
+}
+}

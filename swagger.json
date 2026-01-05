@@ -1,0 +1,5087 @@
+{
+  "openapi": "3.0.4",
+  "info": {
+    "title": "PulseApi",
+    "version": "1.0"
+  },
+  "paths": {
+    "/challenges": {
+      "get": {
+        "tags": [
+          "Challenges"
+        ],
+        "summary": "List all challenges in a time range / at current time with filter conditions",
+        "parameters": [
+          {
+            "name": "Status",
+            "in": "query",
+            "schema": {
+              "$ref": "#/components/schemas/ChallengeStatus"
+            }
+          },
+          {
+            "name": "Country",
+            "in": "query",
+            "description": "Country part of the location filter.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "State",
+            "in": "query",
+            "description": "Start part of the location filter.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "City",
+            "in": "query",
+            "description": "City part of the location filter.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Keyword",
+            "in": "query",
+            "description": "Additional keyword to filter challenges.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Category",
+            "in": "query",
+            "description": "Challenge category.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Skip",
+            "in": "query",
+            "description": "Indicates how many records to skip for the list that matches specified filter conditions.",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "Take",
+            "in": "query",
+            "description": "Indicates how many records to return for the list that matches specified filter conditions.",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Challenge"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Challenge"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Challenge"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/challenges/{id}": {
+      "get": {
+        "tags": [
+          "Challenges"
+        ],
+        "summary": "Get specific challenge by Id with detailed stats",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/Challenge"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Challenge"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Challenge"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/content-assist/polish-topic": {
+      "post": {
+        "tags": [
+          "ContentAssist"
+        ],
+        "summary": "Polish topic: using AI rewrites title, description, detects language, suggests tags and performs semantic \r\nanalysis on the input to assist user with creating new topic.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PolishTopicRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PolishTopicRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/PolishTopicRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/PolishTopicResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PolishTopicResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PolishTopicResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Service Unavailable"
+          }
+        }
+      }
+    },
+    "/content-assist/moderate-topic": {
+      "post": {
+        "tags": [
+          "ContentAssist"
+        ],
+        "summary": "Moderate topic: using AI to moderate the topic title and description.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PolishTopicRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PolishTopicRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/PolishTopicRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ModerateTopicResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ModerateTopicResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ModerateTopicResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Service Unavailable"
+          }
+        }
+      }
+    },
+    "/content-assist/generate-pictures": {
+      "post": {
+        "tags": [
+          "ContentAssist"
+        ],
+        "summary": "Generate topic pictures: using AI to generate cover image and two variants of icons for the topic.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GenerateTopicPicturesRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GenerateTopicPicturesRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/GenerateTopicPicturesRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/GeneratePicturesResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GeneratePicturesResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GeneratePicturesResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Service Unavailable"
+          }
+        }
+      }
+    },
+    "/feed/recent": {
+      "get": {
+        "tags": [
+          "Feed"
+        ],
+        "summary": "List most recent votes in global feed",
+        "parameters": [
+          {
+            "name": "take",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 10
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Vote"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Vote"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Vote"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/identity/create:withEmailAndPassword": {
+      "post": {
+        "tags": [
+          "Identity"
+        ],
+        "summary": "Create user account with specified credentials. \r\nIf the identity already exists, it will be used to create the account.\r\nReturns new or existing user account for the specified credentials.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateUserWithEmailAndPasswordRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateUserWithEmailAndPasswordRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateUserWithEmailAndPasswordRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/identity/create:withToken": {
+      "post": {
+        "tags": [
+          "Identity"
+        ],
+        "summary": "Create new or return existing user profile for the UID associated with the token.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateUserWithTokenRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateUserWithTokenRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateUserWithTokenRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/identity/login:withEmailAndPassword": {
+      "post": {
+        "tags": [
+          "Identity"
+        ],
+        "summary": "Login user into existing account with the specified credentials.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginWithEmailAndPasswordRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginWithEmailAndPasswordRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginWithEmailAndPasswordRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/LoginResult"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LoginResult"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LoginResult"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/identity/login:anonymous": {
+      "post": {
+        "tags": [
+          "Identity"
+        ],
+        "summary": "Login user anonymously [DEV ENV ONLY] \r\nCreates an authentication token without without identifying the user. \r\nIt only identifies an instance of the app and should be obtained by the client independently.",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/LoginResult"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LoginResult"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LoginResult"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/identity": {
+      "get": {
+        "tags": [
+          "Identity"
+        ],
+        "summary": "Retrieves user profile for the current user based on provided authentication token.",
+        "responses": {
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/identity/check": {
+      "post": {
+        "tags": [
+          "Identity"
+        ],
+        "summary": "Check if the specified phone number or email is available for registration.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CheckUserCredentialsRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CheckUserCredentialsRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/CheckUserCredentialsRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/identity/delete": {
+      "post": {
+        "tags": [
+          "Identity"
+        ],
+        "summary": "Delete current user registration - for now user profile is anonymized and detached from UID, rather then deleted. \r\nOptionally, delete user identity with the Identity Provider (Firebase).\r\nReturns user profile information, if the user was registered or 400 BadRequest otherwise.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DeleteUserRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DeleteUserRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/DeleteUserRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/location/detect-country": {
+      "get": {
+        "tags": [
+          "Location"
+        ],
+        "summary": "Detect coarse (country-level) location of the IP address of the connected client",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/CoarseLocation"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CoarseLocation"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CoarseLocation"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/location/detect-city": {
+      "get": {
+        "tags": [
+          "Location"
+        ],
+        "summary": "Detect location (city-level) of the IP address of the connected client",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/CoarseLocation"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CoarseLocation"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CoarseLocation"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/location/ip-address": {
+      "get": {
+        "tags": [
+          "Location"
+        ],
+        "summary": "Test endpoint to check how the server resolves current IP address",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/map": {
+      "get": {
+        "tags": [
+          "Map"
+        ],
+        "summary": "Query map data for the last 24 hours in specified area.",
+        "description": "Sample request:\r\n            \r\n    GET /map?NE.latitude=40.0&NE.longitude=-120.0&SW.latitude=45.0&SW.longitude=-125.0",
+        "parameters": [
+          {
+            "name": "NE.Latitude",
+            "in": "query",
+            "description": "Gets or sets latitude (Y)",
+            "schema": {
+              "type": "number",
+              "format": "double"
+            }
+          },
+          {
+            "name": "NE.Longitude",
+            "in": "query",
+            "description": "Gets or sets longitude (X)",
+            "schema": {
+              "type": "number",
+              "format": "double"
+            }
+          },
+          {
+            "name": "SW.Latitude",
+            "in": "query",
+            "description": "Gets or sets latitude (Y)",
+            "schema": {
+              "type": "number",
+              "format": "double"
+            }
+          },
+          {
+            "name": "SW.Longitude",
+            "in": "query",
+            "description": "Gets or sets longitude (X)",
+            "schema": {
+              "type": "number",
+              "format": "double"
+            }
+          },
+          {
+            "name": "Resolution",
+            "in": "query",
+            "description": "Specifies grid resolution to use for activity data. Optional.",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/MapCellDataContainer"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/MapCellDataContainer"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/MapCellDataContainer"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/map/top": {
+      "get": {
+        "tags": [
+          "Map"
+        ],
+        "summary": "Query topics by map cells in an area (last 24 hours).\r\nTopic are ranked by votes, and top topic per cell is returned.",
+        "description": "Sample request:\r\n            \r\n    GET /map/top?NE.latitude=40.0&NE.longitude=-120.0&SW.latitude=45.0&SW.longitude=-125.0",
+        "parameters": [
+          {
+            "name": "NE.Latitude",
+            "in": "query",
+            "description": "Gets or sets latitude (Y)",
+            "schema": {
+              "type": "number",
+              "format": "double"
+            }
+          },
+          {
+            "name": "NE.Longitude",
+            "in": "query",
+            "description": "Gets or sets longitude (X)",
+            "schema": {
+              "type": "number",
+              "format": "double"
+            }
+          },
+          {
+            "name": "SW.Latitude",
+            "in": "query",
+            "description": "Gets or sets latitude (Y)",
+            "schema": {
+              "type": "number",
+              "format": "double"
+            }
+          },
+          {
+            "name": "SW.Longitude",
+            "in": "query",
+            "description": "Gets or sets longitude (X)",
+            "schema": {
+              "type": "number",
+              "format": "double"
+            }
+          },
+          {
+            "name": "Resolution",
+            "in": "query",
+            "description": "Specifies grid resolution to use for activity data. Optional.",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "NoCache",
+            "in": "query",
+            "description": "[DEV] Set to true to bypass cache and read from live aggregated data",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "Category",
+            "in": "query",
+            "description": "Filter by topics by category",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "$ref": "#/components/schemas/MapCell"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "$ref": "#/components/schemas/MapCell"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "$ref": "#/components/schemas/MapCell"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/map/votes": {
+      "get": {
+        "tags": [
+          "Map"
+        ],
+        "summary": "Get activity heatmap over the specified area / topic (last 24 hours)",
+        "parameters": [
+          {
+            "name": "NE.Latitude",
+            "in": "query",
+            "description": "Gets or sets latitude (Y)",
+            "schema": {
+              "type": "number",
+              "format": "double"
+            }
+          },
+          {
+            "name": "NE.Longitude",
+            "in": "query",
+            "description": "Gets or sets longitude (X)",
+            "schema": {
+              "type": "number",
+              "format": "double"
+            }
+          },
+          {
+            "name": "SW.Latitude",
+            "in": "query",
+            "description": "Gets or sets latitude (Y)",
+            "schema": {
+              "type": "number",
+              "format": "double"
+            }
+          },
+          {
+            "name": "SW.Longitude",
+            "in": "query",
+            "description": "Gets or sets longitude (X)",
+            "schema": {
+              "type": "number",
+              "format": "double"
+            }
+          },
+          {
+            "name": "Resolution",
+            "in": "query",
+            "description": "Specifies grid resolution to use for activity data. Optional.",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "NoCache",
+            "in": "query",
+            "description": "[DEV] Set to true to bypass cache and read from live aggregated data",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "TopicId",
+            "in": "query",
+            "description": "Topic Id to filter. Optional.",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "type": "integer",
+                    "format": "int64"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "type": "integer",
+                    "format": "int64"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "type": "integer",
+                    "format": "int64"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/map/cell": {
+      "get": {
+        "tags": [
+          "Map"
+        ],
+        "summary": "Query active topics in a cell, ranked by vote counts (last 24 hours).",
+        "parameters": [
+          {
+            "name": "Id",
+            "in": "query",
+            "description": "H3 cell Id (index)",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "NoCache",
+            "in": "query",
+            "description": "[DEV] Set to true to bypass cache and read from live aggregated data",
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Topic"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Topic"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Topic"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/settings": {
+      "get": {
+        "tags": [
+          "Settings"
+        ],
+        "summary": "Returns common app settings",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/AppSettings"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AppSettings"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AppSettings"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/site-stats": {
+      "get": {
+        "tags": [
+          "SiteStats"
+        ],
+        "summary": "Get high level site usage statistics",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/SiteStats"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SiteStats"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SiteStats"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/topics/categories": {
+      "get": {
+        "tags": [
+          "Topics"
+        ],
+        "summary": "List available topic categories",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TopicCategory"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TopicCategory"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TopicCategory"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/topics": {
+      "get": {
+        "tags": [
+          "Topics"
+        ],
+        "summary": "List all available and \"active\" now topics with filtering. \r\nResults are always ordered by creation date (newest topics first).",
+        "parameters": [
+          {
+            "name": "Country",
+            "in": "query",
+            "description": "Preferred country (based on user location)",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "State",
+            "in": "query",
+            "description": "State within the country (user location)",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "City",
+            "in": "query",
+            "description": "City within the state or country (user location)",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Keyword",
+            "in": "query",
+            "description": "Keyword to match topics (matches keyword or title)",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Category",
+            "in": "query",
+            "description": "Primary category",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Id",
+            "in": "query",
+            "description": "List of topics by Id to query (in a batch). If Ids are specified, \r\nother query parameters (location, category...) will be ignored.",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "integer",
+                "format": "int32"
+              }
+            }
+          },
+          {
+            "name": "TopicState",
+            "in": "query",
+            "description": "Filter topics by state",
+            "schema": {
+              "$ref": "#/components/schemas/TopicStateFilter"
+            }
+          },
+          {
+            "name": "Fields",
+            "in": "query",
+            "description": "Optional list of fields to return for each topic.",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          {
+            "name": "Skip",
+            "in": "query",
+            "description": "Number of records to skip when paginating the list.",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "Take",
+            "in": "query",
+            "description": "Number of records to return when paginating the list. Default is 100.",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "WithCampaigns",
+            "in": "query",
+            "description": "Filter topics with campaigns",
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Topic"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Topic"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Topic"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/topics/leaderboard": {
+      "get": {
+        "tags": [
+          "Topics"
+        ],
+        "summary": "Get top topics by number of votes in specified timeframe at specific date",
+        "parameters": [
+          {
+            "name": "Timeframe",
+            "in": "query",
+            "description": "Requested timeframe (day, week, month)",
+            "schema": {
+              "$ref": "#/components/schemas/Timeframe"
+            }
+          },
+          {
+            "name": "Count",
+            "in": "query",
+            "description": "Optional number of topics to return (should be less than AppSettings.LeaderboardSize)",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "Date",
+            "in": "query",
+            "description": "Optional UTC date which references past periods (default is current date)",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "IncludeTopicDetails",
+            "in": "query",
+            "description": "Whether to include topic details in response",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "Location.Country",
+            "in": "query",
+            "description": "Represents full country name",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Location.State",
+            "in": "query",
+            "description": "State or administrative region",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Location.City",
+            "in": "query",
+            "description": "City name",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/TopicLeaderboard"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TopicLeaderboard"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TopicLeaderboard"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/topics/leaderboard/locations": {
+      "get": {
+        "tags": [
+          "Topics"
+        ],
+        "summary": "Get list of regions which have leaderboard data for the specified timeframe and date.",
+        "parameters": [
+          {
+            "name": "Timeframe",
+            "in": "query",
+            "description": "Requested timeframe (day, week, month). Default is month.",
+            "schema": {
+              "$ref": "#/components/schemas/Timeframe"
+            }
+          },
+          {
+            "name": "Date",
+            "in": "query",
+            "description": "Optional UTC date which references past periods (default is current date)",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "Location.Country",
+            "in": "query",
+            "description": "Represents full country name",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Location.State",
+            "in": "query",
+            "description": "State or administrative region",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Location.City",
+            "in": "query",
+            "description": "City name",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/NamedLocation"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/NamedLocation"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/NamedLocation"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/topics/{key}": {
+      "get": {
+        "tags": [
+          "Topics"
+        ],
+        "summary": "Get specific topic details by Id",
+        "parameters": [
+          {
+            "name": "key",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/Topic"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Topic"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Topic"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/topics/{id}/stats/{unit}": {
+      "get": {
+        "tags": [
+          "Topics"
+        ],
+        "summary": "Get specific topic stats history",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "unit",
+            "in": "path",
+            "description": "Identifies unit of time for which votes were aggregated",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/TopicStatsHistoryUnit"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "type": "integer",
+                    "format": "int32"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "type": "integer",
+                    "format": "int32"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "type": "integer",
+                    "format": "int32"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/topics/my": {
+      "get": {
+        "tags": [
+          "Topics"
+        ],
+        "summary": "List topics authored by the current user (in reverse chronological order)",
+        "parameters": [
+          {
+            "name": "State",
+            "in": "query",
+            "description": "Optional list of states to include in results. By default only active topics are returned.",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/TopicPublicationState"
+              }
+            }
+          },
+          {
+            "name": "Skip",
+            "in": "query",
+            "description": "Number of records to skip when paginating the list.",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "Take",
+            "in": "query",
+            "description": "Number of records to return when paginating the list. Default is 100.",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "IncludeStats",
+            "in": "query",
+            "description": "Indicates if topic stats should be retrieved and included in the response.",
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Topic"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Topic"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Topic"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/topics/{id}": {
+      "put": {
+        "tags": [
+          "Topics"
+        ],
+        "summary": "Edit topic title, description, icon, picture and keywords",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "Title": {
+                    "type": "string",
+                    "description": "Updated topic title"
+                  },
+                  "Description": {
+                    "type": "string",
+                    "description": "Updated description of the topic"
+                  },
+                  "Icon": {
+                    "type": "string",
+                    "description": "Topic Icon",
+                    "format": "binary"
+                  },
+                  "Picture": {
+                    "type": "string",
+                    "description": "Attached picture",
+                    "format": "binary"
+                  },
+                  "Keywords": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "List of keywords"
+                  }
+                }
+              },
+              "encoding": {
+                "Title": {
+                  "style": "form"
+                },
+                "Description": {
+                  "style": "form"
+                },
+                "Icon": {
+                  "style": "form"
+                },
+                "Picture": {
+                  "style": "form"
+                },
+                "Keywords": {
+                  "style": "form"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/Topic"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Topic"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Topic"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/topics/{id}/archive": {
+      "post": {
+        "tags": [
+          "Topics"
+        ],
+        "summary": "Archive topic, so it does not appear anywhere, except in author's own topic list.\r\nArchived topic icons are also removed from the common icon index.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/Topic"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Topic"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Topic"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/topics/{id}/block": {
+      "post": {
+        "tags": [
+          "Topics"
+        ],
+        "summary": "Block topic (administrative), so it does not appear anywhere, except in user's own topic list",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/Topic"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Topic"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Topic"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/topics/validate": {
+      "post": {
+        "tags": [
+          "Topics"
+        ],
+        "summary": "Validate topic title and share key (check for uniqueness)",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ValidateTopicRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ValidateTopicRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/ValidateTopicRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/Topic"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Topic"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Topic"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/topics/suggest": {
+      "post": {
+        "tags": [
+          "Topics"
+        ],
+        "summary": "Suggest new topic - the topic is submitted for moderation along with user inforation and can be invoked by \r\nan unregistered (anonymous) user. \r\nUser name and contact details must be provided in request for anonymous user.",
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "required": [
+                  "Author.Name",
+                  "Author.PhoneNumber",
+                  "Category",
+                  "Description",
+                  "Keywords",
+                  "Location.Country",
+                  "Title"
+                ],
+                "type": "object",
+                "properties": {
+                  "Title": {
+                    "type": "string",
+                    "description": "Title of the topic"
+                  },
+                  "Description": {
+                    "type": "string",
+                    "description": "Description of the topic"
+                  },
+                  "Category": {
+                    "type": "string",
+                    "description": "Top level category"
+                  },
+                  "Keywords": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "List of keywords"
+                  },
+                  "ShareKey": {
+                    "type": "string",
+                    "description": "Unique share key for the topic"
+                  },
+                  "StartsAt": {
+                    "type": "string",
+                    "description": "Publication start date",
+                    "format": "date-time"
+                  },
+                  "Duration": {
+                    "type": "integer",
+                    "description": "Publication duration (in minutes)",
+                    "format": "int32"
+                  },
+                  "Location.Country": {
+                    "type": "string",
+                    "description": "Represents full country name"
+                  },
+                  "Location.State": {
+                    "type": "string",
+                    "description": "State or administrative region"
+                  },
+                  "Location.City": {
+                    "type": "string",
+                    "description": "City name"
+                  },
+                  "Author.Name": {
+                    "type": "string",
+                    "description": "Name of the person"
+                  },
+                  "Author.Username": {
+                    "type": "string"
+                  },
+                  "Author.PhoneNumber": {
+                    "type": "string",
+                    "description": "Phone number"
+                  },
+                  "Author.Email": {
+                    "type": "string",
+                    "description": "Email address"
+                  },
+                  "Icon": {
+                    "type": "string",
+                    "description": "Suggested icon",
+                    "format": "binary"
+                  },
+                  "Picture": {
+                    "type": "string",
+                    "description": "Attached picture",
+                    "format": "binary"
+                  }
+                }
+              },
+              "encoding": {
+                "Title": {
+                  "style": "form"
+                },
+                "Description": {
+                  "style": "form"
+                },
+                "Category": {
+                  "style": "form"
+                },
+                "Keywords": {
+                  "style": "form"
+                },
+                "ShareKey": {
+                  "style": "form"
+                },
+                "StartsAt": {
+                  "style": "form"
+                },
+                "Duration": {
+                  "style": "form"
+                },
+                "Location.Country": {
+                  "style": "form"
+                },
+                "Location.State": {
+                  "style": "form"
+                },
+                "Location.City": {
+                  "style": "form"
+                },
+                "Author.Name": {
+                  "style": "form"
+                },
+                "Author.Username": {
+                  "style": "form"
+                },
+                "Author.PhoneNumber": {
+                  "style": "form"
+                },
+                "Author.Email": {
+                  "style": "form"
+                },
+                "Icon": {
+                  "style": "form"
+                },
+                "Picture": {
+                  "style": "form"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/topics/create": {
+      "post": {
+        "tags": [
+          "Topics"
+        ],
+        "summary": "Create new topic and publish it immediately for the current user. \r\nThis requires current user have a name and username specified in their profile.",
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "required": [
+                  "Category",
+                  "Description",
+                  "Icon",
+                  "Location.Country",
+                  "Title"
+                ],
+                "type": "object",
+                "properties": {
+                  "Title": {
+                    "type": "string",
+                    "description": "Title of the topic"
+                  },
+                  "Description": {
+                    "type": "string",
+                    "description": "Description of the topic"
+                  },
+                  "Category": {
+                    "type": "string",
+                    "description": "Top level category"
+                  },
+                  "Keywords": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "List of keywords"
+                  },
+                  "ShareKey": {
+                    "type": "string",
+                    "description": "Unique share key for the topic"
+                  },
+                  "StartsAt": {
+                    "type": "string",
+                    "description": "Publication start date",
+                    "format": "date-time"
+                  },
+                  "Duration": {
+                    "type": "integer",
+                    "description": "Publication duration (in minutes)",
+                    "format": "int32"
+                  },
+                  "Location.Country": {
+                    "type": "string",
+                    "description": "Represents full country name"
+                  },
+                  "Location.State": {
+                    "type": "string",
+                    "description": "State or administrative region"
+                  },
+                  "Location.City": {
+                    "type": "string",
+                    "description": "City name"
+                  },
+                  "Icon": {
+                    "type": "string",
+                    "description": "Suggested icon",
+                    "format": "binary"
+                  },
+                  "Picture": {
+                    "type": "string",
+                    "description": "Attached picture",
+                    "format": "binary"
+                  }
+                }
+              },
+              "encoding": {
+                "Title": {
+                  "style": "form"
+                },
+                "Description": {
+                  "style": "form"
+                },
+                "Category": {
+                  "style": "form"
+                },
+                "Keywords": {
+                  "style": "form"
+                },
+                "ShareKey": {
+                  "style": "form"
+                },
+                "StartsAt": {
+                  "style": "form"
+                },
+                "Duration": {
+                  "style": "form"
+                },
+                "Location.Country": {
+                  "style": "form"
+                },
+                "Location.State": {
+                  "style": "form"
+                },
+                "Location.City": {
+                  "style": "form"
+                },
+                "Icon": {
+                  "style": "form"
+                },
+                "Picture": {
+                  "style": "form"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/Topic"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Topic"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Topic"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/Topic"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Topic"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Topic"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/topics/{id}/campaigns": {
+      "get": {
+        "tags": [
+          "Topics"
+        ],
+        "summary": "List current and all previous campaigns with accomplished goals for the topic",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/Topic"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Topic"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Topic"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/Topic"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Topic"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Topic"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Topics"
+        ],
+        "summary": "Add new campaign to existing topic. \r\nFor now campaign can be added: by topic author, only if there are no current active / upcoming campaigns for the topic.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateTopicCampaignRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateTopicCampaignRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateTopicCampaignRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/Topic"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Topic"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Topic"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/Topic"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Topic"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Topic"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/topics/report": {
+      "post": {
+        "tags": [
+          "Topics"
+        ],
+        "summary": "Report topic - this is to capture user complain details",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReportTopicRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReportTopicRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReportTopicRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/topics/suggest-campaign": {
+      "post": {
+        "tags": [
+          "Topics"
+        ],
+        "summary": "Suggest new campaign for an existing topic - this can be done by any user (registered or anonymous).",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SuggestTopicCampaignRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SuggestTopicCampaignRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/SuggestTopicCampaignRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/users/{id}": {
+      "get": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Get specific user profile",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/users/find": {
+      "get": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Get user profile by username",
+        "parameters": [
+          {
+            "name": "Username",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/users/{id}/topics": {
+      "get": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "List topics authored by the specified user (in reverse chronological order)",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Id of the author",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "Skip",
+            "in": "query",
+            "description": "Number of records to skip when paginating the list.",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "Take",
+            "in": "query",
+            "description": "Number of records to return when paginating the list. Default is 100.",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "IncludeStats",
+            "in": "query",
+            "description": "Indicates if topic stats should be retrieved and included in the response.",
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Topic"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Topic"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Topic"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/users/self": {
+      "get": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Get user own profile details",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Set own profile details using form data and optional attached picture",
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "Name": {
+                    "type": "string",
+                    "description": "Display name of the user"
+                  },
+                  "Username": {
+                    "type": "string",
+                    "description": "Unique user handle"
+                  },
+                  "Bio": {
+                    "type": "string",
+                    "description": "User bio"
+                  },
+                  "profilePicture": {
+                    "type": "string",
+                    "format": "binary"
+                  }
+                }
+              },
+              "encoding": {
+                "Name": {
+                  "style": "form"
+                },
+                "Username": {
+                  "style": "form"
+                },
+                "Bio": {
+                  "style": "form"
+                },
+                "profilePicture": {
+                  "style": "form"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/users/self/demographic": {
+      "post": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Update user's demographic profile",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": "string"
+                }
+              }
+            },
+            "text/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": "string"
+                }
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/users/validate": {
+      "post": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Check if the username is valid and available for use.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ValidateUserRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ValidateUserRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/ValidateUserRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/users/validate:username": {
+      "post": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Check if the username is valid and available for use.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ValidateUserRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ValidateUserRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/ValidateUserRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/users/validate:phone": {
+      "post": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Check if the provided phone number is valid and can be used to signup/verify user.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ValidatePhoneNumberRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ValidatePhoneNumberRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/ValidatePhoneNumberRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/votes/my": {
+      "get": {
+        "tags": [
+          "Votes"
+        ],
+        "summary": "Get user vote history in reverse chronological order",
+        "parameters": [
+          {
+            "name": "Skip",
+            "in": "query",
+            "description": "Number of records to skip when paginating the list.",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "Take",
+            "in": "query",
+            "description": "Number of records to return when paginating the list. Default is 100.",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "TopicId",
+            "in": "query",
+            "description": "Optional topic Id to look for. If topic Id is specified, Skip and Take \r\nparameters are ignored and only last vote for the topic is returned (if it exists).",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "After",
+            "in": "query",
+            "description": "Optional threshold timestamp - consider only votes after the specified date",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Vote"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Vote"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Vote"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/votes/my/summary": {
+      "get": {
+        "tags": [
+          "Votes"
+        ],
+        "summary": "Get user vote summary per topic in reverse chronological order",
+        "parameters": [
+          {
+            "name": "Skip",
+            "in": "query",
+            "description": "Number of records to skip when paginating the list.",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "Take",
+            "in": "query",
+            "description": "Number of records to return when paginating the list. Default is 100.",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "After",
+            "in": "query",
+            "description": "Optional threshold timestamp - consider only votes after the specified date",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TopicVoteSummary"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TopicVoteSummary"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TopicVoteSummary"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/votes": {
+      "post": {
+        "tags": [
+          "Votes"
+        ],
+        "summary": "Submit a vote for a specific topic at a location.\r\nReturns the last added vote for the topic by the user. \r\nIf user recently voted for the topic, that previous vote will be returned instead (disambiguate by timestamp). \r\nIf this is a first time vote for the topic or last vote was long time ago, a new vote is added and returned in response.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SubmitVoteRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SubmitVoteRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/SubmitVoteRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/Vote"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Vote"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Vote"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/votes/batch": {
+      "post": {
+        "tags": [
+          "Votes"
+        ],
+        "summary": "Submit a batch of votes for a list of topics.\r\nReturns the last added vote for each topic. \r\nIf user recently voted for the topic, that previous vote will be returned instead (disambiguate by timestamp). \r\nIf this is a first time vote for the topic or last vote was long time ago, a new vote is added and returned in response.\r\nIf the topic is expired, no vote is added and no vote is returned for the topic.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SubmitVotesBatchRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SubmitVotesBatchRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/SubmitVotesBatchRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Vote"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Vote"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Vote"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "AppSettings": {
+        "type": "object",
+        "properties": {
+          "minVoteInterval": {
+            "type": "integer",
+            "description": "Minimum interval in minutes before a new vote for the \r\nsame topic at the same location can be registered.",
+            "format": "int32"
+          },
+          "defaultAutoPulse": {
+            "type": "integer",
+            "description": "Default auto-pulse count - indicates how many times the topic will be pulsed on the owner's behalf after creation",
+            "format": "int32"
+          },
+          "deletedCredentialsBlockInterval": {
+            "type": "integer",
+            "description": "Interval in minutes after deleting a user account, after \r\nwhich the phone number or verified email can be reused for \r\ncreating new accounts",
+            "format": "int32"
+          },
+          "blobUrlPrefix": {
+            "type": "string",
+            "description": "Common blob storage base URL",
+            "nullable": true
+          },
+          "latestAppVersionNumber": {
+            "type": "integer",
+            "description": "Latest application version available for download",
+            "format": "int32"
+          },
+          "appStoreUrl": {
+            "type": "string",
+            "description": "Apple Appstore link",
+            "nullable": true
+          },
+          "googlePlayUrl": {
+            "type": "string",
+            "description": "Google play link",
+            "nullable": true
+          },
+          "shareTopicBaseUrl": {
+            "type": "string",
+            "description": "Topic sharing base URL",
+            "nullable": true
+          },
+          "shareUserBaseUrl": {
+            "type": "string",
+            "description": "User sharing base URL",
+            "nullable": true
+          },
+          "shareLeaderboardBaseUrl": {
+            "type": "string",
+            "description": "Leaderboard sharing base URL",
+            "nullable": true
+          },
+          "defaultActiveTopicsLimit": {
+            "type": "integer",
+            "description": "Maximum number of active topics allowed for a user by default",
+            "format": "int32"
+          },
+          "leaderboardSize": {
+            "type": "integer",
+            "description": "Number of topics in the leaderboard",
+            "format": "int32"
+          },
+          "defaultTopicDurationDays": {
+            "type": "integer",
+            "description": "Default topic duration in days",
+            "format": "int32"
+          },
+          "activeTopicExtensionDays": {
+            "type": "integer",
+            "description": "Number of days to extend the topic end time when there are enough pulses to keep it active",
+            "format": "int32"
+          },
+          "minDailyPulsesForActiveTopic": {
+            "type": "integer",
+            "description": "Minimum number of daily pulses required for a topic to be considered active",
+            "format": "int32"
+          },
+          "inactiveTopicGracePeriodDays": {
+            "type": "integer",
+            "description": "Number of days before an inactive topis is automatically archived",
+            "format": "int32"
+          },
+          "apiVersion": {
+            "type": "string",
+            "description": "Version of the API service in the format YYMM.i, where i - incremental update version that month",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "Campaign": {
+        "required": [
+          "createdAt",
+          "description",
+          "endsAt",
+          "goals",
+          "id",
+          "startsAt"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique Id of the campaign",
+            "format": "uuid"
+          },
+          "createdAt": {
+            "type": "string",
+            "description": "Date and time the campaign was created",
+            "format": "date-time"
+          },
+          "startsAt": {
+            "type": "string",
+            "description": "Campaign start date and time",
+            "format": "date-time"
+          },
+          "endsAt": {
+            "type": "string",
+            "description": "Campaign end date and time",
+            "format": "date-time"
+          },
+          "title": {
+            "type": "string",
+            "description": "Title of the campaign",
+            "nullable": true
+          },
+          "description": {
+            "type": "string",
+            "description": "Description of the campaign",
+            "nullable": true
+          },
+          "sponsoredBy": {
+            "type": "string",
+            "description": "Sponsor name",
+            "nullable": true
+          },
+          "sponsorLink": {
+            "type": "string",
+            "description": "Sponsored link",
+            "nullable": true
+          },
+          "sponsorLogo": {
+            "type": "string",
+            "description": "Sponsor logo URL",
+            "nullable": true
+          },
+          "goals": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CampaignGoal"
+            },
+            "description": "List of goals for the campaign",
+            "nullable": true
+          },
+          "progress": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CampaignGoalStatus"
+            },
+            "description": "Indicates status of each goal in the campaign",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Describes a campaign associated with specific topic"
+      },
+      "CampaignGoal": {
+        "required": [
+          "reward"
+        ],
+        "type": "object",
+        "properties": {
+          "reward": {
+            "type": "string",
+            "description": "Reward for reaching the goal.",
+            "nullable": true
+          },
+          "supporters": {
+            "type": "integer",
+            "description": "Number of supporters required to reach the goal.",
+            "format": "int32",
+            "nullable": true
+          },
+          "lifetimeVotes": {
+            "type": "integer",
+            "description": "Number of lifetime votes required to reach the goal.",
+            "format": "int32",
+            "nullable": true
+          },
+          "dailyVotes": {
+            "type": "integer",
+            "description": "Number of daily votes required to reach the goal.",
+            "format": "int32",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Describes a goal in a campaign."
+      },
+      "CampaignGoalRequest": {
+        "required": [
+          "reward"
+        ],
+        "type": "object",
+        "properties": {
+          "reward": {
+            "type": "string",
+            "description": "Reward for reaching the goal",
+            "nullable": true
+          },
+          "supporters": {
+            "type": "integer",
+            "description": "Number of supporters required to reach the goal",
+            "format": "int32",
+            "nullable": true
+          },
+          "lifetimeVotes": {
+            "type": "integer",
+            "description": "Number of lifetime votes required to reach the goal",
+            "format": "int32",
+            "nullable": true
+          },
+          "dailyVotes": {
+            "type": "integer",
+            "description": "Number of daily votes required to reach the goal",
+            "format": "int32",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "CampaignGoalStatus": {
+        "type": "object",
+        "properties": {
+          "goalType": {
+            "$ref": "#/components/schemas/GoalType"
+          },
+          "goalValue": {
+            "type": "integer",
+            "description": "Target value for the goal",
+            "format": "int64"
+          },
+          "lastValue": {
+            "type": "integer",
+            "description": "Last recorded value for the goal",
+            "format": "int64"
+          },
+          "achievedAt": {
+            "type": "string",
+            "description": "Timestamp when the goal was achieved (implies LastValue >= GoalValue)",
+            "format": "date-time",
+            "nullable": true
+          },
+          "isComplete": {
+            "type": "boolean",
+            "description": "Indicates if the goal has been completed",
+            "readOnly": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Status of a specific campaign goal"
+      },
+      "Challenge": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Id of the challenge",
+            "format": "uuid"
+          },
+          "title": {
+            "type": "string",
+            "description": "Title of the challenge",
+            "nullable": true
+          },
+          "authorId": {
+            "type": "string",
+            "description": "Id of the author",
+            "format": "uuid"
+          },
+          "authorName": {
+            "type": "string",
+            "description": "Name of the author",
+            "nullable": true
+          },
+          "location": {
+            "$ref": "#/components/schemas/NamedLocation"
+          },
+          "createdAt": {
+            "type": "string",
+            "description": "Creation timestamp",
+            "format": "date-time"
+          },
+          "startsAt": {
+            "type": "string",
+            "description": "Start date/time",
+            "format": "date-time"
+          },
+          "endsAt": {
+            "type": "string",
+            "description": "End time. Duration of the challenge is currently assumed to be no more than 24 hours.",
+            "format": "date-time"
+          },
+          "topics": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Topic"
+            },
+            "description": "List of topics included in the challenge",
+            "nullable": true
+          },
+          "results": {
+            "$ref": "#/components/schemas/ChallengeResults"
+          }
+        },
+        "additionalProperties": false,
+        "description": "Represents a time-restricted competition between group of topics"
+      },
+      "ChallengeResults": {
+        "type": "object",
+        "properties": {
+          "total": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "description": "Cumulative total votes for each topic",
+            "nullable": true
+          },
+          "hourly": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "array",
+              "items": {
+                "type": "integer",
+                "format": "int32"
+              }
+            },
+            "description": "Breakdown by hour",
+            "nullable": true
+          },
+          "daily": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "array",
+              "items": {
+                "type": "integer",
+                "format": "int32"
+              }
+            },
+            "description": "Breakdown by day (for multi-day challenges)",
+            "nullable": true
+          },
+          "updatedAt": {
+            "type": "string",
+            "description": "Update timestamp",
+            "format": "date-time"
+          }
+        },
+        "additionalProperties": false
+      },
+      "ChallengeStatus": {
+        "enum": [
+          "Past",
+          "Current",
+          "Upcoming"
+        ],
+        "type": "string"
+      },
+      "CheckUserCredentialsRequest": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "description": "Email address",
+            "nullable": true
+          },
+          "phoneNumber": {
+            "type": "string",
+            "description": "User phone number",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "CoarseLocation": {
+        "type": "object",
+        "properties": {
+          "location": {
+            "$ref": "#/components/schemas/GeoLocation"
+          },
+          "country": {
+            "type": "string",
+            "description": "Detected country name",
+            "nullable": true
+          },
+          "countryCode": {
+            "type": "string",
+            "description": "Detected country code (ISO 3166-1 alpha-2)",
+            "nullable": true
+          },
+          "city": {
+            "type": "string",
+            "description": "Detected city",
+            "nullable": true
+          },
+          "region": {
+            "type": "string",
+            "description": "Detected region/state",
+            "nullable": true
+          },
+          "timezone": {
+            "type": "string",
+            "description": "Detected timezone",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Coarse location information - may contain different levels of detail"
+      },
+      "CreateTopicCampaignRequest": {
+        "required": [
+          "description",
+          "endsAt",
+          "goals",
+          "title"
+        ],
+        "type": "object",
+        "properties": {
+          "startsAt": {
+            "type": "string",
+            "description": "Campaign future start date and time (optional)",
+            "format": "date-time",
+            "nullable": true
+          },
+          "endsAt": {
+            "type": "string",
+            "description": "Campaign end date and time",
+            "format": "date-time"
+          },
+          "title": {
+            "type": "string",
+            "description": "Title of the campaign",
+            "nullable": true
+          },
+          "description": {
+            "type": "string",
+            "description": "Description of the campaign",
+            "nullable": true
+          },
+          "sponsoredBy": {
+            "type": "string",
+            "description": "Sponsor name",
+            "nullable": true
+          },
+          "sponsorLink": {
+            "type": "string",
+            "description": "Sponsored link",
+            "nullable": true
+          },
+          "sponsorLogoUrl": {
+            "type": "string",
+            "description": "Sponsor logo URL",
+            "nullable": true
+          },
+          "goals": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CampaignGoalRequest"
+            },
+            "description": "List of goals for the campaign",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "CreateUserWithEmailAndPasswordRequest": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "description": "User email address used as unique identifier for user identity",
+            "nullable": true
+          },
+          "password": {
+            "type": "string",
+            "description": "User password",
+            "nullable": true
+          },
+          "name": {
+            "type": "string",
+            "description": "Display name to use for the user account",
+            "nullable": true
+          },
+          "username": {
+            "type": "string",
+            "description": "Optional unique username to use for the user account",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "CreateUserWithTokenRequest": {
+        "type": "object",
+        "properties": {
+          "idToken": {
+            "type": "string",
+            "description": "IdToken obtained from Firebase Auth",
+            "nullable": true
+          },
+          "name": {
+            "type": "string",
+            "description": "Optional display name to use and override the name from the identity",
+            "nullable": true
+          },
+          "username": {
+            "type": "string",
+            "description": "Optional unique username to use for the user account",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "DeleteUserRequest": {
+        "type": "object",
+        "properties": {
+          "deleteIdentity": {
+            "type": "boolean",
+            "description": "Indicates if the identity should be also deleted from the Identity Provider"
+          }
+        },
+        "additionalProperties": false
+      },
+      "GeneratePicturesResponse": {
+        "type": "object",
+        "properties": {
+          "imageUrl": {
+            "type": "string",
+            "description": "Base64 data URL of cover image (1024×576, 16:9 aspect ratio)",
+            "nullable": true
+          },
+          "photoIconUrl": {
+            "type": "string",
+            "description": "Base64 data URL of photographic icon (512×512, 1:1)",
+            "nullable": true
+          },
+          "symbolicIconUrl": {
+            "type": "string",
+            "description": "Base64 data URL of symbolic/illustrated icon (512×512, 1:1)",
+            "nullable": true
+          },
+          "mainSubject": {
+            "type": "string",
+            "description": "Detected main subject of the topic for icon generation",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "GenerateTopicPicturesRequest": {
+        "required": [
+          "description",
+          "title"
+        ],
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "description": "Title of the topic",
+            "nullable": true
+          },
+          "description": {
+            "type": "string",
+            "description": "Description of the topic",
+            "nullable": true
+          },
+          "inferCoverImage": {
+            "type": "boolean",
+            "description": "Whether to generate a cover image. Default is true."
+          },
+          "inferPhotoIcon": {
+            "type": "boolean",
+            "description": "Whether to generate a photographic icon. Default is true."
+          },
+          "inferSymbolicIcon": {
+            "type": "boolean",
+            "description": "Whether to generate a symbolic/illustrated icon. Default is true."
+          }
+        },
+        "additionalProperties": false
+      },
+      "GeoLocation": {
+        "type": "object",
+        "properties": {
+          "latitude": {
+            "type": "number",
+            "description": "Gets or sets latitude (Y)",
+            "format": "double"
+          },
+          "longitude": {
+            "type": "number",
+            "description": "Gets or sets longitude (X)",
+            "format": "double"
+          }
+        },
+        "additionalProperties": false,
+        "description": "Describes a point on the surface of Earth"
+      },
+      "GoalType": {
+        "enum": [
+          "Supporters",
+          "LifetimeVotes",
+          "DailyVotes"
+        ],
+        "type": "string"
+      },
+      "LocationSource": {
+        "enum": [
+          "Default",
+          "Ip",
+          "Gps",
+          "UserProvided"
+        ],
+        "type": "string"
+      },
+      "LoginResult": {
+        "type": "object",
+        "properties": {
+          "idToken": {
+            "type": "string",
+            "description": "Primary IdToken used for authorization (bearer)",
+            "nullable": true
+          },
+          "refreshToken": {
+            "type": "string",
+            "description": "Refresh token",
+            "nullable": true,
+            "readOnly": true
+          },
+          "expiresIn": {
+            "type": "integer",
+            "description": "Expiration time for the token (in seconds)",
+            "format": "int32",
+            "nullable": true,
+            "readOnly": true
+          },
+          "userId": {
+            "type": "string",
+            "description": "Id of the user in the app, if the user is registered. Null for anonymous logins.",
+            "format": "uuid",
+            "nullable": true,
+            "readOnly": true
+          },
+          "uid": {
+            "type": "string",
+            "description": "Id of the user with external Id provider (Firebase)",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "LoginWithEmailAndPasswordRequest": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "description": "Email address",
+            "nullable": true
+          },
+          "password": {
+            "type": "string",
+            "description": "User password",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "MapCell": {
+        "type": "object",
+        "properties": {
+          "topicId": {
+            "type": "integer",
+            "description": "Id of the top topic in the cell",
+            "format": "int32"
+          },
+          "icon": {
+            "type": "string",
+            "description": "Topic Icon URI",
+            "nullable": true
+          },
+          "votes": {
+            "type": "integer",
+            "description": "Total number of votes for the topic from all users",
+            "format": "int64"
+          },
+          "numTopics": {
+            "type": "integer",
+            "description": "Number of distinct active topics in the cell matching the query (last 24h)",
+            "format": "int64"
+          }
+        },
+        "additionalProperties": false
+      },
+      "MapCellDataContainer": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Id of the H3 cell",
+            "nullable": true
+          },
+          "votes": {
+            "type": "integer",
+            "description": "Total number of votes in H3 cell (last 24 hours)",
+            "format": "int64"
+          },
+          "topics": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "description": "Breakdown of votes by topics",
+            "nullable": true
+          },
+          "children": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MapCellDataContainer"
+            },
+            "description": "Children cells / recursive",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Composite cell container - corresponds to an H3 cell and may additionally contain its children cells with their data"
+      },
+      "ModerateTopicResponse": {
+        "type": "object",
+        "properties": {
+          "isFlagged": {
+            "type": "boolean",
+            "description": "Indicates whether the topic is flagged"
+          },
+          "moderationNotes": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ModerationNote"
+            },
+            "description": "List of moderation notes",
+            "nullable": true
+          },
+          "canProceedWithoutWarning": {
+            "type": "boolean",
+            "description": "Indicates whether the topic can proceed without warning"
+          }
+        },
+        "additionalProperties": false
+      },
+      "ModerationNote": {
+        "type": "object",
+        "properties": {
+          "category": {
+            "type": "string",
+            "description": "Category of the moderation note",
+            "nullable": true
+          },
+          "severity": {
+            "type": "string",
+            "description": "Severity of the moderation note",
+            "nullable": true
+          },
+          "explanation": {
+            "type": "string",
+            "description": "Explanation of the moderation note",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "NamedLocation": {
+        "required": [
+          "country"
+        ],
+        "type": "object",
+        "properties": {
+          "country": {
+            "type": "string",
+            "description": "Represents full country name",
+            "nullable": true
+          },
+          "state": {
+            "type": "string",
+            "description": "State or administrative region",
+            "nullable": true
+          },
+          "city": {
+            "type": "string",
+            "description": "City name",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Represents named geographical location or region where a topic \r\nwill be published"
+      },
+      "PolishTopicRequest": {
+        "required": [
+          "description",
+          "title"
+        ],
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "description": "Title of the topic",
+            "nullable": true
+          },
+          "description": {
+            "type": "string",
+            "description": "Description of the topic",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "PolishTopicResponse": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "description": "Polished title",
+            "nullable": true
+          },
+          "description": {
+            "type": "string",
+            "description": "Polished description",
+            "nullable": true
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Suggested tags",
+            "nullable": true
+          },
+          "language": {
+            "type": "string",
+            "description": "Language of the topic",
+            "nullable": true
+          },
+          "moderated": {
+            "type": "boolean",
+            "description": "Indicates whether the topic was moderated",
+            "nullable": true
+          },
+          "moderationNotes": {
+            "type": "string",
+            "description": "Notes from moderation",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ProblemDetails": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "nullable": true
+          },
+          "title": {
+            "type": "string",
+            "nullable": true
+          },
+          "status": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "detail": {
+            "type": "string",
+            "nullable": true
+          },
+          "instance": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": { }
+      },
+      "ReportTopicRequest": {
+        "required": [
+          "reason"
+        ],
+        "type": "object",
+        "properties": {
+          "topicId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "reason": {
+            "type": "string",
+            "nullable": true
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "SiteStats": {
+        "type": "object",
+        "properties": {
+          "totalUsers": {
+            "type": "integer",
+            "description": "Total number of verified users",
+            "format": "int32"
+          },
+          "activeTopics": {
+            "type": "integer",
+            "description": "Number of active topics",
+            "format": "int32"
+          },
+          "totalVotes": {
+            "type": "integer",
+            "description": "Total number of votes",
+            "format": "int32"
+          },
+          "lastDayVotes": {
+            "type": "integer",
+            "description": "Number of votes in the last day",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false,
+        "description": "Site statistics"
+      },
+      "SubmitVoteRequest": {
+        "required": [
+          "location",
+          "locationName"
+        ],
+        "type": "object",
+        "properties": {
+          "topicId": {
+            "type": "integer",
+            "description": "Topic identifier",
+            "format": "int32"
+          },
+          "location": {
+            "$ref": "#/components/schemas/GeoLocation"
+          },
+          "locationName": {
+            "type": "string",
+            "description": "Name of the location (e.g. City, State, Country as detected by the client)",
+            "nullable": true
+          },
+          "locationSource": {
+            "$ref": "#/components/schemas/LocationSource"
+          }
+        },
+        "additionalProperties": false
+      },
+      "SubmitVotesBatchRequest": {
+        "required": [
+          "location",
+          "locationName",
+          "topics"
+        ],
+        "type": "object",
+        "properties": {
+          "topics": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "description": "List of topic identifiers",
+            "nullable": true
+          },
+          "location": {
+            "$ref": "#/components/schemas/GeoLocation"
+          },
+          "locationName": {
+            "type": "string",
+            "description": "Name of the location (e.g. City, State, Country as detected by the client)",
+            "nullable": true
+          },
+          "locationSource": {
+            "$ref": "#/components/schemas/LocationSource"
+          }
+        },
+        "additionalProperties": false
+      },
+      "SuggestTopicCampaignRequest": {
+        "required": [
+          "description"
+        ],
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "description": "Contact email",
+            "nullable": true
+          },
+          "description": {
+            "type": "string",
+            "description": "Description of the campaign",
+            "nullable": true
+          },
+          "organizationName": {
+            "type": "string",
+            "nullable": true
+          },
+          "organizationWebsite": {
+            "type": "string",
+            "nullable": true
+          },
+          "organizationLogoUrl": {
+            "type": "string",
+            "nullable": true
+          },
+          "topicId": {
+            "type": "integer",
+            "description": "Optional Id of the topic for which the campaign is suggested",
+            "format": "int32",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "Timeframe": {
+        "enum": [
+          "Last24Hours",
+          "Day",
+          "Week",
+          "Month"
+        ],
+        "type": "string"
+      },
+      "Topic": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "description": "Unique Id of the topic",
+            "format": "int32",
+            "nullable": true
+          },
+          "icon": {
+            "type": "string",
+            "description": "Topic Icon URI",
+            "nullable": true
+          },
+          "title": {
+            "type": "string",
+            "description": "Title of the topic",
+            "nullable": true
+          },
+          "description": {
+            "type": "string",
+            "description": "Description - text content",
+            "nullable": true
+          },
+          "picture": {
+            "type": "string",
+            "description": "Attached picture URI",
+            "nullable": true
+          },
+          "category": {
+            "type": "string",
+            "description": "Category in which the topic was added",
+            "nullable": true
+          },
+          "keywords": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Search keywords",
+            "nullable": true
+          },
+          "shareKey": {
+            "type": "string",
+            "description": "Topic sharing key",
+            "nullable": true
+          },
+          "createdAt": {
+            "type": "string",
+            "description": "Creation timestamp",
+            "format": "date-time",
+            "nullable": true
+          },
+          "authorId": {
+            "type": "string",
+            "description": "Id of the topic author",
+            "format": "uuid",
+            "nullable": true
+          },
+          "author": {
+            "$ref": "#/components/schemas/User"
+          },
+          "startsAt": {
+            "type": "string",
+            "description": "Topic voting start time",
+            "format": "date-time",
+            "nullable": true
+          },
+          "endsAt": {
+            "type": "string",
+            "description": "Topic voting end time",
+            "format": "date-time",
+            "nullable": true
+          },
+          "location": {
+            "$ref": "#/components/schemas/NamedLocation"
+          },
+          "stats": {
+            "$ref": "#/components/schemas/TopicVoteStats"
+          },
+          "state": {
+            "type": "string",
+            "description": "State of the topic (available to the topic author)",
+            "nullable": true
+          },
+          "campaign": {
+            "$ref": "#/components/schemas/Campaign"
+          }
+        },
+        "additionalProperties": false,
+        "description": "Topic represents content describing the issue which users can vote on."
+      },
+      "TopicCategory": {
+        "required": [
+          "name"
+        ],
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Name of the category",
+            "nullable": true
+          },
+          "topics": {
+            "type": "integer",
+            "description": "Number of available topics under this category",
+            "format": "int32"
+          },
+          "votes": {
+            "type": "integer",
+            "description": "Last 24 hour vote stats",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false,
+        "description": "Topic category"
+      },
+      "TopicLeaderboard": {
+        "required": [
+          "results"
+        ],
+        "type": "object",
+        "properties": {
+          "date": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "timeframe": {
+            "$ref": "#/components/schemas/Timeframe"
+          },
+          "location": {
+            "$ref": "#/components/schemas/NamedLocation"
+          },
+          "results": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TopicLeaderboardItem"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "TopicLeaderboardItem": {
+        "required": [
+          "topic"
+        ],
+        "type": "object",
+        "properties": {
+          "topic": {
+            "$ref": "#/components/schemas/Topic"
+          },
+          "votes": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "uniqueUsers": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "lastVoteTime": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "additionalProperties": false
+      },
+      "TopicPublicationState": {
+        "enum": [
+          "Active",
+          "Archived",
+          "Blocked"
+        ],
+        "type": "string",
+        "description": "We use this as an additional label which we can filter on and \r\nexlcude archive / blocked topics from some queries"
+      },
+      "TopicStateFilter": {
+        "enum": [
+          "All",
+          "Active"
+        ],
+        "type": "string"
+      },
+      "TopicStatsHistoryUnit": {
+        "enum": [
+          "Hourly",
+          "Daily"
+        ],
+        "type": "string",
+        "description": "Identifies unit of time for which votes were aggregated"
+      },
+      "TopicVoteStats": {
+        "type": "object",
+        "properties": {
+          "totalVotes": {
+            "type": "integer",
+            "description": "Total votes in the campaign (all time)",
+            "format": "int64",
+            "nullable": true
+          },
+          "totalUniqueUsers": {
+            "type": "integer",
+            "description": "Unique users votes (all time)",
+            "format": "int64",
+            "nullable": true
+          },
+          "lastDayVotes": {
+            "type": "integer",
+            "description": "Total votes in last 24 hours",
+            "format": "int64",
+            "nullable": true
+          },
+          "timestamp": {
+            "type": "string",
+            "description": "Update timestamp (most recent vote time)",
+            "format": "date-time",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "High level stats for a topic"
+      },
+      "TopicVoteSummary": {
+        "type": "object",
+        "properties": {
+          "topicId": {
+            "type": "integer",
+            "description": "Topic Id",
+            "format": "int32"
+          },
+          "totalVotes": {
+            "type": "integer",
+            "description": "Total votes for the topic",
+            "format": "int64"
+          },
+          "last": {
+            "type": "string",
+            "description": "Most recent vote timestamp",
+            "format": "date-time"
+          }
+        },
+        "additionalProperties": false,
+        "description": "High level stats for a topic"
+      },
+      "User": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique Id of the user in the app",
+            "format": "uuid",
+            "nullable": true
+          },
+          "name": {
+            "type": "string",
+            "description": "Display name",
+            "nullable": true
+          },
+          "username": {
+            "type": "string",
+            "description": "Unique user handle",
+            "nullable": true
+          },
+          "bio": {
+            "type": "string",
+            "description": "User bio",
+            "nullable": true
+          },
+          "picture": {
+            "type": "string",
+            "description": "Picture blob URI",
+            "nullable": true
+          },
+          "createdAt": {
+            "type": "string",
+            "description": "User profile creation timestamp",
+            "format": "date-time",
+            "nullable": true
+          },
+          "lastVotedAt": {
+            "type": "string",
+            "description": "Last vote timestamp",
+            "format": "date-time",
+            "nullable": true
+          },
+          "totalVotes": {
+            "type": "integer",
+            "description": "Total number of votes the user has added",
+            "format": "int32",
+            "nullable": true
+          },
+          "demographicProfile": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            },
+            "description": "User provided demographic info",
+            "nullable": true
+          },
+          "totalTopics": {
+            "type": "integer",
+            "description": "Total number of topics created",
+            "format": "int32",
+            "nullable": true
+          },
+          "activeTopics": {
+            "type": "integer",
+            "description": "Total number of currently active topics",
+            "format": "int32",
+            "nullable": true
+          },
+          "activeTopicsLimit": {
+            "type": "integer",
+            "description": "Number of active topic limit set for the user",
+            "format": "int32",
+            "nullable": true
+          },
+          "autoPulseCount": {
+            "type": "integer",
+            "description": "Number of auto pulses set for user own topics",
+            "format": "int32",
+            "nullable": true
+          },
+          "tier": {
+            "type": "string",
+            "description": "User account status tier",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ValidatePhoneNumberRequest": {
+        "required": [
+          "phoneNumber"
+        ],
+        "type": "object",
+        "properties": {
+          "phoneNumber": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ValidateTopicRequest": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "description": "Unique  title of the topic",
+            "nullable": true
+          },
+          "shareKey": {
+            "type": "string",
+            "description": "Unique share key for the topic",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ValidateUserRequest": {
+        "type": "object",
+        "properties": {
+          "username": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "Vote": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique Id of the vote",
+            "format": "uuid"
+          },
+          "topicId": {
+            "type": "integer",
+            "description": "Id of the topic",
+            "format": "int32"
+          },
+          "updatedAt": {
+            "type": "string",
+            "description": "Last vote time",
+            "format": "date-time"
+          },
+          "location": {
+            "type": "string",
+            "description": "Display name for vote location (coarse)",
+            "nullable": true
+          },
+          "locationSource": {
+            "$ref": "#/components/schemas/LocationSource"
+          }
+        },
+        "additionalProperties": false,
+        "description": "Represents single user vote for a topic"
+      }
+    },
+    "securitySchemes": {
+      "Bearer": {
+        "type": "http",
+        "description": "Please enter a valid token",
+        "scheme": "Bearer",
+        "bearerFormat": "JWT"
+      }
+    }
+  },
+  "security": [
+    {
+      "Bearer": [ ]
+    }
+  ]
+}
