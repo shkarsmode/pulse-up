@@ -492,6 +492,7 @@ svg-icon.accent ::ng-deep path {
 .landing-hero__overlay {
     position: absolute;
     inset: 0;
+
     background: linear-gradient(180deg, rgb(0 0 0 / 63%) 0%, rgb(0 0 0 / 64%) 35%, rgba(0, 0, 0, 0.25) 100%);
     backdrop-filter: blur(3px);
 }
