@@ -110,6 +110,10 @@ import { FormControl, FormGroup, ReactiveFormsModule, Validators } from "@angula
             padding: 24px;
             box-shadow: 0 4px 12px rgba(0,0,0,0.05); /* Premium shadow */
             margin-bottom: 24px;
+            
+            @media (max-width: 600px) {
+                padding: 16px;
+            }
         }
         .group {
             margin-bottom: 24px;

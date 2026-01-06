@@ -123,7 +123,7 @@ app-container::ng-deep .app-container {
         gap: 16px;
     }
 
-    > div {
+    >div {
         display: flex;
         flex-direction: column;
         align-items: center;
@@ -258,6 +258,7 @@ svg-icon.accent ::ng-deep path {
     .cols__item:first-child {
         grid-area: a;
     }
+
     .cols__item:last-child {
         grid-area: b;
     }
@@ -307,6 +308,7 @@ svg-icon.accent ::ng-deep path {
 .map--disabled {
     filter: grayscale(1);
     cursor: auto;
+
     &::before {
         background-color: rgba(#131420, 0.2);
     }
@@ -374,7 +376,7 @@ svg-icon.accent ::ng-deep path {
         font-size: 1.25rem;
     }
 
-    .topic-section > div {
+    .topic-section>div {
         display: grid;
         grid-template-columns: repeat(2, minmax(0, 1fr));
         grid-gap: 20px;
@@ -391,7 +393,7 @@ svg-icon.accent ::ng-deep path {
             // color: #64748b;
             font-size: 0.875rem;
             line-height: 1.25;
-            
+
         }
 
     }
@@ -490,12 +492,8 @@ svg-icon.accent ::ng-deep path {
 .landing-hero__overlay {
     position: absolute;
     inset: 0;
-    background: linear-gradient(
-        180deg,
-        rgba(0, 0, 0, 0.45) 0%,
-        rgba(0, 0, 0, 0.35) 35%,
-        rgba(0, 0, 0, 0.25) 100%
-    );
+    background: linear-gradient(180deg, rgb(0 0 0 / 63%) 0%, rgb(0 0 0 / 64%) 35%, rgba(0, 0, 0, 0.25) 100%);
+    backdrop-filter: blur(3px);
 }
 
 .landing-hero__content {
@@ -663,15 +661,13 @@ svg-icon.accent ::ng-deep path {
         border-radius: 10px !important;
     }
 
-    .topic__footer .topic-section > div {
+    .topic__footer .topic-section>div {
         display: flex;
         flex-direction: column !important;
     }
 }
 
-#bg-landing-hero {
-    
-}
+#bg-landing-hero {}
 
 
 @keyframes bounce {

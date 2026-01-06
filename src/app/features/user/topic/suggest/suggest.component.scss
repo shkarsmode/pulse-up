@@ -1,9 +1,12 @@
-
 :host {
     display: block;
     max-width: 600px;
     margin: 0 auto;
     padding: 24px;
+
+    @media (max-width: 600px) {
+        padding: 0;
+    }
 }
 
 .loading-state {
@@ -18,6 +21,7 @@
         animation: spin 2s linear infinite;
         margin-bottom: 24px;
         color: var(--primary-color, #007bff);
+
         svg {
             width: 48px;
             height: 48px;
@@ -36,6 +40,11 @@
 }
 
 @keyframes spin {
-    from { transform: rotate(0deg); }
-    to { transform: rotate(360deg); }
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
 }
