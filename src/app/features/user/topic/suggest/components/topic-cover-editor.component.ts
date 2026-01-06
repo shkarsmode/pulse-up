@@ -245,7 +245,7 @@ export class TopicCoverEditorComponent {
                 panelClass: "custom-dialog-container",
                 backdropClass: "custom-dialog-backdrop",
                 data: {
-                    event: event,
+                    file: file,
                     aspectRatio: 16 / 9, // Assuming cover image ratio
                     maintainAspectRatio: true,
                 },
@@ -266,6 +266,7 @@ export class TopicCoverEditorComponent {
             (event.target as HTMLInputElement).value = '';
         });
     }
+
 
     /**
      * Generates a new File object with the current transforms applied.

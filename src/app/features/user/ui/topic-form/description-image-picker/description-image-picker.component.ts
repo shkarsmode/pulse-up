@@ -110,7 +110,7 @@ export class DescriptionImagePickerComponent implements OnDestroy, ControlValueA
                 panelClass: "custom-dialog-container",
                 backdropClass: "custom-dialog-backdrop",
                 data: {
-                    event: event,
+                    file: file,
                     aspectRatio: 3 / 4,
                     maintainAspectRatio: false,
                 },
@@ -122,6 +122,7 @@ export class DescriptionImagePickerComponent implements OnDestroy, ControlValueA
             .pipe(take(1))
             .subscribe((result) => this.onCroppedImage(result));
     }
+
 
     private onCroppedImage = (result: CropResult): void => {
         if (result.success) {

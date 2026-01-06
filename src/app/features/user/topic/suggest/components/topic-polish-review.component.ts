@@ -461,8 +461,6 @@ export class TopicPolishReviewComponent {
     }
 
     openIconCropper(file: File) {
-        const mockEvent = { target: { files: [file] } } as unknown as Event;
-
         const dialogRef = this.dialog.open<CropImagePopupComponent, CropImagePopupData>(
             CropImagePopupComponent,
             {
@@ -471,7 +469,7 @@ export class TopicPolishReviewComponent {
                 panelClass: "custom-dialog-container",
                 backdropClass: "custom-dialog-backdrop",
                 data: {
-                    event: mockEvent,
+                    file: file,
                     aspectRatio: 1,
                     maintainAspectRatio: true,
                 },
@@ -489,4 +487,5 @@ export class TopicPolishReviewComponent {
             }
         });
     }
+
 }
