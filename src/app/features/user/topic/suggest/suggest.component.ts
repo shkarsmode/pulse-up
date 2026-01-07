@@ -1,3 +1,4 @@
+import { AppRoutes } from "@/app/shared/enums/app-routes.enum";
 import { ContentAssistService } from "@/app/shared/services/api/content-assist.service";
 import { NotificationService } from "@/app/shared/services/core/notification.service";
 import { SendTopicService } from "@/app/shared/services/topic/send-topic.service";
@@ -93,26 +94,17 @@ export class SuggestComponent {
     private readonly sendTopicService = inject(SendTopicService);
 
     onPublish(finalData: any) {
-        // Map finalData to the format expected by SendTopicService/API
-        // Since the previous implementation used a shared service 'currentTopic' form, 
-        // we might need to update that form or call an API directly.
-
-        // Assuming we want to use the existing flow for final submission:
         this.sendTopicService.currentTopic.patchValue({
             headline: finalData.title,
             description: finalData.description,
-            // category: finalData.audience, // Mapping "Audience" to Category might be wrong, need to check
+            category: finalData.category,
             icon: finalData.icon,
             picture: finalData.picture,
             keywords: finalData.tags
         });
 
-        // Navigate to preview or submit?
-        // Original was: this.router.navigateByUrl(this.routes.PREVIEW);
-        // But we probably want to save it similarly.
-
-        console.log('Would publish:', finalData);
-        // this.router.navigate([AppRoutes.User.Topic.PREVIEW]);
+        this.sendTopicService.markAsReadyForPreview();
+        this.router.navigate([AppRoutes.User.Topic.PREVIEW]);
     }
 
     onRegenerate() {

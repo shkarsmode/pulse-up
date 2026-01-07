@@ -1,17 +1,21 @@
 
 import { CommonModule } from "@angular/common";
-import { Component, EventEmitter, inject, Input, Output, signal } from "@angular/core";
+import { Component, EventEmitter, inject, Input, OnInit, Output, signal } from "@angular/core";
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
 import { MatDialog } from "@angular/material/dialog";
 import { SvgIconComponent } from 'angular-svg-icon';
-import { take } from "rxjs";
+import { map, take } from "rxjs";
 
 import { TopicDescriptionComponent } from "@/app/features/user/ui/topic-form/topic-description/topic-description.component";
 import { PrimaryButtonComponent } from "@/app/shared/components/ui-kit/buttons/primary-button/primary-button.component";
 import { ChipsInputComponent } from "@/app/shared/components/ui-kit/chips-input/chips-input.component";
 import { InputComponent } from "@/app/shared/components/ui-kit/input/input.component";
+import { SelectComponent } from "@/app/shared/components/ui-kit/select/select.component";
+import { PulseService } from "@/app/shared/services/api/pulse.service";
 import { NotificationService } from "@/app/shared/services/core/notification.service";
+import { SendTopicService } from "@/app/shared/services/topic/send-topic.service";
 import { CropImagePopupComponent, CropImagePopupData } from "../../../ui/crop-image-popup/crop-image-popup.component";
+import { LocationPickerComponent } from "../../../ui/topic-form/location-picker/location-picker.component";
 import { TopicCoverEditorComponent } from "./topic-cover-editor.component";
 
 @Component({
@@ -21,10 +25,12 @@ import { TopicCoverEditorComponent } from "./topic-cover-editor.component";
         CommonModule,
         ReactiveFormsModule,
         InputComponent,
+        SelectComponent,
         TopicDescriptionComponent,
         PrimaryButtonComponent,
         ChipsInputComponent,
         TopicCoverEditorComponent,
+        LocationPickerComponent,
         SvgIconComponent
     ],
     template: `
@@ -137,19 +143,45 @@ import { TopicCoverEditorComponent } from "./topic-cover-editor.component";
                         formControlName="tags"
                         label="Tags"
                         [limit]="5"
-                    />
+                     />
                 </div>
                 
+                <div class="section">
+                    <app-select
+                        id="category"
+                        name="category"
+                        label="Category *"
+                        formControlName="category"
+                        [options]="(categoriesForForm | async) || []"
+                    />
+                </div>
                 <div class="section">
                      <div class="audience-select">
                         <label>Audience</label>
                         <div class="fake-select">
-                            <svg-icon src="assets/svg/globe.svg" [svgStyle]="{ 'width.px': 18, 'height.px': 18 }"></svg-icon> 
-                            Global 
+                            <svg-icon src="assets/svg/globe.svg" [svgStyle]="{ 'width.px': 18, 'height.px': 18 }"></svg-icon>
+                            Global
                             <svg-icon src="assets/svg/chevron-down.svg" [svgStyle]="{ 'width.px': 16, 'height.px': 16 }" class="arrow"></svg-icon>
                         </div>
                      </div>
                 </div>
+                
+                <!-- <div class="section location-section">
+                    <div class="section-label">Set your topic's starting location</div>
+                    <p class="location-text">Your topic will appear here first. As the creator, your pulse will auto-renew daily for 7 days, keeping it on the map while others discover and spread it.</p>
+                    <app-location-picker>
+                        <app-input
+                            autocomplete="off"
+                            type="text"
+                            id="location"
+                            name="location"
+                            iconEnd="starting-location"
+                            formControlName="location"
+                            placeholder="Select location"
+                            (click)="saveStateBeforeNavigation()"
+                        />
+                    </app-location-picker>
+                </div> -->
 
                 <!-- Spacer -->
                 <div style="height: 24px"></div>
@@ -310,7 +342,7 @@ import { TopicCoverEditorComponent } from "./topic-cover-editor.component";
         .fake-select .arrow { margin-left: auto; color: #999; }
     `]
 })
-export class TopicPolishReviewComponent {
+export class TopicPolishReviewComponent implements OnInit {
     @Input() set data(value: any) {
         if (value) {
             // Store versions
@@ -346,6 +378,8 @@ export class TopicPolishReviewComponent {
         title: new FormControl<string>('', { nonNullable: true, validators: Validators.required }),
         description: new FormControl<string>('', { nonNullable: true, validators: Validators.required }),
         tags: new FormControl<string[]>([], { nonNullable: true }),
+        category: new FormControl<string>('', { nonNullable: true, validators: Validators.required }),
+        location: new FormControl<string>('', { nonNullable: true }),
     });
 
     public activeTab = signal<'original' | 'polished'>('polished');
@@ -368,6 +402,52 @@ export class TopicPolishReviewComponent {
 
     private dialog = inject(MatDialog);
     private notificationService = inject(NotificationService);
+    private pulseService = inject(PulseService);
+    private sendTopicService = inject(SendTopicService);
+
+    public categoriesForForm = this.pulseService.categories$.pipe(
+        map((categories) => categories.map((category) => category.name))
+    );
+
+    ngOnInit() {
+        // Restore state from SendTopicService if returning from location picker
+        const savedState = this.sendTopicService.tempTopicData;
+        if (savedState) {
+            // Restore form values
+            this.form.patchValue({
+                title: savedState.title || '',
+                description: savedState.description || '',
+                tags: savedState.tags || [],
+                category: savedState.category || '',
+                location: savedState.location || ''
+            });
+
+            // Restore generated images
+            if (savedState.photoIcon) this.generatedPhotoIcon = savedState.photoIcon;
+            if (savedState.symbolicIcon) this.generatedSymbolicIcon = savedState.symbolicIcon;
+            if (savedState.coverImage) {
+                this.versions.polished.coverImage = savedState.coverImage;
+                this.versions.original.coverImage = savedState.coverImage;
+            }
+
+            // Restore selected icon
+            if (savedState.selectedIcon) {
+                this.selectedIcon.set(savedState.selectedIcon);
+            }
+        }
+    }
+
+    // Save current state before navigation (e.g., to location picker)
+    saveStateBeforeNavigation() {
+        const currentState = {
+            ...this.form.getRawValue(),
+            photoIcon: this.generatedPhotoIcon,
+            symbolicIcon: this.generatedSymbolicIcon,
+            coverImage: this.selectedCoverImage(),
+            selectedIcon: this.selectedIcon()
+        };
+        this.sendTopicService.tempTopicData = currentState;
+    }
 
     switchTab(tab: 'original' | 'polished') {
         if (this.activeTab() === tab) return;

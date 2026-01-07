@@ -1,45 +1,32 @@
 <header class="desktop">
-    <a
-        class="logo"
-        routerLink="/"
-        aria-label="Pulse Up homepage">
+    <a class="logo" routerLink="/" aria-label="Pulse Up homepage">
         <svg-icon src="assets/svg/logo.svg" />
     </a>
 
     <div class="right-side">
         <ul>
             <li>
-                <a
-                    [routerLink]="'/' + AppRoutes.Landing.MAP"
-                    routerLinkActive="active">
+                <a [routerLink]="'/' + AppRoutes.Landing.MAP" routerLinkActive="active">
                     Map
                 </a>
             </li>
             <li>
-                <a
-                    [routerLink]="'/' + AppRoutes.Landing.LEADERBOARD"
-                    routerLinkActive="active">
+                <a [routerLink]="'/' + AppRoutes.Landing.LEADERBOARD" routerLinkActive="active">
                     Leaderboard
                 </a>
             </li>
             <li>
-                <a
-                    [routerLink]="'/' + AppRoutes.Landing.TOPICS"
-                    routerLinkActive="active">
-                    Topics
+                <a [routerLink]="'/' + AppRoutes.Landing.TOPICS" routerLinkActive="active">
+                    Discover
                 </a>
             </li>
             <li>
-                <a
-                    [routerLink]="'/' + AppRoutes.Landing.ABOUT"
-                    routerLinkActive="active">
+                <a [routerLink]="'/' + AppRoutes.Landing.ABOUT" routerLinkActive="active">
                     About
                 </a>
             </li>
             <li>
-                <a
-                    [routerLink]="'/' + AppRoutes.Landing.BLOG"
-                    routerLinkActive="active">
+                <a [routerLink]="'/' + AppRoutes.Landing.BLOG" routerLinkActive="active">
                     Blog
                 </a>
             </li>
@@ -52,9 +39,7 @@
                 Add a topic
             </app-primary-button> -->
             <div class="buttons__download">
-                <app-secondary-button
-                    [fullWidth]="true"
-                    openGetAppPopup>
+                <app-secondary-button [fullWidth]="true" openGetAppPopup>
                     Download App
                 </app-secondary-button>
             </div>
@@ -65,113 +50,80 @@
 
 <!-- MOBILE DESIGN -->
 
-<header
-    class="mobile"
-    [class.active]="isMobileDropdown">
+<header class="mobile" [class.active]="isMobileDropdown">
     <div class="mobile__top-bar">
-        <a
-            class="logo"
-            (click)="closeDropdown()"
-            routerLink="/">
+        <a class="logo" (click)="closeDropdown()" routerLink="/">
             <svg-icon src="assets/svg/logo-mobile.svg"></svg-icon>
         </a>
 
         <app-burger-button (click)="toggleDropdown()" />
     </div>
 
-    <div
-        class="mobile__dropdown"
-        [class.active]="isMobileDropdown">
-        <div
-            class="mobile__dropdown-container"
-            [class.active]="isMobileDropdown">
-            <div
-                class="right-side"
-                [class.active]="isMobileDropdown">
+    <div class="mobile__dropdown" [class.active]="isMobileDropdown">
+        <div class="mobile__dropdown-container" [class.active]="isMobileDropdown">
+            <div class="right-side" [class.active]="isMobileDropdown">
                 <div class="right-side__top">
-                    <app-burger-button
-                        [isOpen]="isMobileDropdown"
-                        (click)="toggleDropdown()" />
+                    <app-burger-button [isOpen]="isMobileDropdown" (click)="toggleDropdown()" />
                 </div>
 
                 <ul [class.scale]="!isMobileDropdown">
                     <li>
-                        <app-dropdown-link
-                            [link]="'/' + AppRoutes.Landing.MAP"
-                            [accent]="true"
+                        <app-dropdown-link [link]="'/' + AppRoutes.Landing.MAP" [accent]="true"
                             (handleclick)="closeDropdown()">
                             Map
                         </app-dropdown-link>
                     </li>
                     <li>
-                        <app-dropdown-link
-                            [link]="'/' + AppRoutes.Landing.LEADERBOARD"
-                            [accent]="true"
+                        <app-dropdown-link [link]="'/' + AppRoutes.Landing.LEADERBOARD" [accent]="true"
                             (handleclick)="closeDropdown()">
                             Leaderboard
                         </app-dropdown-link>
                     </li>
                     <li>
-                        <app-dropdown-link
-                            [link]="'/' + AppRoutes.Landing.TOPICS"
-                            [accent]="true"
+                        <app-dropdown-link [link]="'/' + AppRoutes.Landing.TOPICS" [accent]="true"
                             (handleclick)="closeDropdown()">
                             Discover
                         </app-dropdown-link>
                     </li>
                     <li>
-                        <app-dropdown-link
-                            [link]="'/' + AppRoutes.Landing.ABOUT"
-                            [accent]="true"
+                        <app-dropdown-link [link]="'/' + AppRoutes.Landing.ABOUT" [accent]="true"
                             (handleclick)="closeDropdown()">
                             About
                         </app-dropdown-link>
                     </li>
                     <li>
-                        <app-dropdown-link
-                            [link]="'/' + AppRoutes.Landing.BLOG"
-                            [accent]="true"
+                        <app-dropdown-link [link]="'/' + AppRoutes.Landing.BLOG" [accent]="true"
                             (handleclick)="closeDropdown()">
                             Blog
                         </app-dropdown-link>
                     </li>
                     @if (isAuthenticated) {
-                        <li>
-                            <app-dropdown-link
-                                [link]="'/' + AppRoutes.Profile.OVERVIEW"
-                                [accent]="true"
-                                (handleclick)="closeDropdown()">
-                                Profile
-                            </app-dropdown-link>
-                        </li>
+                    <li>
+                        <app-dropdown-link [link]="'/' + AppRoutes.Profile.OVERVIEW" [accent]="true"
+                            (handleclick)="closeDropdown()">
+                            Profile
+                        </app-dropdown-link>
+                    </li>
                     } @else {
-                        <li>
-                            <app-dropdown-link
-                                [link]="'/' + AppRoutes.Auth.SIGN_IN_WITH_PHONE"
-                                [accent]="true"
-                                (handleclick)="closeDropdown()">
-                                Login
-                            </app-dropdown-link>
-                        </li>
+                    <li>
+                        <app-dropdown-link [link]="'/' + AppRoutes.Auth.SIGN_IN_WITH_PHONE" [accent]="true"
+                            (handleclick)="closeDropdown()">
+                            Login
+                        </app-dropdown-link>
+                    </li>
                     }
                     <li>
-                        <app-dropdown-link
-                            [link]="'/' + AppRoutes.Community.TERMS"
-                            (handleclick)="closeDropdown()">
+                        <app-dropdown-link [link]="'/' + AppRoutes.Community.TERMS" (handleclick)="closeDropdown()">
                             Terms of Use
                         </app-dropdown-link>
                     </li>
                     <li>
-                        <app-dropdown-link
-                            [link]="'/' + AppRoutes.Community.PRIVACY"
-                            (handleclick)="closeDropdown()">
+                        <app-dropdown-link [link]="'/' + AppRoutes.Community.PRIVACY" (handleclick)="closeDropdown()">
                             Privacy Policy
                         </app-dropdown-link>
                     </li>
                     <li>
-                        <app-dropdown-link
-                            [link]="'/' + AppRoutes.Community.SUPPORT"
-                            (handleclick)="closeDropdown()">
+                        <app-dropdown-link [link]="'/' + AppRoutes.Community.SUPPORT" (handleclick)="closeDropdown()">
                             Support
                         </app-dropdown-link>
                     </li>
@@ -185,16 +137,15 @@
                         routerLinkActive="active">
                         Add a topic
                     </app-secondary-button> -->
-                    <app-download-app-button
-                        [link]="(onlineStoreLink$ | async) || ''"
+                    <app-download-app-button [link]="(onlineStoreLink$ | async) || ''"
                         (handleClick)="closeDropdown()" />
                 </div>
             </div>
 
             @if (isToShowVersionOfApp) {
-                <div class="version">
-                    {{ version.major }}.{{ version.minor }}.{{ version.patch }}
-                </div>
+            <div class="version">
+                {{ version.major }}.{{ version.minor }}.{{ version.patch }}
+            </div>
             }
         </div>
     </div>
