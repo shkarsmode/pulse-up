@@ -5,6 +5,7 @@ import { MatButtonModule } from "@angular/material/button";
 import { MatExpansionModule } from "@angular/material/expansion";
 import { MatFormFieldModule, MatLabel } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
+import { MatSliderModule } from "@angular/material/slider";
 import { DevSettingsService } from "../../services/core/dev-settings.service";
 import { GlobeSettingsService } from "../../services/map/globe-settings.service";
 
@@ -19,6 +20,7 @@ import { GlobeSettingsService } from "../../services/map/globe-settings.service"
         MatLabel,
         MatExpansionModule,
         MatButtonModule,
+        MatSliderModule,
     ],
     templateUrl: "./dev-menu.component.html",
     styleUrls: ["./dev-menu.component.scss"],

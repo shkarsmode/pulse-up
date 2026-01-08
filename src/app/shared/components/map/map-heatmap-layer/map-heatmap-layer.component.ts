@@ -1,4 +1,10 @@
-import { Component, DestroyRef, inject, Input, OnInit } from "@angular/core";
+import { AppConstants } from "@/app/shared/constants";
+import { MapPainter } from "@/app/shared/helpers/map-painter";
+import { GlobeSettingsService } from "@/app/shared/services/map/globe-settings.service";
+import { HeatmapService } from "@/app/shared/services/map/heatmap.service";
+import { MapUtils } from "@/app/shared/services/map/map-utils.service";
+import { Component, DestroyRef, effect, inject, Input, OnInit } from "@angular/core";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import {
     delay,
     filter,
@@ -12,11 +18,6 @@ import {
     tap,
     throttle,
 } from "rxjs";
-import { MapUtils } from "@/app/shared/services/map/map-utils.service";
-import { AppConstants } from "@/app/shared/constants";
-import { MapPainter } from "@/app/shared/helpers/map-painter";
-import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
-import { HeatmapService } from "@/app/shared/services/map/heatmap.service";
 
 @Component({
     selector: "app-map-heatmap-layer",
@@ -28,15 +29,43 @@ import { HeatmapService } from "@/app/shared/services/map/heatmap.service";
 export class MapHeatmapLayerComponent implements OnInit {
     private readonly destroyRef = inject(DestroyRef);
     private readonly heatmapService = inject(HeatmapService);
+    private readonly globeSettings = inject(GlobeSettingsService);
 
     @Input({ required: true }) public map: mapboxgl.Map;
     @Input() public topicId?: number;
 
     private readonly sourceId = "vibes";
     private dataLoaded = false;
-    public readonly intensity: number = 0.1;
+    public intensity: number = 0.1;
     public painter: MapPainter;
     public heatmapDataPointsCount = 0;
+
+    constructor() {
+        effect(() => {
+            if (!this.map) return;
+            const intensity = this.globeSettings.heatmapIntensity();
+            this.intensity = intensity;
+            this.paintIntensity();
+        });
+
+        effect(() => {
+            if (!this.map) return;
+            // Trigger radius repaint when setting changes
+            this.globeSettings.heatmapRadius();
+            this.paintRadius();
+        });
+
+        effect(() => {
+            if (!this.map) return;
+            const opacity = this.globeSettings.heatmapOpacity();
+            MapUtils.updatePaintProperty({
+                map: this.map,
+                layerId: "vibes-heat",
+                property: "heatmap-opacity",
+                value: ["interpolate", ["linear"], ["zoom"], 0, opacity, 15, opacity],
+            });
+        });
+    }
 
     ngOnInit() {
         this.painter = new MapPainter({
@@ -114,15 +143,16 @@ export class MapHeatmapLayerComponent implements OnInit {
     }
 
     private calculateHeatmapRadius(zoom: number) {
+        const baseRadius = this.globeSettings.heatmapRadius();
         const radiusMap = [
-            { zoom: 0, radius: 100 },
-            { zoom: 5, radius: 100 },
-            { zoom: 10, radius: 120 },
-            { zoom: 15, radius: 140 },
-            { zoom: 20, radius: 100 },
+            { zoom: 0, radius: baseRadius },
+            { zoom: 5, radius: baseRadius },
+            { zoom: 10, radius: baseRadius * 1.2 },
+            { zoom: 15, radius: baseRadius * 1.4 },
+            { zoom: 20, radius: baseRadius },
         ];
 
-        let radius = 100;
+        let radius = baseRadius;
         for (const entry of radiusMap) {
             if (zoom >= entry.zoom) {
                 radius = entry.radius;
