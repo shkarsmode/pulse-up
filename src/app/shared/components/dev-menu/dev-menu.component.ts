@@ -1,11 +1,12 @@
+import { CommonModule } from "@angular/common";
 import { Component, inject, signal } from "@angular/core";
 import { FormBuilder, FormGroup, ReactiveFormsModule } from "@angular/forms";
-import { CommonModule } from "@angular/common";
-import { MatExpansionModule } from "@angular/material/expansion";
 import { MatButtonModule } from "@angular/material/button";
-import { MatLabel, MatFormFieldModule } from "@angular/material/form-field";
+import { MatExpansionModule } from "@angular/material/expansion";
+import { MatFormFieldModule, MatLabel } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
 import { DevSettingsService } from "../../services/core/dev-settings.service";
+import { GlobeSettingsService } from "../../services/map/globe-settings.service";
 
 @Component({
     selector: "app-dev-menu",
@@ -25,6 +26,7 @@ import { DevSettingsService } from "../../services/core/dev-settings.service";
 export class DevMenuComponent {
     private readonly formBuilder = inject(FormBuilder);
     private readonly devSettings = inject(DevSettingsService);
+    public readonly globeSettings = inject(GlobeSettingsService);
 
     public locationForm: FormGroup;
     readonly isOpen = signal(false);
