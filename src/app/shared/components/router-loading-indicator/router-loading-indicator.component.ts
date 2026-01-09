@@ -1,6 +1,6 @@
 import { animate, state, style, transition, trigger } from "@angular/animations";
-import { CommonModule } from "@angular/common";
-import { Component, DestroyRef, inject, OnInit } from "@angular/core";
+import { CommonModule, isPlatformBrowser } from "@angular/common";
+import { Component, DestroyRef, inject, OnInit, PLATFORM_ID } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import {
     Router
@@ -27,6 +27,7 @@ export class RouterLoadingIndicatorComponent implements OnInit {
     private router = inject(Router);
     private destroyRef = inject(DestroyRef);
     private loadingIndicatorService = inject(RouterLoadingIndicatorService);
+    private platformId = inject(PLATFORM_ID);
 
     // @HostBinding("@fade") get fadeAnimation() {
     //     return this.isLoading ? "visible" : "hidden";
@@ -47,6 +48,15 @@ export class RouterLoadingIndicatorComponent implements OnInit {
     );
 
     ngOnInit() {
+        // Hide and remove the static initial loader once Angular boots on the client
+        if (isPlatformBrowser(this.platformId)) {
+            const initial = document.getElementById("initial-loader");
+            if (initial) {
+                initial.classList.add("hidden");
+                setTimeout(() => initial.remove(), 250);
+            }
+        }
+
         setTimeout(() => {
             this.isNavigating.next(false);
         }, 1000);

@@ -44,6 +44,21 @@
   <meta name="robots" content="noindex, nofollow">
 </head>
 <body>
+    <div id="initial-loader" aria-label="Loading">
+      <div class="initial-loader__backdrop"></div>
+      <div class="initial-loader__content" role="status">
+        <img src="/assets/svg/logo/logo-hexagon.svg" alt="PulseUp" width="96" height="96" />
+      </div>
+    </div>
+
+    <style>
+      /* Critical CSS: ensure loader shows before Angular boots */
+      #initial-loader { position: fixed; inset: 0; z-index: 9999; display: flex; align-items: center; justify-content: center; }
+      #initial-loader .initial-loader__backdrop { position: absolute; inset: 0; background: #fff; }
+      #initial-loader .initial-loader__content { position: relative; width: 96px; height: 96px; display: grid; place-items: center; }
+      #initial-loader.hidden { opacity: 0; pointer-events: none; transition: opacity .2s ease; }
+    </style>
+
     <app-root class="app-root"></app-root>
 </body>
 </html>
