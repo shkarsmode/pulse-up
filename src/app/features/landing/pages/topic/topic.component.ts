@@ -2,7 +2,6 @@ import { TopicPublishedComponent } from "@/app/features/landing/ui/topic-publish
 import { FadeInDirective } from "@/app/shared/animations/fade-in.directive";
 import { MapHeatmapLayerComponent } from "@/app/shared/components/map/map-heatmap-layer/map-heatmap-layer.component";
 import { MapComponent } from "@/app/shared/components/map/map.component";
-import { SliderComponent } from "@/app/shared/components/slider/slider.component";
 import { CopyButtonComponent } from "@/app/shared/components/ui-kit/buttons/copy-button/copy-button.component";
 import { FabButtonComponent } from '@/app/shared/components/ui-kit/buttons/fab-button/fab-button.component';
 import { FlatButtonDirective } from "@/app/shared/components/ui-kit/buttons/flat-button/flat-button.directive";
@@ -78,7 +77,6 @@ const TOPIC_VIEW_MODE_STORAGE_KEY = 'topic_view_mode';
         CopyButtonComponent,
         SocialsButtonComponent,
         MapComponent,
-        SliderComponent,
         SpinnerComponent,
         FadeInDirective,
         FormatNumberPipe,
@@ -200,6 +198,18 @@ export class TopicComponent implements OnInit, OnDestroy {
         if (this.isLandingView()) {
             const introSection = document.querySelector(selector);
             introSection?.scrollIntoView({ behavior: 'smooth' });
+        }
+    }
+
+    public goBack(): void {
+        try {
+            if (this.isWin) {
+                (this.isWin as any).history.back();
+            } else {
+                history.back();
+            }
+        } catch (e) {
+            // ignore
         }
     }
 

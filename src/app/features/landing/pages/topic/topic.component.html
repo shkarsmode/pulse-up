@@ -1,6 +1,32 @@
 @let shareTopicUrl = topicUrl();
 @let isTopicArchived = isArchived();
 
+@if (isLandingView()) {
+    <header class="topic-landing-header">
+        <div class="topic-landing-header__left">
+            <button type="button" class="icon-button" aria-label="Back" (click)="goBack()">
+                <svg-icon src="assets/svg/arrow-left.svg"></svg-icon>
+            </button>
+        </div>
+    
+        <div class="topic-landing-header__center">
+            <svg-icon src="assets/svg/logo.svg" />
+        </div>
+    
+        <div class="topic-landing-header__right">
+            <app-menu [content]="menuContent">
+                <button type="button" class="icon-button" aria-label="Share">
+                    <svg-icon src="assets/svg/icon_share.svg"></svg-icon>
+                </button>
+            </app-menu>
+    
+            <button type="button" class="icon-button" aria-label="More options" [matMenuTriggerFor]="menu">
+                <svg-icon src="assets/svg/more-dots.svg" style="width: 44px;"></svg-icon>
+            </button>
+        </div>
+    </header>
+}
+
 <app-landing-page-layout>
     @if (isLoading()) {
     <app-spinner class="pulse__spinner" />

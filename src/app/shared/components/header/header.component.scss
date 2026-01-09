@@ -6,6 +6,12 @@
     height: var(--header-height);
 }
 
+::ng-deep body:has(.topic-landing-header) {
+    app-header {
+        display: none !important;
+    }
+}
+
 :host-context(.header-contrast) {
     position: absolute;
     top: 0;

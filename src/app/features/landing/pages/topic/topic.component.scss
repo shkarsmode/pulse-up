@@ -704,3 +704,99 @@ svg-icon.accent ::ng-deep path {
         animation-timing-function: cubic-bezier(0.8, 0, 1, 1);
     }
 }
+
+/* Landing header styles (page-local header shown for landing view) */
+.topic-landing-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 16px;
+    gap: 8px;
+    width: 100%;
+    position: sticky;
+    top: 0;
+    z-index: 220;
+    background: #ffffff85;
+    backdrop-filter: blur(6px);
+    box-sizing: border-box;
+    overflow: hidden;
+
+    &__left,
+    &__right {
+        display: flex;
+        align-items: center;
+        min-width: 56px;
+        justify-content: flex-start;
+        gap: 8px;
+    }
+
+    &__center {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex: 1 1 auto;
+    }
+
+    &__logo {
+        width: 34px;
+        height: 34px;
+        border-radius: 6px;
+        object-fit: cover;
+    }
+
+    &__logo-fallback {
+        width: 34px;
+        height: 34px;
+        border-radius: 8px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        background: var(--accent-color);
+        color: var(--white-color);
+        font-weight: 700;
+        font-size: 14px;
+        text-transform: uppercase;
+    }
+
+    .icon-button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 44px;
+        height: 44px;
+        padding: 6px;
+        border-radius: 999px;
+        background: rgba(255,255,255,0.06);
+        border: none;
+    }
+
+    &__right svg-icon ::ng-deep svg path {
+        fill: #000;
+    }
+
+}
+
+/* ensure hero content doesn't hide behind sticky header on small screens */
+.landing-hero {
+    padding-top: 64px;
+}
+
+@media screen and (max-width: 820px) {
+    .topic-landing-header {
+        padding: 8px 12px;
+        &__logo { width: 28px; height: 28px; }
+        .icon-button { width: 48px; height: 48px; }
+    }
+
+    .landing-hero { padding-top: 72px; }
+}
+
+@media screen and (max-width: 420px) {
+    .topic-landing-header {
+        padding: 6px 10px;
+        &__logo { width: 26px; height: 26px; }
+        .icon-button { width: 48px; height: 48px; padding: 8px; }
+    }
+
+    .landing-hero { padding-top: 72px; }
+}
