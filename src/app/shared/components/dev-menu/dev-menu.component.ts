@@ -1,3 +1,4 @@
+import { environment } from "@/environments/environment";
 import { CommonModule } from "@angular/common";
 import { Component, inject, signal } from "@angular/core";
 import { FormBuilder, FormGroup, ReactiveFormsModule } from "@angular/forms";
@@ -5,6 +6,7 @@ import { MatButtonModule } from "@angular/material/button";
 import { MatExpansionModule } from "@angular/material/expansion";
 import { MatFormFieldModule, MatLabel } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
+import { MatSlideToggleModule } from "@angular/material/slide-toggle";
 import { MatSliderModule } from "@angular/material/slider";
 import { DevSettingsService } from "../../services/core/dev-settings.service";
 import { GlobeSettingsService } from "../../services/map/globe-settings.service";
@@ -21,13 +23,14 @@ import { GlobeSettingsService } from "../../services/map/globe-settings.service"
         MatExpansionModule,
         MatButtonModule,
         MatSliderModule,
+        MatSlideToggleModule,
     ],
     templateUrl: "./dev-menu.component.html",
     styleUrls: ["./dev-menu.component.scss"],
 })
 export class DevMenuComponent {
     private readonly formBuilder = inject(FormBuilder);
-    private readonly devSettings = inject(DevSettingsService);
+    public readonly devSettings = inject(DevSettingsService);
     public readonly globeSettings = inject(GlobeSettingsService);
 
     public locationForm: FormGroup;
@@ -41,6 +44,30 @@ export class DevMenuComponent {
             lng: [lng],
             accuracy: ["100"],
         });
+    }
+
+    private ensureOverride() {
+        if (!this.devSettings.markerSizingOverride) {
+            this.devSettings.markerSizingOverride = { globe: {}, mercator: {} };
+        }
+    }
+
+    getSizingValue(isGlobe: boolean, key: keyof (typeof environment.markerSizing.globe)) {
+        const side = isGlobe ? "globe" : "mercator";
+        const override = this.devSettings.markerSizingOverride?.[side as "globe" | "mercator"] as any;
+        if (override && typeof override[key] !== "undefined") return override[key];
+        return (environment.markerSizing as any)[side][key];
+    }
+
+    setSizingValue(isGlobe: boolean, key: keyof (typeof environment.markerSizing.globe), value: number) {
+        this.ensureOverride();
+        const side = isGlobe ? "globe" : "mercator";
+        const cur = this.devSettings.markerSizingOverride || { globe: {}, mercator: {} };
+        // @ts-ignore
+        const part = { ...(cur as any)[side] } || {};
+        part[key] = Number(value);
+        (cur as any)[side] = part;
+        this.devSettings.markerSizingOverride = cur;
     }
 
     toggleMenu() {

@@ -3,6 +3,7 @@ import { H3Service } from '@/app/features/landing/services/h3.service';
 import { ITopic } from "@/app/shared/interfaces";
 import { IMapMarker, IMapMarkerAnimated } from "@/app/shared/interfaces/map/map-marker.interface";
 import { PulseService } from "@/app/shared/services/api/pulse.service";
+import { environment } from '@/environments/environment';
 import { inject, Injectable } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import {
@@ -15,6 +16,7 @@ import {
     tap
 } from "rxjs";
 import { ICategory } from "../../interfaces/category.interface";
+import { DevSettingsService } from "../core/dev-settings.service";
 
 interface TooltipData extends ITopic {
     markerId: number;
@@ -26,12 +28,15 @@ interface TooltipData extends ITopic {
 export class MapMarkersService {
     private readonly pulseService: PulseService = inject(PulseService);
     private readonly h3Service: H3Service = inject(H3Service);
+    private readonly devSettings = inject(DevSettingsService);
 
     private readonly markerHover$ = new Subject<IMapMarker>();
     private markers = new BehaviorSubject<IMapMarkerAnimated[]>([]);
     private tooltipData = new BehaviorSubject<TooltipData | null>(null);
     private categorySubject = new BehaviorSubject<ICategory | null>(null);
     private pulseCache = new Map<number, ITopic>();
+    private lastData: IH3Pulses | null = null;
+    private lastOptions: { isGlobe?: boolean } | undefined = undefined;
 
     public markers$ = this.markers.asObservable();
     public tooltipData$ = this.tooltipData.asObservable();
@@ -77,9 +82,19 @@ export class MapMarkersService {
                 })
             )
             .subscribe();
+
+        // Recompute markers when developer overrides change
+        this.devSettings.markerSizingOverride$?.pipe(takeUntilDestroyed()).subscribe(() => {
+            if (this.lastData) {
+                this.updateMarkers(this.lastData, this.lastOptions);
+            }
+        });
     }
 
     public updateMarkers(data: IH3Pulses, options?: { isGlobe?: boolean }): void {
+        // remember last request so we can recompute when dev overrides change
+        this.lastData = data;
+        this.lastOptions = options;
         const entries = Object.entries(data);
 
         Promise.all(
@@ -95,23 +110,16 @@ export class MapMarkersService {
 
                 const votes = item.votes || 0;
 
+                const defaultCfg = { globe: { min: 18, base: 18, scale: 12, max: 110 }, mercator: { min: 28, base: 24, scale: 14, max: 160 } };
+                const envCfg = (environment?.markerSizing as any) || defaultCfg;
+                const override = this.devSettings?.markerSizingOverride || null;
+
                 const computeSize = (v: number, isGlobe = false) => {
-                    // stronger, more visible logarithmic scaling with clamping
-                    if (isGlobe) {
-                        const min = 18;
-                        const max = 110;
-                        const base = 18;
-                        const scale = 12.0;
-                        const size = Math.round(base + scale * Math.log2(v + 1));
-                        return Math.max(min, Math.min(max, size));
-                    } else {
-                        const min = 28;
-                        const max = 160;
-                        const base = 24;
-                        const scale = 14.0;
-                        const size = Math.round(base + scale * Math.log2(v + 1));
-                        return Math.max(min, Math.min(max, size));
-                    }
+                    const side = isGlobe ? 'globe' : 'mercator';
+                    const merged = { ...(envCfg as any)[side], ...(override ? (override as any)[side] : {}) };
+                    const s = merged;
+                    const size = Math.round((s.base ?? 20) + (s.scale ?? 7) * Math.log2(v + 1));
+                    return Math.max(s.min ?? 8, Math.min(s.max ?? 160, size));
                 };
 
                 const size = computeSize(votes, !!options?.isGlobe);

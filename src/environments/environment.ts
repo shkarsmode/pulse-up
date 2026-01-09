@@ -17,4 +17,8 @@ export const environment = {
         appId: '1:301057533103:web:388935743e165e31bf205a',
     },
     ipInfoApiToken: "7781b0329f5236",
+    markerSizing: {
+        globe: { min: 18, base: 18, scale: 12.0, max: 110 },
+        mercator: { min: 28, base: 24, scale: 14.0, max: 160 },
+    },
 };

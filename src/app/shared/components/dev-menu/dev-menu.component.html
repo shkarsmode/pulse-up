@@ -6,6 +6,19 @@
     <mat-accordion>
         <mat-expansion-panel>
             <mat-expansion-panel-header>
+                <mat-panel-title>⚙️ Dev Menu</mat-panel-title>
+            </mat-expansion-panel-header>
+
+            <div style="padding: 12px 0; display:flex; align-items:center; gap:12px;">
+                <mat-slide-toggle [checked]="devSettings.showDevMenu" (change)="devSettings.showDevMenu = $event.checked">
+                    Show Dev Menu
+                </mat-slide-toggle>
+            </div>
+
+        </mat-expansion-panel>
+
+        <mat-expansion-panel>
+            <mat-expansion-panel-header>
                 <mat-panel-title>📍 Location</mat-panel-title>
             </mat-expansion-panel-header>
 
@@ -41,6 +54,79 @@
                     Toggle Glow (Current: {{ globeSettings.getGlowStateLabel() }})
                 </button>
             </div>
+        </mat-expansion-panel>
+
+        <mat-expansion-panel>
+            <mat-expansion-panel-header>
+                <mat-panel-title>📌 Marker Sizing</mat-panel-title>
+            </mat-expansion-panel-header>
+
+            <div style="padding: 12px 0; display:flex; flex-direction:column; gap:12px;">
+                <div>
+                    <strong>Globe</strong>
+                </div>
+
+                <div>
+                    <mat-label>Min: {{ getSizingValue(true, 'min') }}</mat-label>
+                    <mat-slider min="4" max="80" step="1" showTickMarks discrete>
+                        <input matSliderThumb [value]="getSizingValue(true, 'min')" (valueChange)="setSizingValue(true, 'min', $event)">
+                    </mat-slider>
+                </div>
+
+                <div>
+                    <mat-label>Base: {{ getSizingValue(true, 'base') }}</mat-label>
+                    <mat-slider min="8" max="120" step="1" showTickMarks discrete>
+                        <input matSliderThumb [value]="getSizingValue(true, 'base')" (valueChange)="setSizingValue(true, 'base', $event)">
+                    </mat-slider>
+                </div>
+
+                <div>
+                    <mat-label>Scale: {{ getSizingValue(true, 'scale') }}</mat-label>
+                    <mat-slider min="0" max="50" step="1" showTickMarks discrete>
+                        <input matSliderThumb [value]="getSizingValue(true, 'scale')" (valueChange)="setSizingValue(true, 'scale', $event)">
+                    </mat-slider>
+                </div>
+
+                <div>
+                    <mat-label>Max: {{ getSizingValue(true, 'max') }}</mat-label>
+                    <mat-slider min="20" max="400" step="1" showTickMarks discrete>
+                        <input matSliderThumb [value]="getSizingValue(true, 'max')" (valueChange)="setSizingValue(true, 'max', $event)">
+                    </mat-slider>
+                </div>
+
+                <div>
+                    <strong>Mercator</strong>
+                </div>
+
+                <div>
+                    <mat-label>Min: {{ getSizingValue(false, 'min') }}</mat-label>
+                    <mat-slider min="4" max="120" step="1" showTickMarks discrete>
+                        <input matSliderThumb [value]="getSizingValue(false, 'min')" (valueChange)="setSizingValue(false, 'min', $event)">
+                    </mat-slider>
+                </div>
+
+                <div>
+                    <mat-label>Base: {{ getSizingValue(false, 'base') }}</mat-label>
+                    <mat-slider min="8" max="200" step="1" showTickMarks discrete>
+                        <input matSliderThumb [value]="getSizingValue(false, 'base')" (valueChange)="setSizingValue(false, 'base', $event)">
+                    </mat-slider>
+                </div>
+
+                <div>
+                    <mat-label>Scale: {{ getSizingValue(false, 'scale') }}</mat-label>
+                    <mat-slider min="0" max="80" step="1" showTickMarks discrete>
+                        <input matSliderThumb [value]="getSizingValue(false, 'scale')" (valueChange)="setSizingValue(false, 'scale', $event)">
+                    </mat-slider>
+                </div>
+
+                <div>
+                    <mat-label>Max: {{ getSizingValue(false, 'max') }}</mat-label>
+                    <mat-slider min="20" max="600" step="1" showTickMarks discrete>
+                        <input matSliderThumb [value]="getSizingValue(false, 'max')" (valueChange)="setSizingValue(false, 'max', $event)">
+                    </mat-slider>
+                </div>
+            </div>
+
         </mat-expansion-panel>
 
         <mat-expansion-panel>
