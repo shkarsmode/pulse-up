@@ -249,7 +249,7 @@ import { TopicCoverEditorComponent } from "./topic-cover-editor.component";
         /* Fancy Upload Icon */
         .icon-option.upload { 
             background: #fff; 
-            border: 2px dashed #7029ff; /* Purple dashed */
+            border: 2px dashed var(--accent-color); 
             display: flex; 
             align-items: center; 
             justify-content: center; 
@@ -257,10 +257,10 @@ import { TopicCoverEditorComponent } from "./topic-cover-editor.component";
         .icon-option.upload.selected {
              background: #f8f7fa;
         }
-        .upload-content { display: flex; flex-direction: column; align-items: center; gap: 4px; color: #7029ff; }
+        .upload-content { display: flex; flex-direction: column; align-items: center; gap: 4px; color: var(--accent-color); }
          ::ng-deep .upload-content svg-icon svg {
-             fill: #7029ff;
-             stroke: #7029ff;
+             fill: var(--accent-color) !important;
+             stroke: var(--accent-color) !important;
         }
         
         /* Map Preview */

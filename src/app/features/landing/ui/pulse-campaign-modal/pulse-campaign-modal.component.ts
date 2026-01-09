@@ -1,13 +1,13 @@
+import { PopupCloseButtonComponent } from "@/app/shared/components/ui-kit/popup/popup-close-button/popup-close-button.component";
+import { PopupSubtitleComponent } from "@/app/shared/components/ui-kit/popup/popup-subtitle/popup-subtitle.component";
+import { PopupLayoutComponent } from "@/app/shared/components/ui-kit/popup/popup.component";
 import { Campaign, ITopicStats } from "@/app/shared/interfaces";
 import { CommonModule, DatePipe } from "@angular/common";
 import { ChangeDetectionStrategy, Component, inject } from "@angular/core";
 import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
-import { PopupLayoutComponent } from "@/app/shared/components/ui-kit/popup/popup.component";
-import { PopupCloseButtonComponent } from "@/app/shared/components/ui-kit/popup/popup-close-button/popup-close-button.component";
-import { PopupSubtitleComponent } from "@/app/shared/components/ui-kit/popup/popup-subtitle/popup-subtitle.component";
 import { AngularSvgIconModule } from "angular-svg-icon";
-import { CampaignProgressCountComponent } from "./campaign-progress-count/campaign-progress-count.component";
 import { CampaignGoalExtended } from "../../interfaces/campaign-goal-extended.interface";
+import { CampaignProgressCountComponent } from "./campaign-progress-count/campaign-progress-count.component";
 
 @Component({
     selector: "app-pulse-campaign-modal",
@@ -98,6 +98,6 @@ export class PulseCampaignModalComponent {
         if (progress >= 100) {
             return "#00C105";
         }
-        return "#5E00CC";
+        return (typeof document !== 'undefined') ? getComputedStyle(document.documentElement).getPropertyValue('--accent-color').trim() || '#000000' : '#000000';
     }
 }

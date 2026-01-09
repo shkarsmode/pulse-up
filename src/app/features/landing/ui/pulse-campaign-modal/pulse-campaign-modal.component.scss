@@ -36,10 +36,10 @@
         overflow: hidden;
         margin-bottom: 4px;
 
-        .modal__progress-fill {
+            .modal__progress-fill {
             height: 100%;
             border-radius: 9999px;
-            background-color: #5E00CC;
+            background-color: var(--accent-color);
             transition: width 0.3s ease;
             animation: fillBar 1s ease-out forwards;
         }
@@ -90,8 +90,8 @@
         border-top: 1px solid #e5e7eb;
         padding-top: 12px;
 
-        span {
-            color: #5E00CC;
+            span {
+            color: var(--accent-color);
             text-decoration: none;
             font-weight: 600;
 

@@ -5,7 +5,7 @@
 .secondary-button {
     font-weight: 600;
     color: var(--accent-color);
-    border: 1px solid #5e00cc;
+    border: 1px solid var(--accent-color);
     border-radius: 40px;
     background-color: transparent;
     transition: all 0.2s;

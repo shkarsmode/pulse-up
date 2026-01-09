@@ -58,7 +58,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    background-color: rgba(#5e00cc, 0.1);
+    background-color: var(--accent-light-color);
     border-radius: 50%;
 
     svg {

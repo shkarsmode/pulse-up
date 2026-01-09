@@ -15,6 +15,11 @@
                 </mat-slide-toggle>
             </div>
 
+            <div style="padding: 8px 0; display:flex; gap:8px; align-items:center;">
+                <button mat-stroked-button (click)="setAccentColor('#000000')">Apply Black Accent</button>
+                <button mat-stroked-button (click)="resetAccentColor()">Reset Accent</button>
+            </div>
+
         </mat-expansion-panel>
 
         <mat-expansion-panel>

@@ -92,7 +92,7 @@ import { CropImagePopupComponent, CropImagePopupData } from "../../../ui/crop-im
             justify-content: center;
             width: 100%;
             height: 100%;
-            background: #f8f7fa; /* Light purple tint */
+            background: var(--accent-light-color); /* Light accent tint */
             cursor: pointer;
             transition: background 0.2s;
         }
@@ -108,14 +108,14 @@ import { CropImagePopupComponent, CropImagePopupData } from "../../../ui/crop-im
             color: #1e1e2f;
             margin-bottom: 8px;
         }
-        .upload-icon {
-             font-size: 20px;
-             color: #7029ff; /* Purple accent */
-        }
-         ::ng-deep .upload-btn svg-icon svg {
-            fill: #7029ff; /* Force purple specifically for this icon */
-             stroke: #7029ff;
-        }
+           .upload-icon {
+               font-size: 20px;
+               color: var(--accent-color); /* Accent */
+           }
+            ::ng-deep .upload-btn svg-icon svg {
+              fill: var(--accent-color) !important;
+               stroke: var(--accent-color) !important;
+           }
         .upload-hint {
             font-size: 13px;
             color: #64748b;

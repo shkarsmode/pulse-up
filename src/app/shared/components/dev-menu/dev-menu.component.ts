@@ -82,4 +82,47 @@ export class DevMenuComponent {
         };
         this.toggleMenu();
     }
+
+    setAccentColor(hex: string) {
+        this.applyAccentToDocument(hex);
+    }
+
+    resetAccentColor() {
+        const root = document.documentElement;
+        root.style.removeProperty("--accent-color");
+        root.style.removeProperty("--accent-foreground");
+        root.classList.remove("dev-accent-override");
+    }
+
+    private applyAccentToDocument(hex: string) {
+        const root = document.documentElement;
+        const fg = this.getReadableForeground(hex);
+        root.style.setProperty("--accent-color", hex);
+        root.style.setProperty("--accent-foreground", fg);
+        root.classList.add("dev-accent-override");
+    }
+
+    private getReadableForeground(hex: string) {
+        const rgb = this.hexToRgb(hex);
+        if (!rgb) return "#ffffff";
+        const lum = (0.2126 * rgb.r + 0.7152 * rgb.g + 0.0722 * rgb.b) / 255;
+        return lum > 0.5 ? "#000000" : "#ffffff";
+    }
+
+    private hexToRgb(hex: string): { r: number; g: number; b: number } | null {
+        const sanitized = hex.replace('#', '').trim();
+        if (sanitized.length === 3) {
+            const r = parseInt(sanitized[0] + sanitized[0], 16);
+            const g = parseInt(sanitized[1] + sanitized[1], 16);
+            const b = parseInt(sanitized[2] + sanitized[2], 16);
+            return { r, g, b };
+        }
+        if (sanitized.length === 6) {
+            const r = parseInt(sanitized.substring(0, 2), 16);
+            const g = parseInt(sanitized.substring(2, 4), 16);
+            const b = parseInt(sanitized.substring(4, 6), 16);
+            return { r, g, b };
+        }
+        return null;
+    }
 }
