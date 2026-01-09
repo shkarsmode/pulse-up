@@ -79,7 +79,7 @@ export class MapMarkersService {
             .subscribe();
     }
 
-    public updateMarkers(data: IH3Pulses): void {
+    public updateMarkers(data: IH3Pulses, options?: { isGlobe?: boolean }): void {
         const entries = Object.entries(data);
 
         Promise.all(
@@ -93,6 +93,29 @@ export class MapMarkersService {
 
                 const [lat, lng] = coords;
 
+                const votes = item.votes || 0;
+
+                const computeSize = (v: number, isGlobe = false) => {
+                    // stronger, more visible logarithmic scaling with clamping
+                    if (isGlobe) {
+                        const min = 18;
+                        const max = 110;
+                        const base = 18;
+                        const scale = 12.0;
+                        const size = Math.round(base + scale * Math.log2(v + 1));
+                        return Math.max(min, Math.min(max, size));
+                    } else {
+                        const min = 28;
+                        const max = 160;
+                        const base = 24;
+                        const scale = 14.0;
+                        const size = Math.round(base + scale * Math.log2(v + 1));
+                        return Math.max(min, Math.min(max, size));
+                    }
+                };
+
+                const size = computeSize(votes, !!options?.isGlobe);
+
                 const marker: IMapMarkerAnimated = {
                     id: index,
                     lng,
@@ -101,6 +124,8 @@ export class MapMarkersService {
                     h3Index,
                     topicId: item.topicId,
                     delay: this.randomInteger(100, 2000),
+                    votes,
+                    size,
                 };
 
                 return marker;

@@ -1,9 +1,7 @@
 <img
     [src]="icon"
-    width="44"
-    height="44"
     alt="icon"
     appLoadImgPath
     [ngClass]="classes"
-    [ngStyle]="isAnimated ? { animationDelay: animationDelay + 'ms' } : {}"
+    [ngStyle]="{ width: size + 'px', height: size + 'px', animationDelay: isAnimated ? (animationDelay + 'ms') : null }"
     (load)="onImageLoaded()"/>

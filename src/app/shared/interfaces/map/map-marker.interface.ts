@@ -5,6 +5,8 @@ export interface IMapMarker {
   lng: number;
   lat: number;
   icon: string;
+  votes?: number;
+  size?: number; // px
 }
 
 export interface IMapMarkerAnimated extends IMapMarker {

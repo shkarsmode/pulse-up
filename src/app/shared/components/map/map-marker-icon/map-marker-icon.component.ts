@@ -13,6 +13,7 @@ export class MapMarkerIconComponent implements OnInit {
     @Input() icon = "";
     @Input() isAnimated = false;
     @Input() animationDelay = 0;
+    @Input() size: number = 44; // px
     @Output() imageLoaded: EventEmitter<void> = new EventEmitter<void>();
 
     public classes = {};
