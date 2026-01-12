@@ -11,6 +11,7 @@ import {
     TopicVotingHistory,
 } from "../../interfaces";
 import { ICategory } from "../../interfaces/category.interface";
+import { ISiteStats } from '../../interfaces/site-stats.interface';
 import { IGetLeaderboardLocationsRequest } from "../../interfaces/topic/get-leaderboard-locations-request.interface";
 import { IGetLeaderboardLocationsResponse } from "../../interfaces/topic/get-leaderboard-locations-response.interface";
 import { IGetLeaderboardTopicsRequest } from "../../interfaces/topic/get-leaderboard-topics-request.interface";
@@ -345,6 +346,12 @@ export class PulseService {
                     ...params,
                 },
             },
+        );
+    }
+
+    public getSiteStats(): Observable<ISiteStats> {
+        return this.http.get<ISiteStats>(
+            `${this.apiUrl}/site-stats`,
         );
     }
 

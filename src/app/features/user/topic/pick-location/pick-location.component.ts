@@ -157,7 +157,7 @@ export class PickLocationComponent implements OnInit, OnDestroy {
             layerId: "search-polygons-layer-line",
             map: this.map,
             data: {
-                "line-color": "#5e00cc",
+                "line-color": "#000000",
                 "line-width": 2,
                 "line-opacity": 0.25,
             },
@@ -167,7 +167,7 @@ export class PickLocationComponent implements OnInit, OnDestroy {
             layerId: "search-polygons-layer-fill",
             map: this.map,
             data: {
-                "fill-color": "#5e00cc",
+                "fill-color": "#000000",
                 "fill-opacity": 0.15,
             },
         });

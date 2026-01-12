@@ -1,55 +1,172 @@
-<button
-    class="dev-toggle-btn"
-    (click)="toggleMenu()">
+<button class="dev-toggle-btn" (click)="toggleMenu()">
     ⚙️
 </button>
 
-<div
-    class="dev-menu-panel"
-    *ngIf="isOpen()">
+<div class="dev-menu-panel" *ngIf="isOpen()">
     <mat-accordion>
+        <mat-expansion-panel>
+            <mat-expansion-panel-header>
+                <mat-panel-title>⚙️ Dev Menu</mat-panel-title>
+            </mat-expansion-panel-header>
+
+            <div style="padding: 12px 0; display:flex; align-items:center; gap:12px;">
+                <mat-slide-toggle [checked]="devSettings.showDevMenu" (change)="devSettings.showDevMenu = $event.checked">
+                    Show Dev Menu
+                </mat-slide-toggle>
+            </div>
+
+            <div style="padding: 8px 0; display:flex; gap:8px; align-items:center;">
+                <button mat-stroked-button (click)="setAccentColor('#000000')">Apply Black Accent</button>
+                <button mat-stroked-button (click)="resetAccentColor()">Reset Accent</button>
+            </div>
+
+        </mat-expansion-panel>
+
         <mat-expansion-panel>
             <mat-expansion-panel-header>
                 <mat-panel-title>📍 Location</mat-panel-title>
             </mat-expansion-panel-header>
 
-            <form
-                [formGroup]="locationForm"
-                (ngSubmit)="save()">
-                <mat-form-field
-                    appearance="outline"
-                    class="full-width">
+            <form [formGroup]="locationForm" (ngSubmit)="save()">
+                <mat-form-field appearance="outline" class="full-width">
                     <mat-label>Latitude</mat-label>
-                    <input
-                        matInput
-                        formControlName="lat" />
+                    <input matInput formControlName="lat" />
                 </mat-form-field>
 
-                <mat-form-field
-                    appearance="outline"
-                    class="full-width">
+                <mat-form-field appearance="outline" class="full-width">
                     <mat-label>Longitude</mat-label>
-                    <input
-                        matInput
-                        formControlName="lng" />
+                    <input matInput formControlName="lng" />
                 </mat-form-field>
 
-                <mat-form-field
-                    appearance="outline"
-                    class="full-width">
+                <mat-form-field appearance="outline" class="full-width">
                     <mat-label>Accuracy</mat-label>
-                    <input
-                        matInput
-                        formControlName="accuracy" />
+                    <input matInput formControlName="accuracy" />
                 </mat-form-field>
 
-                <button
-                    mat-raised-button
-                    color="primary"
-                    type="submit">
+                <button mat-raised-button color="primary" type="submit">
                     Save
                 </button>
             </form>
+        </mat-expansion-panel>
+
+        <mat-expansion-panel>
+            <mat-expansion-panel-header>
+                <mat-panel-title>🌍 Globe Glow</mat-panel-title>
+            </mat-expansion-panel-header>
+
+            <div class="glow-controls" style="padding: 16px 0;">
+                <button mat-raised-button color="accent" class="full-width" (click)="globeSettings.toggleGlowState()">
+                    Toggle Glow (Current: {{ globeSettings.getGlowStateLabel() }})
+                </button>
+            </div>
+        </mat-expansion-panel>
+
+        <mat-expansion-panel>
+            <mat-expansion-panel-header>
+                <mat-panel-title>📌 Marker Sizing</mat-panel-title>
+            </mat-expansion-panel-header>
+
+            <div style="padding: 12px 0; display:flex; flex-direction:column; gap:12px;">
+                <div>
+                    <strong>Globe</strong>
+                </div>
+
+                <div>
+                    <mat-label>Min: {{ getSizingValue(true, 'min') }}</mat-label>
+                    <mat-slider min="4" max="80" step="1" showTickMarks discrete>
+                        <input matSliderThumb [value]="getSizingValue(true, 'min')" (valueChange)="setSizingValue(true, 'min', $event)">
+                    </mat-slider>
+                </div>
+
+                <div>
+                    <mat-label>Base: {{ getSizingValue(true, 'base') }}</mat-label>
+                    <mat-slider min="8" max="120" step="1" showTickMarks discrete>
+                        <input matSliderThumb [value]="getSizingValue(true, 'base')" (valueChange)="setSizingValue(true, 'base', $event)">
+                    </mat-slider>
+                </div>
+
+                <div>
+                    <mat-label>Scale: {{ getSizingValue(true, 'scale') }}</mat-label>
+                    <mat-slider min="0" max="50" step="1" showTickMarks discrete>
+                        <input matSliderThumb [value]="getSizingValue(true, 'scale')" (valueChange)="setSizingValue(true, 'scale', $event)">
+                    </mat-slider>
+                </div>
+
+                <div>
+                    <mat-label>Max: {{ getSizingValue(true, 'max') }}</mat-label>
+                    <mat-slider min="20" max="400" step="1" showTickMarks discrete>
+                        <input matSliderThumb [value]="getSizingValue(true, 'max')" (valueChange)="setSizingValue(true, 'max', $event)">
+                    </mat-slider>
+                </div>
+
+                <div>
+                    <strong>Mercator</strong>
+                </div>
+
+                <div>
+                    <mat-label>Min: {{ getSizingValue(false, 'min') }}</mat-label>
+                    <mat-slider min="4" max="120" step="1" showTickMarks discrete>
+                        <input matSliderThumb [value]="getSizingValue(false, 'min')" (valueChange)="setSizingValue(false, 'min', $event)">
+                    </mat-slider>
+                </div>
+
+                <div>
+                    <mat-label>Base: {{ getSizingValue(false, 'base') }}</mat-label>
+                    <mat-slider min="8" max="200" step="1" showTickMarks discrete>
+                        <input matSliderThumb [value]="getSizingValue(false, 'base')" (valueChange)="setSizingValue(false, 'base', $event)">
+                    </mat-slider>
+                </div>
+
+                <div>
+                    <mat-label>Scale: {{ getSizingValue(false, 'scale') }}</mat-label>
+                    <mat-slider min="0" max="80" step="1" showTickMarks discrete>
+                        <input matSliderThumb [value]="getSizingValue(false, 'scale')" (valueChange)="setSizingValue(false, 'scale', $event)">
+                    </mat-slider>
+                </div>
+
+                <div>
+                    <mat-label>Max: {{ getSizingValue(false, 'max') }}</mat-label>
+                    <mat-slider min="20" max="600" step="1" showTickMarks discrete>
+                        <input matSliderThumb [value]="getSizingValue(false, 'max')" (valueChange)="setSizingValue(false, 'max', $event)">
+                    </mat-slider>
+                </div>
+            </div>
+
+        </mat-expansion-panel>
+
+        <mat-expansion-panel>
+            <mat-expansion-panel-header>
+                <mat-panel-title>🔥 Heatmap</mat-panel-title>
+            </mat-expansion-panel-header>
+
+            <div class="glow-controls" style="padding: 16px 0; display: flex; flex-direction: column; gap: 16px;">
+                <!-- Intensity -->
+                <div>
+                    <mat-label>Intensity: {{ globeSettings.heatmapIntensity() }}</mat-label>
+                    <mat-slider min="0" max="1" step="0.05" showTickMarks discrete>
+                        <input matSliderThumb [value]="globeSettings.heatmapIntensity()"
+                            (valueChange)="globeSettings.heatmapIntensity.set($event)">
+                    </mat-slider>
+                </div>
+
+                <!-- Opacity -->
+                <div>
+                    <mat-label>Opacity: {{ globeSettings.heatmapOpacity() }}</mat-label>
+                    <mat-slider min="0" max="1" step="0.05" showTickMarks discrete>
+                        <input matSliderThumb [value]="globeSettings.heatmapOpacity()"
+                            (valueChange)="globeSettings.heatmapOpacity.set($event)">
+                    </mat-slider>
+                </div>
+
+                <!-- Radius -->
+                <div>
+                    <mat-label>Radius (Base): {{ globeSettings.heatmapRadius() }}</mat-label>
+                    <mat-slider min="10" max="300" step="10" showTickMarks discrete>
+                        <input matSliderThumb [value]="globeSettings.heatmapRadius()"
+                            (valueChange)="globeSettings.heatmapRadius.set($event)">
+                    </mat-slider>
+                </div>
+            </div>
         </mat-expansion-panel>
 
     </mat-accordion>

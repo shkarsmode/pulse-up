@@ -1,7 +1,7 @@
 :host {
     display: flex;
     flex-direction: column;
-    max-width: 400px;
+    // max-width: 400px;
     position: relative;
 }
 
@@ -36,14 +36,15 @@ input {
     &.icon--start {
         left: 22px;
 
-        & ~ input {
+        &~input {
             padding-left: 54px;
         }
     }
+
     &.icon--end {
         right: 22px;
 
-        & ~ input {
+        &~input {
             padding-right: 54px;
         }
     }
@@ -66,7 +67,7 @@ app-spinner {
     top: 50%;
     transform: translateY(-50%);
 
-    & ~ input {
+    &~input {
         padding-right: 54px;
     }
 }

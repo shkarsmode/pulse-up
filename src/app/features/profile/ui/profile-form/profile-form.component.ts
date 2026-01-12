@@ -172,7 +172,7 @@ export class ProfileFormComponent implements OnInit {
                     panelClass: "custom-dialog-container",
                     backdropClass: "custom-dialog-backdrop",
                     data: {
-                        event: event,
+                        file: file,
                         minWidth: 128,
                         minHeight: 128,
                         aspectRatio: 1,
@@ -185,6 +185,7 @@ export class ProfileFormComponent implements OnInit {
                 .subscribe((result) => this.onCroppedImage(result));
         }
     }
+
 
     public onDeletePicture(): void {
         this.form.get("profilePicture")?.setValue(null);

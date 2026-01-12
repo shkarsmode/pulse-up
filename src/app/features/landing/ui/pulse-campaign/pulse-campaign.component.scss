@@ -23,7 +23,7 @@
         }
 
         &--info {
-            color: #5e00cc;
+            color: var(--accent-color);
             @include text-12px;
             font-weight: 600;
             margin-bottom: 8px;
@@ -67,7 +67,7 @@
             &--line {
                 height: inherit;
                 border-radius: inherit;
-                background-color: #5e00cc;
+                background-color: var(--accent-color);
                 animation: fillBar 1s ease-out forwards;
 
                 @keyframes fillBar {

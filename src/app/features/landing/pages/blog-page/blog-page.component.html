@@ -1,0 +1,78 @@
+<app-landing-page-layout>
+    <section class="blog">
+        <header class="blog__header">
+            <h1 class="blog__title">PulseUp Insights</h1>
+            <p class="blog__subtitle">
+                Exploring authenticity, transparency, and the future of digital democracy in an age of misinformation
+            </p>
+    
+            <nav class="blog__filters" aria-label="Blog categories">
+                @for (category of categories; track $index) {
+                    <button
+                        class="blog__filter"
+                        [class.blog__filter--active]="activeCategory() === category"
+                        [attr.aria-pressed]="activeCategory() === category"
+                        (click)="setActiveCategory(category)"
+                        type="button">
+                        {{ category }}
+                    </button>
+                }
+            </nav>
+        </header>
+    
+        <div class="blog__grid">
+            @for (post of visiblePosts(); track trackByPostId($index, post)) {
+                <article
+                    class="post-card"
+                    tabindex="0">
+                    <a
+                        [routerLink]="'/blog/' + post.id"
+                        class="post-card__link"
+                        aria-label="Open post">
+                        <div class="post-card__media">
+                            <img class="post-card__image" [src]="post.coverImageUrl" [alt]="post.coverImageAlt"
+                                loading="lazy" />
+        
+                            <span class="post-card__badge">
+                                {{ post.category }}
+                            </span>
+                        </div>
+        
+                        <div class="post-card__body">
+                            <h2 class="post-card__title">
+                                {{ post.title }}
+                            </h2>
+        
+                            <p class="post-card__excerpt">
+                                {{ post.excerpt }}
+                            </p>
+                        </div>
+        
+                        <footer class="post-card__meta">
+                            <div class="post-card__meta-item">
+                                <svg class="post-card__icon" viewBox="0 0 24 24" aria-hidden="true">
+                                    <path
+                                        d="M7 2v2M17 2v2M4 7h16M6 4h12a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2Z"
+                                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                        stroke-linejoin="round" />
+                                </svg>
+                                <span>{{ post.dateISO | date: 'MMM d, y' }}</span>
+                            </div>
+        
+                            <div class="post-card__meta-item">
+                                <svg class="post-card__icon" viewBox="0 0 24 24" aria-hidden="true">
+                                    <path d="M12 6v6l4 2" fill="none" stroke="currentColor" stroke-width="2"
+                                        stroke-linecap="round" stroke-linejoin="round" />
+                                    <path d="M22 12a10 10 0 1 1-20 0a10 10 0 0 1 20 0Z" fill="none" stroke="currentColor"
+                                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                                </svg>
+                                <span>{{ post.readMinutes }} min</span>
+                            </div>
+                        </footer>
+                    </a>
+                </article>
+            }
+        </div>
+    </section>
+
+</app-landing-page-layout>

@@ -7,55 +7,37 @@
                 <span class="block">Amplified<span class="text-dot">.</span></span>
             </h1>
             <p class="hero__description">
-                PulseUp transforms grassroots support into verified momentum. Every pulse is a real person supporting causes privately while their voice is mapped to their region—fighting misinformation with transparent, verified action from wherever you are.
+                PulseUp transforms grassroots support into verified momentum. Every pulse is a real person supporting
+                causes privately while their voice is mapped to their region, fighting misinformation with transparent,
+                verified action from wherever you are.
             </p>
             <div class="hero__actions">
                 @defer {
-                    <app-primary-button
-                        [fullWidth]="true"
-                        [contrast]="true"
-                        size="large"
-                        [routerLink]="'/' + AppRoutes.Landing.TOPICS"
-                        class="hero__button">
-                        Browse topics
-                    </app-primary-button>
-                    <app-secondary-button
-                        [routerLink]="'/' + AppRoutes.User.Topic.SUGGEST"
-                        routerLinkActive="active"
-                        [fullWidth]="true"
-                        [fullHeight]="true"
-                        [contrast]="true"
-                        size="large"
-                        class="hero__button">
-                        Start a topic
-                    </app-secondary-button>
+                <app-primary-button [fullWidth]="true" [contrast]="true" size="large"
+                    [routerLink]="'/' + AppRoutes.Landing.TOPICS" class="hero__button">
+                    Browse topics
+                </app-primary-button>
+                <app-secondary-button [routerLink]="'/' + AppRoutes.User.Topic.SUGGEST" routerLinkActive="active"
+                    [fullWidth]="true" [fullHeight]="true" [contrast]="true" size="large" class="hero__button">
+                    Start a topic
+                </app-secondary-button>
                 }
             </div>
         </div>
-        <div
-            class="hero__map"
-            #mapWrapper>
+        <div class="hero__map" #mapWrapper>
             @defer {
-                <app-map
-                    projection="globe"
-                    [markers]="{
+            <app-map projection="globe" [markers]="{
                         enabled: true,
                         showTooltip: true,
                         isAnimated: true,
-                    }"
-                    [zoom]="[zoom]"
-                    [minZoom]="0.45"
-                    [maxBounds]="undefined"
-                    [isScrollZoomEnabled]="false"
-                    [isDoubleClickZoomEnabled]="false"
-                    (mapLoaded)="onMapLoaded($event)"
-                    (mapStyleData)="onStyleData($event)"
-                    (mapClick)="onMapClick()">
-                    <ng-container *ngIf="map">
-                        <app-map-hexagons-layer [map]="map" />
-                        <app-map-heatmap-layer [map]="map" />
-                    </ng-container>
-                </app-map>
+                    }" [zoom]="[zoom]" [minZoom]="0.45" [maxZoom]="1.2" [maxBounds]="undefined"
+                [isScrollZoomEnabled]="false" [isDoubleClickZoomEnabled]="false" [mapStylesUrl]="mapStylesUrl"
+                (mapLoaded)="onMapLoaded($event)" (mapStyleData)="onStyleData($event)" (mapClick)="onMapClick()">
+                <ng-container *ngIf="map">
+                    <app-map-hexagons-layer [map]="map" />
+                    <app-map-heatmap-layer [map]="map" />
+                </ng-container>
+            </app-map>
             }
         </div>
     </div>

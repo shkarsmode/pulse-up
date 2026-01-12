@@ -1,16 +1,18 @@
+import { MapHeatmapLayerComponent } from "@/app/shared/components/map/map-heatmap-layer/map-heatmap-layer.component";
+import { MapHexagonsLayerComponent } from "@/app/shared/components/map/map-hexagons-layer/map-hexagons-layer.component";
 import { MapComponent } from "@/app/shared/components/map/map.component";
 import { PrimaryButtonComponent } from "@/app/shared/components/ui-kit/buttons/primary-button/primary-button.component";
 import { SecondaryButtonComponent } from "@/app/shared/components/ui-kit/buttons/secondary-button/secondary-button.component";
 import { AppRoutes } from "@/app/shared/enums/app-routes.enum";
 import { MediaQueryService } from "@/app/shared/services/core/media-query.service";
+import { GlobeSettingsService } from "@/app/shared/services/map/globe-settings.service";
+import { GlobeSpinnerService } from "@/app/shared/services/map/globe-spinner.service";
+import { MAPBOX_STYLE_WITH_BACKGROUND } from '@/app/shared/tokens/tokens';
 import { CommonModule } from "@angular/common";
-import { Component, effect, ElementRef, inject, ViewChild, AfterViewInit } from "@angular/core";
+import { AfterViewInit, Component, effect, ElementRef, inject, ViewChild } from "@angular/core";
 import { toSignal } from "@angular/core/rxjs-interop";
 import { Router, RouterModule } from "@angular/router";
 import mapboxgl, { EventData, MapStyleDataEvent } from "mapbox-gl";
-import { MapHexagonsLayerComponent } from "@/app/shared/components/map/map-hexagons-layer/map-hexagons-layer.component";
-import { MapHeatmapLayerComponent } from "@/app/shared/components/map/map-heatmap-layer/map-heatmap-layer.component";
-import { GlobeSpinnerService } from "@/app/shared/services/map/globe-spinner.service";
 
 @Component({
     selector: "app-main-hero",
@@ -31,6 +33,8 @@ export class MainHeroComponent implements AfterViewInit {
     private router = inject(Router);
     private mediaService = inject(MediaQueryService);
     private globeSpinnerService = new GlobeSpinnerService();
+    private globeSettingsService = inject(GlobeSettingsService);
+    public mapStylesUrl = inject(MAPBOX_STYLE_WITH_BACKGROUND);
 
     @ViewChild("mapWrapper", { static: true }) mapWrapperRef!: ElementRef<HTMLDivElement>;
 
@@ -60,34 +64,41 @@ export class MainHeroComponent implements AfterViewInit {
         9: 6,
         10: 6,
     };
-    public fog: mapboxgl.Fog = {
-        color: "rgb(228, 240, 255)",
-        "high-color": "rgb(117, 172, 255)",
-        "space-color": "rgb(2, 11, 27)",
-        "star-intensity": ["interpolate", ["linear"], ["zoom"], 11, 0.35, 12, 0],
-        "horizon-blend": 0.015,
-    };
+
+
 
     constructor() {
         effect(() => {
             this.zoom = this.isXXXSMobile()
                 ? 0.45
                 : this.isXXSMobile()
-                  ? 0.55
-                  : this.isXSMobile()
-                    ? 0.8
-                    : this.isTablet()
-                      ? 1
-                      : this.is1200Desctop()
+                    ? 0.55
+                    : this.isXSMobile()
                         ? 0.8
-                        : this.is1400Desctop()
-                          ? 1.5
-                          : 1.85;
+                        : this.isTablet()
+                            ? 1
+                            : this.is1200Desctop()
+                                ? 0.8
+                                : this.is1400Desctop()
+                                    ? 1.5
+                                    : 1.85;
 
             if (this.isTablet()) {
                 this.zoomResolutionMap = { ...this.zoomResolutionMap, 1: 0 };
             } else {
                 this.zoomResolutionMap = { ...this.zoomResolutionMap, 1: 1 };
+            }
+        });
+
+        // Effect to update fog when glow state changes
+        effect(() => {
+            const glowState = this.globeSettingsService.glowState();
+            // Debug log
+            console.log('MainHero: Glow state effect triggered', glowState, 'Map initialized:', !!this.map);
+
+            if (this.map) {
+                const fog = this.globeSettingsService.getFogForState(glowState);
+                this.map.setFog(fog);
             }
         });
     }
@@ -123,9 +134,17 @@ export class MainHeroComponent implements AfterViewInit {
 
     public onMapLoaded(map: mapboxgl.Map) {
         this.map = map;
-        this.map.setFog(this.fog);
+        const fog = this.globeSettingsService.getFogForState(this.globeSettingsService.glowState());
+        this.map.setFog(fog);
+
         this.globeSpinnerService.init(this.map);
         this.globeSpinnerService.start();
+
+        // Apply fog on style load to ensure it persists
+        this.map.on("style.load", () => {
+            const currentFog = this.globeSettingsService.getFogForState(this.globeSettingsService.glowState());
+            this.map?.setFog(currentFog);
+        });
     }
 
     public onStyleData(style: MapStyleDataEvent & EventData): void {
@@ -142,6 +161,8 @@ export class MainHeroComponent implements AfterViewInit {
     public onMapClick() {
         this.navigateToMapPage();
     }
+
+
 
     private navigateToMapPage() {
         this.router.navigateByUrl(`/${this.AppRoutes.Landing.MAP}`);

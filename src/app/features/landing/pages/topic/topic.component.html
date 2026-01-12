@@ -1,266 +1,424 @@
 @let shareTopicUrl = topicUrl();
 @let isTopicArchived = isArchived();
 
+@if (isLandingView()) {
+    <header class="topic-landing-header">
+        <div class="topic-landing-header__left">
+            <button type="button" class="icon-button" aria-label="Back" (click)="goBack()">
+                <svg-icon src="assets/svg/arrow-left.svg"></svg-icon>
+            </button>
+        </div>
+    
+        <div class="topic-landing-header__center">
+            <svg-icon src="assets/svg/logo.svg" />
+        </div>
+    
+        <div class="topic-landing-header__right">
+            <app-menu [content]="menuContent">
+                <button type="button" class="icon-button" aria-label="Share">
+                    <svg-icon src="assets/svg/icon_share.svg"></svg-icon>
+                </button>
+            </app-menu>
+    
+            <button type="button" class="icon-button" aria-label="More options" [matMenuTriggerFor]="menu">
+                <svg-icon src="assets/svg/more-dots.svg" style="width: 44px;"></svg-icon>
+            </button>
+        </div>
+    </header>
+}
+
 <app-landing-page-layout>
     @if (isLoading()) {
-        <app-spinner class="pulse__spinner" />
+    <app-spinner class="pulse__spinner" />
     } @else if (topic) {
-        <app-container size="lg">
-            <div class="page-bg">
-                <div
-                    class="pulse"
-                    fadeIn
-                    [childrenFadeIn]="true">           
-                    <app-topic-section>
-                        <div class="header">
-                            <img
-                                class="header__logo"
-                                [src]="topicIcon$ | async"
-                                width="64"
-                                height="64"
-                                alt="pulse icon" />
-                            <div class="header__title">
-                                <h2>{{ topic.title }}</h2>
-                                <a
-                                    [routerLink]="['/user', topic.author.username]"
-                                    [state]="{ pulseId: topic.id }">
-                                    {{ topic.author.name }}
-                                </a>
-                            </div>
+    <app-container size="lg">
+        <div class="page-bg">
+            <div class="pulse" fadeIn [childrenFadeIn]="true">
+                <div class="view-mode-switch" role="tablist" aria-label="Topic view mode">
+                    <button type="button" class="view-mode-switch__item" role="tab"
+                        [class.view-mode-switch__item--active]="topicViewMode() === 'classic'"
+                        [attr.aria-selected]="topicViewMode() === 'classic'" (click)="setTopicViewMode('classic')">
+                        Classic
+                    </button>
 
-                            <div class="header__settings" style="margin-left: auto">
-                                <app-fab-button
-                                    [circle]="true"
-                                    class="more-profile-button"
-                                    icon="assets/svg/more-dots.svg"
-                                    label="More options"
-                                    [matMenuTriggerFor]="menu">
-                                </app-fab-button>
-                            </div>
+                    <button type="button" class="view-mode-switch__item" role="tab"
+                        [class.view-mode-switch__item--active]="topicViewMode() === 'landing'"
+                        [attr.aria-selected]="topicViewMode() === 'landing'" (click)="setTopicViewMode('landing')">
+                        Landing
+                    </button>
+                </div>
+                @if (!isLandingView()) {
+                <app-topic-section>
+                    <div class="header">
+                        <img class="header__logo" [src]="topicIcon$ | async" width="64" height="64" alt="pulse icon" />
+                        <div class="header__title">
+                            <h2>{{ topic.title }}</h2>
+                            <a [routerLink]="['/user', topic.author.username]" [state]="{ pulseId: topic.id }">
+                                {{ topic.author.name }}
+                            </a>
                         </div>
 
-                        @if (topic.picture) {
-                            <img
-                                class="cover-image"
-                                [src]="coverImage$ | async"
-                                width="538"
-                                height="400"
-                                [alt]="topic.title"
-                                appLoadImgPath />
-                        }
-
-                        <div class="stats">
-                            <div class="stats__wrap">
-                                <div>
-                                    <span class="stats__title">Supporters</span>
-                                    <div class="stats__icon">
-                                        <svg-icon src="assets/svg/fans.svg" />
-                                    </div>
-                                    <span class="stats__count">
-                                        {{ topic.stats?.totalUniqueUsers || 0 | formatNumber }}
-                                    </span>
-                                </div>
-                                <div>
-                                    <span class="stats__title">Lifetime</span>
-                                    <div class="stats__icon">
-                                        <svg-icon src="assets/svg/chart-simple.svg" />
-                                    </div>
-                                    <span class="stats__count">
-                                        {{ topic.stats?.totalVotes || 0 | formatNumber }}
-                                    </span>
-                                </div>
-                                <div>
-                                    <span class="stats__title">24 hours</span>
-                                    @if (isActiveVote()) {
-                                        <div class="stats__icon stats__icon--active">
-                                            <svg-icon
-                                                appWavesAnimation
-                                                src="assets/svg/logo/logo-v2.svg"
-                                                ariaLabel="pulse icon"
-                                                class="card-footer-icon" />
-                                        </div>
-                                    } @else {
-                                        <svg-icon src="assets/svg/pulse.svg" />
-                                    }
-                                    <span class="stats__count">
-                                        {{ topic.stats?.lastDayVotes || 0 | formatNumber }}
-                                    </span>
-                                </div>
-                            </div>
+                        <div class="header__settings" style="margin-left: auto">
+                            <app-fab-button [circle]="true" class="more-profile-button" icon="assets/svg/more-dots.svg"
+                                label="More options" [matMenuTriggerFor]="menu">
+                            </app-fab-button>
                         </div>
+                    </div>
 
-                        <div class="actions">
-                            <div class="actions__buttons">
-                                @if (isTopicArchived) {
-                                    <app-disbled-vote-button />
-                                } @else if (isAnonymousUser()) {
-                                    <app-guest-vote-button />
+                    @if (topic.picture) {
+                    <img class="cover-image" [src]="coverImage$ | async" width="538" height="400" [alt]="topic.title"
+                        appLoadImgPath />
+                    }
+
+                    <div class="stats">
+                        <div class="stats__wrap">
+                            <div>
+                                <span class="stats__title">Supporters</span>
+                                <div class="stats__icon">
+                                    <svg-icon src="assets/svg/fans.svg" />
+                                </div>
+                                <span class="stats__count">
+                                    {{ topic.stats?.totalUniqueUsers || 0 | formatNumber }}
+                                </span>
+                            </div>
+                            <div>
+                                <span class="stats__title">Lifetime</span>
+                                <div class="stats__icon">
+                                    <svg-icon src="assets/svg/chart-simple.svg" />
+                                </div>
+                                <span class="stats__count">
+                                    {{ topic.stats?.totalVotes || 0 | formatNumber }}
+                                </span>
+                            </div>
+                            <div>
+                                <span class="stats__title">24 hours</span>
+                                @if (isActiveVote()) {
+                                <div class="stats__icon stats__icon--active">
+                                    <svg-icon appWavesAnimation src="assets/svg/logo/logo-v2.svg" ariaLabel="pulse icon"
+                                        class="card-footer-icon" />
+                                </div>
                                 } @else {
-                                    <app-user-vote-button
-                                        (voted)="onVoted()"
-                                        (voteExpired)="onVoteExpired()" />
+                                <svg-icon src="assets/svg/pulse.svg" />
                                 }
+                                <span class="stats__count">
+                                    {{ topic.stats?.lastDayVotes || 0 | formatNumber }}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
 
+                    <div class="actions">
+                        <div class="actions__buttons">
+                            @if (isTopicArchived) {
+                            <app-disbled-vote-button />
+                            } @else if (isAnonymousUser()) {
+                            <app-guest-vote-button />
+                            } @else {
+                            <app-user-vote-button (voted)="onVoted()" (voteExpired)="onVoteExpired()" />
+                            }
+
+                            <app-menu [content]="menuContent">
+                                <button flatButton class="actions__share-button"
+                                    [class.actions__share-button--dark]="isActiveVote()">
+                                    <svg-icon src="assets/svg/icon_share.svg"></svg-icon>
+                                </button>
+                            </app-menu>
+                        </div>
+                        @if (isActiveVote()) {
+                        <div class="active-pulse-location">
+                            <svg-icon [class.accent]="isTopicPulsedByGps()"
+                                [matTooltip]="isTopicPulsedByGps() ? 'Pulsed with GPS' : ''" src="assets/svg/pin.svg" />
+                            <div class="active-pulse-location__text">
+                                {{ lastVoteInfo() }}
+                            </div>
+                        </div>
+                        } @else {
+                        @if (!isTopicArchived && currentLocation()?.locationSource) {
+                        @let isGpsPulseFrom =
+                        currentLocation()?.locationSource == LocationSource.Gps;
+                        <div class="pulse-from" [class.pulse-from--no-gps]="!isGpsPulseFrom" [matTooltip]="
+                                                !isGpsPulseFrom ? 'Edit your location' : ''
+                                            " (click)="onChangeLocation()">
+                            @if (
+                            isGpsPulseFrom
+                            ) {
+                            <svg-icon src="assets/svg/pulsed-from-gps.svg" alt="Gps" />
+                            } @else {
+                            <svg-icon src="assets/svg/edit2.svg" alt="Edit" />
+                            }
+                            Pulse from:
+                            <span>{{ currentLocation()?.details?.fullname }}</span>
+                        </div>
+                        }
+                        }
+                        <a class="whats-pulse" href="#why-support-topic">
+                            <svg-icon src="assets/svg/i.svg"></svg-icon>
+                            <span>What's a pulse?</span>
+                        </a>
+                    </div>
+
+                    <div class="warnings">
+                        <app-topic-warning-message [topic]="topic" />
+                    </div>
+
+                    <app-pulse-description [longDescription]="topic.description | linkify"
+                        [shortDescription]="shortPulseDescription() | linkify" />
+
+                    <div class="keywords">
+                        @for (keyword of keywords(); track keyword.label) {
+                        <app-keyword-button [keyword]="keyword" />
+                        }
+                    </div>
+
+                    <div class="activity">
+                        Active from {{ topic.startsAt | date: "MMM d, y" }}, to
+                        {{ topic.endsAt | date: "MMM d, y" }}
+                    </div>
+                </app-topic-section>
+                @if (topic.campaign) {
+                <app-topic-section>
+                    <app-pulse-campaign [campaign]="topic.campaign" [stats]="topic.stats" />
+                </app-topic-section>
+                }
+                <div class="cols">
+                    <app-topic-section class="cols__item">
+                        @if (isTopicArchived) {
+                        <div class="map map--disabled">
+                            <div class="map__clickbait">
+                                <h3 class="map__text map__text--heading">
+                                    Heatmap is not available
+                                </h3>
+                                <p class="map__text">Topic is archived</p>
+                            </div>
+
+                            <app-map [zoom]="[1.5]" [minZoom]="1.5" [weights]="{ enabled: true }"
+                                [center]="mapCenterCoordinates()" (mapLoaded)="onMapLoaded($event)">
+                                <ng-container *ngIf="map">
+                                    <app-map-heatmap-layer [map]="map" [topicId]="topic.id" />
+                                </ng-container>
+                            </app-map>
+                        </div>
+                        } @else {
+                        <div class="map" [routerLink]="'/topic/' + topic.id + '/heatmap'">
+                            <div class="map__clickbait">
+                                <h3 class="map__text map__text--heading">View Heatmap</h3>
+                            </div>
+
+                            <app-map [zoom]="[1.5]" [minZoom]="1.5" [weights]="{ enabled: true }"
+                                [center]="mapCenterCoordinates()" (mapLoaded)="onMapLoaded($event)">
+                                <ng-container *ngIf="map">
+                                    <app-map-heatmap-layer [map]="map" [topicId]="topic.id" />
+                                </ng-container>
+                            </app-map>
+                        </div>
+                        }
+                    </app-topic-section>
+
+                    <app-topic-section class="cols__item">
+                        <app-topic-chrts />
+                    </app-topic-section>
+
+                </div>
+                } @else {
+                <section class="landing-hero"
+                    [style.backgroundImage]="topic.picture ? 'url(' + (coverImage$ | async) + ')' : 'none'">
+                    <div class="landing-hero__overlay"></div>
+
+                    <div class="landing-hero__content">
+                        <div class="landing-hero__tags">
+                            @for (keyword of (keywords() || []).slice(0, 3); track keyword.label) {
+                            <span class="landing-hero__tag">
+                                {{ keyword.label }}
+                            </span>
+                            }
+                        </div>
+
+                        <h1 class="landing-hero__title">
+                            {{ topic.title }}
+                        </h1>
+
+                        <div class="landing-hero__stats">
+                            <div class="landing-hero__stat">
+                                <div class="landing-hero__stat-value">
+                                    {{ topic.stats?.totalUniqueUsers || 0 | formatNumber }}
+                                </div>
+                                <div class="landing-hero__stat-label">
+                                    supporters
+                                </div>
+                            </div>
+
+                            <div class="landing-hero__stat-line"></div>
+
+                            <div class="landing-hero__stat">
+                                <div class="landing-hero__stat-value">
+                                    {{ topic.stats?.totalVotes || 0 | formatNumber }}
+                                </div>
+                                <div class="landing-hero__stat-label">
+                                    pulses
+                                </div>
+                            </div>
+
+                            <div class="landing-hero__stat-line"></div>
+
+                            <div class="landing-hero__stat">
+                                <div class="landing-hero__stat-value">
+                                    {{ topic.stats?.lastDayVotes || 0 | formatNumber }}
+                                </div>
+                                <div class="landing-hero__stat-label">
+                                    <svg-icon src="assets/svg/hours.svg"></svg-icon>
+                                    <span>24h</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="landing-hero__actions">
+                            <div class="landing-hero__actions-side">
                                 <app-menu [content]="menuContent">
-                                    <button
-                                        flatButton
-                                        class="actions__share-button"
-                                        [class.actions__share-button--dark]="isActiveVote()">
+                                    <button type="button" class="landing-hero__icon-button"
+                                        [class.landing-hero__icon-button--active]="isActiveVote()">
                                         <svg-icon src="assets/svg/icon_share.svg"></svg-icon>
                                     </button>
                                 </app-menu>
                             </div>
-                            @if (isActiveVote()) {
-                                <div class="active-pulse-location">
-                                    <svg-icon
-                                        [class.accent]="isTopicPulsedByGps()"
-                                        [matTooltip]="isTopicPulsedByGps() ? 'Pulsed with GPS' : ''"
-                                        src="assets/svg/pin.svg" />
-                                    <div class="active-pulse-location__text">
-                                        {{ lastVoteInfo() }}
-                                    </div>
-                                </div>
-                            } @else {
-                                @if (!isTopicArchived && currentLocation()?.locationSource) {
-                                    @let isGpsPulseFrom = 
-                                        currentLocation()?.locationSource == LocationSource.Gps;
-                                    <div
-                                        class="pulse-from"
-                                        [class.pulse-from--no-gps]="!isGpsPulseFrom"
-                                        [matTooltip]="
-                                            !isGpsPulseFrom ? 'Edit your location' : ''
-                                        "
-                                        (click)="onChangeLocation()">
-                                        @if (
-                                            isGpsPulseFrom
-                                        ) {
-                                            <svg-icon
-                                                src="assets/svg/pulsed-from-gps.svg"
-                                                alt="Gps" />
-                                        } @else {
-                                            <svg-icon src="assets/svg/edit2.svg" alt="Edit" />
-                                        }
-                                        Pulse from:
-                                        <span>{{ currentLocation()?.details?.fullname }}</span>
-                                    </div>
+
+                            <div class="landing-hero__actions-main">
+                                @if (isTopicArchived) {
+                                <app-disbled-vote-button />
+                                } @else if (isAnonymousUser()) {
+                                <app-guest-vote-button />
+                                } @else {
+                                <app-user-vote-button (voted)="onVoted()" (voteExpired)="onVoteExpired()" />
                                 }
-                            }
+                            </div>
+
+                            <div class="landing-hero__actions-side">
+                                <button type="button" class="landing-hero__icon-button" aria-label="More options"
+                                    [matMenuTriggerFor]="menu">
+                                    <svg-icon src="assets/svg/more-dots.svg"></svg-icon>
+                                </button>
+                            </div>
+
                         </div>
 
-                        <div class="warnings">
-                            <app-topic-warning-message [topic]="topic" />
+                        <div class="whats-pulse" (click)="scrollDown('#why-support-topic')">
+                            <svg-icon src="assets/svg/i.svg"></svg-icon>
+                            <span>What's a pulse?</span>
                         </div>
 
-                        <app-pulse-description
-                            [longDescription]="topic.description | linkify"
-                            [shortDescription]="shortPulseDescription() | linkify" />
-
-                        <div class="keywords">
-                            @for (keyword of keywords(); track keyword.label) {
-                                <app-keyword-button [keyword]="keyword" />
-                            }
+                        <div class="landing-hero__hint" (click)="scrollDown('app-topic-section')">
+                            <svg-icon class="landing-hero__hint-icon" src="assets/svg/arrow-down.svg">
+                            </svg-icon>
                         </div>
-
-                        <div class="activity">
-                            Active from {{ topic.startsAt | date: "MMM d, y" }}, to
-                            {{ topic.endsAt | date: "MMM d, y" }}
-                        </div>
-                    </app-topic-section>
-
-                    @if (topic.campaign) {
-                        <app-topic-section>
-                            <app-pulse-campaign
-                                [campaign]="topic.campaign"
-                                [stats]="topic.stats" />
-                        </app-topic-section>
-                    }
-
-                    <div class="cols">
-                        <app-topic-section class="cols__item">
-                            @if (isTopicArchived) {
-                                <div class="map map--disabled">
-                                    <div class="map__clickbait">
-                                        <h3 class="map__text map__text--heading">
-                                            Heatmap is not available
-                                        </h3>
-                                        <p class="map__text">Topic is archived</p>
-                                    </div>
-
-                                    <app-map
-                                        [zoom]="[1.5]"
-                                        [minZoom]="1.5"
-                                        [weights]="{ enabled: true }"
-                                        [center]="mapCenterCoordinates()"
-                                        (mapLoaded)="onMapLoaded($event)">
-                                        <ng-container *ngIf="map">
-                                            <app-map-heatmap-layer
-                                                [map]="map"
-                                                [topicId]="topic.id" />
-                                        </ng-container>
-                                    </app-map>
-                                </div>
-                            } @else {
-                                <div
-                                    class="map"
-                                    [routerLink]="'/topic/' + topic.id + '/heatmap'">
-                                    <div class="map__clickbait">
-                                        <h3 class="map__text map__text--heading">View Heatmap</h3>
-                                    </div>
-
-                                    <app-map
-                                        [zoom]="[1.5]"
-                                        [minZoom]="1.5"
-                                        [weights]="{ enabled: true }"
-                                        [center]="mapCenterCoordinates()"
-                                        (mapLoaded)="onMapLoaded($event)">
-                                        <ng-container *ngIf="map">
-                                            <app-map-heatmap-layer
-                                                [map]="map"
-                                                [topicId]="topic.id" />
-                                        </ng-container>
-                                    </app-map>
-                                </div>
-                            }
-                        </app-topic-section>
-
-                        <app-topic-section class="cols__item">
-                            <app-topic-chrts />
-                        </app-topic-section>
-
                     </div>
-                    
-                    <app-topic-section class="topic__footer">
-                        <h2>
-                            Why Support This Topic on PulseUp?
-                        </h2>
-                        <div>
-                            <div>
-                                <h3>
-                                    <img src="assets/svg/heart-new.svg" alt="Heart">
-                                    What is a Pulse?
-                                </h3>
-                                <p>
-                                    A pulse is your authentic show of support, verified through phone authentication to ensure every voice is real, not a bot. Each person can pulse any topic once every 24 hours, creating a true measure of sustained interest.
-                                </p>
-                                <p>
-                                    When you pulse, your support is mapped to your region, revealing where movements have real momentum. This geographic transparency shows authentic community engagement at local, national, or global levels, proving that your voice matters and your region cares about the issues that shape our future.
-                                </p>
-                            </div>
-                            <div>
-                                <h3>
-                                    <img src="assets/svg/up.svg" alt="Heart">
-                                    Why Supporting This Topic Matters
-                                </h3>
-                                <p>
-                                    In an internet flooded with spam and fake supporters, PulseUp cuts through the noise. Your daily pulse proves you genuinely care. People who truly support a cause come back tomorrow to pulse it again.
-                                </p>
-                                <p>
-                                    Topics that matter today rise to the top. Historical support does not matter if nobody cares anymore. By pulsing this topic, you ensure it stays relevant and visible to people who can make real change happen.
-                                </p>
-                            </div>
+                </section>
+
+                <app-topic-section class="landing-intro">
+                    <app-pulse-description [longDescription]="topic.description | linkify"
+                        [shortDescription]="shortPulseDescription() | linkify" />
+
+                    <div class="activity landing-intro__dates">
+                        Active from {{ topic.startsAt | date: "MMM d, y" }}, to
+                        {{ topic.endsAt | date: "MMM d, y" }}
+                    </div>
+                </app-topic-section>
+
+                @if (topic.campaign) {
+                <app-topic-section>
+                    <app-pulse-campaign [campaign]="topic.campaign" [stats]="topic.stats" />
+                </app-topic-section>
+                }
+
+                <app-topic-section>
+                    <app-topic-chrts />
+                </app-topic-section>
+
+                <app-topic-section>
+                    @if (isTopicArchived) {
+                    <div class="map map--disabled">
+                        <div class="map__clickbait">
+                            <h3 class="map__text map__text--heading">
+                                Heatmap is not available
+                            </h3>
+                            <p class="map__text">Topic is archived</p>
                         </div>
-                    </app-topic-section>
-                    <!-- <h2 class="pulse__slider-title">You may also like</h2>
+
+                        <app-map [zoom]="[1.5]" [minZoom]="1.5" [weights]="{ enabled: true }"
+                            [center]="mapCenterCoordinates()" (mapLoaded)="onMapLoaded($event)">
+                            <ng-container *ngIf="map">
+                                <app-map-heatmap-layer [map]="map" [topicId]="topic.id" />
+                            </ng-container>
+                        </app-map>
+                    </div>
+                    } @else {
+                    <div class="map" [routerLink]="'/topic/' + topic.id + '/heatmap'">
+                        <div class="map__clickbait">
+                            <h3 class="map__text map__text--heading">View Heatmap</h3>
+                        </div>
+
+                        <app-map [zoom]="[1.5]" [minZoom]="1.5" [weights]="{ enabled: true }"
+                            [center]="mapCenterCoordinates()" (mapLoaded)="onMapLoaded($event)">
+                            <ng-container *ngIf="map">
+                                <app-map-heatmap-layer [map]="map" [topicId]="topic.id" />
+                            </ng-container>
+                        </app-map>
+                    </div>
+                    }
+                </app-topic-section>
+
+                <app-topic-section class="related-topics">
+                    <div class="related-topics__head">
+                        <!-- <svg-icon src="assets/svg/layers.svg"></svg-icon> -->
+                        <h3>Related Topics</h3>
+                    </div>
+
+                    <div class="related-topics__empty">
+                        No related topics yet. Be the first to add one!
+                    </div>
+                </app-topic-section>
+                }
+
+
+                <app-topic-section id="why-support-topic" class="topic__footer">
+                    <h2>
+                        Why Support This Topic on PulseUp?
+                    </h2>
+                    <div>
+                        <div>
+                            <h3>
+                                <img src="assets/svg/heart-new.svg" alt="Heart">
+                                What is a Pulse?
+                            </h3>
+                            <p>
+                                A pulse is your authentic show of support, verified through phone authentication to
+                                ensure every voice is real, not a bot. Each person can pulse any topic once every 24
+                                hours, creating a true measure of sustained interest.
+                            </p>
+                            <p>
+                                When you pulse, your support is mapped to your region, revealing where movements have
+                                real momentum. This geographic transparency shows authentic community engagement at
+                                local, national, or global levels, proving that your voice matters and your region cares
+                                about the issues that shape our future.
+                            </p>
+                        </div>
+                        <div>
+                            <h3>
+                                <img src="assets/svg/up.svg" alt="Heart">
+                                Why Supporting This Topic Matters
+                            </h3>
+                            <p>
+                                In an internet flooded with spam and fake supporters, PulseUp cuts through the noise.
+                                Your daily pulse proves you genuinely care. People who truly support a cause come back
+                                tomorrow to pulse it again.
+                            </p>
+                            <p>
+                                Topics that matter today rise to the top. Historical support does not matter if nobody
+                                cares anymore. By pulsing this topic, you ensure it stays relevant and visible to people
+                                who can make real change happen.
+                            </p>
+                        </div>
+                    </div>
+                </app-topic-section>
+                <!-- <h2 class="pulse__slider-title">You may also like</h2>
                     <app-slider>
                         @for (pulse of suggestions(); track pulse.id; let i = $index) {
                             <li class="splide__slide">
@@ -268,31 +426,19 @@
                             </li>
                         }
                     </app-slider> -->
-                </div>
             </div>
-        </app-container>
+        </div>
+    </app-container>
     }
 
     <ng-template #menuContent>
         <div class="social-share-menu">
-            <app-copy-button
-                [link]="shareTopicUrl"
-                (handleClick)="onCopyLink($event)" />
-            <app-socials-button
-                [variant]="'facebook'"
-                [url]="shareTopicUrl" />
-            <app-socials-button
-                [variant]="'x'"
-                [url]="shareTopicUrl" />
-            <app-socials-button
-                [variant]="'email'"
-                [url]="shareTopicUrl" />
-            <app-qrcode-button
-                [link]="shareTopicUrl"
-                [popupSubtitle]="qrCodePopupText()"
-                popupTitle="Topic QR code"
-                [bannerIcon]="(topicIcon$ | async) || ''"
-                [bannerTitle]="qrCodeBannerTitle()"
+            <app-copy-button [link]="shareTopicUrl" (handleClick)="onCopyLink($event)" />
+            <app-socials-button [variant]="'facebook'" [url]="shareTopicUrl" />
+            <app-socials-button [variant]="'x'" [url]="shareTopicUrl" />
+            <app-socials-button [variant]="'email'" [url]="shareTopicUrl" />
+            <app-qrcode-button [link]="shareTopicUrl" [popupSubtitle]="qrCodePopupText()" popupTitle="Topic QR code"
+                [bannerIcon]="(topicIcon$ | async) || ''" [bannerTitle]="qrCodeBannerTitle()"
                 [bannerSubtitle]="qrCodeBannerText()" />
         </div>
     </ng-template>
@@ -300,42 +446,28 @@
     <div id="recaptcha-container"></div>
 </app-landing-page-layout>
 
-<mat-menu
-    #menu="matMenu"
-    class="floating-menu">
+<mat-menu #menu="matMenu" class="floating-menu">
     <ng-template matMenuContent>
-        <button
-            mat-menu-item
-            [matTooltip]="
+        <button mat-menu-item [matTooltip]="
                 topic?.authorId !== profileService.profile()?.id ? 
                     'You cannot edit someones topic' : ''
-            "
-            [matTooltipPosition]="'left'"
-            [routerLink]="'/user/topic/suggest/' + topic?.id"
+            " [matTooltipPosition]="'left'" [routerLink]="'/user/topic/suggest/' + topic?.id"
             [disabled]="topic?.authorId !== profileService.profile()?.id">
             <svg-icon src="assets/svg/edit.svg" />
             <span>Edit</span>
         </button>
-        <button
-            mat-menu-item
-            [matTooltip]="
+        <button mat-menu-item [matTooltip]="
                 topic?.authorId !== profileService.profile()?.id ? 
                     'You cannot archive someones topic' : ''
-            "
-            [matTooltipPosition]="'left'"
-            (click)="archive(topic?.id!)"
+            " [matTooltipPosition]="'left'" (click)="archive(topic?.id!)"
             [disabled]="topic?.authorId !== profileService.profile()?.id || isTopicArchived">
             <svg-icon src="assets/svg/report.svg" />
             <span>Archive</span>
         </button>
-        <button
-            mat-menu-item
-            [matTooltip]="
+        <button mat-menu-item [matTooltip]="
                 topic?.authorId === profileService.profile()?.id ? 
                     'You cannot report your own topic' : ''
-            "
-            
-            (click)="topicService.showReportPopup(topic?.id!)"
+            " (click)="topicService.showReportPopup(topic?.id!)"
             [disabled]="topic?.authorId === profileService.profile()?.id">
             <svg-icon src="assets/svg/report.svg" />
             <span>Report</span>

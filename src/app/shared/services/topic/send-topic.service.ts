@@ -55,6 +55,7 @@ export class SendTopicService {
     public topicLocation: TopicLocation | null = null;
     public isTopicEditing = false;
     public startTopicLocationWarningShown = false;
+    public tempTopicData: any = null; // Temporary storage for AI topic flow state
 
     private readonly pulseService = inject(PulseService);
     private readonly profileService = inject(ProfileService);
@@ -110,12 +111,12 @@ export class SendTopicService {
 
     public getFormValues(): TopicFormValues {
         const value: any = this.currentTopic.value;
-    
+
         const normalizedIcon: File | string | null = value.icon ?? null;
         const normalizedPicture: File | string | null = value.picture ?? null;
-    
+
         const rawKeywords: string[] = value.keywords || [];
-    
+
         return {
             id: value?.id,
             icon: normalizedIcon,
@@ -150,7 +151,7 @@ export class SendTopicService {
             },
             shareKey: "",
         };
-        
+
         if (isEditTopic) {
             params["id"] = values.id;
             delete params["location"];
@@ -159,7 +160,7 @@ export class SendTopicService {
             }
             if (typeof params["picture"] === "string") {
                 delete params["picture"];
-            }   
+            }
         }
         this.submitting.next(true);
         return this.pulseService.getShareKeyFromTitle(values.headline).pipe(
@@ -168,7 +169,7 @@ export class SendTopicService {
                 params["shareKey"] = shareKey ? shareKey : uuidv4();
             }),
             switchMap(() => {
-                if (isEditTopic) 
+                if (isEditTopic)
                     return this.pulseService.update(params);
                 return this.pulseService.create(params)
             }),

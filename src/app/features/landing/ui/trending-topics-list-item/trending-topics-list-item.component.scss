@@ -41,7 +41,7 @@
     border-radius: 50%;
 
     &.card-footer-icon-wrap--active {
-        background-color: rgba(#5e00cc, 0.1);
+        background-color: var(--accent-light-color);
 
         .card-footer-icon {
             filter: none;

@@ -9,6 +9,8 @@ enum LandingRoutes {
     USER = 'user/:username',
     ABOUT = 'about',
     LEADERBOARD = 'leaderboard',
+    BLOG = 'blog',
+    POST = 'blog/:id',
 }
 
 enum CommunityRoutes {

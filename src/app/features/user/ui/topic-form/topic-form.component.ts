@@ -65,7 +65,7 @@ export class TopicFormComponent implements OnInit {
     public readonly sendTopicService: SendTopicService = inject(SendTopicService);
     public readonly notificationService: NotificationService = inject(NotificationService);
     public readonly settingsService = inject(SettingsService);
-    
+
     private readonly router = inject(Router);
     private readonly dialog = inject(MatDialog);
     private readonly activatedRoute = inject(ActivatedRoute);
@@ -130,7 +130,7 @@ export class TopicFormComponent implements OnInit {
                 panelClass: "custom-dialog-container",
                 backdropClass: "custom-dialog-backdrop",
                 data: {
-                    event: event,
+                    file: file,
                     minWidth: 128,
                     minHeight: 128,
                     aspectRatio: 1,
@@ -144,6 +144,7 @@ export class TopicFormComponent implements OnInit {
             .pipe(take(1))
             .subscribe((result) => this.onCroppedImage(result));
     }
+
 
     public onDeleteIcon(): void {
         this.selectedIcon = null;
@@ -223,7 +224,7 @@ export class TopicFormComponent implements OnInit {
 
         const lastTopicEditId = this.sendTopicService.currentTopic.get("id")?.value;
         if (
-            lastTopicEditId && 
+            lastTopicEditId &&
             this.currentTopicId === lastTopicEditId
         ) {
             return;
@@ -246,20 +247,20 @@ export class TopicFormComponent implements OnInit {
         if (!path) {
             return null;
         }
-    
+
         if (path.startsWith("http") || path.startsWith("blob:")) {
             return path;
         }
-    
+
         let apiBaseOrigin: string;
-    
+
         try {
             const apiUrl = this.blobUrlPrefix();
             apiBaseOrigin = new URL(apiUrl, window.location.origin).origin;
         } catch {
             return path;
         }
-    
+
         return `${apiBaseOrigin}${path}`;
     }
 
@@ -285,7 +286,7 @@ export class TopicFormComponent implements OnInit {
             location: topic.location ?? null,
         });
 
-        this.sendTopicService.currentTopic.setValue(this.topicForm.value);        
+        this.sendTopicService.currentTopic.setValue(this.topicForm.value);
 
         const headlineControl = this.topicForm.get("headline");
         if (headlineControl) {

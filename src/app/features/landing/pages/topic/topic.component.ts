@@ -2,7 +2,6 @@ import { TopicPublishedComponent } from "@/app/features/landing/ui/topic-publish
 import { FadeInDirective } from "@/app/shared/animations/fade-in.directive";
 import { MapHeatmapLayerComponent } from "@/app/shared/components/map/map-heatmap-layer/map-heatmap-layer.component";
 import { MapComponent } from "@/app/shared/components/map/map.component";
-import { SliderComponent } from "@/app/shared/components/slider/slider.component";
 import { CopyButtonComponent } from "@/app/shared/components/ui-kit/buttons/copy-button/copy-button.component";
 import { FabButtonComponent } from '@/app/shared/components/ui-kit/buttons/fab-button/fab-button.component';
 import { FlatButtonDirective } from "@/app/shared/components/ui-kit/buttons/flat-button/flat-button.directive";
@@ -59,6 +58,12 @@ import { GuestVoteButtonComponent } from "../../ui/vote-button/guest-vote-button
 import { UserVoteButtonComponent } from "../../ui/vote-button/user-vote-button/user-vote-button.component";
 import { TopicService } from "./topic.service";
 
+
+type TopicViewMode = 'classic' | 'landing';
+
+const TOPIC_VIEW_MODE_STORAGE_KEY = 'topic_view_mode';
+
+
 @Component({
     selector: "app-topic",
     templateUrl: "./topic.component.html",
@@ -72,7 +77,6 @@ import { TopicService } from "./topic.service";
         CopyButtonComponent,
         SocialsButtonComponent,
         MapComponent,
-        SliderComponent,
         SpinnerComponent,
         FadeInDirective,
         FormatNumberPipe,
@@ -114,6 +118,9 @@ export class TopicComponent implements OnInit, OnDestroy {
     public profileService: ProfileService = inject(ProfileService);
     public geoLocationService: GeolocationService = inject(GeolocationService);
 
+    public readonly topicViewMode = signal<TopicViewMode>('classic');
+    public readonly isLandingView = computed(() => this.topicViewMode() === 'landing');
+
     private meta = inject(Meta);
     private title = inject(Title);
     private isWin = inject(WINDOW);
@@ -150,7 +157,8 @@ export class TopicComponent implements OnInit, OnDestroy {
     ]).pipe(
         map(([topic, settings]) => {
             if (topic?.icon) {
-                return `${settings.blobUrlPrefix}${topic.icon}`;
+                const url = `${settings.blobUrlPrefix}${topic.icon}`
+                return url;
             }
             return "";
         }),
@@ -186,14 +194,43 @@ export class TopicComponent implements OnInit, OnDestroy {
         });
     }
 
+    public scrollDown(selector: string): void {
+        if (this.isLandingView()) {
+            const introSection = document.querySelector(selector);
+            introSection?.scrollIntoView({ behavior: 'smooth' });
+        }
+    }
+
+    public goBack(): void {
+        try {
+            if (this.isWin) {
+                (this.isWin as any).history.back();
+            } else {
+                history.back();
+            }
+        } catch (e) {
+            // ignore
+        }
+    }
+
+    public setTopicViewMode(viewMode: TopicViewMode): void {
+        this.topicViewMode.set(viewMode);
+        localStorage.setItem(TOPIC_VIEW_MODE_STORAGE_KEY, viewMode);
+    }
+
     public ngOnInit(): void {
         this.updatePageData();
 
-        if (!this.isWin) return;
+        if (this.isWin) {
+            const storedViewMode = localStorage.getItem(TOPIC_VIEW_MODE_STORAGE_KEY) as TopicViewMode | null;
+            if (storedViewMode === 'classic' || storedViewMode === 'landing') {
+                this.topicViewMode.set(storedViewMode);
+            }
 
-        this.geoLocationService.getCurrentGeolocationAsync().then((location) => {
-            this.currentLocation.set(location);
-        });
+            this.geoLocationService.getCurrentGeolocationAsync().then((location) => {
+                this.currentLocation.set(location);
+            });
+        }
     }
 
     ngOnDestroy(): void {

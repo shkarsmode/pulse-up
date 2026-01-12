@@ -1,6 +1,5 @@
 import { AdBannerComponent } from "@/app/shared/components/banners/ad-banner/ad-banner.component";
-import { Component, inject, OnInit } from "@angular/core";
-import { CollectUserInfoService } from "../../services/collect-user-info.service";
+import { Component } from "@angular/core";
 import { LandingPageLayoutComponent } from "../../ui/landing-page-layout/landing-page-layout.component";
 import { AboutSectionComponent } from "./components/about-section/about-section.component";
 import { MainHeroComponent } from "./components/main-hero/main-hero.component";
@@ -19,9 +18,5 @@ import { TopPulsesComponent } from "./components/top-pulses/top-pulses.component
         LandingPageLayoutComponent,
     ],
 })
-export class MainComponent implements OnInit {
-    private collectUserInfoService = inject(CollectUserInfoService);
-    ngOnInit(): void {
-        // this.collectUserInfoService.collectPersonalInfo();
-    }
+export class MainComponent {
 }

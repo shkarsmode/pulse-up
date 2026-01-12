@@ -23,7 +23,8 @@ import {
     GEOCODING_API_URL,
     IP_INFO_API_TOKEN,
     MAPBOX_ACCESS_TOKEN,
-    MAPBOX_STYLE
+    MAPBOX_STYLE,
+    MAPBOX_STYLE_WITH_BACKGROUND
 } from "./shared/tokens/tokens";
 
 export const queryClient = new QueryClient({
@@ -82,6 +83,10 @@ export const appConfig: ApplicationConfig = {
         {
             provide: MAPBOX_STYLE,
             useValue: environment.mapStyleUrl
+        },
+        {
+            provide: MAPBOX_STYLE_WITH_BACKGROUND,
+            useValue: environment.mapWithBackgroundStyleUrl
         },
         {
             provide: FIREBASE_CONFIG,

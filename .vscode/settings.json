@@ -1,8 +1,7 @@
 {
-    "cSpell.words": [
-        "mapbox",
-        "splide",
-        "splidejs",
-        "uikit"
-    ]
+    "workbench.colorTheme": "Tokyo Night Storm",
+    "workbench.iconTheme": "material-icon-theme",
+    "workbench.productIconTheme": "fluent-icons",
+    "editor.tabSize": 4,
+    "editor.detectIndentation": false
 }

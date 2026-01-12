@@ -1,7 +1,21 @@
-import { Component, DestroyRef, EventEmitter, inject, Input, Output, OnInit } from "@angular/core";
+import { IH3Pulses } from "@/app/features/landing/interfaces/h3-pulses.interface";
+import { MediaUtilsService } from "@/app/features/landing/services/media-utils.service";
+import { AppConstants } from "@/app/shared/constants";
+import { ICategory } from "@/app/shared/interfaces/category.interface";
+import {
+    IMapMarker,
+    IMapMarkerVisibilityEventData,
+} from "@/app/shared/interfaces/map/map-marker.interface";
+import { PulseService } from "@/app/shared/services/api/pulse.service";
+import { MapMarkersService } from "@/app/shared/services/map/map-marker.service";
+import { MapUtils } from "@/app/shared/services/map/map-utils.service";
 import { CommonModule } from "@angular/common";
+import { Component, DestroyRef, EventEmitter, inject, Input, OnInit, Output } from "@angular/core";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
+import { NgxMapboxGLModule } from "ngx-mapbox-gl";
 import {
     combineLatest,
+    delay,
     filter,
     fromEvent,
     map,
@@ -12,22 +26,8 @@ import {
     switchMap,
     tap,
     throttle,
-    delay,
 } from "rxjs";
-import { PulseService } from "@/app/shared/services/api/pulse.service";
-import { MapUtils } from "@/app/shared/services/map/map-utils.service";
-import { AppConstants } from "@/app/shared/constants";
-import {
-    IMapMarker,
-    IMapMarkerVisibilityEventData,
-} from "@/app/shared/interfaces/map/map-marker.interface";
-import { MediaUtilsService } from "@/app/features/landing/services/media-utils.service";
-import { MapMarkersService } from "@/app/shared/services/map/map-marker.service";
-import { NgxMapboxGLModule } from "ngx-mapbox-gl";
 import { MapMarkerComponent } from "../map-marker/map-marker.component";
-import { IH3Pulses } from "@/app/features/landing/interfaces/h3-pulses.interface";
-import { ICategory } from "@/app/shared/interfaces/category.interface";
-import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 
 @Component({
     selector: "app-map-markers-layer",
@@ -63,11 +63,11 @@ export class MapMarkersLayerComponent implements OnInit {
                     );
                 }),
                 filter(({ resolution }) => resolution >= 2 || !this.dataLoaded),
-                switchMap(({ category }) => {
-                    return this.getMarkers(category);
-                }),
+                switchMap(({ category }) => this.getMarkers(category)),
                 tap((data) => {
-                    this.mapMarkersService.updateMarkers(data);
+                    if (!data) return;
+                    const isGlobe = this.isMapGlobe();
+                    this.mapMarkersService.updateMarkers(data, { isGlobe });
                     this.dataLoaded = true;
                 }),
                 takeUntilDestroyed(this.destroyRef),
@@ -77,7 +77,10 @@ export class MapMarkersLayerComponent implements OnInit {
         combineLatest([this.mapImmediateInteractions$(), this.mapMarkersService.category$])
             .pipe(
                 switchMap(([, category]) => this.getMarkers(category)),
-                tap((data) => this.mapMarkersService.updateMarkers(data)),
+                tap((data) => {
+                    const isGlobe = this.isMapGlobe();
+                    this.mapMarkersService.updateMarkers(data, { isGlobe });
+                }),
                 takeUntilDestroyed(this.destroyRef),
             )
             .subscribe();
@@ -145,6 +148,15 @@ export class MapMarkersLayerComponent implements OnInit {
             resolution,
             category: category?.name,
         });
+    }
+
+    private isMapGlobe(): boolean {
+        try {
+            const proj = (this.map as any)?.getProjection?.();
+            return proj?.name === 'globe';
+        } catch (e) {
+            return false;
+        }
     }
 
     private checkIfTouchDevice(): void {

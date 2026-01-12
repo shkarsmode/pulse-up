@@ -27,17 +27,19 @@ export class TopicChartComponent {
     public lineChartData = computed<ChartConfiguration["data"]>(() => {
         const data = this.data();
         const labels = this.labels();
+        const accent = (typeof document !== 'undefined') ? getComputedStyle(document.documentElement).getPropertyValue('--accent-color').trim() || '#000000' : '#000000';
+        const accentLight = (typeof document !== 'undefined') ? getComputedStyle(document.documentElement).getPropertyValue('--accent-light-color').trim() || 'rgba(0, 0, 0, 0.06)' : 'rgba(0, 0, 0, 0.06)';
         return {
             datasets: [
                 {
                     data,
                     label: "Pulses",
-                    backgroundColor: "rgba(240, 229, 250, 0.5)",
-                    borderColor: "#5e00cc",
-                    pointBackgroundColor: "#5e00cc",
+                    backgroundColor: accentLight,
+                    borderColor: accent,
+                    pointBackgroundColor: accent,
                     pointBorderColor: "#fff",
                     pointHoverBackgroundColor: "#fff",
-                    pointHoverBorderColor: "#5e00cc",
+                    pointHoverBorderColor: accent,
                     fill: "origin",
                 },
             ],

@@ -66,7 +66,8 @@ input,
 select,
 textarea,
 input {
-    font-family: "SFProText", sans-serif;
+    // font-family: "SFProText", sans-serif;
+    font-family: Outfit, -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif;
 }
 
 button {
@@ -140,6 +141,31 @@ svg-icon {
 .external-link {
     color: var(--accent-color);
     font-weight: 600;
+}
+
+/* Developer accent override: apply accent color and ensure contrast for elements that use accent */
+.dev-accent-override {
+    --accent-foreground: var(--accent-foreground, #fff);
+}
+
+.dev-accent-override .primary-button,
+.dev-accent-override .fab-button,
+.dev-accent-override .icon-button,
+.dev-accent-override .link-button,
+.dev-accent-override .qrcode-button {
+    color: var(--accent-foreground) !important;
+}
+
+.dev-accent-override .primary-button {
+    background-color: var(--accent-color) !important;
+}
+
+/* Force inline SVG assets to follow accent when override is active */
+.dev-accent-override svg,
+.dev-accent-override svg * {
+    fill: var(--accent-color) !important;
+    stroke: var(--accent-color) !important;
+    color: var(--accent-color) !important;
 }
 
 /* intl-tel-input styles */

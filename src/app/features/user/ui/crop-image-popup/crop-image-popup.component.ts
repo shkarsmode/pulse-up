@@ -1,23 +1,23 @@
-import { Component, ElementRef, inject, ViewChild } from "@angular/core";
+import { PopupCloseButtonComponent } from "@/app/shared/components/ui-kit/popup/popup-close-button/popup-close-button.component";
+import { PopupLayoutComponent } from "@/app/shared/components/ui-kit/popup/popup.component";
 import { CommonModule } from "@angular/common";
+import { Component, ElementRef, inject, ViewChild } from "@angular/core";
 import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
 import { MatSliderModule } from "@angular/material/slider";
 import { DomSanitizer, SafeUrl } from "@angular/platform-browser";
+import { SvgIconComponent } from "angular-svg-icon";
 import {
-    ImageCropperComponent,
     ImageCroppedEvent,
+    ImageCropperComponent,
     ImageTransform,
 } from "ngx-image-cropper";
-import { PopupLayoutComponent } from "@/app/shared/components/ui-kit/popup/popup.component";
-import { PopupCloseButtonComponent } from "@/app/shared/components/ui-kit/popup/popup-close-button/popup-close-button.component";
-import { SpinnerComponent } from "../../../../shared/components/ui-kit/spinner/spinner.component";
-import { SecondaryButtonComponent } from "../../../../shared/components/ui-kit/buttons/secondary-button/secondary-button.component";
 import { PrimaryButtonComponent } from "../../../../shared/components/ui-kit/buttons/primary-button/primary-button.component";
-import { SvgIconComponent } from "angular-svg-icon";
+import { SecondaryButtonComponent } from "../../../../shared/components/ui-kit/buttons/secondary-button/secondary-button.component";
+import { SpinnerComponent } from "../../../../shared/components/ui-kit/spinner/spinner.component";
 import { CropResult } from "../../interfaces/crop-result.interface";
 
 export interface CropImagePopupData {
-    event: Event;
+    file: File;
     minWidth?: number;
     minHeight?: number;
     aspectRatio?: number;
@@ -51,7 +51,7 @@ export class CropImagePopupComponent {
     minScale = 1;
     maxScale = 3;
     stepScale = 0.01;
-    imageChangedEvent: Event | null = null;
+    imageFile: File | undefined = undefined;
     croppedImageUrl: SafeUrl = "";
     croppedImageBlob: Blob | null = null;
     sourceImageLoaded = false;
@@ -70,7 +70,7 @@ export class CropImagePopupComponent {
     };
 
     constructor() {
-        this.imageChangedEvent = this.data.event;
+        this.imageFile = this.data.file;
         this.updateClasses();
     }
 
@@ -149,8 +149,7 @@ export class CropImagePopupComponent {
                 imageUrl: this.croppedImageUrl as string,
                 imageFile: new File(
                     [this.croppedImageBlob],
-                    (this.imageChangedEvent?.target as HTMLInputElement)?.files?.[0]?.name ||
-                        "cropped-image",
+                    this.imageFile?.name || "cropped-image",
                     { type: this.croppedImageBlob.type },
                 ),
             });
