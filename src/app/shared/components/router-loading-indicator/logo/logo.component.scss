@@ -9,7 +9,7 @@
     min-width: 91px;
     height: 100px;
     width: 91px;
-    // animation: .5s linear 1s shift forwards;
+    animation: .5s linear 1s shift forwards;
     transition: width .5s ease;
 }
 
@@ -95,8 +95,18 @@
         min-width: 80px;
         width: 80px;
         // width: 248px;
-        // animation: .5s linear 1s shift forwards;
+        animation: .5s linear 1s enter forwards;
         transition: width .5s ease;
+    }
+
+    @keyframes enter {
+        from {
+            opacity: 0;
+        }
+
+        to {
+            opacity: 1;
+        }
     }
  
     // :host {
