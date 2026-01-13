@@ -35,6 +35,45 @@
     }
 }
 
+/* Make the vote button default to white (contrast-like) and provide a dark variant */
+.pulse-button {
+    &::ng-deep {
+        .primary-button {
+            background-color: var(--white-color);
+            color: var(--accent-color);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+            transition: background-color var(--duration-long), box-shadow 0.25s ease, transform 0.12s ease;
+        }
+    }
+
+    &:not(:disabled):hover {
+        &::ng-deep {
+            .primary-button {
+                transform: translateY(-2px) scale(1.01);
+                box-shadow: 0 14px 36px rgba(0,0,0,0.12);
+            }
+        }
+    }
+}
+
+.pulse-button--dark {
+    &::ng-deep {
+        .primary-button {
+            background-color: #0b0b0b;
+            color: var(--white-color);
+            box-shadow: 0 8px 28px rgba(0,0,0,0.25);
+        }
+    }
+
+    &:not(:disabled):hover {
+        &::ng-deep {
+            .primary-button {
+                background-color: #000000;
+            }
+        }
+    }
+}
+
 .pulse-button__inner {
     position: relative;
     width: 100%;
@@ -74,6 +113,8 @@
     &::ng-deep {
         .primary-button {
             background-color: var(--purple-color);
+            color: var(--white-color);
+            box-shadow: 0 14px 40px rgba(86,46,255,0.18);
         }
     }
 }
@@ -102,6 +143,19 @@
             opacity: 0;
         }
     }
+}
+
+/* Ensure voting/success states still look good on dark variant */
+.pulse-button--dark.pulse-button--voting {
+    &::ng-deep .primary-button {
+        background-color: var(--purple-color);
+        color: var(--white-color);
+        box-shadow: 0 14px 40px rgba(86,46,255,0.18);
+    }
+}
+
+.pulse-button--dark.pulse-button--success {
+    opacity: 0;
 }
 
 .active-pulse-info {

@@ -34,7 +34,7 @@
     <app-container size="lg">
         <div class="page-bg">
             <div class="pulse" fadeIn [childrenFadeIn]="true">
-                <div class="view-mode-switch" role="tablist" aria-label="Topic view mode">
+                <!-- <div class="view-mode-switch" role="tablist" aria-label="Topic view mode">
                     <button type="button" class="view-mode-switch__item" role="tab"
                         [class.view-mode-switch__item--active]="topicViewMode() === 'classic'"
                         [attr.aria-selected]="topicViewMode() === 'classic'" (click)="setTopicViewMode('classic')">
@@ -46,7 +46,7 @@
                         [attr.aria-selected]="topicViewMode() === 'landing'" (click)="setTopicViewMode('landing')">
                         Landing
                     </button>
-                </div>
+                </div> -->
                 @if (!isLandingView()) {
                     <app-topic-section>
                         <div class="header">

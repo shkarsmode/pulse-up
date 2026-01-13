@@ -119,7 +119,7 @@ export class TopicComponent implements OnInit, OnDestroy {
     public profileService: ProfileService = inject(ProfileService);
     public geoLocationService: GeolocationService = inject(GeolocationService);
 
-    public readonly topicViewMode = signal<TopicViewMode>('classic');
+    public readonly topicViewMode = signal<TopicViewMode>('landing');
     public readonly isLandingView = computed(() => this.topicViewMode() === 'landing');
     public readonly backgroundGradient = signal<string | null>(null);
     public readonly isLightBackground = signal<boolean>(false);

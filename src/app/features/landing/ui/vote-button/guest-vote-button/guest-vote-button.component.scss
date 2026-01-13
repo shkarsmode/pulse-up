@@ -33,6 +33,7 @@
     top: 50%;
     right: 0;
     transform: translateY(-50%);
+    transition: right 0.5s cubic-bezier(.24,.57,.09,.98), transform 0.2s ease, opacity 0.2s ease;
 
     svg-icon {
         display: flex;
@@ -43,5 +44,60 @@
             width: 100%;
             height: 100%;
         }
+    }
+}
+
+/* Default: white button with accent colored text (use primary-button--contrast behavior)
+   Dark variant: when isLightBackground is true, render dark/black button with white text */
+.pulse-button {
+    &::ng-deep {
+        .primary-button {
+            transition: background-color 0.35s ease, color 0.25s ease, transform 0.15s ease, box-shadow 0.25s ease;
+            /* ensure default looks like white card */
+            background-color: var(--white-color);
+            color: var(--accent-color);
+            box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+        }
+    }
+
+    &:not(:disabled):hover {
+        &::ng-deep {
+            .primary-button {
+                transform: translateY(-2px) scale(1.01);
+                box-shadow: 0 10px 24px rgba(0,0,0,0.12);
+            }
+        }
+    }
+}
+
+.pulse-button--dark {
+    &::ng-deep {
+        .primary-button {
+            background-color: #0b0b0b;
+            color: var(--white-color);
+            box-shadow: 0 6px 18px rgba(0,0,0,0.25);
+        }
+    }
+
+    &:not(:disabled):hover {
+        &::ng-deep {
+            .primary-button {
+                background-color: #000000;
+                transform: translateY(-2px) scale(1.01);
+                box-shadow: 0 12px 30px rgba(0,0,0,0.35);
+            }
+        }
+    }
+}
+
+@keyframes subtle-pulse {
+    0% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.02); opacity: 0.98; }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+.pulse-button:active {
+    &::ng-deep .primary-button {
+        transform: scale(0.996);
     }
 }

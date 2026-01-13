@@ -7,7 +7,7 @@ import { AuthenticationService } from "@/app/shared/services/api/authentication.
 import { NotificationService } from "@/app/shared/services/core/notification.service";
 import { VotingService } from "@/app/shared/services/votes/voting.service";
 import { CommonModule } from "@angular/common";
-import { Component, DestroyRef, EventEmitter, inject, OnInit, Output } from "@angular/core";
+import { Component, DestroyRef, EventEmitter, inject, Input, OnInit, Output } from "@angular/core";
 import { takeUntilDestroyed, toObservable } from "@angular/core/rxjs-interop";
 import { SvgIconComponent } from "angular-svg-icon";
 import {
@@ -55,6 +55,7 @@ function delayBetween<T>(delayMs: number, first = false) {
     styleUrl: "./user-vote-button.component.scss",
 })
 export class UserVoteButtonComponent implements OnInit {
+    @Input() public isLightBackground = false;
     private destroyRef = inject(DestroyRef);
     private votingService = inject(VotingService);
     private notificationService = inject(NotificationService);

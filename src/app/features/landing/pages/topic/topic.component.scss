@@ -45,6 +45,7 @@ app-container::ng-deep .app-container {
     row-gap: 24px;
     margin: 0 auto 20px;
     padding: 24px 20px;
+    padding-top: 0px;
     position: relative;
     z-index: 1;
 
@@ -534,6 +535,13 @@ svg-icon.accent ::ng-deep path {
     text-align: center;
     color: #ffffff;
 
+    position: absolute;
+    bottom: 40px;
+    left: 50%;
+    padding: 0;
+    margin: 0;
+    transform: translateX(-50%);
+
     &--light-bg {
         color: #000000;
 
@@ -678,7 +686,7 @@ svg-icon.accent ::ng-deep path {
 
             // Icons color adjustment
             svg-icon::ng-deep svg path {
-                fill: #ffffff;
+                // fill: #ffffff;
             }
         }
     }
