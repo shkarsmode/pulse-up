@@ -1,10 +1,10 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, inject, OnInit } from "@angular/core";
-import { ActivatedRoute } from "@angular/router";
-import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
+import { TopicService } from "@/app/features/landing/pages/topic/topic.service";
 import { ButtonToggleComponent } from "@/app/shared/components/ui-kit/buttons/button-toggle/button-toggle.component";
-import { TopicHourlyChartService } from "./topic-hourly-chart.service";
-import { TopicChartComponent } from "../topic-chart/topic-chart.component";
+import { ChangeDetectionStrategy, Component, DestroyRef, effect, inject, OnInit } from "@angular/core";
+import { ActivatedRoute } from "@angular/router";
 import { TopicChartNoDataComponent } from "../topic-chart-no-data/topic-chart-no-data.component";
+import { TopicChartComponent } from "../topic-chart/topic-chart.component";
+import { TopicHourlyChartService } from "./topic-hourly-chart.service";
 
 @Component({
     selector: "app-topic-hourly-chart",
@@ -19,12 +19,28 @@ export class TopicHourlyChartComponent implements OnInit {
     private destroyRef = inject(DestroyRef);
 
     private topicHourlyChartService = inject(TopicHourlyChartService);
+    private topicService = inject(TopicService);
+
+    public topicEffect = effect(() => {
+        const topic = this.topicService.topic();
+        if (topic && topic.id)
+            this.topicHourlyChartService.setTopicId(topic.id);
+    }, { allowSignalWrites: true });
 
     ngOnInit() {
-        this.route.paramMap.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((params) => {
-            const topicId = Number(params.get("id"));
-            this.topicHourlyChartService.setTopicId(topicId);
-        });
+        // this.route.paramMap.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((params) => {
+        //     const rawId = params.get("id");
+        //     const numericId = Number(rawId);
+        //     if (!Number.isNaN(numericId)) {
+        //         this.topicHourlyChartService.setTopicId(numericId);
+        //     }
+        // });
+
+        // toObservable(this.topicService.topic).pipe(takeUntilDestroyed(this.destroyRef)).subscribe((topic) => {
+        //     if (topic && topic.id) {
+        //         this.topicHourlyChartService.setTopicId(topic.id);
+        //     }
+        // });
     }
 
     public isLoading = this.topicHourlyChartService.isLoading;
