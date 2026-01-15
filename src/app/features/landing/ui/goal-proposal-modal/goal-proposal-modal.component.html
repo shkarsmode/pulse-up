@@ -1,24 +1,27 @@
 <app-popup>
     <app-popup-close-button (close)="dialogRef.close()" />
 
-    <!-- Step 1: Define Your Goal -->
-    @if (currentStep === 1) {
-        <div class="proposal-modal">
-            <div class="proposal-modal__header">
-                <svg class="proposal-modal__icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/>
-                    <circle cx="12" cy="12" r="6" fill="currentColor"/>
-                    <circle cx="12" cy="12" r="3" fill="white"/>
-                </svg>
-                <span class="proposal-modal__step">Step 1 of 2</span>
-            </div>
+    <div class="proposal-modal">
+        <!-- Header - не скроллится -->
+        <div class="proposal-modal__header">
+            <svg class="proposal-modal__icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/>
+                <circle cx="12" cy="12" r="6" fill="currentColor"/>
+                <circle cx="12" cy="12" r="3" fill="white"/>
+            </svg>
+            <span class="proposal-modal__step">Step {{ currentStep }} of 2</span>
+        </div>
 
-            <h2 class="proposal-modal__title">Define Your Goal</h2>
-            <p class="proposal-modal__subtitle">
-                Set a target and pledge something meaningful if the community reaches it.
-            </p>
+        <!-- Scrollable content -->
+        <div class="proposal-modal__content">
+            <!-- Step 1: Define Your Goal -->
+            @if (currentStep === 1) {
+                <h2 class="proposal-modal__title">Define Your Goal</h2>
+                <p class="proposal-modal__subtitle">
+                    Set a target and pledge something meaningful if the community reaches it.
+                </p>
 
-            <form [formGroup]="goalForm">
+                <form [formGroup]="goalForm">
                 <!-- Goal Type Selection -->
                 <div class="form-group">
                     <label class="form-label">What do you want to grow?</label>
@@ -186,25 +189,14 @@
                     </svg>
                 </button>
             </form>
-        </div>
-    }
+            }
 
-    <!-- Step 2: About You -->
-    @if (currentStep === 2) {
-        <div class="proposal-modal">
-            <div class="proposal-modal__header">
-                <svg class="proposal-modal__icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/>
-                    <circle cx="12" cy="12" r="6" fill="currentColor"/>
-                    <circle cx="12" cy="12" r="3" fill="white"/>
-                </svg>
-                <span class="proposal-modal__step">Step 2 of 2</span>
-            </div>
-
-            <h2 class="proposal-modal__title">About You</h2>
-            <p class="proposal-modal__subtitle">
-                Tell us who's backing this goal so supporters know it's real.
-            </p>
+            <!-- Step 2: About You -->
+            @if (currentStep === 2) {
+                <h2 class="proposal-modal__title">About You</h2>
+                <p class="proposal-modal__subtitle">
+                    Tell us who's backing this goal so supporters know it's real.
+                </p>
 
             <form [formGroup]="aboutForm">
                 <!-- Goal Summary -->
@@ -343,6 +335,7 @@
                     </button>
                 </div>
             </form>
+            }
         </div>
-    }
+    </div>
 </app-popup>

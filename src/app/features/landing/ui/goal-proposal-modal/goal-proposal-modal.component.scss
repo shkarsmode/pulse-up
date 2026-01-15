@@ -1,22 +1,74 @@
 @use "../../../../../styles/variables" as *;
 @use "../../../../../styles/mixins" as *;
 
+// Override app-popup padding for this component
+::ng-deep app-popup {
+    .popup {
+        padding: 24px 16px 24px;
+
+        @media (min-width: 640px) {
+            padding: 32px 24px 32px;
+        }
+
+        @media (min-width: 768px) {
+            padding: 36px 32px 36px;
+        }
+    }
+}
+
 .proposal-modal {
     width: 100%;
     max-width: 450px;
-    padding: 0 8px;
+    display: flex;
+    flex-direction: column;
+    max-height: calc(100vh - 120px);
 
     &__header {
         display: flex;
         align-items: center;
         gap: 8px;
         margin-bottom: 16px;
+        padding: 0 8px;
+        flex-shrink: 0;
+        transition: all 0.2s ease;
+    }
+
+    &__content {
+        flex: 1;
+        overflow-y: auto;
+        overflow-x: hidden;
+        padding: 0 8px;
+        padding-right: 12px;
+
+        // Custom scrollbar
+        &::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        &::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        &::-webkit-scrollbar-thumb {
+            background: rgba(156, 163, 175, 0.3);
+            border-radius: 3px;
+            transition: background 0.2s;
+
+            &:hover {
+                background: rgba(156, 163, 175, 0.5);
+            }
+        }
+
+        // Firefox scrollbar
+        scrollbar-color: rgba(156, 163, 175, 0.3) transparent;
+        scrollbar-width: thin;
     }
 
     &__icon {
         width: 20px;
         height: 20px;
         color: var(--dark-grey-color);
+        transition: color 0.2s ease;
     }
 
     &__step {
@@ -52,21 +104,29 @@
     font-weight: 600;
     color: var(--black-color);
     margin-bottom: 8px;
+    transition: color 0.2s;
+
+    &:hover {
+        color: var(--accent-color);
+    }
 
     &__hint {
         font-weight: 400;
         color: #6b7280;
         font-size: 13px;
+        transition: color 0.2s;
     }
 
     &__link {
         font-weight: 400;
-        color: #7c3aed;
+        color: #6b7280;
         text-decoration: none;
         font-size: 13px;
+        transition: all 0.2s;
 
         &:hover {
             text-decoration: underline;
+            color: #1f2937;
         }
     }
 }
@@ -85,16 +145,23 @@
     font-size: 14px;
     color: var(--black-color);
     background: white;
-    transition: all 0.2s;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+    &:hover {
+        border-color: var(--accent-color);
+        background: rgba(156, 163, 175, 0.04);
+    }
 
     &:focus {
         outline: none;
         border-color: var(--accent-color);
-        box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.1);
+        box-shadow: 0 0 0 3px rgba(156, 163, 175, 0.1);
+        background: rgba(156, 163, 175, 0.02);
     }
 
     &::placeholder {
         color: #9ca3af;
+        transition: color 0.2s;
     }
 
     &--date {
@@ -114,10 +181,16 @@
         height: 16px;
         color: #6b7280;
         pointer-events: none;
+        transition: color 0.3s ease;
     }
 
     input {
         padding-left: 36px;
+
+        &:focus ~ svg,
+        &:hover ~ svg {
+            color: var(--accent-color);
+        }
     }
 }
 
@@ -132,16 +205,23 @@
     background: white;
     font-family: inherit;
     resize: vertical;
-    transition: all 0.2s;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+    &:hover {
+        border-color: var(--accent-color);
+        background: rgba(156, 163, 175, 0.04);
+    }
 
     &:focus {
         outline: none;
         border-color: var(--accent-color);
-        box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.1);
+        box-shadow: 0 0 0 3px rgba(156, 163, 175, 0.1);
+        background: rgba(156, 163, 175, 0.02);
     }
 
     &::placeholder {
         color: #9ca3af;
+        transition: color 0.2s;
     }
 }
 
@@ -149,6 +229,11 @@
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 12px;
+
+    @media (max-width: 480px) {
+        grid-template-columns: 1fr;
+        gap: 16px;
+    }
 }
 
 .button-group {
@@ -163,6 +248,18 @@
     &--three {
         grid-template-columns: repeat(3, 1fr);
     }
+
+    @media (max-width: 480px) {
+        gap: 6px;
+
+        &--two {
+            grid-template-columns: 1fr 1fr;
+        }
+
+        &--three {
+            gap: 4px;
+        }
+    }
 }
 
 .option-button {
@@ -176,7 +273,7 @@
     border-radius: 8px;
     background: white;
     cursor: pointer;
-    transition: all 0.2s;
+    transition: all 0.2s ease;
     font-size: 13px;
     font-weight: 500;
     color: var(--black-color);
@@ -187,12 +284,12 @@
         width: 24px;
         height: 24px;
         color: #6b7280;
-        transition: color 0.2s;
+        transition: color 0.2s ease;
     }
 
     &:hover {
         border-color: var(--accent-color);
-        background: rgba(124, 58, 237, 0.02);
+        background: rgba(156, 163, 175, 0.04);
 
         svg {
             color: var(--accent-color);
@@ -201,8 +298,9 @@
 
     &--active {
         border-color: var(--accent-color);
-        background: rgba(124, 58, 237, 0.05);
+        background: rgba(156, 163, 175, 0.08);
         color: var(--accent-color);
+        box-shadow: 0 2px 8px rgba(156, 163, 175, 0.2);
 
         svg {
             color: var(--accent-color);
@@ -264,21 +362,27 @@
     font-size: 15px;
     font-weight: 600;
     cursor: pointer;
-    transition: all 0.2s;
+    transition: all 0.2s ease;
     margin-top: 8px;
 
     svg {
         width: 18px;
         height: 18px;
+        transition: transform 0.2s ease;
     }
 
     &:not(:disabled) {
         background: var(--accent-color);
+        box-shadow: 0 2px 8px rgba(156, 163, 175, 0.2);
 
         &:hover {
-            background: #6d28d9;
+            background: #4b5563;
             transform: translateY(-1px);
-            box-shadow: 0 4px 12px rgba(124, 58, 237, 0.3);
+            box-shadow: 0 4px 12px rgba(156, 163, 175, 0.25);
+
+            svg {
+                transform: translateX(2px);
+            }
         }
 
         &:active {
@@ -293,18 +397,27 @@
 }
 
 .goal-summary {
-    background: #f9fafb;
+    background: linear-gradient(135deg, #f9fafb 0%, #f3f4f6 100%);
     border: 1px solid #e5e7eb;
     border-radius: 8px;
     padding: 16px;
     margin-bottom: 20px;
+    backdrop-filter: blur(10px);
+    transition: all 0.3s ease;
+
+    &:hover {
+        border-color: var(--accent-color);
+        box-shadow: 0 4px 12px rgba(156, 163, 175, 0.1);
+        background: linear-gradient(135deg, rgba(156, 163, 175, 0.02) 0%, rgba(156, 163, 175, 0.01) 100%);
+    }
 
     &__label {
         font-size: 11px;
         font-weight: 700;
-        color: #7c3aed;
+        color: #6b7280;
         letter-spacing: 0.5px;
         margin-bottom: 8px;
+        text-transform: uppercase;
     }
 
     &__content {
@@ -315,6 +428,7 @@
 
         strong {
             font-weight: 700;
+            color: var(--accent-color);
         }
     }
 
@@ -328,6 +442,16 @@
     display: flex;
     gap: 12px;
     margin-top: 24px;
+
+    @media (max-width: 480px) {
+        flex-direction: column;
+        gap: 8px;
+
+        .btn-back,
+        .btn-submit {
+            width: 100%;
+        }
+    }
 }
 
 .btn-back {
@@ -343,16 +467,28 @@
     font-size: 15px;
     font-weight: 600;
     cursor: pointer;
-    transition: all 0.2s;
+    transition: all 0.2s ease;
 
     svg {
         width: 16px;
         height: 16px;
+        transition: transform 0.2s ease;
     }
 
     &:hover {
         border-color: #9ca3af;
         background: #f9fafb;
+        color: var(--black-color);
+        transform: translateY(-1px);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+
+        svg {
+            transform: translateX(-2px);
+        }
+    }
+
+    &:active {
+        transform: translateY(0);
     }
 }
 
@@ -372,3 +508,4 @@ input[type="number"] {
     -moz-appearance: textfield;
     appearance: textfield;
 }
+
