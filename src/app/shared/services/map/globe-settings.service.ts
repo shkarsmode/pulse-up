@@ -8,7 +8,8 @@ export type GlowState = 0 | 1 | 2 | 3;
 })
 export class GlobeSettingsService {
     // 0 = off, 1 = minimal, 2 = medium, 3 = strong
-    public glowState = signal<GlowState>(1);
+    // Default set to medium glow
+    public glowState = signal<GlowState>(2);
 
     // Heatmap settings
     public heatmapIntensity = signal<number>(0.1);  // Default matched runtime component value (was 0.35 in constants but overridden to 0.1)

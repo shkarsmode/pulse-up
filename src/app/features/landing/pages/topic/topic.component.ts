@@ -13,6 +13,7 @@ import { SpinnerComponent } from "@/app/shared/components/ui-kit/spinner/spinner
 import { LoadImgPathDirective } from "@/app/shared/directives/load-img-path/load-img-path.directive";
 import { WaveAnimationDirective } from "@/app/shared/directives/wave-animation/wave-animation.directive";
 import { LocationSource } from '@/app/shared/enums/location-source.enum';
+import { extractBeautifulColorsFromImageUrl } from '@/app/shared/helpers/image-color-extractor';
 import { IGeolocation, ITopic } from "@/app/shared/interfaces";
 import { FormatNumberPipe } from "@/app/shared/pipes/format-number.pipe";
 import { LinkifyPipe } from "@/app/shared/pipes/linkify.pipe";
@@ -118,8 +119,10 @@ export class TopicComponent implements OnInit, OnDestroy {
     public profileService: ProfileService = inject(ProfileService);
     public geoLocationService: GeolocationService = inject(GeolocationService);
 
-    public readonly topicViewMode = signal<TopicViewMode>('classic');
+    public readonly topicViewMode = signal<TopicViewMode>('landing');
     public readonly isLandingView = computed(() => this.topicViewMode() === 'landing');
+    public readonly backgroundGradient = signal<string | null>(null);
+    public readonly isLightBackground = signal<boolean>(false);
 
     private meta = inject(Meta);
     private title = inject(Title);
@@ -190,6 +193,30 @@ export class TopicComponent implements OnInit, OnDestroy {
             ) {
                 this.isJustCreatedTopicPopupShown = true;
                 this.openJustCreatedTopicPopup(this.topic);
+            }
+        });
+
+        // Extract colors from topic cover image
+        effect(() => {
+            const topic = this.topicService.topic();
+            if (topic?.picture) {
+                this.settingsService.settings$.pipe(first()).subscribe(settings => {
+                    const imageUrl = `${settings.blobUrlPrefix}${topic.picture}`;
+                    extractBeautifulColorsFromImageUrl(imageUrl)
+                        .then(colors => {
+                            // store a single darker color used as CSS variable --gradient-color
+                            this.backgroundGradient.set(colors.gradientColorCss);
+                            this.isLightBackground.set(colors.isLightBackground);
+                        })
+                        .catch(err => {
+                            console.warn('Failed to extract colors from image:', err);
+                            this.backgroundGradient.set(null);
+                            this.isLightBackground.set(false);
+                        });
+                });
+            } else {
+                this.backgroundGradient.set(null);
+                this.isLightBackground.set(false);
             }
         });
     }

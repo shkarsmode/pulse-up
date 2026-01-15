@@ -3,6 +3,8 @@
         size="large"
         [fullWidth]="true"
         class="pulse-button"
+        [contrast]="!isLightBackground"
+        [class.pulse-button--dark]="isLightBackground"
         (handleClick)="onClick()">
         <span class="pulse-button__inner">
             <span class="pulse-button__text"> Tap to Pulse </span>

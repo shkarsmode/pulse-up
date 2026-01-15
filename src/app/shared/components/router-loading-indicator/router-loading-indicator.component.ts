@@ -53,7 +53,7 @@ export class RouterLoadingIndicatorComponent implements OnInit {
             const initial = document.getElementById("initial-loader");
             if (initial) {
                 initial.classList.add("hidden");
-                setTimeout(() => initial.remove(), 250);
+                setTimeout(() => initial.remove(), 100);
             }
         }
 

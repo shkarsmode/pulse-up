@@ -1,10 +1,10 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, inject, OnInit } from "@angular/core";
-import { ActivatedRoute } from "@angular/router";
-import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
+import { TopicService } from "@/app/features/landing/pages/topic/topic.service";
 import { ButtonToggleComponent } from "@/app/shared/components/ui-kit/buttons/button-toggle/button-toggle.component";
-import { TopicDailyChartService } from "./topic-daily-chart.service";
-import { TopicChartComponent } from "../topic-chart/topic-chart.component";
+import { ChangeDetectionStrategy, Component, DestroyRef, effect, inject, OnInit } from "@angular/core";
+import { ActivatedRoute } from "@angular/router";
 import { TopicChartNoDataComponent } from "../topic-chart-no-data/topic-chart-no-data.component";
+import { TopicChartComponent } from "../topic-chart/topic-chart.component";
+import { TopicDailyChartService } from "./topic-daily-chart.service";
 
 @Component({
     selector: "app-topic-daily-chart",
@@ -19,12 +19,31 @@ export class TopicDailyChartComponent implements OnInit {
     private destroyRef = inject(DestroyRef);
 
     private topicDailyChartService = inject(TopicDailyChartService);
+    private topicService = inject(TopicService);
+
+    public topicEffect = effect(() => {
+        const topic = this.topicService.topic();
+        if (topic && topic.id)
+            this.topicDailyChartService.setTopicId(topic.id);
+    }, { allowSignalWrites: true });
 
     ngOnInit() {
-        this.route.paramMap.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((params) => {
-            const topicId = Number(params.get("id"));
-            this.topicDailyChartService.setTopicId(topicId);
-        });
+        // this.route.paramMap.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((params) => {
+        //     const rawId = params.get("id");
+        //     const numericId = Number(rawId);
+        //     console.log('TopicDailyChartComponent: Retrieved id from route params:', rawId);
+        //     if (!Number.isNaN(numericId)) {
+        //         this.topicDailyChartService.setTopicId(numericId);
+        //     }
+        // });
+
+        // // If the page was loaded via shareKey (non-numeric), listen for topic being loaded
+        // // and set topicId from the resolved topic.
+        // toObservable(this.topicService.topic).pipe(takeUntilDestroyed(this.destroyRef)).subscribe((topic) => {
+        //     if (topic && topic.id) {
+        //         this.topicDailyChartService.setTopicId(topic.id);
+        //     }
+        // });
     }
 
     public isLoading = this.topicDailyChartService.isLoading;

@@ -45,16 +45,21 @@
 <body>
     <div id="initial-loader" aria-label="Loading">
       <div class="initial-loader__backdrop"></div>
-      <div class="initial-loader__content" role="status">
-        <img src="/assets/svg/logo/logo-hexagon.svg" alt="PulseUp" width="96" height="96" />
       </div>
     </div>
 
     <style>
-      /* Critical CSS: ensure loader shows before Angular boots */
+      /* Critical CSS: ensure loader shows before Angular boots
+         - Force vertical scrollbar to avoid layout jump on F5
+         - Use same simple logo SVG so initial loader visually matches `app-logo` */
+      html { overflow-y: scroll; }
       #initial-loader { position: fixed; inset: 0; z-index: 9999; display: flex; align-items: center; justify-content: center; }
-      #initial-loader .initial-loader__backdrop { position: absolute; inset: 0; background: #fff; }
+      #initial-loader .initial-loader__backdrop { position: absolute; inset: 0; background: #ffffff; }
       #initial-loader .initial-loader__content { position: relative; width: 96px; height: 96px; display: grid; place-items: center; }
+      /* stack hexagon and wordmark */
+      .initial-logo { position: relative; width: 96px; height: 96px; display: inline-block; }
+      .initial-logo img { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: block; }
+      .initial-logo__word { pointer-events: none; }
       #initial-loader.hidden { opacity: 0; pointer-events: none; transition: opacity .2s ease; }
     </style>
 

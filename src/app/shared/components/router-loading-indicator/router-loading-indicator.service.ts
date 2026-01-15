@@ -5,7 +5,7 @@ import { BehaviorSubject } from "rxjs";
     providedIn: "root",
 })
 export class RouterLoadingIndicatorService {
-    private loadingSubject = new BehaviorSubject<boolean>(false);
+    private loadingSubject = new BehaviorSubject<boolean>(true);
     public loading$ = this.loadingSubject.asObservable();
 
     public setLoading(isLoading: boolean): void {

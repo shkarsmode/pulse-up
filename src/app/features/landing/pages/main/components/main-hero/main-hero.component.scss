@@ -98,7 +98,7 @@
     margin-bottom: 16px;
     
 
-    @include media-sm {
+    @include media-xl {
         @include title-24px;
 
         text-align: center;
@@ -131,7 +131,7 @@
     @include media-lg {
         text-align: left;
     }
-    @include media-sm {
+    @include media-xl {
         // max-width: 300px;
         margin: 0 auto 40px;
         text-align: center;
@@ -159,7 +159,7 @@
     @include media-lg {
         margin: 0 auto;
     }
-    @include media-sm {
+    @include media-xl {
         justify-content: center;
     }
     @include media-3xs {

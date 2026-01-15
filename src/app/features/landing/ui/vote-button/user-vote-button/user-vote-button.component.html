@@ -6,6 +6,8 @@
             size="large"
             [fullWidth]="true"
             class="pulse-button"
+            [contrast]="!isLightBackground"
+            [class.pulse-button--dark]="isLightBackground"
             [class.pulse-button--voting]="isAnimating$ | async"
             [class.pulse-button--success]="isActiveVote()"
             [disabled]="(isAnimating$ | async) || !!isActiveVote()"
