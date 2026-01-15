@@ -175,11 +175,11 @@
                             {{ topic.endsAt | date: "MMM d, y" }}
                         </div>
                     </app-topic-section>
-                    @if (topic.campaign) {
+                    <!-- @if (topic.campaign) { -->
                     <app-topic-section>
                         <app-pulse-campaign [campaign]="topic.campaign" [stats]="topic.stats" />
                     </app-topic-section>
-                    }
+                    <!-- } -->
                     <div class="cols">
                         <app-topic-section class="cols__item">
                             @if (isTopicArchived) {
@@ -328,11 +328,11 @@
                     </div>
                 </app-topic-section>
 
-                @if (topic.campaign) {
+                <!-- @if (topic.campaign) { -->
                 <app-topic-section>
                     <app-pulse-campaign [campaign]="topic.campaign" [stats]="topic.stats" />
                 </app-topic-section>
-                }
+                <!-- } -->
 
                 <app-topic-section>
                     <app-topic-chrts />

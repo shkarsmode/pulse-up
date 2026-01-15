@@ -1,10 +1,13 @@
 import { Campaign, ITopicStats } from '@/app/shared/interfaces';
-import { ChangeDetectionStrategy, Component, HostListener, inject, Input } from '@angular/core';
-import { PulseCampaignModalComponent } from '../pulse-campaign-modal/pulse-campaign-modal.component';
 import { DialogService } from '@/app/shared/services/core/dialog.service';
+import { CommonModule } from '@angular/common';
+import { ChangeDetectionStrategy, Component, HostListener, inject, Input } from '@angular/core';
 import { getCampaignGoalName } from '../../helpers/getCampaignGoalName';
+import { GoalProposalModalComponent } from '../goal-proposal-modal/goal-proposal-modal.component';
+import { PulseCampaignModalComponent } from '../pulse-campaign-modal/pulse-campaign-modal.component';
 
 enum CampaignState {
+    NO_GOAL = "no_goal",
     NOT_STARTED = "not_started",
     ACTIVE = "active",
     COMPLETED_SUCCESS = "completed_success",
@@ -13,14 +16,14 @@ enum CampaignState {
 
 @Component({
     standalone: true,
-    imports: [],
+    imports: [CommonModule],
     selector: 'app-pulse-campaign',
     templateUrl: './pulse-campaign.component.html',
     styleUrl: './pulse-campaign.component.scss',
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PulseCampaignComponent {
-    @Input() public campaign: Campaign;
+    @Input() public campaign?: Campaign;
     @Input() public stats?: ITopicStats;
 
     public CampaignState: typeof CampaignState = CampaignState;
@@ -29,6 +32,9 @@ export class PulseCampaignComponent {
 
     @HostListener('click')
     public onHostClick(): void {
+        // Don't open modal on click if no campaign
+        if (!this.campaign) return;
+        
         this.dialogService.open(PulseCampaignModalComponent, {
             width: '335px',
             data: {
@@ -42,11 +48,21 @@ export class PulseCampaignComponent {
         });
     }
 
+    public onProposeGoalClick(event: Event): void {
+        event.stopPropagation();
+        this.dialogService.open(GoalProposalModalComponent, {
+            width: '500px',
+            maxWidth: '95vw',
+        });
+    }
+
     public get currentGoal(): string {
+        if (!this.campaign) return '';
         return getCampaignGoalName(this.campaign);
     }
 
     public get currentGoalReward(): string {
+        if (!this.campaign) return '';
         return this.campaign.goals[this.campaign.accomplishedGoals?.length || 0].reward;
     }
 
@@ -74,7 +90,7 @@ export class PulseCampaignComponent {
     }
 
     public get campaignState(): CampaignState | null {
-        if (!this.campaign) return null;
+        if (!this.campaign) return CampaignState.NO_GOAL;
 
         const now = new Date();
         const startsAt = new Date(this.campaign.startsAt);
