@@ -1,9 +1,11 @@
 import { PopupCloseButtonComponent } from '@/app/shared/components/ui-kit/popup/popup-close-button/popup-close-button.component';
 import { PopupLayoutComponent } from '@/app/shared/components/ui-kit/popup/popup.component';
+import { DialogService } from '@/app/shared/services/core/dialog.service';
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatDialogRef } from '@angular/material/dialog';
+import { ProposalSuccessModalComponent } from '../proposal-success-modal/proposal-success-modal.component';
 
 type GoalType = 'supporters' | 'totalPulses' | 'dailyActivity';
 type PledgeType = 'donation' | 'action';
@@ -42,6 +44,7 @@ interface GoalProposalData {
 export class GoalProposalModalComponent {
     public readonly dialogRef = inject(MatDialogRef<GoalProposalModalComponent>);
     private readonly fb = inject(FormBuilder);
+    private readonly dialogService = inject(DialogService);
 
     public currentStep = 1;
     public goalForm: FormGroup;
@@ -211,7 +214,13 @@ export class GoalProposalModalComponent {
                 ...this.aboutForm.value,
             };
             console.log('Proposal submitted:', proposalData);
+            
+            // Закрываем текущую модалку и открываем success модалку
             this.dialogRef.close(proposalData);
+            this.dialogService.open(ProposalSuccessModalComponent, {
+                disableClose: false,
+                panelClass: 'success-modal-dialog'
+            });
         }
     }
 

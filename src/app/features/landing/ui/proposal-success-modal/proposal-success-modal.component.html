@@ -1,0 +1,21 @@
+<app-popup>
+    <app-popup-close-button (close)="close()" />
+    
+    <div class="success-modal">
+        <div class="success-modal__icon">
+            <svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="40" cy="40" r="36" stroke="#10B981" stroke-width="4"/>
+                <path d="M25 40L35 50L55 30" stroke="#10B981" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+        </div>
+
+        <h2 class="success-modal__title">Proposal Submitted!</h2>
+        <p class="success-modal__message">
+            We'll review your goal proposal and get back to you within 48 hours.
+        </p>
+
+        <button type="button" class="success-modal__button" (click)="close()">
+            Done
+        </button>
+    </div>
+</app-popup>
