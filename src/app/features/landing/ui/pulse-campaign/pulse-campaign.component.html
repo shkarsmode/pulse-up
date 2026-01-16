@@ -7,13 +7,7 @@
                     <circle cx="12" cy="12" r="6" fill="currentColor"/>
                     <circle cx="12" cy="12" r="3" fill="white"/>
                 </svg>
-                <div class="campaign__no-goal-title">
-                    No Active Goal
-                    <svg class="campaign__info-icon" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="1.5"/>
-                        <path d="M8 7v4M8 5h.01" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-                    </svg>
-                </div>
+                <div class="campaign__no-goal-title">No Active Goal</div>
                 <p class="campaign__no-goal-description">
                     Champions can set goals with pledges to motivate supporters and amplify this cause.
                 </p>
@@ -25,62 +19,97 @@
                 </button>
             </div>
         }
+
+        @case (CampaignState.NOT_STARTED) {
+            <div class="campaign__meta-row">
+                <span class="campaign__badge campaign__badge--upcoming">Upcoming Goal</span>
+                <span class="campaign__time-left">Starts in {{ daysLeft }} days</span>
+            </div>
+            <div class="campaign__title campaign__title--main">{{ currentGoal }}</div>
+            <p class="campaign__description">{{ campaign?.description }}</p>
+
+            <div class="campaign__progress-section">
+                <div class="campaign__progress-header">
+                    <span class="campaign__percent">0% Complete</span>
+                    <span class="campaign__progress-count">0 / {{ goalTargetFormatted }}</span>
+                </div>
+                <div class="campaign__progress-bar">
+                    <div class="campaign__progress-bar--line" style="width:0%"></div>
+                </div>
+            </div>
+
+            <div class="campaign__pledge-box">
+                <div class="campaign__pledge-label">The Pledge:</div>
+                <div class="campaign__pledge-text">{{ currentGoalReward || '—' }}</div>
+            </div>
+        }
+
         @case (CampaignState.ACTIVE) {
-            <div class="campaign__title">🎯 Goal: {{ currentGoalReward }}</div>
-            <div class="campaign__progress">
-                <div class="campaign__progress-title">Progress</div>
+            <div class="campaign__meta-row">
+                <span class="campaign__badge campaign__badge--active">Active Goal</span>
+                <span class="campaign__time-left">{{ daysLeft }} days left</span>
+            </div>
+            <div class="campaign__title campaign__title--main">{{ currentGoal }}</div>
+            <p class="campaign__description">{{ campaign?.description }}</p>
+
+            <div class="campaign__progress-section">
+                <div class="campaign__progress-header">
+                    <span class="campaign__percent">{{ percentLabel }}</span>
+                    <span class="campaign__progress-count">{{ progressCountText }}</span>
+                </div>
                 <div class="campaign__progress-bar">
                     <div
                         [style.width.%]="currentGoalInPercent"
                         class="campaign__progress-bar--line"
                         style="--fill-width: {{ currentGoalInPercent }}%"
-                        [class.campaign__progress-bar--not-fulled]="
-                            currentGoalInPercent < 100
-                        "></div>
-                </div>
-                <div class="campaign__progress-count">
-                    {{ currentGoal }}
+                        [class.campaign__progress-bar--not-fulled]="currentGoalInPercent < 100"></div>
                 </div>
             </div>
-        }
-        @case (CampaignState.NOT_STARTED) {
-            <div class="campaign__title campaign__title--info">
-                {{ campaign?.description }}
+
+            <div class="campaign__pledge-box">
+                <div class="campaign__pledge-label">The Pledge:</div>
+                <div class="campaign__pledge-text">{{ currentGoalReward || '—' }}</div>
             </div>
-            <div class="campaign__goal">Current Goal: Get {{ currentGoal }}</div>
         }
+
         @case (CampaignState.COMPLETED_SUCCESS) {
-            <div class="campaign__title campaign__title--info">
-                {{ campaign?.description }}
+            <div class="campaign__meta-row">
+                <span class="campaign__badge campaign__badge--completed">Completed</span>
+                <span class="campaign__time-left">{{ campaign?.endsAt | date:'MMM d, y' }}</span>
             </div>
-            <div class="campaign__title campaign__title--success">
-                Campaign Successfully Completed
+            <div class="campaign__title campaign__title--main">{{ currentGoal }}</div>
+            <p class="campaign__description">{{ campaign?.description }}</p>
+            <div class="campaign__title campaign__title--success">✓ Campaign Successfully Completed</div>
+
+            <div class="campaign__pledge-box">
+                <div class="campaign__pledge-label">The Pledge:</div>
+                <div class="campaign__pledge-text">{{ currentGoalReward || '—' }}</div>
             </div>
         }
+
         @case (CampaignState.COMPLETED_FAIL) {
-            <div class="campaign__title campaign__title--info">
-                {{ campaign?.description }}
+            <div class="campaign__meta-row">
+                <span class="campaign__badge campaign__badge--closed">Campaign Closed</span>
+                <span class="campaign__time-left">Ended {{ campaign?.endsAt | date:'MMM d, y' }}</span>
             </div>
+            <div class="campaign__title campaign__title--main">{{ currentGoal }}</div>
+            <p class="campaign__description">{{ campaign?.description }}</p>
             <div class="campaign__title campaign__title--fail">Campaign Closed</div>
+
+            <div class="campaign__pledge-box">
+                <div class="campaign__pledge-label">The Pledge:</div>
+                <div class="campaign__pledge-text">{{ currentGoalReward || '—' }}</div>
+            </div>
         }
     }
+
     @if (campaign) {
-        <a
-            class="campaign__sponsored"
-            [href]="campaign.sponsorLink"
-            target="_blank"
-            (click)="$event.stopPropagation()">
-            Sponsored by
+        <a class="campaign__backed-by" [href]="campaign.sponsorLink" target="_blank" (click)="$event.stopPropagation()">
+            <span class="campaign__backed-label">Backed by:</span>
             @if (campaign.sponsorLogo) {
-                <img
-                    width="100"
-                    height="30"
-                    [src]="campaign.sponsorLogo"
-                    alt="sponsor logo" />
+                <img width="100" height="30" [src]="campaign.sponsorLogo" alt="sponsor logo" />
             } @else {
-                <span>
-                    {{ campaign.sponsoredBy }}
-                </span>
+                <span class="campaign__backed-name">{{ campaign.sponsoredBy }}</span>
             }
         </a>
     }

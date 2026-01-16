@@ -2,7 +2,7 @@ import { AppConstants, QUERY_KEYS } from "@/app/shared/constants";
 import { AppRoutes } from "@/app/shared/enums/app-routes.enum";
 import { isHttpErrorResponse } from "@/app/shared/helpers/errors/isHttpErrorResponse";
 import { VoteUtils } from "@/app/shared/helpers/vote-utils";
-import { ITopic, TopicState } from "@/app/shared/interfaces";
+import { ITopic, ITopicStats, TopicState } from "@/app/shared/interfaces";
 import { IVote } from "@/app/shared/interfaces/vote.interface";
 import { AuthenticationService } from "@/app/shared/services/api/authentication.service";
 import { PulseService } from "@/app/shared/services/api/pulse.service";
@@ -104,9 +104,13 @@ export class TopicService {
         return !!this.anonymousUser();
     });
 
+    private topicOverride = signal<Partial<ITopic> | null>(null);
+
     public topic = computed(() => {
         const topic = this.topicQuery.data();
-        return topic || null;
+        const override = this.topicOverride();
+        if (!topic) return null;
+        return override ? ({ ...topic, ...override } as ITopic) : topic;
     });
 
     public votes = computed(() => {
@@ -247,6 +251,21 @@ export class TopicService {
         this.topicId.set(null);
         this.topicShareKey.set(null);
         this.isAnonymousUserVotingInProgressSignal.set(false);
+    }
+
+    /** DEV: override current topic fields (e.g., campaign) */
+    public setTopicOverride(partial: Partial<ITopic> | null) {
+        this.topicOverride.set(partial);
+    }
+
+    /** DEV: helper to override just the campaign field */
+    public setCampaignOverride(campaign: ITopic['campaign']) {
+        this.topicOverride.set({ campaign } as Partial<ITopic>);
+    }
+
+    /** DEV: helper to override campaign + stats for testing */
+    public setCampaignAndStatsOverride(campaign: ITopic['campaign'], stats: ITopicStats) {
+        this.topicOverride.set({ campaign, stats } as Partial<ITopic>);
     }
 
     public updateMetadata(topic: ITopic): void {

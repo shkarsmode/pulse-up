@@ -15,10 +15,10 @@
                 </mat-slide-toggle>
             </div>
 
-            <div style="padding: 8px 0; display:flex; gap:8px; align-items:center;">
+            <!-- <div style="padding: 8px 0; display:flex; gap:8px; align-items:center;">
                 <button mat-stroked-button (click)="setAccentColor('#000000')">Apply Black Accent</button>
                 <button mat-stroked-button (click)="resetAccentColor()">Reset Accent</button>
-            </div>
+            </div> -->
 
         </mat-expansion-panel>
 
@@ -166,6 +166,30 @@
                             (valueChange)="globeSettings.heatmapRadius.set($event)">
                     </mat-slider>
                 </div>
+            </div>
+        </mat-expansion-panel>
+
+        <mat-expansion-panel>
+            <mat-expansion-panel-header>
+                <mat-panel-title>🎯 Campaign Override</mat-panel-title>
+            </mat-expansion-panel-header>
+            <div style="display:flex; flex-direction:column; gap:8px; padding: 12px 0;">
+                <div style="display:flex; gap:8px; flex-wrap:wrap;">
+                    <button mat-stroked-button (click)="setPreset('no_goal')">No Goal</button>
+                    <button mat-stroked-button (click)="setPreset('not_started')">Not Started</button>
+                    <button mat-stroked-button (click)="setPreset('active')">Active</button>
+                    <button mat-stroked-button (click)="setPreset('completed_success')">Completed ✓</button>
+                    <button mat-stroked-button (click)="setPreset('completed_fail')">Closed ✕</button>
+                </div>
+                <mat-form-field appearance="outline" class="full-width">
+                    <mat-label>Campaign JSON (null to remove)</mat-label>
+                    <textarea matInput rows="10" [formControl]="campaignJson"></textarea>
+                </mat-form-field>
+                <div style="display:flex; gap:8px;">
+                    <button mat-raised-button color="primary" (click)="applyCampaignOverrideFromJson()">Apply</button>
+                    <button mat-stroked-button color="warn" (click)="clearCampaignOverride()">Reset</button>
+                </div>
+                <small>Fields: id, createdAt, description, startsAt, endsAt, goals[], accomplishedGoals[], sponsorLink, sponsorLogo, sponsoredBy</small>
             </div>
         </mat-expansion-panel>
 

@@ -63,7 +63,10 @@ export class PulseCampaignComponent {
 
     public get currentGoalReward(): string {
         if (!this.campaign) return '';
-        return this.campaign.goals[this.campaign.accomplishedGoals?.length || 0].reward;
+        const index = this.campaign.accomplishedGoals?.length || 0;
+        // If all goals accomplished, show the last one
+        const goalIndex = index >= this.campaign.goals.length ? this.campaign.goals.length - 1 : index;
+        return this.campaign.goals[goalIndex]?.reward || '—';
     }
 
     public get currentGoalInPercent(): number {
@@ -87,6 +90,49 @@ export class PulseCampaignComponent {
             default:
                 return 0;
         }
+    }
+
+    private formatNumber(value?: number | string): string {
+        const n = Number(value ?? 0);
+        return n.toLocaleString();
+    }
+
+    public get percentLabel(): string {
+        return `${Math.round(this.currentGoalInPercent)}% Complete`;
+    }
+
+    public get goalTarget(): number {
+        if (!this.campaign) return 0;
+        const goal = this.campaign.goals[this.campaign.accomplishedGoals?.length || 0];
+        return Number(goal?.supporters ?? goal?.lifetimeVotes ?? goal?.dailyVotes ?? 0);
+    }
+
+    public get goalTargetFormatted(): string {
+        return this.formatNumber(this.goalTarget);
+    }
+
+    public get currentCount(): number {
+        const s = this.stats || { totalUniqueUsers: 0, lastDayVotes: 0, totalVotes: 0 };
+        const goal = this.campaign?.goals[this.campaign?.accomplishedGoals?.length || 0];
+        if (!goal) return 0;
+        if (goal.supporters) return s.totalUniqueUsers ?? 0;
+        if (goal.lifetimeVotes) return s.totalVotes ?? 0;
+        if (goal.dailyVotes) return s.lastDayVotes ?? 0;
+        return 0;
+    }
+
+    public get progressCountText(): string {
+        return `${this.formatNumber(this.currentCount)} / ${this.goalTargetFormatted}`;
+    }
+
+    public get daysLeft(): number {
+        if (!this.campaign) return 0;
+        const now = new Date();
+        const startsAt = new Date(this.campaign.startsAt);
+        const endsAt = new Date(this.campaign.endsAt);
+        const target = now < startsAt ? startsAt : endsAt;
+        const ms = Math.max(0, target.getTime() - now.getTime());
+        return Math.ceil(ms / (1000 * 60 * 60 * 24));
     }
 
     public get campaignState(): CampaignState | null {
