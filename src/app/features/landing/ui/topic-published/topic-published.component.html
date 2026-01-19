@@ -1,62 +1,28 @@
-<div class="popup">
+﻿<div class="popup">
     <app-close-button
         class="popup__close"
         (handleClick)="onCloseDialog()" />
     <span class="popup__check">✅</span>
-    <h2>Your topic is live!</h2>
-    <p>We’ve auto-pulsed it for the next 7 days to help it get seen.</p>
-    <h3>Here’s how it works:</h3>
-    <ul>
-        <li>Anyone can pulse daily to support your topic</li>
-        <li>It appears on the map wherever users pulse</li>
-        <li>If no one pulses for 30 days, it may be archived</li>
-        <li>You’ll need to pulse again after 7 days to keep your own support active</li>
-    </ul>
-    <h3>Premium Perk:</h3>
-    <p>Premium users get 30-day auto-pulse for extended reach</p>
-    <div class="footer">
-        <div class="footer__button">
-            <app-primary-button
-                size="large"
-                [fullWidth]="true"
-                (handleClick)="copyLink()">
-                {{ copied() ? "Link copied!" : "Copy link" }}
-            </app-primary-button>
-        </div>
-        <div class="footer__button">
-            <app-menu [content]="menuContent">
-                <app-primary-button
-                    size="large"
-                    [fullWidth]="true">
-                    Share
-                </app-primary-button>
-            </app-menu>
-        </div>
+    <h2>Topic Created Successfully!</h2>
+    <p class="popup__subtitle">Your voice matters! Now let's amplify it and rally others to your cause.</p>
+    
+    <div class="popup__social-buttons" *ngIf="link() as link">
+        <button class="social-btn twitter-btn" (click)="shareOnTwitter(link)">
+            <span class="btn-icon">𝕏</span>
+            <span class="btn-text">X (Twitter)</span>
+        </button>
+        <button class="social-btn facebook-btn" (click)="shareOnFacebook(link)">
+            <span class="btn-icon">f</span>
+            <span class="btn-text">Facebook</span>
+        </button>
+        <button class="social-btn share-btn" (click)="shareVia(link)">
+            <span class="share-icon">⤴</span>
+            <span class="btn-text">Share via...</span>
+        </button>
+        <button class="social-btn copy-btn" (click)="copyLink()">
+            <span class="btn-icon">🔗</span>
+            <span class="btn-text">Copy Link</span>
+        </button>
     </div>
 </div>
 
-<ng-template #menuContent>
-    <div class="social-share-menu">
-        <ng-container *ngIf="link() as link">
-            <app-copy-button
-                link="{{ link }}"
-                (handleClick)="onCopySocialLink($event)" />
-            <app-socials-button
-                [variant]="'facebook'"
-                [url]="link" />
-            <app-socials-button
-                [variant]="'x'"
-                [url]="link" />
-            <app-socials-button
-                [variant]="'email'"
-                [url]="link" />
-            <app-qrcode-button
-                [link]="link"
-                popupTitle="Topic QR code"
-                [popupSubtitle]="qrCodePopupText"
-                [bannerTitle]="qrCodeBannerTitle"
-                [bannerSubtitle]="qrCodeBannerSubtitle"
-                [bannerIcon]="qrCodeBannerIcon()" />
-        </ng-container>
-    </div>
-</ng-template>

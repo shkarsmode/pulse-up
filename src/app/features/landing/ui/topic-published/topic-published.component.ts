@@ -1,17 +1,13 @@
-import { ChangeDetectionStrategy, Component, inject, signal } from "@angular/core";
+import { CloseButtonComponent } from "@/app/shared/components/ui-kit/buttons/close-button/close-button.component";
+import { ITopic } from "@/app/shared/interfaces";
+import { PulseService } from "@/app/shared/services/api/pulse.service";
+import { SettingsService } from "@/app/shared/services/api/settings.service";
+import { NotificationService } from "@/app/shared/services/core/notification.service";
 import { CommonModule } from "@angular/common";
+import { ChangeDetectionStrategy, Component, inject } from "@angular/core";
 import { toSignal } from "@angular/core/rxjs-interop";
 import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
 import { map } from "rxjs";
-import { CloseButtonComponent } from "@/app/shared/components/ui-kit/buttons/close-button/close-button.component";
-import { CopyButtonComponent } from "@/app/shared/components/ui-kit/buttons/copy-button/copy-button.component";
-import { PrimaryButtonComponent } from "@/app/shared/components/ui-kit/buttons/primary-button/primary-button.component";
-import { QrcodeButtonComponent } from "@/app/shared/components/ui-kit/buttons/qrcode-button/qrcode-button.component";
-import { SocialsButtonComponent } from "@/app/shared/components/ui-kit/buttons/socials-button/socials-button.component";
-import { MenuComponent } from "@/app/shared/components/ui-kit/menu/menu.component";
-import { PulseService } from "@/app/shared/services/api/pulse.service";
-import { SettingsService } from "@/app/shared/services/api/settings.service";
-import { ITopic } from "@/app/shared/interfaces";
 
 @Component({
     selector: "app-topic-published",
@@ -19,11 +15,6 @@ import { ITopic } from "@/app/shared/interfaces";
     imports: [
         CommonModule,
         CloseButtonComponent,
-        PrimaryButtonComponent,
-        MenuComponent,
-        CopyButtonComponent,
-        SocialsButtonComponent,
-        QrcodeButtonComponent,
     ],
     templateUrl: "./topic-published.component.html",
     styleUrl: "./topic-published.component.scss",
@@ -33,9 +24,9 @@ export class TopicPublishedComponent {
     private readonly dialogRef = inject(MatDialogRef<TopicPublishedComponent>);
     private readonly pulseService = inject(PulseService);
     private readonly settingsService = inject(SettingsService);
+    private readonly notificationService = inject(NotificationService);
     private readonly data: { topic: ITopic } = inject(MAT_DIALOG_DATA);
 
-    public copied = signal(false);
     public link = toSignal(
         this.settingsService.settings$.pipe(
             map((settings) => settings.shareTopicBaseUrl + this.data.topic.shareKey),
@@ -62,14 +53,34 @@ export class TopicPublishedComponent {
 
     copyLink(): void {
         navigator.clipboard.writeText(this.link()).then(() => {
-            this.copied.set(true);
-            setTimeout(() => {
-                this.copied.set(false);
-            }, 1500);
+            this.notificationService.success("Link copied to clipboard!");
         });
     }
 
-    onCopySocialLink(event: MouseEvent) {
-        event.stopPropagation();
+    shareVia(url: string): void {
+        const shareData = {
+            title: this.data.topic.title,
+            text: `Check out "${this.data.topic.title}" on GoPulse!`,
+            url,
+        };
+
+        if (navigator.share) {
+            navigator.share(shareData).catch(() => {
+                this.notificationService.error("Sharing failed. Please try again.");
+            });
+            return;
+        }
+
+        this.notificationService.info("Native sharing not available. Link copied instead.");
+        this.copyLink();
+    }
+
+    shareOnTwitter(url: string): void {
+        const text = encodeURIComponent(`Check out "${this.data.topic.title}" on GoPulse!`);
+        window.open(`https://twitter.com/intent/tweet?url=${encodeURIComponent(url)}&text=${text}`, '_blank');
+    }
+
+    shareOnFacebook(url: string): void {
+        window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`, '_blank');
     }
 }

@@ -196,6 +196,11 @@ export class TopicComponent implements OnInit, OnDestroy {
             }
         });
 
+        setTimeout(() => {
+            // @ts-ignore
+            this.openJustCreatedTopicPopup(this.topic);
+        }, 1000);
+
         // Extract colors from topic cover image
         effect(() => {
             const topic = this.topicService.topic();
