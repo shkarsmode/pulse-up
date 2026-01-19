@@ -101,6 +101,38 @@ export class HeatmapService {
         return heatmapGeoJSON;
     }
 
+    public getHeatmapDataForBounds(
+        NElatitude: number,
+        NElongitude: number,
+        SWlatitude: number,
+        SWlongitude: number,
+        resolution = 1,
+        topicId?: number,
+    ): Observable<IHeatmapData> {
+        return this.pulseService
+            .getMapVotes(NElatitude, NElongitude, SWlatitude, SWlongitude, resolution, topicId)
+            .pipe(
+                map((heatmapData) => {
+                    let votesByH3Index: IH3Votes = {};
+
+                    if (resolution === 0) {
+                        Object.entries(heatmapData).forEach(([h3Index, numberOfVotes]) => {
+                            const parsedIndex = h3Index.split(":").at(-1);
+                            if (parsedIndex) {
+                                votesByH3Index[parsedIndex] = numberOfVotes;
+                            }
+                        });
+                    } else {
+                        votesByH3Index = heatmapData;
+                    }
+
+                    return votesByH3Index;
+                }),
+                switchMap((votesByH3Index) => from(this.mapVotesToHeatmapData(votesByH3Index))),
+                tap((data) => this.updateWeights(data)),
+            );
+    }
+
     public clearWeights(): void {
         this.weightsSubject.next([]);
     }

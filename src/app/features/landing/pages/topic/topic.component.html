@@ -191,10 +191,10 @@
                                     <p class="map__text">Topic is archived</p>
                                 </div>
 
-                                <app-map [zoom]="[1.5]" [minZoom]="1.5" [weights]="{ enabled: true }"
-                                    [center]="mapCenterCoordinates()" (mapLoaded)="onMapLoaded($event)">
-                                    <ng-container *ngIf="map">
-                                        <app-map-heatmap-layer [map]="map" [topicId]="topic.id" />
+                                <app-map #archivedMap [zoom]="[1.5]" [minZoom]="1.5" [weights]="{ enabled: true }"
+                                    [center]="mapCenterCoordinates()">
+                                    <ng-container *ngIf="archivedMap.map">
+                                        <app-map-heatmap-layer [map]="archivedMap.map" [topicId]="topic.id" />
                                     </ng-container>
                                 </app-map>
                             </div>
@@ -204,10 +204,10 @@
                                     <h3 class="map__text map__text--heading">View Heatmap</h3>
                                 </div>
 
-                                <app-map [zoom]="[1.5]" [minZoom]="1.5" [weights]="{ enabled: true }"
-                                    [center]="mapCenterCoordinates()" (mapLoaded)="onMapLoaded($event)">
-                                    <ng-container *ngIf="map">
-                                        <app-map-heatmap-layer [map]="map" [topicId]="topic.id" />
+                                <app-map #classicMapHeatmap [zoom]="[1.5]" [minZoom]="1.5" [weights]="{ enabled: true }"
+                                    [center]="mapCenterCoordinates()">
+                                    <ng-container *ngIf="classicMapHeatmap.map">
+                                        <app-map-heatmap-layer [map]="classicMapHeatmap.map" [topicId]="topic.id" />
                                     </ng-container>
                                 </app-map>
                             </div>
@@ -348,10 +348,10 @@
                             <p class="map__text">Topic is archived</p>
                         </div>
 
-                        <app-map [zoom]="[1.5]" [minZoom]="1.5" [weights]="{ enabled: true }"
-                            [center]="mapCenterCoordinates()" (mapLoaded)="onMapLoaded($event)">
-                            <ng-container *ngIf="map">
-                                <app-map-heatmap-layer [map]="map" [topicId]="topic.id" />
+                        <app-map #landingArchivedMap [zoom]="[1.5]" [minZoom]="1.5" [weights]="{ enabled: true }"
+                            [center]="mapCenterCoordinates()">
+                            <ng-container *ngIf="landingArchivedMap.map">
+                                <app-map-heatmap-layer [map]="landingArchivedMap.map" [topicId]="topic.id" />
                             </ng-container>
                         </app-map>
                     </div>
@@ -361,10 +361,10 @@
                             <h3 class="map__text map__text--heading">View Heatmap</h3>
                         </div>
 
-                        <app-map [zoom]="[1.5]" [minZoom]="1.5" [weights]="{ enabled: true }"
-                            [center]="mapCenterCoordinates()" (mapLoaded)="onMapLoaded($event)">
-                            <ng-container *ngIf="map">
-                                <app-map-heatmap-layer [map]="map" [topicId]="topic.id" />
+                        <app-map #landingMapHeatmap [zoom]="[1.5]" [minZoom]="1.5" [weights]="{ enabled: true }"
+                            [center]="mapCenterCoordinates()">
+                            <ng-container *ngIf="landingMapHeatmap.map">
+                                <app-map-heatmap-layer [map]="landingMapHeatmap.map" [topicId]="topic.id" />
                             </ng-container>
                         </app-map>
                     </div>

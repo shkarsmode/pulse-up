@@ -9,7 +9,6 @@ import {
     delay,
     filter,
     fromEvent,
-    map,
     merge,
     Observable,
     of,
@@ -82,9 +81,50 @@ export class MapHeatmapLayerComponent implements OnInit {
                 switchMap(() => of(this.getResolution())),
                 filter((resolution) => resolution >= 2 || !this.dataLoaded),
                 switchMap(() => this.heatmapService.getHeatmapData(this.map, this.topicId)),
-                map((heatmapData) => this.heatmapService.getHeatmapGeoJson(heatmapData)),
-                tap((geoJson) => {
+                tap((heatmapData) => {
+                    const geoJson = this.heatmapService.getHeatmapGeoJson(heatmapData);
                     this.updateHeatmap(geoJson);
+
+                    // Debug log: report number of points and sample coords
+                    try {
+                        console.debug('[MapHeatmap] received heatmap data, points:', heatmapData.length);
+                        if (heatmapData.length > 0) {
+                            console.debug('[MapHeatmap] sample point coords:', heatmapData[0].coords);
+                        }
+                    } catch (e) {
+                        // ignore
+                    }
+
+                    // Fit map to data bounds on first load
+                    if (!this.dataLoaded && heatmapData.length > 0) {
+                        console.debug('[MapHeatmap] fitting map to bounds (first load)');
+                        this.fitMapToBounds(heatmapData);
+                    }
+
+                    // Fallback: if no local data, try fetching global data for topic
+                    if (!this.dataLoaded && heatmapData.length === 0 && this.topicId) {
+                        console.debug('[MapHeatmap] no local data — fetching global data fallback');
+                        this.heatmapService
+                            .getHeatmapDataForBounds(90, 180, -90, -180, 1, this.topicId)
+                            .pipe(takeUntilDestroyed(this.destroyRef))
+                            .subscribe((globalData) => {
+                                console.debug('[MapHeatmap] global fallback points:', globalData.length);
+                                if (globalData.length > 0) {
+                                    const globalGeo = this.heatmapService.getHeatmapGeoJson(globalData);
+                                    this.updateHeatmap(globalGeo);
+                                    this.fitMapToBounds(globalData);
+                                } else {
+                                    // No global data — fallback to view of Americas
+                                    console.debug('[MapHeatmap] no global data — zooming to Americas fallback');
+                                    try {
+                                        this.map.flyTo({ center: [-95, 37], zoom: 3.5, duration: 1500 });
+                                    } catch (e) {
+                                        // ignore
+                                    }
+                                }
+                            });
+                    }
+
                     this.dataLoaded = true;
                 }),
                 takeUntilDestroyed(this.destroyRef),
@@ -94,11 +134,79 @@ export class MapHeatmapLayerComponent implements OnInit {
         this.mapImmediateInteractions$()
             .pipe(
                 switchMap(() => this.heatmapService.getHeatmapData(this.map, this.topicId)),
-                map((heatmapData) => this.heatmapService.getHeatmapGeoJson(heatmapData)),
-                tap((geoJson) => this.updateHeatmap(geoJson)),
+                tap((heatmapData) => {
+                    const geoJson = this.heatmapService.getHeatmapGeoJson(heatmapData);
+                    this.updateHeatmap(geoJson);
+
+                    // Also try to fit on initial immediate emission if not yet fitted
+                    try {
+                        console.debug('[MapHeatmap] immediate fetch, points:', heatmapData.length);
+                    } catch (e) {}
+
+                    if (!this.dataLoaded && heatmapData.length > 0) {
+                        console.debug('[MapHeatmap] immediate fetch — fitting bounds (first load)');
+                        this.fitMapToBounds(heatmapData);
+                        this.dataLoaded = true;
+                        return;
+                    }
+
+                    if (!this.dataLoaded && heatmapData.length === 0 && this.topicId) {
+                        console.debug('[MapHeatmap] immediate fetch — no local data, fetching global fallback');
+                        this.heatmapService
+                            .getHeatmapDataForBounds(90, 180, -90, -180, 1, this.topicId)
+                            .pipe(takeUntilDestroyed(this.destroyRef))
+                            .subscribe((globalData) => {
+                                console.debug('[MapHeatmap] immediate global fallback points:', globalData.length);
+                                if (globalData.length > 0) {
+                                    const globalGeo = this.heatmapService.getHeatmapGeoJson(globalData);
+                                    this.updateHeatmap(globalGeo);
+                                    this.fitMapToBounds(globalData);
+                                } else {
+                                    console.debug('[MapHeatmap] immediate fallback to Americas');
+                                    try {
+                                        this.map.flyTo({ center: [-95, 37], zoom: 3.5, duration: 1500 });
+                                    } catch (e) {}
+                                }
+                            });
+                    }
+                }),
                 takeUntilDestroyed(this.destroyRef),
             )
             .subscribe();
+    }
+
+    private fitMapToBounds(heatmapData: any[]): void {
+        if (heatmapData.length === 0) return;
+
+        // Calculate bounds from heatmap data
+        let minLat = heatmapData[0].coords[0];
+        let maxLat = heatmapData[0].coords[0];
+        let minLng = heatmapData[0].coords[1];
+        let maxLng = heatmapData[0].coords[1];
+
+        for (const point of heatmapData) {
+            const [lat, lng] = point.coords;
+            minLat = Math.min(minLat, lat);
+            maxLat = Math.max(maxLat, lat);
+            minLng = Math.min(minLng, lng);
+            maxLng = Math.max(maxLng, lng);
+        }
+
+        // Add padding to bounds (10% on each side)
+        const latPadding = (maxLat - minLat) * 0.1;
+        const lngPadding = (maxLng - minLng) * 0.1;
+
+        const bounds: mapboxgl.LngLatBoundsLike = [
+            [minLng - lngPadding, minLat - latPadding],
+            [maxLng + lngPadding, maxLat + latPadding],
+        ];
+
+        // Fit map to bounds with animation
+        this.map.fitBounds(bounds, {
+            padding: 50,
+            duration: 1500,
+            maxZoom: 15,
+        });
     }
 
     private mapImmediateInteractions$(): Observable<Event | null> {

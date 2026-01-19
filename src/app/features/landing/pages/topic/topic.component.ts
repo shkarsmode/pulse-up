@@ -133,7 +133,6 @@ export class TopicComponent implements OnInit, OnDestroy {
     private isJustCreatedTopicPopupShown = false;
 
     public isReadMore = false;
-    public map: mapboxgl.Map | null = null;
     public get topic() {
         return this.topicService.topic();
     }
@@ -196,11 +195,6 @@ export class TopicComponent implements OnInit, OnDestroy {
             }
         });
 
-        setTimeout(() => {
-            // @ts-ignore
-            this.openJustCreatedTopicPopup(this.topic);
-        }, 1000);
-
         // Extract colors from topic cover image
         effect(() => {
             const topic = this.topicService.topic();
@@ -223,7 +217,7 @@ export class TopicComponent implements OnInit, OnDestroy {
                 this.backgroundGradient.set(null);
                 this.isLightBackground.set(false);
             }
-        });
+        }, { allowSignalWrites: true });
     }
 
     public scrollDown(selector: string): void {
@@ -281,10 +275,6 @@ export class TopicComponent implements OnInit, OnDestroy {
                         this.currentLocation.set(location)
                     );
             });
-    }
-
-    public onMapLoaded(map: mapboxgl.Map): void {
-        this.map = map;
     }
 
     public onReadMore(): void {

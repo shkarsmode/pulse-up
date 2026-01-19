@@ -19,7 +19,7 @@ export class AppConstants {
     public static readonly PULSES_PER_PAGE: number = 20;
     public static readonly PHONE_LINE_TYPES = PHONE_LINE_TYPES;
     public static readonly DEFAULT_CATEGORIES = ["trending", "newest"];
-    public static readonly MAP_CENTER_COORDINATES: [number, number] = [-100.661, 37.7749];
+    public static readonly MAP_CENTER_COORDINATES: [number, number] = [38.9, 77.0369];
     public static readonly MAP_MAX_BOUNDS: mapboxgl.LngLatBoundsLike = [
         [-180, -80],
         [180, 85],
